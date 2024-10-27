@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">43</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -135,7 +135,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,209 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/ElasticSearch-Index-Lifecycle-Policy-ILM-%E2%80%93-Deep-Dive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/ElasticSearch-Index-Lifecycle-Policy-ILM-%E2%80%93-Deep-Dive/" class="post-title-link" itemprop="url">ElasticSearch Index Lifecycle Policy (ILM) – Deep Dive</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 12:39:24" itemprop="dateCreated datePublished" datetime="2024-10-24T12:39:24-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-25 18:08:09" itemprop="dateModified" datetime="2024-10-25T18:08:09-04:00">2024-10-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Elasticsearch/" itemprop="url" rel="index"><span itemprop="name">Elasticsearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction-to-index-lifecycle-management-ilm">Introduction to Index Lifecycle Management (ILM)</a></li>
+<li><a href="#elasticsearch-ilm-phases">ElasticSearch ILM Phases</a><ul>
+<li><a href="#1-hot-phase">1. Hot Phase</a></li>
+<li><a href="#2-warm-phase">2. Warm Phase</a></li>
+<li><a href="#3-cold-phase">3. Cold Phase</a></li>
+<li><a href="#4-delete-phase">4. Delete Phase</a></li>
+</ul>
+</li>
+<li><a href="#creating-an-index-lifecycle-policy">Creating an Index Lifecycle Policy</a></li>
+<li><a href="#real-life-scenarios-of-ilm">Real-Life Scenarios of ILM</a><ul>
+<li><a href="#scenario-1-logs-retention-policy">Scenario 1: Logs Retention Policy</a></li>
+<li><a href="#scenario-2-time-based-data-management">Scenario 2: Time-Based Data Management</a></li>
+</ul>
+</li>
+<li><a href="#ilm-best-practices">ILM Best Practices</a></li>
+<li><a href="#useful-commands-and-operations">Useful Commands and Operations</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<h2 id="Introduction-to-Index-Lifecycle-Management-ILM"><a href="#Introduction-to-Index-Lifecycle-Management-ILM" class="headerlink" title="Introduction to Index Lifecycle Management (ILM)"></a>Introduction to Index Lifecycle Management (ILM)</h2><hr>
+<p>ElasticSearch’s <strong>Index Lifecycle Management (ILM)</strong> allows you to define and automate how indices are managed throughout their lifecycle. This is critical for controlling the size, performance, and cost of your Elasticsearch cluster by ensuring data is stored in appropriate storage tiers as it ages.</p>
+<p>An ILM policy divides an index’s lifecycle into phases, during which specific actions are applied to the data. These actions include closing, freezing, moving to different nodes, or deleting indices.</p>
+<hr>
+<p><a name="elasticsearch-ilm-phases"></a> </p>
+<h2 id="ElasticSearch-ILM-Phases"><a href="#ElasticSearch-ILM-Phases" class="headerlink" title="ElasticSearch ILM Phases"></a>ElasticSearch ILM Phases</h2><p><a name="1-hot-phase"></a> </p>
+<h3 id="1-Hot-Phase"><a href="#1-Hot-Phase" class="headerlink" title="1. Hot Phase"></a>1. Hot Phase</h3><ul>
+<li>The hot phase is for indexing and querying fresh data.</li>
+<li>Data is stored on high-performance nodes for rapid access.</li>
+<li>Indices in this phase are actively written and read.</li>
+</ul>
+<p><strong>Operations:</strong></p>
+<ul>
+<li>Force merge segments</li>
+<li>Shrink the index</li>
+<li>Roll over to a new index when the current one is too large</li>
+</ul>
+<p><strong>Command:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;policy&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;phases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;hot&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;actions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;rollover&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_size&quot;</span><span class="punctuation">:</span> <span class="string">&quot;50gb&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;max_age&quot;</span><span class="punctuation">:</span> <span class="string">&quot;30d&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="2-warm-phase"></a> </p>
+<h3 id="2-Warm-Phase"><a href="#2-Warm-Phase" class="headerlink" title="2. Warm Phase"></a>2. Warm Phase</h3><ul>
+<li>The warm phase is for data that is no longer being actively written but still queried.</li>
+<li>Data is stored on less powerful nodes.</li>
+<li>The index can be optimized by reducing the number of replicas and relocating shards to nodes with less CPU and memory resources.</li>
+</ul>
+<p><strong>Operations:</strong></p>
+<ul>
+<li>Shrink index to fewer shards</li>
+<li>Reduce the number of replicas</li>
+<li>Move the index to nodes with less powerful resources</li>
+</ul>
+<p><strong>Command:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;policy&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;phases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;warm&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;actions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;allocate&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;require&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;box_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;warm&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="3-cold-phase"></a> </p>
+<h3 id="3-Cold-Phase"><a href="#3-Cold-Phase" class="headerlink" title="3. Cold Phase"></a>3. Cold Phase</h3><ul>
+<li>The cold phase is for data that is rarely accessed but needs to be retained.</li>
+<li>Data is stored on the least powerful nodes, with a focus on cost-effectiveness over performance.</li>
+<li>Indices can be marked as read-only.</li>
+</ul>
+<p><strong>Operations:</strong></p>
+<ul>
+<li>Set the index as read-only</li>
+<li>Move the index to cold storage nodes</li>
+<li>Freeze the index (lowers resource consumption even further)</li>
+</ul>
+<p><strong>Command:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;policy&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;phases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;cold&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;actions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;allocate&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;require&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;box_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cold&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;freeze&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="4-delete-phase"></a> </p>
+<h3 id="4-Delete-Phase"><a href="#4-Delete-Phase" class="headerlink" title="4. Delete Phase"></a>4. Delete Phase</h3><ul>
+<li>The delete phase removes indices once they are no longer needed, preventing unnecessary resource usage.</li>
+</ul>
+<p><strong>Operations:</strong></p>
+<ul>
+<li>Delete the index after a specific time period or based on certain criteria.</li>
+</ul>
+<p><strong>Command:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;policy&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;phases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;delete&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;actions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;delete&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="creating-an-index-lifecycle-policy"></a> </p>
+<h2 id="Creating-an-Index-Lifecycle-Policy"><a href="#Creating-an-Index-Lifecycle-Policy" class="headerlink" title="Creating an Index Lifecycle Policy"></a>Creating an Index Lifecycle Policy</h2><p>To create a custom ILM policy, use the following steps:</p>
+<ol>
+<li>Define the policy by specifying the different phases (hot, warm, cold, delete).</li>
+<li>Apply the policy to your indices using an alias or direct index management.</li>
+</ol>
+<p><strong>Command Example:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">PUT _ilm/policy/my_policy</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;policy&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;phases&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;hot&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;actions&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;rollover&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;max_size&quot;</span>: <span class="string">&quot;50gb&quot;</span>,</span><br><span class="line">            <span class="string">&quot;max_age&quot;</span>: <span class="string">&quot;7d&quot;</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;delete&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;min_age&quot;</span>: <span class="string">&quot;30d&quot;</span>,</span><br><span class="line">        <span class="string">&quot;actions&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;delete&quot;</span>: &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="real-life-scenarios-of-ilm"></a> </p>
+<h2 id="Real-Life-Scenarios-of-ILM"><a href="#Real-Life-Scenarios-of-ILM" class="headerlink" title="Real-Life Scenarios of ILM"></a>Real-Life Scenarios of ILM</h2><p><a name="scenario-1-logs-retention-policy"></a> </p>
+<h3 id="Scenario-1-Logs-Retention-Policy"><a href="#Scenario-1-Logs-Retention-Policy" class="headerlink" title="Scenario 1: Logs Retention Policy"></a>Scenario 1: Logs Retention Policy</h3><p>In a logging system (e.g., centralized logging with ElasticSearch), the hot phase may consist of daily log ingestion, followed by moving the logs to the warm phase after 30 days. Finally, after 90 days, the logs are deleted.</p>
+<p><strong>Policy Example:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">PUT _ilm/policy/log_retention_policy</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;policy&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;phases&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;hot&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;min_age&quot;</span>: <span class="string">&quot;0ms&quot;</span>,</span><br><span class="line">        <span class="string">&quot;actions&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;rollover&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;max_size&quot;</span>: <span class="string">&quot;50gb&quot;</span>,</span><br><span class="line">            <span class="string">&quot;max_age&quot;</span>: <span class="string">&quot;1d&quot;</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;warm&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;min_age&quot;</span>: <span class="string">&quot;30d&quot;</span>,</span><br><span class="line">        <span class="string">&quot;actions&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;allocate&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;include&quot;</span>: &#123;</span><br><span class="line">              <span class="string">&quot;box_type&quot;</span>: <span class="string">&quot;warm&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="string">&quot;shrink&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;number_of_shards&quot;</span>: 1</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;delete&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;min_age&quot;</span>: <span class="string">&quot;90d&quot;</span>,</span><br><span class="line">        <span class="string">&quot;actions&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;delete&quot;</span>: &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="scenario-2-time-based-data-management"></a> </p>
+<h3 id="Scenario-2-Time-Based-Data-Management"><a href="#Scenario-2-Time-Based-Data-Management" class="headerlink" title="Scenario 2: Time-Based Data Management"></a>Scenario 2: Time-Based Data Management</h3><p>For applications dealing with time-based data (e.g., financial transactions or event logs), ILM helps archive data efficiently. You might retain recent data in the hot phase for instant querying, move older data to warm nodes, and eventually store data in cold nodes before deleting it.</p>
+<hr>
+<p><a name="ilm-best-practices"></a> </p>
+<h2 id="ILM-Best-Practices"><a href="#ILM-Best-Practices" class="headerlink" title="ILM Best Practices"></a>ILM Best Practices</h2><ol>
+<li><strong>Define Clear Retention Policies:</strong> Tailor lifecycle policies to the nature of your data.</li>
+<li><strong>Monitor Resource Usage:</strong> Ensure you have enough storage in warm and cold nodes.</li>
+<li><strong>Test Policy Changes:</strong> Roll out new policies incrementally to avoid production outages.</li>
+<li><strong>Leverage Aliases:</strong> Use index aliases to manage indices during rollovers without affecting search queries.</li>
+</ol>
+<hr>
+<p><a name="useful-commands-and-operations"></a> </p>
+<h2 id="Useful-Commands-and-Operations"><a href="#Useful-Commands-and-Operations" class="headerlink" title="Useful Commands and Operations"></a>Useful Commands and Operations</h2><ul>
+<li><strong>Create a policy:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT _ilm/policy/my_policy</span><br></pre></td></tr></table></figure></li>
+<li><strong>Get details of an existing policy:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET _ilm/policy/my_policy</span><br></pre></td></tr></table></figure></li>
+<li><strong>Delete a policy:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE _ilm/policy/my_policy</span><br></pre></td></tr></table></figure></li>
+<li><strong>Apply a policy to an index:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index/_settings</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;index.lifecycle.name&quot;</span>: <span class="string">&quot;my_policy&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p><a name="conclusion"></a> </p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>ElasticSearch’s Index Lifecycle Management (ILM) is a powerful tool that helps organizations manage their indices’ lifecycle by automating transitions between different storage phases (hot, warm, cold, and delete). By optimizing storage and performance, ILM policies improve the overall cost-effectiveness and scalability of your ElasticSearch cluster. Proper use of ILM ensures your data remains accessible and performant while controlling operational costs effectively.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2214,187 +2417,6 @@
 <td>Get location data by U.S. ZIP code.</td>
 </tr>
 </tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/22/Introduction-to-Regression-Algorithms/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/22/Introduction-to-Regression-Algorithms/" class="post-title-link" itemprop="url">Introduction to Regression Algorithms</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-22 16:47:07 / Modified: 17:04:45" itemprop="dateCreated datePublished" datetime="2024-10-22T16:47:07-04:00">2024-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Introduction-to-Regression-Algorithms"><a href="#Introduction-to-Regression-Algorithms" class="headerlink" title="Introduction to Regression Algorithms"></a>Introduction to Regression Algorithms</h1><p>Regression is a type of analysis used to understand relationships between variables. In machine learning, regression algorithms predict continuous outcomes based on input data. In this article, we will cover several common regression algorithms with sample Python code snippets and visual aids to help you understand how they work. Let’s dive in!</p>
-<hr>
-<h2 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h2><ul>
-<li><a href="#introduction-to-regression-algorithms">Introduction to Regression Algorithms</a><ul>
-<li><a href="#index">Index</a></li>
-<li><a href="#1-linear-regression">1. Linear Regression</a><ul>
-<li><a href="#example-diagram">Example Diagram:</a></li>
-<li><a href="#python-code-example">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#2-logistic-regression">2. Logistic Regression</a><ul>
-<li><a href="#example-diagram-1">Example Diagram:</a></li>
-<li><a href="#python-code-example-1">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#3-decision-tree-regression">3. Decision Tree Regression</a><ul>
-<li><a href="#example-diagram-2">Example Diagram:</a></li>
-<li><a href="#python-code-example-2">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#4-random-forest-regression">4. Random Forest Regression</a><ul>
-<li><a href="#example-diagram-3">Example Diagram:</a></li>
-<li><a href="#python-code-example-3">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#5-support-vector-regression-svr">5. Support Vector Regression (SVR)</a><ul>
-<li><a href="#example-diagram-4">Example Diagram:</a></li>
-<li><a href="#python-code-example-4">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#6-k-nearest-neighbors-knn-regression">6. K-Nearest Neighbors (KNN) Regression</a><ul>
-<li><a href="#example-diagram-5">Example Diagram:</a></li>
-<li><a href="#python-code-example-5">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#7-bayesian-linear-regression">7. Bayesian Linear Regression</a><ul>
-<li><a href="#python-code-example-6">Python Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#8-lasso-and-ridge-regression">8. Lasso and Ridge Regression</a><ul>
-<li><a href="#lasso-regression-code-example">Lasso Regression Code Example:</a></li>
-<li><a href="#ridge-regression-code-example">Ridge Regression Code Example:</a></li>
-</ul>
-</li>
-<li><a href="#9-regression-analysis">9. Regression Analysis</a></li>
-<li><a href="#10-neural-networks-with-regression">10. Neural Networks with Regression</a><ul>
-<li><a href="#example-diagram-6">Example Diagram:</a></li>
-<li><a href="#python-code-example-using-keras">Python Code Example (Using Keras):</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="1-Linear-Regression"><a href="#1-Linear-Regression" class="headerlink" title="1. Linear Regression"></a>1. Linear Regression</h2><p><strong>Linear Regression</strong> models the relationship between input (x) and output (y) as a straight line. It tries to minimize the difference between the predicted and actual values.</p>
-<h3 id="Example-Diagram"><a href="#Example-Diagram" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Linear_regression.png" alt="Linear Regression"></p>
-<h3 id="Python-Code-Example"><a href="#Python-Code-Example" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = LinearRegression()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new values</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="2-Logistic-Regression"><a href="#2-Logistic-Regression" class="headerlink" title="2. Logistic Regression"></a>2. Logistic Regression</h2><p><strong>Logistic Regression</strong> is used for binary classification, predicting probabilities that the input belongs to one of two classes (e.g., “yes” or “no”).</p>
-<h3 id="Example-Diagram-1"><a href="#Example-Diagram-1" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/sigmoid_graph.png" alt="Logistic Regression"></p>
-<h3 id="Python-Code-Example-1"><a href="#Python-Code-Example-1" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data (1 or 0 outcome)</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = LogisticRegression()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">3.5</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=3.5: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="3-Decision-Tree-Regression"><a href="#3-Decision-Tree-Regression" class="headerlink" title="3. Decision Tree Regression"></a>3. Decision Tree Regression</h2><p><strong>Decision Tree Regression</strong> splits the data into different regions based on decisions and forms a tree structure. Each leaf node represents a prediction.</p>
-<h3 id="Example-Diagram-2"><a href="#Example-Diagram-2" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Decision_Tree_1.png" alt="Decision Tree"></p>
-<h3 id="Python-Code-Example-2"><a href="#Python-Code-Example-2" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1.5</span>, <span class="number">2.5</span>, <span class="number">3.0</span>, <span class="number">3.5</span>, <span class="number">4.0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = DecisionTreeRegressor()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new values</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="4-Random-Forest-Regression"><a href="#4-Random-Forest-Regression" class="headerlink" title="4. Random Forest Regression"></a>4. Random Forest Regression</h2><p><strong>Random Forest Regression</strong> is an ensemble of multiple decision trees that makes predictions by averaging the results of the trees.</p>
-<h3 id="Example-Diagram-3"><a href="#Example-Diagram-3" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Random_forest_explain.png" alt="Random Forest"></p>
-<h3 id="Python-Code-Example-3"><a href="#Python-Code-Example-3" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = RandomForestRegressor(n_estimators=<span class="number">100</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="5-Support-Vector-Regression-SVR"><a href="#5-Support-Vector-Regression-SVR" class="headerlink" title="5. Support Vector Regression (SVR)"></a>5. Support Vector Regression (SVR)</h2><p><strong>Support Vector Regression (SVR)</strong> fits the best line within a margin of error, known as the <strong>epsilon tube</strong>, focusing on points within this margin.</p>
-<h3 id="Example-Diagram-4"><a href="#Example-Diagram-4" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/SVM_margin.png" alt="SVR"></p>
-<h3 id="Python-Code-Example-4"><a href="#Python-Code-Example-4" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVR</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = SVR(kernel=<span class="string">&#x27;linear&#x27;</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="6-K-Nearest-Neighbors-KNN-Regression"><a href="#6-K-Nearest-Neighbors-KNN-Regression" class="headerlink" title="6. K-Nearest Neighbors (KNN) Regression"></a>6. K-Nearest Neighbors (KNN) Regression</h2><p><strong>KNN Regression</strong> finds the k-nearest data points to the input and predicts the value based on their average.</p>
-<h3 id="Example-Diagram-5"><a href="#Example-Diagram-5" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/KnnClassification.png" alt="KNN"></p>
-<h3 id="Python-Code-Example-5"><a href="#Python-Code-Example-5" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">1.5</span>, <span class="number">3.5</span>, <span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = KNeighborsRegressor(n_neighbors=<span class="number">2</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="7-Bayesian-Linear-Regression"><a href="#7-Bayesian-Linear-Regression" class="headerlink" title="7. Bayesian Linear Regression"></a>7. Bayesian Linear Regression</h2><p><strong>Bayesian Linear Regression</strong> adds probability to the linear regression model, providing a measure of uncertainty in predictions.</p>
-<h3 id="Python-Code-Example-6"><a href="#Python-Code-Example-6" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> BayesianRidge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1.2</span>, <span class="number">2.3</span>, <span class="number">3.1</span>, <span class="number">4.8</span>, <span class="number">5.5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = BayesianRidge()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="8-Lasso-and-Ridge-Regression"><a href="#8-Lasso-and-Ridge-Regression" class="headerlink" title="8. Lasso and Ridge Regression"></a>8. Lasso and Ridge Regression</h2><p><strong>Lasso Regression</strong> and <strong>Ridge Regression</strong> add regularization to reduce overfitting in linear regression. Lasso uses L1 regularization (shrinking coefficients to zero), while Ridge uses L2 regularization.</p>
-<h3 id="Lasso-Regression-Code-Example"><a href="#Lasso-Regression-Code-Example" class="headerlink" title="Lasso Regression Code Example:"></a>Lasso Regression Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Lasso</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = Lasso(alpha=<span class="number">0.1</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="Ridge-Regression-Code-Example"><a href="#Ridge-Regression-Code-Example" class="headerlink" title="Ridge Regression Code Example:"></a>Ridge Regression Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = Ridge(alpha=<span class="number">1.0</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="9-Regression-Analysis"><a href="#9-Regression-Analysis" class="headerlink" title="9. Regression Analysis"></a>9. Regression Analysis</h2><p><strong>Regression Analysis</strong> helps understand the relationships between variables, often used in fields such as economics and biology.</p>
-<hr>
-<h2 id="10-Neural-Networks-with-Regression"><a href="#10-Neural-Networks-with-Regression" class="headerlink" title="10. Neural Networks with Regression"></a>10. Neural Networks with Regression</h2><p><strong>Neural Networks</strong> can capture complex relationships between variables. For regression, the output layer of the network predicts continuous values.</p>
-<h3 id="Example-Diagram-6"><a href="#Example-Diagram-6" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Artificial_neural_network.png" alt="Neural Networks"></p>
-<h3 id="Python-Code-Example-Using-Keras"><a href="#Python-Code-Example-Using-Keras" class="headerlink" title="Python Code Example (Using Keras):"></a>Python Code Example (Using Keras):</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> Dense</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create neural network model</span></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Dense(<span class="number">10</span>, input_dim=<span class="number">1</span>, activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(Dense(<span class="number">1</span>))  <span class="comment"># Output layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile and train model</span></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;mean_squared_error&#x27;</span>)</span><br><span class="line">model.fit(X, y, epochs=<span class="number">100</span>, verbose=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np</span><br><span class="line"></span><br><span class="line">.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>][<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Each regression algorithm has its strengths and is suited for different tasks. <strong>Linear regression</strong> works well for simple data, while <strong>Random Forests</strong> and <strong>Neural Networks</strong> are ideal for more complex datasets. Learning and experimenting with these algorithms will help you solve a variety of predictive problems.</p>
 
       
     </div>
