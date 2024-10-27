@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,538 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/" class="post-title-link" itemprop="url">One Real Production Issue Fix About Race Condition in Adobe LiveCycle</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-27 18:48:58 / Modified: 18:53:29" itemprop="dateCreated datePublished" datetime="2024-10-27T18:48:58-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Weird-Issue/" itemprop="url" rel="index"><span itemprop="name">Weird Issue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-real-life-production-issue">2. Real-Life Production Issue</a></li>
+<li><a href="#3-what-is-a-race-condition">3. What is a Race Condition?</a><ul>
+<li><a href="#example">Example:</a></li>
+</ul>
+</li>
+<li><a href="#4-how-race-conditions-occur-in-apache-velocity">4. How Race Conditions Occur in Apache Velocity</a><ul>
+<li><a href="#key-factors">Key Factors:</a></li>
+</ul>
+</li>
+<li><a href="#5-example-scenario">5. Example Scenario</a><ul>
+<li><a href="#code-example">Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#6-solutions-to-race-conditions">6. Solutions to Race Conditions</a><ul>
+<li><a href="#1-use-a-thread-safe-velocity-engine">1. Use a Thread-Safe Velocity Engine</a></li>
+<li><a href="#2-synchronization">2. Synchronization</a></li>
+<li><a href="#3-connection-pooling">3. Connection Pooling</a></li>
+<li><a href="#4-lightweight-objects">4. Lightweight Objects</a></li>
+</ul>
+</li>
+<li><a href="#7-sample-code-and-configuration">7. Sample Code and Configuration</a><ul>
+<li><a href="#configuration-example">Configuration Example:</a></li>
+<li><a href="#verifying-the-configuration">Verifying the Configuration</a></li>
+</ul>
+</li>
+<li><a href="#8-conclusion">8. Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>In software development, race conditions can lead to unpredictable behavior, particularly in multi-threaded environments. This article explores race conditions, particularly in the context of using the Apache Velocity templating engine, and provides insights into avoiding such issues in production systems.</p>
+<p><a name="real-life-production-issue"></a></p>
+<h2 id="2-Real-Life-Production-Issue"><a href="#2-Real-Life-Production-Issue" class="headerlink" title="2. Real-Life Production Issue"></a>2. Real-Life Production Issue</h2><p>During my time at a major telecommunications company, I was involved in a project that utilized Apache Velocity within Adobe LiveCycle to generate PDFs from templates. Although PDF generation had been functioning smoothly, we encountered a serious issue in the production environment where, on certain days each month, PDF generation would intermittently result in <code>NullPointerExceptions</code> (NPEs). </p>
+<p>The production environment was more robust than development and UAT, resulting in higher concurrency levels. The frequent NPEs led to the application needing to be rebooted to restore functionality. Initial investigations did not yield immediate clues, as the errors stemmed deep within the Adobe LiveCycle source code, obscuring the connection to Apache Velocity. </p>
+<p>Despite increasing system resources and tuning the template generator’s maximum thread limit, the issue persisted and even worsened. After extensive debugging, including analyzing process dumps during PDF rendering and testing various concurrency scenarios, I identified that the root cause was tied to the <code>VelocityEngine</code>. This engine was being instantiated for every template rendering request, leading to <code>Race Conditions</code> due to concurrent access.</p>
+<p><a name="what-is-a-race-condition"></a></p>
+<h2 id="3-What-is-a-Race-Condition"><a href="#3-What-is-a-Race-Condition" class="headerlink" title="3. What is a Race Condition?"></a>3. What is a Race Condition?</h2><p>A race condition occurs when multiple threads or processes attempt to change shared data at the same time. This can lead to inconsistent results, unexpected behavior, or application crashes, particularly when the sequence of thread execution is not managed correctly.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h3><p>Imagine two threads updating the same bank account balance simultaneously. If both threads read the current balance before either has written back the new balance, one thread’s update could overwrite the other, leading to a final balance that doesn’t reflect both transactions.</p>
+<p><a name="how-race-conditions-occur-in-apache-velocity"></a></p>
+<h2 id="4-How-Race-Conditions-Occur-in-Apache-Velocity"><a href="#4-How-Race-Conditions-Occur-in-Apache-Velocity" class="headerlink" title="4. How Race Conditions Occur in Apache Velocity"></a>4. How Race Conditions Occur in Apache Velocity</h2><p>In the case of Apache Velocity, the <code>VelocityEngine</code> is not thread-safe by default. If multiple threads instantiate and manipulate the same <code>VelocityEngine</code> instance concurrently, it can lead to race conditions and unpredictable behaviors, such as <code>NullPointerExceptions</code>. This is particularly critical in a high-throughput environment, such as the one experienced in the production instance at Rogers.</p>
+<h3 id="Key-Factors"><a href="#Key-Factors" class="headerlink" title="Key Factors:"></a>Key Factors:</h3><ul>
+<li><strong>Multiple Concurrent Requests</strong>: In high-concurrency scenarios, simultaneous requests can create contention for resources managed by shared instances.</li>
+<li><strong>Stateful Objects</strong>: Objects like <code>VelocityEngine</code> that maintain state can exhibit unexpected behaviors when accessed by multiple threads.</li>
+</ul>
+<p><a name="example-scenario"></a></p>
+<h2 id="5-Example-Scenario"><a href="#5-Example-Scenario" class="headerlink" title="5. Example Scenario"></a>5. Example Scenario</h2><p>In our case, PDF generation would involve creating a <code>VelocityEngine</code> instance for each template rendering request. The absence of synchronization or proper handling of concurrent requests led to conditions where one thread’s updates conflicted with another’s, causing NPEs during PDF rendering.</p>
+<h3 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example:"></a>Code Example:</h3><p>Here’s a simplified representation of how <code>VelocityEngine</code> was used improperly:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line">        engine.init();</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, every call to <code>generatePdf</code> creates a new instance of <code>VelocityEngine</code>, leading to potential race conditions.</p>
+<p><a name="solutions-to-race-conditions"></a></p>
+<h2 id="6-Solutions-to-Race-Conditions"><a href="#6-Solutions-to-Race-Conditions" class="headerlink" title="6. Solutions to Race Conditions"></a>6. Solutions to Race Conditions</h2><p>To mitigate race conditions in Apache Velocity, several approaches can be employed:</p>
+<h3 id="1-Use-a-Thread-Safe-Velocity-Engine"><a href="#1-Use-a-Thread-Safe-Velocity-Engine" class="headerlink" title="1. Use a Thread-Safe Velocity Engine"></a>1. Use a Thread-Safe Velocity Engine</h3><p>Utilize a single shared instance of <code>VelocityEngine</code>, initialized once and reused across multiple requests.</p>
+<h3 id="2-Synchronization"><a href="#2-Synchronization" class="headerlink" title="2. Synchronization"></a>2. Synchronization</h3><p>Wrap access to the <code>VelocityEngine</code> in synchronized blocks to ensure that only one thread can access it at a time.</p>
+<h3 id="3-Connection-Pooling"><a href="#3-Connection-Pooling" class="headerlink" title="3. Connection Pooling"></a>3. Connection Pooling</h3><p>Implement connection pooling for managing <code>VelocityEngine</code> instances, allowing for better resource management and concurrency handling.</p>
+<h3 id="4-Lightweight-Objects"><a href="#4-Lightweight-Objects" class="headerlink" title="4. Lightweight Objects"></a>4. Lightweight Objects</h3><p>If possible, use lighter objects that do not maintain state or can be safely reused.</p>
+<p><a name="sample-code-and-configuration"></a></p>
+<h2 id="7-Sample-Code-and-Configuration"><a href="#7-Sample-Code-and-Configuration" class="headerlink" title="7. Sample Code and Configuration"></a>7. Sample Code and Configuration</h2><p>Here’s an improved approach using a singleton <code>VelocityEngine</code> instance:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.ResourceManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.Resource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        engine.init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuration-Example"><a href="#Configuration-Example" class="headerlink" title="Configuration Example:"></a>Configuration Example:</h3><p>To ensure that the <code>VelocityEngine</code> is properly configured, the following configuration might be included:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># velocity.properties</span></span><br><span class="line"><span class="attr">resource.loader</span> = <span class="string">file</span></span><br><span class="line"><span class="attr">file.resource.loader.path</span> = <span class="string">/path/to/templates</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Verifying-the-Configuration"><a href="#Verifying-the-Configuration" class="headerlink" title="Verifying the Configuration"></a>Verifying the Configuration</h3><p>To check if the <code>VelocityEngine</code> is initialized properly and functioning as expected:</p>
+<ul>
+<li><strong>Logging</strong>: Enable logging within the Velocity framework to capture initialization events and errors.</li>
+<li><strong>Unit Tests</strong>: Implement unit tests that trigger concurrent PDF generation requests and verify output consistency.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="8-Conclusion"><a href="#8-Conclusion" class="headerlink" title="8. Conclusion"></a>8. Conclusion</h2><p>Race conditions in multi-threaded environments, especially when using libraries like Apache Velocity, can lead to severe application issues. Understanding how these conditions arise and employing strategies to mitigate them is crucial for building robust systems. By adopting best practices, such as using a singleton <code>VelocityEngine</code>, synchronizing access, and implementing pooling strategies, developers can significantly reduce the likelihood of encountering race conditions, ensuring smooth operation even under high-load scenarios.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Race-Conditions-in-Apache-Velocity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Race-Conditions-in-Apache-Velocity/" class="post-title-link" itemprop="url">Race Conditions in Apache Velocity</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-27 18:27:48 / Modified: 18:29:02" itemprop="dateCreated datePublished" datetime="2024-10-27T18:27:48-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Weird-Issue/" itemprop="url" rel="index"><span itemprop="name">Weird Issue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-introduction-to-race-conditions">1. Introduction to Race Conditions</a><ul>
+<li><a href="#key-characteristics-of-race-conditions">Key Characteristics of Race Conditions:</a></li>
+</ul>
+</li>
+<li><a href="#2-understanding-apache-velocity-and-velocityengine">2. Understanding Apache Velocity and VelocityEngine</a><ul>
+<li><a href="#velocityengine">VelocityEngine</a></li>
+</ul>
+</li>
+<li><a href="#3-race-condition-explained">3. Race Condition Explained</a><ul>
+<li><a href="#example">Example:</a></li>
+</ul>
+</li>
+<li><a href="#4-real-life-scenario-with-apache-velocity">4. Real-Life Scenario with Apache Velocity</a><ul>
+<li><a href="#example-scenario">Example Scenario:</a></li>
+</ul>
+</li>
+<li><a href="#5-sample-code-demonstrating-the-issue">5. Sample Code Demonstrating the Issue</a><ul>
+<li><a href="#explanation">Explanation:</a></li>
+</ul>
+</li>
+<li><a href="#6-solutions-to-avoid-race-conditions">6. Solutions to Avoid Race Conditions</a><ul>
+<li><a href="#1-thread-safe-velocityengine-initialization">1. Thread-Safe VelocityEngine Initialization</a></li>
+<li><a href="#2-create-a-separate-context-per-request">2. Create a Separate Context per Request</a></li>
+<li><a href="#3-synchronization-mechanisms">3. Synchronization Mechanisms</a></li>
+<li><a href="#4-upgrade-to-latest-versions">4. Upgrade to Latest Versions</a></li>
+<li><a href="#example-of-safe-usage">Example of Safe Usage</a></li>
+</ul>
+</li>
+<li><a href="#7-conclusion">7. Conclusion</a></li>
+</ul>
+<p><a name="introduction-to-race-conditions"></a></p>
+<h2 id="1-Introduction-to-Race-Conditions"><a href="#1-Introduction-to-Race-Conditions" class="headerlink" title="1. Introduction to Race Conditions"></a>1. Introduction to Race Conditions</h2><p>A <strong>race condition</strong> occurs in a concurrent system when two or more threads access shared data and try to change it simultaneously. The final outcome depends on the timing of how the threads are scheduled, leading to unpredictable behavior. This can result in inconsistent data states, application crashes, or even security vulnerabilities.</p>
+<h3 id="Key-Characteristics-of-Race-Conditions"><a href="#Key-Characteristics-of-Race-Conditions" class="headerlink" title="Key Characteristics of Race Conditions:"></a>Key Characteristics of Race Conditions:</h3><ul>
+<li><strong>Concurrent Execution</strong>: More than one thread accesses shared resources simultaneously.</li>
+<li><strong>Timing Dependency</strong>: The result depends on the order and timing of execution.</li>
+<li><strong>Non-Deterministic Behavior</strong>: The outcome is not predictable.</li>
+</ul>
+<p><a name="understanding-apache-velocity-and-velocityengine"></a></p>
+<h2 id="2-Understanding-Apache-Velocity-and-VelocityEngine"><a href="#2-Understanding-Apache-Velocity-and-VelocityEngine" class="headerlink" title="2. Understanding Apache Velocity and VelocityEngine"></a>2. Understanding Apache Velocity and VelocityEngine</h2><p><strong>Apache Velocity</strong> is a Java-based template engine that allows developers to create dynamic web pages by combining templates with data sources. It uses the <code>VelocityEngine</code> class to manage the rendering of templates.</p>
+<h3 id="VelocityEngine"><a href="#VelocityEngine" class="headerlink" title="VelocityEngine"></a>VelocityEngine</h3><ul>
+<li>It is responsible for loading templates and rendering them.</li>
+<li>Creating a <code>VelocityEngine</code> instance is resource-intensive, which makes it inefficient to instantiate it multiple times per request.</li>
+<li>In older versions like 1.7, reusing a single <code>VelocityEngine</code> instance can lead to thread safety issues, including race conditions.</li>
+</ul>
+<p><a name="race-condition-explained"></a></p>
+<h2 id="3-Race-Condition-Explained"><a href="#3-Race-Condition-Explained" class="headerlink" title="3. Race Condition Explained"></a>3. Race Condition Explained</h2><p>When multiple threads share the same instance of <code>VelocityEngine</code>, they might access or modify the state of the engine at the same time. If the engine’s internal state is not properly synchronized, this can lead to unexpected behaviors, such as:</p>
+<ul>
+<li><strong>Incorrect Template Rendering</strong>: Two threads might try to modify the same template context.</li>
+<li><strong>Inconsistent Data Output</strong>: The output can vary based on the order of execution.</li>
+<li><strong>Application Crashes</strong>: If an unexpected state is encountered, it might lead to exceptions.</li>
+</ul>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h3><p>Imagine a web application where multiple users trigger requests to generate reports using the same <code>VelocityEngine</code>. If one thread updates the template context while another thread is rendering a report, it may lead to incomplete or corrupted outputs.</p>
+<p><a name="real-life-scenario-with-apache-velocity"></a></p>
+<h2 id="4-Real-Life-Scenario-with-Apache-Velocity"><a href="#4-Real-Life-Scenario-with-Apache-Velocity" class="headerlink" title="4. Real-Life Scenario with Apache Velocity"></a>4. Real-Life Scenario with Apache Velocity</h2><p>Consider a web application that generates user-specific reports based on data fetched from a database. This application utilizes Apache Velocity to format the reports. If the application is under heavy load, multiple requests for report generation may come in simultaneously.</p>
+<h3 id="Example-Scenario"><a href="#Example-Scenario" class="headerlink" title="Example Scenario:"></a>Example Scenario:</h3><ol>
+<li>User A requests a report for their account.</li>
+<li>User B requests a report for their account almost simultaneously.</li>
+<li>The application uses a shared <code>VelocityEngine</code> instance.</li>
+<li>Both requests modify the shared state of the <code>VelocityEngine</code>, leading to inconsistencies in the generated reports.</li>
+</ol>
+<p><a name="sample-code-demonstrating-the-issue"></a></p>
+<h2 id="5-Sample-Code-Demonstrating-the-Issue"><a href="#5-Sample-Code-Demonstrating-the-Issue" class="headerlink" title="5. Sample Code Demonstrating the Issue"></a>5. Sample Code Demonstrating the Issue</h2><p>Here’s an example demonstrating how a race condition can occur with <code>VelocityEngine</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.Template;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.VelocityContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReportGenerator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">velocityEngine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">generateReport</span><span class="params">(String userName, String reportData)</span> &#123;</span><br><span class="line">        <span class="comment">// Creating a new context for each request</span></span><br><span class="line">        <span class="type">VelocityContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityContext</span>();</span><br><span class="line">        context.put(<span class="string">&quot;userName&quot;</span>, userName);</span><br><span class="line">        context.put(<span class="string">&quot;reportData&quot;</span>, reportData);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Load the template</span></span><br><span class="line">        <span class="type">Template</span> <span class="variable">template</span> <span class="operator">=</span> velocityEngine.getTemplate(<span class="string">&quot;reportTemplate.vm&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Render the template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        template.merge(context, writer);</span><br><span class="line">        <span class="keyword">return</span> writer.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation:"></a>Explanation:</h3><p>In the above code, multiple threads may call <code>generateReport</code> simultaneously. If the <code>VelocityEngine</code> instance has mutable state that is not synchronized, it could lead to inconsistent outputs.</p>
+<p><a name="solutions-to-avoid-race-conditions"></a></p>
+<h2 id="6-Solutions-to-Avoid-Race-Conditions"><a href="#6-Solutions-to-Avoid-Race-Conditions" class="headerlink" title="6. Solutions to Avoid Race Conditions"></a>6. Solutions to Avoid Race Conditions</h2><p>To prevent race conditions when using <code>VelocityEngine</code>, consider the following strategies:</p>
+<h3 id="1-Thread-Safe-VelocityEngine-Initialization"><a href="#1-Thread-Safe-VelocityEngine-Initialization" class="headerlink" title="1. Thread-Safe VelocityEngine Initialization"></a>1. Thread-Safe VelocityEngine Initialization</h3><ul>
+<li>Ensure that <code>VelocityEngine</code> is initialized only once in a thread-safe manner. Use a singleton pattern or dependency injection frameworks (e.g., Spring) to manage the lifecycle.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VelocityEngineProvider</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">VelocityEngineProvider</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> VelocityEngine <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Create-a-Separate-Context-per-Request"><a href="#2-Create-a-Separate-Context-per-Request" class="headerlink" title="2. Create a Separate Context per Request"></a>2. Create a Separate Context per Request</h3><ul>
+<li>Always create a new <code>VelocityContext</code> for each request. This ensures that each thread works with its own context and avoids shared mutable state.</li>
+</ul>
+<h3 id="3-Synchronization-Mechanisms"><a href="#3-Synchronization-Mechanisms" class="headerlink" title="3. Synchronization Mechanisms"></a>3. Synchronization Mechanisms</h3><ul>
+<li>Use synchronization mechanisms like <code>synchronized</code> blocks or <code>ReentrantLock</code> if shared state modifications are necessary. However, this may impact performance.</li>
+</ul>
+<h3 id="4-Upgrade-to-Latest-Versions"><a href="#4-Upgrade-to-Latest-Versions" class="headerlink" title="4. Upgrade to Latest Versions"></a>4. Upgrade to Latest Versions</h3><ul>
+<li>Upgrade to newer versions of Apache Velocity that may have addressed these concurrency issues. Newer versions might provide better handling of thread safety.</li>
+</ul>
+<h3 id="Example-of-Safe-Usage"><a href="#Example-of-Safe-Usage" class="headerlink" title="Example of Safe Usage"></a>Example of Safe Usage</h3><p>Here’s a revised example that incorporates the aforementioned solutions:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.Template;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.VelocityContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReportGenerator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">velocityEngine</span> <span class="operator">=</span> VelocityEngineProvider.getInstance();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">generateReport</span><span class="params">(String userName, String reportData)</span> &#123;</span><br><span class="line">        <span class="type">VelocityContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityContext</span>();</span><br><span class="line">        context.put(<span class="string">&quot;userName&quot;</span>, userName);</span><br><span class="line">        context.put(<span class="string">&quot;reportData&quot;</span>, reportData);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Load the template in a thread-safe manner</span></span><br><span class="line">        <span class="type">Template</span> <span class="variable">template</span> <span class="operator">=</span> velocityEngine.getTemplate(<span class="string">&quot;reportTemplate.vm&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        template.merge(context, writer);</span><br><span class="line">        <span class="keyword">return</span> writer.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h2><p>Race conditions pose a significant risk in multi-threaded environments, especially when dealing with shared resources like <code>VelocityEngine</code>. By understanding the nature of race conditions, applying proper design patterns, and ensuring thread safety, developers can create robust and reliable applications using Apache Velocity. Always keep your libraries up-to-date to benefit from the latest improvements and security patches.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/" class="post-title-link" itemprop="url">Deep Dive Test Automation of Spring Boot Application</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-27 17:57:50 / Modified: 18:17:01" itemprop="dateCreated datePublished" datetime="2024-10-27T17:57:50-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/Test-Automation/" itemprop="url" rel="index"><span itemprop="name">Test Automation</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/Test-Automation/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Testing Spring Boot applications is crucial for validating functionality across the persistence, service, and controller layers, especially when deployed in containerized environments. This guide covers everything from configuring each layer’s tests to handling parallel endpoint testing and leveraging Docker for containerized environments.</p>
+<hr>
+<ul>
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-testing-the-persistence-layer">2. Testing the Persistence Layer</a><ul>
+<li><a href="#embedded-database-for-testing">Embedded Database for Testing</a></li>
+<li><a href="#integration-testing-with-testcontainers">Integration Testing with Testcontainers</a></li>
+</ul>
+</li>
+<li><a href="#3-testing-the-service-layer">3. Testing the Service Layer</a><ul>
+<li><a href="#unit-tests-with-mocks">Unit Tests with Mocks</a></li>
+<li><a href="#integration-testing-with-dependencies">Integration Testing with Dependencies</a></li>
+</ul>
+</li>
+<li><a href="#4-testing-the-controller-layer">4. Testing the Controller Layer</a><ul>
+<li><a href="#mockmvc-for-isolated-controller-testing">MockMvc for Isolated Controller Testing</a></li>
+<li><a href="#testing-real-endpoints-in-a-container">Testing Real Endpoints in a Container</a></li>
+<li><a href="#parallel-testing-for-api-endpoints">Parallel Testing for API Endpoints</a></li>
+</ul>
+</li>
+<li><a href="#5-end-to-end-testing-in-containerized-environments">5. End-to-End Testing in Containerized Environments</a><ul>
+<li><a href="#using-docker-compose-for-integration-testing">Using Docker Compose for Integration Testing</a></li>
+</ul>
+</li>
+<li><a href="#6-sample-code-and-configuration-summary">6. Sample Code and Configuration Summary</a><ul>
+<li><a href="#maven-dependencies">Maven Dependencies</a></li>
+<li><a href="#sample-application-properties">Sample Application Properties</a></li>
+<li><a href="#persistence-layer-test-example">Persistence Layer Test Example</a></li>
+<li><a href="#service-layer-test-example">Service Layer Test Example</a></li>
+<li><a href="#controller-layer-test-example">Controller Layer Test Example</a></li>
+<li><a href="#integration-testing-with-testcontainers-1">Integration Testing with Testcontainers</a></li>
+<li><a href="#docker-compose-configuration">Docker Compose Configuration</a></li>
+<li><a href="#running-tests-in-docker">Running Tests in Docker</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a name="overview"></a></p>
+<h2 id="1-Overview"><a href="#1-Overview" class="headerlink" title="1. Overview"></a>1. Overview</h2><p>Testing a Spring Boot application ensures each layer functions as expected and that the system performs cohesively. Tests should cover:</p>
+<ul>
+<li><strong>Persistence Layer</strong>: Verifying data access and manipulation.</li>
+<li><strong>Service Layer</strong>: Ensuring business logic functions correctly.</li>
+<li><strong>Controller Layer</strong>: Testing API endpoints and interactions.</li>
+</ul>
+<p>This article includes testing strategies for both development and containerized environments, plus configurations for parallel endpoint testing.</p>
+<hr>
+<p><a name="testing-the-persistence-layer"></a></p>
+<h2 id="2-Testing-the-Persistence-Layer"><a href="#2-Testing-the-Persistence-Layer" class="headerlink" title="2. Testing the Persistence Layer"></a>2. Testing the Persistence Layer</h2><p>The persistence layer involves data storage and access. To test without connecting to production databases, use embedded databases for unit testing and Testcontainers for more complex integration tests.</p>
+<p><a name="embedded-database-for-testing"></a></p>
+<h3 id="Embedded-Database-for-Testing"><a href="#Embedded-Database-for-Testing" class="headerlink" title="Embedded Database for Testing"></a>Embedded Database for Testing</h3><p>Embedded databases (like H2) are ideal for simple, fast tests:</p>
+<ol>
+<li><p><strong>Add H2 dependency</strong> in <code>pom.xml</code>:</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Application configuration</strong> for testing (<code>src/test/resources/application-test.yml</code>):</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:mem:testdb</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">org.h2.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Persistence Layer Test</strong>:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSaveUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;John Doe&quot;</span>, <span class="string">&quot;john.doe@example.com&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userRepository.save(user);</span><br><span class="line">        assertNotNull(savedUser.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><a name="integration-testing-with-testcontainers"></a></p>
+<h3 id="Integration-Testing-with-Testcontainers"><a href="#Integration-Testing-with-Testcontainers" class="headerlink" title="Integration Testing with Testcontainers"></a>Integration Testing with Testcontainers</h3><p>For more realistic integration tests with databases (e.g., PostgreSQL), use <strong>Testcontainers</strong>:</p>
+<ol>
+<li><p><strong>Add Testcontainers dependency</strong>:</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Set up Testcontainers for PostgreSQL</strong>:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> PostgreSQLContainer&lt;?&gt; postgres = <span class="keyword">new</span> <span class="title class_">PostgreSQLContainer</span>&lt;&gt;(<span class="string">&quot;postgres:13&quot;</span>)</span><br><span class="line">        .withDatabaseName(<span class="string">&quot;testdb&quot;</span>)</span><br><span class="line">        .withUsername(<span class="string">&quot;user&quot;</span>)</span><br><span class="line">        .withPassword(<span class="string">&quot;password&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DynamicPropertySource</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">configureProperties</span><span class="params">(DynamicPropertyRegistry registry)</span> &#123;</span><br><span class="line">        postgres.start();</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.url&quot;</span>, postgres::getJdbcUrl);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.username&quot;</span>, postgres::getUsername);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.password&quot;</span>, postgres::getPassword);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindUserById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Test logic</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p><a name="testing-the-service-layer"></a></p>
+<h2 id="3-Testing-the-Service-Layer"><a href="#3-Testing-the-Service-Layer" class="headerlink" title="3. Testing the Service Layer"></a>3. Testing the Service Layer</h2><p>The service layer holds business logic. Use mocks for isolated unit tests and real dependencies for integration tests.</p>
+<p><a name="unit-tests-with-mocks"></a></p>
+<h3 id="Unit-Tests-with-Mocks"><a href="#Unit-Tests-with-Mocks" class="headerlink" title="Unit Tests with Mocks"></a>Unit Tests with Mocks</h3><ol>
+<li><strong>Define a test with <code>@MockBean</code></strong>: <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith(MockitoExtension.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testCreateUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        when(userRepository.save(any(User.class))).thenReturn(user);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userService.createUser(user);</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, savedUser.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><a name="integration-testing-with-dependencies"></a></p>
+<h3 id="Integration-Testing-with-Dependencies"><a href="#Integration-Testing-with-Dependencies" class="headerlink" title="Integration Testing with Dependencies"></a>Integration Testing with Dependencies</h3><p>For full service layer integration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;User&gt; users = userService.findAllUsers();</span><br><span class="line">        assertNotNull(users);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="testing-the-controller-layer"></a></p>
+<h2 id="4-Testing-the-Controller-Layer"><a href="#4-Testing-the-Controller-Layer" class="headerlink" title="4. Testing the Controller Layer"></a>4. Testing the Controller Layer</h2><p>Controller tests validate API endpoints. <code>MockMvc</code> is used for isolated testing, while containerized setups allow testing real endpoints.</p>
+<p><a name="mockmvc-for-isolated-controller-testing"></a></p>
+<h3 id="MockMvc-for-Isolated-Controller-Testing"><a href="#MockMvc-for-Isolated-Controller-Testing" class="headerlink" title="MockMvc for Isolated Controller Testing"></a>MockMvc for Isolated Controller Testing</h3><p>MockMvc allows API testing without starting a full web server.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebMvcTest(UserController.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        when(userService.getUserById(anyLong())).thenReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="number">1L</span>, <span class="string">&quot;Alice&quot;</span>));</span><br><span class="line"></span><br><span class="line">        mockMvc.perform(get(<span class="string">&quot;/users/1&quot;</span>))</span><br><span class="line">            .andExpect(status().isOk())</span><br><span class="line">            .andExpect(jsonPath(<span class="string">&quot;$.name&quot;</span>).value(<span class="string">&quot;Alice&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="testing-real-endpoints-in-a-container"></a></p>
+<h3 id="Testing-Real-Endpoints-in-a-Container"><a href="#Testing-Real-Endpoints-in-a-Container" class="headerlink" title="Testing Real Endpoints in a Container"></a>Testing Real Endpoints in a Container</h3><p>For real endpoint testing, use <code>RestTemplate</code> with a server running on a random port:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@LocalServerPort</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> port;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TestRestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        ResponseEntity&lt;User&gt; response = restTemplate.getForEntity(<span class="string">&quot;http://localhost:&quot;</span> + port + <span class="string">&quot;/users/1&quot;</span>, User.class);</span><br><span class="line">        assertEquals(HttpStatus.OK, response.getStatusCode());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="parallel-testing-for-api-endpoints"></a></p>
+<h3 id="Parallel-Testing-for-API-Endpoints"><a href="#Parallel-Testing-for-API-Endpoints" class="headerlink" title="Parallel Testing for API Endpoints"></a>Parallel Testing for API Endpoints</h3><p>When testing multiple endpoints simultaneously, use <code>RANDOM_PORT</code> to prevent port conflicts.</p>
+<hr>
+<p><a name="end-to-end-testing-in-containerized-environments"></a></p>
+<h2 id="5-End-to-End-Testing-in-Containerized-Environments"><a href="#5-End-to-End-Testing-in-Containerized-Environments" class="headerlink" title="5. End-to-End Testing in Containerized Environments"></a>5. End-to-End Testing in Containerized Environments</h2><p>Using Docker Compose, spin up services to perform full integration tests in a controlled environment.</p>
+<p><a name="using-docker-compose-for-integration-testing"></a></p>
+<h3 id="Using-Docker-Compose-for-Integration-Testing"><a href="#Using-Docker-Compose-for-Integration-Testing" class="headerlink" title="Using Docker Compose for Integration Testing"></a>Using Docker Compose for Integration Testing</h3><ol>
+<li><p><strong>Docker Compose File</strong>:</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my-spring-app:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SPRING_PROFILES_ACTIVE=test</span></span><br><span class="line">  <span class="attr">postgres:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres:13</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">POSTGRES_USER:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">POSTGRES_PASSWORD:</span> <span class="string">password</span></span><br><span class="line">      <span class="attr">POSTGRES_DB:</span> <span class="string">testdb</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Run and Tear Down Tests</strong>:</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># Run integration tests</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p><a name="sample-code-and-configuration-summary"></a></p>
+<h2 id="6-Sample-Code-and-Configuration-Summary"><a href="#6-Sample-Code-and-Configuration-Summary" class="headerlink" title="6. Sample Code and Configuration Summary"></a>6. Sample Code and Configuration Summary</h2><p>This section provides practical code snippets and configurations to help automate testing in Spring Boot applications. The examples cover the persistence layer, service layer, controller layer, and containerized testing.</p>
+<h3 id="Maven-Dependencies"><a href="#Maven-Dependencies" class="headerlink" title="Maven Dependencies"></a>Maven Dependencies</h3><p>Make sure to include the necessary dependencies in your <code>pom.xml</code> for testing:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Spring Boot Starter for Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- H2 Database for In-Memory Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- Testcontainers for Integration Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-jupiter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Sample-Application-Properties"><a href="#Sample-Application-Properties" class="headerlink" title="Sample Application Properties"></a>Sample Application Properties</h3><p>Define properties for the test environment in <code>src/test/resources/application-test.yml</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:mem:testdb</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">org.h2.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Persistence-Layer-Test-Example"><a href="#Persistence-Layer-Test-Example" class="headerlink" title="Persistence Layer Test Example"></a>Persistence Layer Test Example</h3><p>Example of testing a repository with an embedded H2 database:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSaveUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;John Doe&quot;</span>, <span class="string">&quot;john.doe@example.com&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userRepository.save(user);</span><br><span class="line">        assertNotNull(savedUser.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Layer-Test-Example"><a href="#Service-Layer-Test-Example" class="headerlink" title="Service Layer Test Example"></a>Service Layer Test Example</h3><p>Example of unit testing the service layer with Mockito:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith(MockitoExtension.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testCreateUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        when(userRepository.save(any(User.class))).thenReturn(user);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userService.createUser(user);</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, savedUser.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Layer-Test-Example"><a href="#Controller-Layer-Test-Example" class="headerlink" title="Controller Layer Test Example"></a>Controller Layer Test Example</h3><p>Example of testing a controller using <code>MockMvc</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebMvcTest(UserController.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        when(userService.getUserById(anyLong())).thenReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="number">1L</span>, <span class="string">&quot;Alice&quot;</span>));</span><br><span class="line"></span><br><span class="line">        mockMvc.perform(get(<span class="string">&quot;/users/1&quot;</span>))</span><br><span class="line">            .andExpect(status().isOk())</span><br><span class="line">            .andExpect(jsonPath(<span class="string">&quot;$.name&quot;</span>).value(<span class="string">&quot;Alice&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Integration-Testing-with-Testcontainers-1"><a href="#Integration-Testing-with-Testcontainers-1" class="headerlink" title="Integration Testing with Testcontainers"></a>Integration Testing with Testcontainers</h3><p>Example of a test that uses Testcontainers to spin up a PostgreSQL instance for integration tests:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> PostgreSQLContainer&lt;?&gt; postgres = <span class="keyword">new</span> <span class="title class_">PostgreSQLContainer</span>&lt;&gt;(<span class="string">&quot;postgres:13&quot;</span>)</span><br><span class="line">            .withDatabaseName(<span class="string">&quot;testdb&quot;</span>)</span><br><span class="line">            .withUsername(<span class="string">&quot;user&quot;</span>)</span><br><span class="line">            .withPassword(<span class="string">&quot;password&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DynamicPropertySource</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">configureProperties</span><span class="params">(DynamicPropertyRegistry registry)</span> &#123;</span><br><span class="line">        postgres.start();</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.url&quot;</span>, postgres::getJdbcUrl);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.username&quot;</span>, postgres::getUsername);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.password&quot;</span>, postgres::getPassword);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindUserById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        userRepository.save(user);</span><br><span class="line"></span><br><span class="line">        Optional&lt;User&gt; foundUser = userRepository.findById(user.getId());</span><br><span class="line">        assertTrue(foundUser.isPresent());</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, foundUser.get().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Docker-Compose-Configuration"><a href="#Docker-Compose-Configuration" class="headerlink" title="Docker Compose Configuration"></a>Docker Compose Configuration</h3><p>An example of a <code>docker-compose.yml</code> file for running your application and PostgreSQL for testing:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.8&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my-spring-app:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">SPRING_PROFILES_ACTIVE:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_URL:</span> <span class="string">jdbc:postgresql://postgres:5432/testdb</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_USERNAME:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_PASSWORD:</span> <span class="string">password</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">postgres:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres:13</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">POSTGRES_USER:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">POSTGRES_PASSWORD:</span> <span class="string">password</span></span><br><span class="line">      <span class="attr">POSTGRES_DB:</span> <span class="string">testdb</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Running-Tests-in-Docker"><a href="#Running-Tests-in-Docker" class="headerlink" title="Running Tests in Docker"></a>Running Tests in Docker</h3><p>Run your integration tests with Docker Compose:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># Run tests</span></span><br><span class="line">mvn <span class="built_in">test</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure>
+
+<p>This guide offers configurations and code samples to help set up automated testing for Spring Boot applications in both development and containerized environments, suitable for integration into CI&#x2F;CD pipelines.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -191,7 +723,16 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2024-10-27 17:33:02 / Modified: 17:33:40" itemprop="dateCreated datePublished" datetime="2024-10-27T17:33:02-04:00">2024-10-27</time>
+      <time title="Created: 2024-10-27 17:33:02 / Modified: 18:07:57" itemprop="dateCreated datePublished" datetime="2024-10-27T17:33:02-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Nginx/" itemprop="url" rel="index"><span itemprop="name">Nginx</span></a>
+        </span>
     </span>
 
   
@@ -204,7 +745,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Configuring-NGINX-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services"><a href="#Configuring-NGINX-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services" class="headerlink" title="Configuring NGINX as HTTPS Proxy for HTTP and TCP Backend Services"></a>Configuring NGINX as HTTPS Proxy for HTTP and TCP Backend Services</h1><h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>We’ll configure NGINX to act as an HTTPS proxy in front of the following backend services:</p>
+          <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>We’ll configure NGINX to act as an HTTPS proxy in front of the following backend services:</p>
 <ul>
 <li><strong>Kafka Cluster</strong> (TCP-based)</li>
 <li><strong>Elasticsearch Cluster</strong> (HTTP-based)</li>
@@ -1899,530 +2440,6 @@
 
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The <code>java.util.function</code> package provides a rich set of functional interfaces that are essential for writing modern, concise, and expressive Java code. By understanding and leveraging these interfaces, you can significantly improve the readability and maintainability of your code. Real-life use cases and sample code demonstrate how these interfaces can be applied in various scenarios, making them indispensable tools for Java developers.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/26/Deep-Dive-Comparing-Spring-REST-Clients-with-Spring-Cloud-OpenFeign/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/26/Deep-Dive-Comparing-Spring-REST-Clients-with-Spring-Cloud-OpenFeign/" class="post-title-link" itemprop="url">Deep Dive: Comparing Spring REST Clients with Spring Cloud OpenFeign</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-26 19:42:35 / Modified: 19:45:53" itemprop="dateCreated datePublished" datetime="2024-10-26T19:42:35-04:00">2024-10-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#overview-of-spring-rest-clients">Overview of Spring REST Clients</a></li>
-<li><a href="#overview-of-spring-cloud-openfeign">Overview of Spring Cloud OpenFeign</a></li>
-<li><a href="#key-differences">Key Differences</a></li>
-<li><a href="#why-spring-rest-clients-are-replacing-openfeign">Why Spring REST Clients are Replacing OpenFeign</a></li>
-<li><a href="#sample-code-comparison">Sample Code Comparison</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ol>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the realm of microservices and RESTful APIs, efficient and maintainable client-side HTTP communication is crucial. Spring provides two prominent solutions for this: Spring REST Clients and Spring Cloud OpenFeign. This article delves into a detailed comparison of these two approaches, highlighting their key differences and discussing why Spring REST Clients are increasingly replacing OpenFeign in modern applications.</p>
-<p><a name="overview-of-spring-rest-clients"></a></p>
-<h2 id="Overview-of-Spring-REST-Clients"><a href="#Overview-of-Spring-REST-Clients" class="headerlink" title="Overview of Spring REST Clients"></a>Overview of Spring REST Clients</h2><h3 id="What-is-Spring-REST-Clients"><a href="#What-is-Spring-REST-Clients" class="headerlink" title="What is Spring REST Clients?"></a>What is Spring REST Clients?</h3><p>Spring REST Clients, introduced in Spring 5, is a set of tools and libraries that facilitate HTTP client-side communication. It includes <code>RestTemplate</code> and <code>WebClient</code>, both of which are designed to simplify the process of making HTTP requests and handling responses.</p>
-<h3 id="Key-Features"><a href="#Key-Features" class="headerlink" title="Key Features"></a>Key Features</h3><ul>
-<li><strong>RestTemplate</strong>: A synchronous client that provides a simple, template method API over underlying HTTP client libraries.</li>
-<li><strong>WebClient</strong>: A reactive, non-blocking client introduced in Spring 5, suitable for modern, asynchronous applications.</li>
-<li><strong>Integration with Spring WebFlux</strong>: WebClient is part of the Spring WebFlux framework, making it ideal for reactive programming.</li>
-<li><strong>Flexibility</strong>: Supports both synchronous and asynchronous operations.</li>
-</ul>
-<p><a name="overview-of-spring-cloud-openfeign"></a></p>
-<h2 id="Overview-of-Spring-Cloud-OpenFeign"><a href="#Overview-of-Spring-Cloud-OpenFeign" class="headerlink" title="Overview of Spring Cloud OpenFeign"></a>Overview of Spring Cloud OpenFeign</h2><h3 id="What-is-Spring-Cloud-OpenFeign"><a href="#What-is-Spring-Cloud-OpenFeign" class="headerlink" title="What is Spring Cloud OpenFeign?"></a>What is Spring Cloud OpenFeign?</h3><p>Spring Cloud OpenFeign is a declarative HTTP client that simplifies the process of consuming RESTful services. It allows you to define interfaces with annotations to describe the REST API you want to consume, handling the HTTP requests and responses automatically.</p>
-<h3 id="Key-Features-1"><a href="#Key-Features-1" class="headerlink" title="Key Features"></a>Key Features</h3><ul>
-<li><strong>Declarative REST Client</strong>: Define interfaces with annotations to describe the REST API.</li>
-<li><strong>Integration with Spring Boot</strong>: Automatically integrates with Spring Boot’s dependency injection and configuration mechanisms.</li>
-<li><strong>Load Balancing</strong>: Integrates with Spring Cloud LoadBalancer for client-side load balancing.</li>
-<li><strong>Error Handling</strong>: Provides mechanisms to handle errors and exceptions gracefully.</li>
-<li><strong>Interceptors</strong>: Allows adding custom interceptors to modify requests and responses.</li>
-</ul>
-<p><a name="key-differences"></a></p>
-<h2 id="Key-Differences"><a href="#Key-Differences" class="headerlink" title="Key Differences"></a>Key Differences</h2><h3 id="1-Programming-Model"><a href="#1-Programming-Model" class="headerlink" title="1. Programming Model"></a>1. <strong>Programming Model</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Offers both synchronous (<code>RestTemplate</code>) and reactive (<code>WebClient</code>) models, providing flexibility based on the application’s needs.</li>
-<li><strong>OpenFeign</strong>: Primarily declarative, focusing on defining interfaces with annotations for HTTP communication.</li>
-</ul>
-<h3 id="2-Reactive-Support"><a href="#2-Reactive-Support" class="headerlink" title="2. Reactive Support"></a>2. <strong>Reactive Support</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: WebClient provides full support for reactive programming, making it suitable for modern, asynchronous applications.</li>
-<li><strong>OpenFeign</strong>: Limited reactive support; primarily designed for synchronous communication.</li>
-</ul>
-<h3 id="3-Integration-and-Ecosystem"><a href="#3-Integration-and-Ecosystem" class="headerlink" title="3. Integration and Ecosystem"></a>3. <strong>Integration and Ecosystem</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Deeply integrated with the Spring ecosystem, including Spring WebFlux and Spring Boot.</li>
-<li><strong>OpenFeign</strong>: Integrates well with Spring Cloud, providing additional features like load balancing and service discovery.</li>
-</ul>
-<h3 id="4-Error-Handling-and-Customization"><a href="#4-Error-Handling-and-Customization" class="headerlink" title="4. Error Handling and Customization"></a>4. <strong>Error Handling and Customization</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Provides robust error handling and customization options through exception handling and interceptors.</li>
-<li><strong>OpenFeign</strong>: Offers error handling through custom error decoders and interceptors, but with a more declarative approach.</li>
-</ul>
-<p><a name="why-spring-rest-clients-are-replacing-openfeign"></a></p>
-<h2 id="Why-Spring-REST-Clients-are-Replacing-OpenFeign"><a href="#Why-Spring-REST-Clients-are-Replacing-OpenFeign" class="headerlink" title="Why Spring REST Clients are Replacing OpenFeign"></a>Why Spring REST Clients are Replacing OpenFeign</h2><h3 id="1-Reactive-Programming"><a href="#1-Reactive-Programming" class="headerlink" title="1. Reactive Programming"></a>1. <strong>Reactive Programming</strong></h3><p>With the rise of reactive programming and the need for non-blocking, asynchronous communication, <code>WebClient</code> has become the preferred choice over <code>RestTemplate</code> and OpenFeign. WebClient’s reactive nature aligns well with modern application architectures.</p>
-<h3 id="2-Flexibility-and-Control"><a href="#2-Flexibility-and-Control" class="headerlink" title="2. Flexibility and Control"></a>2. <strong>Flexibility and Control</strong></h3><p>Spring REST Clients provide more flexibility and control over HTTP communication. Developers can choose between synchronous and asynchronous models based on their specific requirements, whereas OpenFeign is more opinionated and less flexible.</p>
-<h3 id="3-Ecosystem-Integration"><a href="#3-Ecosystem-Integration" class="headerlink" title="3. Ecosystem Integration"></a>3. <strong>Ecosystem Integration</strong></h3><p>Spring REST Clients are deeply integrated with the broader Spring ecosystem, including Spring WebFlux and Spring Boot. This integration provides a seamless development experience and leverages the full capabilities of the Spring framework.</p>
-<h3 id="4-Community-and-Support"><a href="#4-Community-and-Support" class="headerlink" title="4. Community and Support"></a>4. <strong>Community and Support</strong></h3><p>As part of the core Spring framework, Spring REST Clients benefit from continuous updates, improvements, and community support. OpenFeign, while powerful, is part of the Spring Cloud ecosystem and may not receive the same level of attention and updates.</p>
-<p><a name="sample-code-comparison"></a></p>
-<h2 id="Sample-Code-Comparison"><a href="#Sample-Code-Comparison" class="headerlink" title="Sample Code Comparison"></a>Sample Code Comparison</h2><h3 id="Using-Spring-REST-Clients-WebClient"><a href="#Using-Spring-REST-Clients-WebClient" class="headerlink" title="Using Spring REST Clients (WebClient)"></a>Using Spring REST Clients (<code>WebClient</code>)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductServiceClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient webClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProductServiceClient</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClient = webClientBuilder.baseUrl(<span class="string">&quot;http://localhost:8081&quot;</span>).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Product&gt; <span class="title function_">getProduct</span><span class="params">(Long productId)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                        .uri(<span class="string">&quot;/products/&#123;productId&#125;&quot;</span>, productId)</span><br><span class="line">                        .retrieve()</span><br><span class="line">                        .bodyToMono(Product.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-Spring-Cloud-OpenFeign"><a href="#Using-Spring-Cloud-OpenFeign" class="headerlink" title="Using Spring Cloud OpenFeign"></a>Using Spring Cloud OpenFeign</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient(name = &quot;product-service&quot;, url = &quot;http://localhost:8081&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ProductServiceClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/products/&#123;productId&#125;&quot;)</span></span><br><span class="line">    Product <span class="title function_">getProduct</span><span class="params">(<span class="meta">@PathVariable(&quot;productId&quot;)</span> Long productId)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>While Spring Cloud OpenFeign offers a declarative and simplified approach to HTTP client communication, Spring REST Clients provide more flexibility, reactive support, and deep integration with the Spring ecosystem. As modern applications increasingly adopt reactive programming and require more control over HTTP communication, Spring REST Clients, particularly <code>WebClient</code>, are becoming the preferred choice over OpenFeign. By understanding the key differences and advantages of each approach, developers can make informed decisions to build robust and scalable microservices architectures.</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-openfeign">https://spring.io/projects/spring-cloud-openfeign</a><br><strong>Warning:</strong> As announced in <a target="_blank" rel="noopener" href="https://spring.io/blog/2022/12/16/spring-cloud-2022-0-0-codename-kilburn-has-been-released#spring-cloud-openfeign-feature-complete-announcement">Spring Cloud 2022.0.0 release blog entry</a>, Spring Cloud OpenFeign is now considered feature-complete. We will only be focusing on bug fixes and potentially merging small community feature pull requests. We recommend migrating to <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface">Spring Interface Clients</a> instead.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/26/Deep-Dive-into-Spring-Cloud-OpenFeign/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/26/Deep-Dive-into-Spring-Cloud-OpenFeign/" class="post-title-link" itemprop="url">Deep Dive into Spring Cloud OpenFeign --- Deprecated</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-26 19:29:33 / Modified: 19:41:04" itemprop="dateCreated datePublished" datetime="2024-10-26T19:29:33-04:00">2024-10-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/Spring-Cloud/Deprecated/" itemprop="url" rel="index"><span itemprop="name">Deprecated</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#key-features">Key Features</a></li>
-<li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#real-production-use-case">Real Production Use Case</a></li>
-<li><a href="#sample-code">Sample Code</a></li>
-<li><a href="#deployment-and-usage">Deployment and Usage</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ol>
-<hr>
-<h1 id="Deep-Dive-into-Spring-Cloud-OpenFeign"><a href="#Deep-Dive-into-Spring-Cloud-OpenFeign" class="headerlink" title="Deep Dive into Spring Cloud OpenFeign"></a>Deep Dive into Spring Cloud OpenFeign</h1><hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Spring Cloud OpenFeign is a declarative HTTP client that simplifies the process of consuming RESTful services in Spring Boot applications. It integrates seamlessly with Spring’s dependency injection and configuration mechanisms, making it a powerful tool for microservices architectures. This article provides a deep dive into Spring Cloud OpenFeign, including a real production use case, sample code, and deployment strategies.</p>
-<p><a name="key-features"></a></p>
-<h2 id="Key-Features"><a href="#Key-Features" class="headerlink" title="Key Features"></a>Key Features</h2><ul>
-<li><strong>Declarative REST Client</strong>: Define interfaces with annotations to describe the REST API you want to consume.</li>
-<li><strong>Integration with Spring Boot</strong>: Automatically integrates with Spring Boot’s dependency injection and configuration mechanisms.</li>
-<li><strong>Load Balancing</strong>: Integrates with Spring Cloud LoadBalancer for client-side load balancing.</li>
-<li><strong>Error Handling</strong>: Provides mechanisms to handle errors and exceptions gracefully.</li>
-<li><strong>Interceptors</strong>: Allows adding custom interceptors to modify requests and responses.</li>
-</ul>
-<p><a name="getting-started"></a></p>
-<h2 id="Getting-Started"><a href="#Getting-Started" class="headerlink" title="Getting Started"></a>Getting Started</h2><p>To use Spring Cloud OpenFeign in your Spring Boot project, add the following dependency to your <code>pom.xml</code> (for Maven) or <code>build.gradle</code> (for Gradle):</p>
-<p><strong>Maven:</strong></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>Gradle:</strong></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">&#x27;org.springframework.cloud:spring-cloud-starter-openfeign&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>Enable Feign in your Spring Boot application by adding the <code>@EnableFeignClients</code> annotation to your main application class:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.EnableFeignClients;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableFeignClients</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(MyApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="real-production-use-case"></a></p>
-<h2 id="Real-Production-Use-Case"><a href="#Real-Production-Use-Case" class="headerlink" title="Real Production Use Case"></a>Real Production Use Case</h2><h3 id="Scenario-Microservices-Communication-in-an-E-commerce-Platform"><a href="#Scenario-Microservices-Communication-in-an-E-commerce-Platform" class="headerlink" title="Scenario: Microservices Communication in an E-commerce Platform"></a>Scenario: Microservices Communication in an E-commerce Platform</h3><p>In an e-commerce platform, multiple microservices interact to handle various functionalities such as product catalog, user management, and order processing. OpenFeign is used to facilitate communication between these services.</p>
-<h4 id="Example-Order-Service-Communicating-with-Product-Service"><a href="#Example-Order-Service-Communicating-with-Product-Service" class="headerlink" title="Example: Order Service Communicating with Product Service"></a>Example: Order Service Communicating with Product Service</h4><p>The Order Service needs to retrieve product details from the Product Service to process orders. OpenFeign simplifies this communication by allowing the Order Service to define a Feign client for the Product Service.</p>
-<p><a name="sample-code"></a></p>
-<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Define-the-Feign-Client"><a href="#Define-the-Feign-Client" class="headerlink" title="Define the Feign Client"></a>Define the Feign Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient(name = &quot;product-service&quot;, url = &quot;http://localhost:8081&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ProductServiceClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/products/&#123;productId&#125;&quot;)</span></span><br><span class="line">    Product <span class="title function_">getProduct</span><span class="params">(<span class="meta">@PathVariable(&quot;productId&quot;)</span> Long productId)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Product-Class"><a href="#Product-Class" class="headerlink" title="Product Class"></a>Product Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Product</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Double price;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-the-Feign-Client-in-the-Order-Service"><a href="#Using-the-Feign-Client-in-the-Order-Service" class="headerlink" title="Using the Feign Client in the Order Service"></a>Using the Feign Client in the Order Service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ProductServiceClient productServiceClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processOrder</span><span class="params">(Long productId)</span> &#123;</span><br><span class="line">        <span class="type">Product</span> <span class="variable">product</span> <span class="operator">=</span> productServiceClient.getProduct(productId);</span><br><span class="line">        <span class="comment">// Process the order using the product details</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="deployment-and-usage"></a></p>
-<h2 id="Deployment-and-Usage"><a href="#Deployment-and-Usage" class="headerlink" title="Deployment and Usage"></a>Deployment and Usage</h2><h3 id="Deployment-Strategy"><a href="#Deployment-Strategy" class="headerlink" title="Deployment Strategy"></a>Deployment Strategy</h3><ol>
-<li><strong>Containerization</strong>: Use Docker to containerize your Spring Boot applications.</li>
-<li><strong>Orchestration</strong>: Deploy your containers using Kubernetes for orchestration.</li>
-<li><strong>Service Discovery</strong>: Integrate with a service discovery tool like Eureka or Consul.</li>
-</ol>
-<h3 id="Example-Deployment-with-Kubernetes"><a href="#Example-Deployment-with-Kubernetes" class="headerlink" title="Example Deployment with Kubernetes"></a>Example Deployment with Kubernetes</h3><h4 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h4><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">11</span>-jre-slim</span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> target/myapp.jar /myapp.jar</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;/myapp.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Kubernetes-Deployment-YAML"><a href="#Kubernetes-Deployment-YAML" class="headerlink" title="Kubernetes Deployment YAML"></a>Kubernetes Deployment YAML</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">order-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">order-service</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">order-service</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">order-service</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">myapp:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Usage-in-Production"><a href="#Usage-in-Production" class="headerlink" title="Usage in Production"></a>Usage in Production</h3><ol>
-<li><strong>Monitoring</strong>: Use tools like Prometheus and Grafana to monitor your services.</li>
-<li><strong>Logging</strong>: Implement centralized logging with ELK (Elasticsearch, Logstash, Kibana) stack.</li>
-<li><strong>Security</strong>: Ensure secure communication using HTTPS and OAuth2 for authentication.</li>
-</ol>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Cloud OpenFeign is a powerful tool for building declarative HTTP clients in Spring Boot applications. Its integration with the Spring ecosystem, combined with active development and community support, makes it a reliable choice for microservices architectures. By following the steps outlined in this article, you can effectively use OpenFeign in your production environment, facilitating seamless communication between microservices.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XIII-2</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-24 23:43:33" itemprop="dateCreated datePublished" datetime="2024-10-24T23:43:33-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-10-26 22:40:26" itemprop="dateModified" datetime="2024-10-26T22:40:26-04:00">2024-10-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/Reactive/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#deep-dive-integrating-spring-webflux-with-microservices-architecture">Deep Dive: Integrating Spring WebFlux with Microservices Architecture</a><ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#microservices-architecture-overview">Microservices Architecture Overview</a></li>
-<li><a href="#integrating-spring-webflux-with-microservices">Integrating Spring WebFlux with Microservices</a></li>
-<li><a href="#using-spring-cloud">Using Spring Cloud</a></li>
-<li><a href="#service-registration-and-discovery">Service Registration and Discovery</a><ul>
-<li><a href="#adding-dependencies">Adding Dependencies</a></li>
-<li><a href="#configuring-service-registration-and-discovery">Configuring Service Registration and Discovery</a></li>
-<li><a href="#annotating-the-main-class">Annotating the Main Class</a></li>
-</ul>
-</li>
-<li><a href="#api-gateway">API Gateway</a><ul>
-<li><a href="#adding-dependencies-1">Adding Dependencies</a></li>
-<li><a href="#configuring-gateway-routes">Configuring Gateway Routes</a></li>
-</ul>
-</li>
-<li><a href="#client-side-load-balancing">Client-Side Load Balancing</a><ul>
-<li><a href="#adding-dependencies-2">Adding Dependencies</a></li>
-<li><a href="#configuring-load-balancer">Configuring Load Balancer</a></li>
-<li><a href="#using-load-balancer">Using Load Balancer</a></li>
-</ul>
-</li>
-<li><a href="#circuit-breaker">Circuit Breaker</a><ul>
-<li><a href="#adding-dependencies-3">Adding Dependencies</a></li>
-<li><a href="#configuring-circuit-breaker">Configuring Circuit Breaker</a></li>
-<li><a href="#using-circuit-breaker">Using Circuit Breaker</a></li>
-<li><a href="#diagram">Diagram</a></li>
-<li><a href="#real-life-production-use-cases">Real-Life Production Use Cases</a><ul>
-<li><a href="#use-case-1-e-commerce-platform">Use Case 1: E-commerce Platform</a></li>
-<li><a href="#example-order-service-communicating-with-product-service">Example: Order Service Communicating with Product Service</a></li>
-<li><a href="#use-case-2-financial-services">Use Case 2: Financial Services</a></li>
-<li><a href="#example-transaction-service-with-circuit-breaker">Example: Transaction Service with Circuit Breaker</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#sample-code">Sample Code</a><ul>
-<li><a href="#service-registration-and-discovery-1">Service Registration and Discovery</a></li>
-<li><a href="#api-gateway-1">API Gateway</a></li>
-<li><a href="#client-side-load-balancing-1">Client-Side Load Balancing</a></li>
-<li><a href="#using-webclient-to-call-different-services">Using <code>WebClient</code> to Call Different Services</a></li>
-<li><a href="#circuit-breaker-1">Circuit Breaker</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Deep-Dive-Integrating-Spring-WebFlux-with-Microservices-Architecture"><a href="#Deep-Dive-Integrating-Spring-WebFlux-with-Microservices-Architecture" class="headerlink" title="Deep Dive: Integrating Spring WebFlux with Microservices Architecture"></a>Deep Dive: Integrating Spring WebFlux with Microservices Architecture</h1><hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the previous articles, we have delved into the foundational concepts of Spring WebFlux, Reactor, error handling, data stream transformations, reactive database access, performance optimization, security, testing, deployment and operations, as well as best practices and common pitfalls. This article will focus on integrating Spring WebFlux with microservices architecture to build high-performance, scalable distributed systems.</p>
-<p><a name="microservices-architecture-overview"></a></p>
-<h2 id="Microservices-Architecture-Overview"><a href="#Microservices-Architecture-Overview" class="headerlink" title="Microservices Architecture Overview"></a>Microservices Architecture Overview</h2><p>Microservices architecture is an approach that breaks down an application into a set of small, independently deployable services, each running in its own process and communicating through lightweight mechanisms, typically HTTP or message queues. The benefits of microservices architecture include:</p>
-<ul>
-<li><strong>Independent Deployment</strong>: Each service can be deployed and updated independently, reducing system downtime.</li>
-<li><strong>Scalability</strong>: Services can be scaled independently, improving resource utilization.</li>
-<li><strong>Technological Diversity</strong>: Different services can use the most suitable technology stacks, increasing flexibility in technology choices.</li>
-</ul>
-<p><a name="integrating-spring-webflux-with-microservices"></a></p>
-<h2 id="Integrating-Spring-WebFlux-with-Microservices"><a href="#Integrating-Spring-WebFlux-with-Microservices" class="headerlink" title="Integrating Spring WebFlux with Microservices"></a>Integrating Spring WebFlux with Microservices</h2><p>Spring WebFlux, as a reactive web framework within the Spring ecosystem, is well-suited for building high-concurrency, low-latency microservices. Here are some key points for integrating Spring WebFlux with microservices.</p>
-<p><a name="using-spring-cloud"></a></p>
-<h2 id="Using-Spring-Cloud"><a href="#Using-Spring-Cloud" class="headerlink" title="Using Spring Cloud"></a>Using Spring Cloud</h2><p>Spring Cloud provides a set of tools to simplify development and management in distributed systems, particularly in microservices architectures based on Spring Boot. Key components include:</p>
-<ul>
-<li><strong>Spring Cloud Kubernetes</strong>: Integrates with Kubernetes for service registration and discovery, configuration, and more.</li>
-<li><strong>Spring Cloud Gateway</strong>: An API gateway built on Spring WebFlux, offering dynamic routing, monitoring, and rate limiting.</li>
-<li><strong>Spring Cloud Config</strong>: Provides centralized configuration management for distributed systems.</li>
-</ul>
-<p><a name="service-registration-and-discovery"></a></p>
-<h2 id="Service-Registration-and-Discovery"><a href="#Service-Registration-and-Discovery" class="headerlink" title="Service Registration and Discovery"></a>Service Registration and Discovery</h2><p>Service registration and discovery are crucial components in microservices architecture, allowing services to dynamically register themselves and discover other services. Spring Cloud Kubernetes integrates with Kubernetes’ native service discovery mechanisms.</p>
-<h3 id="Adding-Dependencies"><a href="#Adding-Dependencies" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Kubernetes dependencies to your service:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Service-Registration-and-Discovery"><a href="#Configuring-Service-Registration-and-Discovery" class="headerlink" title="Configuring Service Registration and Discovery"></a>Configuring Service Registration and Discovery</h3><p>Configure service registration and discovery in <code>application.properties</code>:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.application.name</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.kubernetes.discovery.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Annotating-the-Main-Class"><a href="#Annotating-the-Main-Class" class="headerlink" title="Annotating the Main Class"></a>Annotating the Main Class</h3><p>Annotate your Spring Boot main class with <code>@EnableDiscoveryClient</code>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookServiceApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(BookServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="api-gateway"></a></p>
-<h2 id="API-Gateway"><a href="#API-Gateway" class="headerlink" title="API Gateway"></a>API Gateway</h2><p>An API gateway is another critical component in microservices architecture, handling all external requests and routing them to the appropriate services. Spring Cloud Gateway is an API gateway built on Spring WebFlux.</p>
-<h3 id="Adding-Dependencies-1"><a href="#Adding-Dependencies-1" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Gateway dependency to your gateway service:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Gateway-Routes"><a href="#Configuring-Gateway-Routes" class="headerlink" title="Configuring Gateway Routes"></a>Configuring Gateway Routes</h3><p>Configure routes in <code>application.properties</code>:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.gateway.routes[0].id</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].uri</span>=<span class="string">lb://book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].predicates[0]</span>=<span class="string">Path=/books/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].id</span>=<span class="string">user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].uri</span>=<span class="string">lb://user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].predicates[0]</span>=<span class="string">Path=/users/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].id</span>=<span class="string">order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].uri</span>=<span class="string">lb://order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].predicates[0]</span>=<span class="string">Path=/orders/**</span></span><br></pre></td></tr></table></figure>
-
-<p><a name="client-side-load-balancing"></a></p>
-<h2 id="Client-Side-Load-Balancing"><a href="#Client-Side-Load-Balancing" class="headerlink" title="Client-Side Load Balancing"></a>Client-Side Load Balancing</h2><p>Spring Cloud provides client-side load balancing through Spring Cloud LoadBalancer, which allows services to distribute requests across multiple instances.</p>
-<h3 id="Adding-Dependencies-2"><a href="#Adding-Dependencies-2" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud LoadBalancer dependency to your service:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-loadbalancer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Load-Balancer"><a href="#Configuring-Load-Balancer" class="headerlink" title="Configuring Load Balancer"></a>Configuring Load Balancer</h3><p>Configure the load balancer in <code>application.properties</code>:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.loadbalancer.ribbon.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-Load-Balancer"><a href="#Using-Load-Balancer" class="headerlink" title="Using Load Balancer"></a>Using Load Balancer</h3><p>Use the load balancer in your service:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="keyword">public</span> WebClient.Builder <span class="title function_">loadBalancedWebClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>When you make a request using the <code>WebClient.Builder</code>, you typically specify the service name in the URI (e.g., <code>http://book-service/books</code>). The <code>@LoadBalanced</code> annotation tells Spring Cloud LoadBalancer to intercept this request and resolve the service name (<code>book-service</code>) to the actual service instances.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://book-service/books/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Book.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="circuit-breaker"></a></p>
-<h2 id="Circuit-Breaker"><a href="#Circuit-Breaker" class="headerlink" title="Circuit Breaker"></a>Circuit Breaker</h2><p>Circuit breakers are an essential pattern in microservices architecture, handling service call failures to prevent fault propagation. Spring Cloud Circuit Breaker provides circuit breaker functionality with support for multiple implementations like Resilience4J.</p>
-<h3 id="Adding-Dependencies-3"><a href="#Adding-Dependencies-3" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Circuit Breaker and Resilience4J dependencies to your service:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-circuitbreaker-reactor-resilience4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Circuit-Breaker"><a href="#Configuring-Circuit-Breaker" class="headerlink" title="Configuring Circuit Breaker"></a>Configuring Circuit Breaker</h3><p>Configure the circuit breaker in <code>application.properties</code>:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.failureRateThreshold</span>=<span class="string">50</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.waitDurationInOpenState</span>=<span class="string">5s</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.ringBufferSizeInHalfOpenState</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.ringBufferSizeInClosedState</span>=<span class="string">100</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-Circuit-Breaker"><a href="#Using-Circuit-Breaker" class="headerlink" title="Using Circuit Breaker"></a>Using Circuit Breaker</h3><p>Use the circuit breaker in your service:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReactiveCircuitBreakerFactory circuitBreakerFactory;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(ReactiveCircuitBreakerFactory circuitBreakerFactory, BookRepository bookRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.circuitBreakerFactory = circuitBreakerFactory;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .transform(it -&gt; circuitBreakerFactory.create(<span class="string">&quot;bookService&quot;</span>).run(it, throwable -&gt; Mono.just(<span class="keyword">new</span> <span class="title class_">Book</span>(id, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown&quot;</span>, <span class="number">0.0</span>))));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Diagram"><a href="#Diagram" class="headerlink" title="Diagram"></a>Diagram</h3><ul>
-<li>Client-Side: WebClient - Alternative of Spring-Cloud OpenFeign</li>
-<li>API Gateway: Routes</li>
-<li>BookService: Integerated CircuitBreaker(Actual Implementation is resilience4j)</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Client-Side       |       | API Gateway       |       | Actual BookService|</span><br><span class="line">| MultiServiceCaller|       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">| +-------------+   |       | +-------------+   |       | +-------------+   |</span><br><span class="line">| | WebClient   |   |       | | Routes      |   |       | | Circuit    |   |</span><br><span class="line">| |             |   |       | |             |   |       | | Breaker    |   |</span><br><span class="line">| | +---------+ |   |       | | +---------+ |   |       | | +---------+ |   |</span><br><span class="line">| | | Request | |   |       | | | Request | |   |       | | | Request | |   |</span><br><span class="line">| | +---------+ |   |       | | +---------+ |   |       | | +---------+ |   |</span><br><span class="line">| +-------------+   |       | +-------------+   |       | +-------------+   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<h3 id="Real-Life-Production-Use-Cases"><a href="#Real-Life-Production-Use-Cases" class="headerlink" title="Real-Life Production Use Cases"></a>Real-Life Production Use Cases</h3><h4 id="Use-Case-1-E-commerce-Platform"><a href="#Use-Case-1-E-commerce-Platform" class="headerlink" title="Use Case 1: E-commerce Platform"></a>Use Case 1: E-commerce Platform</h4><p>In an e-commerce platform, multiple microservices interact to handle various functionalities such as product catalog, user management, and order processing. Spring WebFlux and Spring Cloud components can be used to build a scalable and resilient system.</p>
-<h4 id="Example-Order-Service-Communicating-with-Product-Service"><a href="#Example-Order-Service-Communicating-with-Product-Service" class="headerlink" title="Example: Order Service Communicating with Product Service"></a>Example: Order Service Communicating with Product Service</h4><p>The Order Service needs to retrieve product details from the Product Service to process orders. Spring Cloud Gateway can be used as an API gateway to route requests, and Spring Cloud LoadBalancer can be used for client-side load balancing.</p>
-<h4 id="Use-Case-2-Financial-Services"><a href="#Use-Case-2-Financial-Services" class="headerlink" title="Use Case 2: Financial Services"></a>Use Case 2: Financial Services</h4><p>In financial services, microservices handle transactions, account management, and reporting. Spring WebFlux can be used to build high-performance services, and Spring Cloud Circuit Breaker can be used to handle failures gracefully.</p>
-<h4 id="Example-Transaction-Service-with-Circuit-Breaker"><a href="#Example-Transaction-Service-with-Circuit-Breaker" class="headerlink" title="Example: Transaction Service with Circuit Breaker"></a>Example: Transaction Service with Circuit Breaker</h4><p>The Transaction Service needs to call the Account Service to validate account balances. If the Account Service is down, the circuit breaker can return a default response to prevent system failure.</p>
-<p><a name="sample-code"></a></p>
-<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Service-Registration-and-Discovery-1"><a href="#Service-Registration-and-Discovery-1" class="headerlink" title="Service Registration and Discovery"></a>Service Registration and Discovery</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookServiceApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(BookServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="API-Gateway-1"><a href="#API-Gateway-1" class="headerlink" title="API Gateway"></a>API Gateway</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.gateway.routes[0].id</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].uri</span>=<span class="string">lb://book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].predicates[0]</span>=<span class="string">Path=/books/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].id</span>=<span class="string">user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].uri</span>=<span class="string">lb://user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].predicates[0]</span>=<span class="string">Path=/users/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].id</span>=<span class="string">order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].uri</span>=<span class="string">lb://order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].predicates[0]</span>=<span class="string">Path=/orders/**</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Client-Side-Load-Balancing-1"><a href="#Client-Side-Load-Balancing-1" class="headerlink" title="Client-Side Load Balancing"></a>Client-Side Load Balancing</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="keyword">public</span> WebClient.Builder <span class="title function_">loadBalancedWebClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-WebClient-to-Call-Different-Services"><a href="#Using-WebClient-to-Call-Different-Services" class="headerlink" title="Using WebClient to Call Different Services"></a>Using <code>WebClient</code> to Call Different Services</h3><p>Create a service class that uses the <code>WebClient.Builder</code> to interact with different registered services:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MultiServiceCaller</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MultiServiceCaller</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://book-service/books/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Book.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://user-service/users/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Order&gt; <span class="title function_">getOrderById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://order-service/orders/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Order.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Circuit-Breaker-1"><a href="#Circuit-Breaker-1" class="headerlink" title="Circuit Breaker"></a>Circuit Breaker</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReactiveCircuitBreakerFactory circuitBreakerFactory;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(ReactiveCircuitBreakerFactory circuitBreakerFactory, BookRepository bookRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.circuitBreakerFactory = circuitBreakerFactory;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .transform(it -&gt; circuitBreakerFactory.create(<span class="string">&quot;bookService&quot;</span>).run(it, throwable -&gt; Mono.just(<span class="keyword">new</span> <span class="title class_">Book</span>(id, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown&quot;</span>, <span class="number">0.0</span>))));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to integrate Spring WebFlux with microservices architecture using the latest Spring Cloud components. By leveraging Spring Cloud Kubernetes, Spring Cloud Gateway, Spring Cloud LoadBalancer, and Spring Cloud Circuit Breaker, we can easily build high-performance, scalable distributed systems. Real-life production use cases and sample code demonstrate the practical application of these components in building resilient and scalable microservices.</p>
 
       
     </div>
