@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,386 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/" class="post-title-link" itemprop="url">Deep Dive into Avro and Parquet Together</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-28 17:33:14 / Modified: 17:52:38" itemprop="dateCreated datePublished" datetime="2024-10-28T17:33:14-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/" itemprop="url" rel="index"><span itemprop="name">Avro</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/Parquet/" itemprop="url" rel="index"><span itemprop="name">Parquet</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#data-pipeline-design">Data Pipeline Design</a><ul>
+<li><a href="#ingesting-data-from-messaging-system">Ingesting Data from Messaging System</a></li>
+<li><a href="#processing-and-converting-avro-to-parquet">Processing and Converting Avro to Parquet</a></li>
+<li><a href="#saving-to-big-data-storage-s3">Saving to Big Data Storage (S3)</a></li>
+</ul>
+</li>
+<li><a href="#understanding-the-structural-differences">Understanding the Structural Differences</a><ul>
+<li><a href="#avro-to-parquet-conversion">Avro to Parquet Conversion</a></li>
+<li><a href="#reading-from-parquet-and-converting-back-to-avro">Reading from Parquet and Converting Back to Avro</a></li>
+</ul>
+</li>
+<li><a href="#parquets-row-groups-and-column-chunks">Parquet’s Row Groups and Column Chunks</a><ul>
+<li><a href="#-ensuring-data-belongs-to-the-same-record"> Ensuring Data Belongs to the Same Record</a></li>
+<li><a href="#reading-from-parquet-and-converting-back-to-avro-1">Reading from Parquet and Converting Back to Avro</a></li>
+</ul>
+</li>
+<li><a href="#what-if-null-values-in-parquet">What if Null Values in Parquet</a><ul>
+<li><a href="#1-null-values-in-columns">1. <strong>Null Values in Columns</strong></a></li>
+<li><a href="#2-encodings-for-efficient-storage">2. <strong>Encodings for Efficient Storage</strong></a></li>
+<li><a href="#3-metadata-tracking-and-optional-fields">3. <strong>Metadata Tracking and Optional Fields</strong></a></li>
+<li><a href="#example-scenario">Example Scenario</a></li>
+<li><a href="#example-in-spark">Example in Spark</a></li>
+</ul>
+</li>
+<li><a href="#real-life-production-sample-code-in-spark">Real-Life Production Sample Code in Spark</a><ul>
+<li><a href="#-reading-from-kafka"> Reading from Kafka</a></li>
+<li><a href="#-converting-avro-to-parquet"> Converting Avro to Parquet</a></li>
+<li><a href="#-writing-to-s3"> Writing to S3</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In modern data architectures, Avro data is often used in messaging systems like Apache Kafka due to its compact binary format and schema evolution support. However, in data lakes or data warehouses, Parquet is preferred for storage due to its columnar format and efficient read performance. This article covers the architecture, pipeline design, and real-life sample code for implementing a pipeline that ingests Avro data from a messaging system and saves it in Parquet format in a big data storage solution like Amazon S3.</p>
+<hr>
+<p><a name="architecture-overview"></a></p>
+<h2 id="Architecture-Overview"><a href="#Architecture-Overview" class="headerlink" title="Architecture Overview"></a>Architecture Overview</h2><p>This section provides an overview of the components in a typical architecture that ingests Avro from a messaging system and saves it as Parquet in big data storage.</p>
+<p><strong>Diagram: Avro to Parquet Pipeline Architecture</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Messaging System (Kafka)  ----&gt;  Stream Processing (Spark)  ----&gt;  S3 Storage (Parquet Format)</span><br></pre></td></tr></table></figure>
+
+<p><a name="avro-and-parquet-formats"></a>###  Avro and Parquet Formats</p>
+<ul>
+<li><strong>Avro</strong>: A row-based binary format, commonly used for serializing data in messaging systems due to its compact size and schema evolution capabilities.</li>
+<li><strong>Parquet</strong>: A columnar storage format optimized for reading specific columns, making it highly efficient for analytics and big data storage solutions.</li>
+</ul>
+<p><a name="role-of-messaging-systems"></a>###  Role of Messaging Systems</p>
+<p>Messaging systems like <strong>Apache Kafka</strong> are widely used to transport streaming data across systems in real time. Kafka provides fault-tolerance and durability, ensuring data is safely delivered to downstream applications for processing.</p>
+<p><a name="storage-in-big-data-storage-solutions"></a>###  Storage in Big Data Storage Solutions</p>
+<p>Big data storage solutions, such as <strong>Amazon S3</strong>, offer durable and cost-effective storage for large-scale data. Storing data in Parquet format on S3 enables easy integration with data analytics frameworks like Spark, Presto, and Hive.</p>
+<hr>
+<p><a name="data-pipeline-design"></a></p>
+<h2 id="Data-Pipeline-Design"><a href="#Data-Pipeline-Design" class="headerlink" title="Data Pipeline Design"></a>Data Pipeline Design</h2><p>The pipeline includes the following key stages:</p>
+<ol>
+<li><strong>Data Ingestion</strong>: Consuming Avro-encoded messages from Kafka.</li>
+<li><strong>Processing and Transformation</strong>: Converting Avro data to Parquet format.</li>
+<li><strong>Storage</strong>: Saving the transformed Parquet files to Amazon S3.</li>
+</ol>
+<p><a name="ingesting-data-from-messaging-system"></a></p>
+<h3 id="Ingesting-Data-from-Messaging-System"><a href="#Ingesting-Data-from-Messaging-System" class="headerlink" title="Ingesting Data from Messaging System"></a>Ingesting Data from Messaging System</h3><p>The first step in the pipeline is ingesting data from a messaging system like Kafka. Spark Structured Streaming can be used to consume Avro-encoded messages from Kafka topics in real-time.</p>
+<p><strong>Diagram: Ingesting Avro Data from Kafka</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kafka Topic (Avro Messages)  ---&gt;  Spark Structured Streaming  ---&gt;  Data Transformation</span><br></pre></td></tr></table></figure>
+
+<p><a name="processing-and-converting-avro-to-parquet"></a></p>
+<h3 id="Processing-and-Converting-Avro-to-Parquet"><a href="#Processing-and-Converting-Avro-to-Parquet" class="headerlink" title="Processing and Converting Avro to Parquet"></a>Processing and Converting Avro to Parquet</h3><p>Spark Structured Streaming allows us to process and transform the incoming Avro data. To convert Avro to Parquet, the schema needs to be mapped, and the data is then serialized to the Parquet format.</p>
+<p><strong>Diagram: Converting Avro to Parquet in Spark</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Avro Data (Spark DataFrame)  ---&gt;  Schema Mapping  ---&gt;  Parquet Data</span><br></pre></td></tr></table></figure>
+
+<p><a name="saving-to-big-data-storage-s3"></a></p>
+<h3 id="Saving-to-Big-Data-Storage-S3"><a href="#Saving-to-Big-Data-Storage-S3" class="headerlink" title="Saving to Big Data Storage (S3)"></a>Saving to Big Data Storage (S3)</h3><p>Once converted to Parquet, the data can be written to Amazon S3 in a structured format. Parquet files in S3 are organized by partitions (e.g., by date or another logical grouping) to optimize retrieval and querying performance.</p>
+<p><strong>Diagram: Saving to S3</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Parquet Data (Partitioned by Date)  ---&gt;  Amazon S3 Bucket  ---&gt;  Analytics-ready Storage</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="understanding-the-structural-differences"></a></p>
+<h2 id="Understanding-the-Structural-Differences"><a href="#Understanding-the-Structural-Differences" class="headerlink" title="Understanding the Structural Differences"></a>Understanding the Structural Differences</h2><p>In Avro and Parquet formats, the <strong>data organization</strong> is fundamentally different:</p>
+<ul>
+<li><strong>Avro</strong>: A row-based format where each record is serialized as a single entity, storing all fields of each row together.</li>
+<li><strong>Parquet</strong>: A columnar storage format where data is grouped by columns rather than rows, optimizing for efficient reads on specific columns (ideal for analytical workloads).</li>
+</ul>
+<p>To illustrate, let’s consider an Avro record with two attributes:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John Doe&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>In Avro, the above record would be stored as a single contiguous block of binary data, with fields appearing in the order defined by the schema.</p>
+<p>When converting this record to <strong>Parquet</strong>, the storage layout changes to a <strong>column-oriented format</strong>. Parquet organizes data by columns:</p>
+<ul>
+<li>Each column (e.g., “name” and “age”) is stored separately in <strong>column chunks</strong>.</li>
+<li>Parquet organizes records into <strong>row groups</strong>, where each row group has column chunks for each column defined in the schema.</li>
+</ul>
+<p><strong>Diagram: Avro to Parquet Conversion for Record <code>&#123; &quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30 &#125;</code></strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>Parquet Column Chunk</strong></th>
+<th><strong>Data Stored</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Name Column Chunk</td>
+<td>John Doe</td>
+</tr>
+<tr>
+<td>Age Column Chunk</td>
+<td>30</td>
+</tr>
+</tbody></table>
+<p>In a more extensive dataset with thousands of records, Parquet’s layout significantly optimizes read performance because each column chunk can be accessed independently. For instance, if only the “age” column is required for analysis, Parquet reads only the relevant chunk, skipping over unrelated columns like “name.”</p>
+<hr>
+<p><a name="avro-to-parquet-conversion"></a></p>
+<h3 id="Avro-to-Parquet-Conversion"><a href="#Avro-to-Parquet-Conversion" class="headerlink" title="Avro to Parquet Conversion"></a>Avro to Parquet Conversion</h3><p>The steps for converting Avro to Parquet in a system like Apache Spark generally follow this sequence:</p>
+<ol>
+<li><p><strong>Avro Data Loading</strong>:</p>
+<ul>
+<li>Avro-encoded data is parsed and loaded into an intermediate in-memory structure, such as a DataFrame in Spark.</li>
+<li>Avro schema is either read from the Avro file (or topic in case of Kafka) or supplied separately.</li>
+</ul>
+</li>
+<li><p><strong>Schema Mapping</strong>:</p>
+<ul>
+<li>Spark maps the Avro schema to an equivalent internal schema (e.g., Spark schema), which is essential to support Parquet’s columnar structure.</li>
+<li>Fields in the Avro schema (like “name” and “age”) are mapped to equivalent columns.</li>
+</ul>
+</li>
+<li><p><strong>Data Conversion</strong>:</p>
+<ul>
+<li>Each Avro record is then serialized into a format compatible with Parquet’s column-oriented layout.</li>
+<li>Each attribute is transformed to be written in column chunks rather than row-by-row.</li>
+</ul>
+</li>
+<li><p><strong>Data Writing (Parquet)</strong>:</p>
+<ul>
+<li>Parquet organizes data into <strong>row groups</strong>, and within each row group, column data is stored in contiguous chunks.</li>
+<li>Additional metadata (e.g., min, max, dictionary encoding) is recorded for each column chunk, which is useful for optimizations in querying.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example</strong>:<br>In Spark, a sample code to convert Avro to Parquet may look like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Load Avro data into a DataFrame</span></span><br><span class="line">Dataset&lt;Row&gt; avroDF = spark.read().format(<span class="string">&quot;avro&quot;</span>).load(<span class="string">&quot;path/to/avro/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write data to Parquet format</span></span><br><span class="line">avroDF.write().parquet(<span class="string">&quot;path/to/output/parquet&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>This process reorganizes the data from a row-based layout (Avro) to a columnar layout (Parquet).</p>
+<hr>
+<p><a name="reading-from-parquet-and-converting-back-to-avro"></a></p>
+<h3 id="Reading-from-Parquet-and-Converting-Back-to-Avro"><a href="#Reading-from-Parquet-and-Converting-Back-to-Avro" class="headerlink" title="Reading from Parquet and Converting Back to Avro"></a>Reading from Parquet and Converting Back to Avro</h3><p>When reading Parquet data and converting it back to Avro, the system reverses the process, transforming columnar data back into row-based data.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li><p><strong>Load Parquet Data</strong>:</p>
+<ul>
+<li>Parquet files are read into memory. In a Spark-based setup, this would involve loading Parquet files into a DataFrame.</li>
+</ul>
+</li>
+<li><p><strong>Column Extraction</strong>:</p>
+<ul>
+<li>Parquet retrieves data by accessing each relevant column chunk. Parquet’s metadata allows efficient navigation to the specific data of interest.</li>
+</ul>
+</li>
+<li><p><strong>Row Assembly</strong>:</p>
+<ul>
+<li>As each column’s data is accessed, the system assembles rows by gathering data from each column chunk.</li>
+<li>The row-based structure compatible with Avro is recreated by combining values from each column for every row.</li>
+</ul>
+</li>
+<li><p><strong>Schema Mapping</strong>:</p>
+<ul>
+<li>Parquet columns are mapped to Avro fields based on a schema. This schema alignment ensures that columns match Avro’s row-oriented requirements.</li>
+<li>The DataFrame (or equivalent data structure) is serialized back into the Avro format.</li>
+</ul>
+</li>
+<li><p><strong>Write to Avro</strong>:</p>
+<ul>
+<li>The row-based structure is serialized in Avro’s binary format, and the schema is either embedded or referenced as needed.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example Code: Converting Parquet to Avro in Spark</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Load Parquet data into a DataFrame</span></span><br><span class="line">Dataset&lt;Row&gt; parquetDF = spark.read().parquet(<span class="string">&quot;path/to/parquet/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write data back to Avro format</span></span><br><span class="line">parquetDF.write().format(<span class="string">&quot;avro&quot;</span>).save(<span class="string">&quot;path/to/output/avro&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>This code converts the columnar Parquet format back into Avro’s row-based format.</p>
+<hr>
+<p><a name="parquets-row-groups-and-column-chunks"></a></p>
+<h2 id="Parquet’s-Row-Groups-and-Column-Chunks"><a href="#Parquet’s-Row-Groups-and-Column-Chunks" class="headerlink" title="Parquet’s Row Groups and Column Chunks"></a>Parquet’s Row Groups and Column Chunks</h2><p>In Parquet, data is stored in <strong>row groups</strong>. Each row group contains data for a set number of rows, and within each row group, data is stored in <strong>column chunks</strong> (one for each column). The row group is Parquet’s key structural element that ensures the association between column data across multiple rows:</p>
+<ul>
+<li><strong>Row Group</strong>: A set of rows is organized as a contiguous data block. Each row group in Parquet represents a batch of rows from the original dataset.</li>
+<li><strong>Column Chunk</strong>: Within each row group, each column’s data is stored in a separate column chunk.</li>
+</ul>
+<p>For example, if we have a dataset with 10,000 records, it might be divided into several row groups (say 5,000 rows per row group). Each row group then contains the data for the columns <code>name</code> and <code>age</code> in its respective column chunks.</p>
+<h3 id="Ensuring-Data-Belongs-to-the-Same-Record"><a href="#Ensuring-Data-Belongs-to-the-Same-Record" class="headerlink" title=" Ensuring Data Belongs to the Same Record"></a><a name="ensuring-data-belongs-to-the-same-record"></a> Ensuring Data Belongs to the Same Record</h3><p>To ensure data from each column belongs to the same record, Parquet relies on <strong>row ordering</strong> within each row group. The ordering within each column chunk of a row group matches across all columns:</p>
+<ul>
+<li><strong>Ordering</strong>: Each row in a row group corresponds to the same index across all column chunks within that row group. For instance, the first value in the <code>name</code> column chunk of a row group corresponds to the first value in the <code>age</code> column chunk for the same row group.</li>
+<li><strong>Offset Metadata</strong>: Parquet uses metadata about the offsets within each column chunk to ensure each row can be reconstructed correctly when reading.</li>
+</ul>
+<p>So, in your example, the row group might look like this:</p>
+<table>
+<thead>
+<tr>
+<th>Row Index</th>
+<th>Name Column Chunk</th>
+<th>Age Column Chunk</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Row 1</td>
+<td>“John Doe”</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Row 2</td>
+<td>“Jane Smith”</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Row 3</td>
+<td>“Alice Brown”</td>
+<td>28</td>
+</tr>
+</tbody></table>
+<p>Each entry in the <code>name</code> and <code>age</code> column chunks corresponds by index. Parquet uses metadata within the row group and column chunks to indicate where each row begins and ends, making sure that during reads, each row’s data across columns is aligned.</p>
+<p><a name="reading-from-parquet-and-converting-back-to-avro"></a></p>
+<h3 id="Reading-from-Parquet-and-Converting-Back-to-Avro-1"><a href="#Reading-from-Parquet-and-Converting-Back-to-Avro-1" class="headerlink" title="Reading from Parquet and Converting Back to Avro"></a>Reading from Parquet and Converting Back to Avro</h3><p>When reading Parquet data back into a row-based format (like Avro), the system iterates over each row group:</p>
+<ul>
+<li><strong>Row Assembly</strong>: For each row in a row group, Parquet retrieves the respective values from each column chunk based on their row index. This reassembles each row’s fields together to form the original record.</li>
+<li><strong>Schema Mapping</strong>: The column metadata stored in Parquet includes the schema, allowing the correct assignment of values back to each field in the record.</li>
+</ul>
+<p><a name="what-if-null-values-in-parquet"></a></p>
+<h2 id="What-if-Null-Values-in-Parquet"><a href="#What-if-Null-Values-in-Parquet" class="headerlink" title="What if Null Values in Parquet"></a>What if Null Values in Parquet</h2><p>In Parquet, each <strong>column chunk</strong> within a <strong>row group</strong> holds data in columnar format, and Parquet efficiently handles cases where some rows may lack a value for a given column by using specific encoding and metadata, rather than empty placeholders. Here’s how it manages the scenario:</p>
+<h3 id="1-Null-Values-in-Columns"><a href="#1-Null-Values-in-Columns" class="headerlink" title="1. Null Values in Columns"></a>1. <strong>Null Values in Columns</strong></h3><p>   If a column lacks a value for a particular row, Parquet does not insert an empty placeholder. Instead:</p>
+<ul>
+<li><strong>Definition Levels</strong> are used to indicate whether a value is present or null. Each level specifies if a field has a value or is missing at that row.</li>
+<li><strong>Repetition Levels</strong> track nested structures within rows, so nested nulls and repeated fields can be handled in one scan.</li>
+</ul>
+<h3 id="2-Encodings-for-Efficient-Storage"><a href="#2-Encodings-for-Efficient-Storage" class="headerlink" title="2. Encodings for Efficient Storage"></a>2. <strong>Encodings for Efficient Storage</strong></h3><p>   Parquet uses encodings like <strong>Run-Length Encoding (RLE)</strong> and <strong>Dictionary Encoding</strong> to represent repeated or missing values compactly:</p>
+<ul>
+<li><strong>Run-Length Encoding</strong> groups consecutive null values (or any repeating values) into a single representation, saving space when large chunks are missing in a column.</li>
+<li><strong>Dictionary Encoding</strong> can efficiently map common values (like repeated nulls or default values) using dictionary lookup tables.</li>
+</ul>
+<h3 id="3-Metadata-Tracking-and-Optional-Fields"><a href="#3-Metadata-Tracking-and-Optional-Fields" class="headerlink" title="3. Metadata Tracking and Optional Fields"></a>3. <strong>Metadata Tracking and Optional Fields</strong></h3><ul>
+<li>If a field is defined as <code>optional</code> in the schema, it allows a row to be saved without a value for that field. Parquet only includes these rows in the row group metadata, which helps query engines like Spark identify missing values.</li>
+</ul>
+<h3 id="Example-Scenario"><a href="#Example-Scenario" class="headerlink" title="Example Scenario"></a>Example Scenario</h3><p>Let’s say we have a Parquet file with three rows and three columns, where one column lacks values for some rows.</p>
+<table>
+<thead>
+<tr>
+<th>Row Group</th>
+<th>Column A</th>
+<th>Column B</th>
+<th>Column C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Row 1</td>
+<td>Value 1</td>
+<td>Null</td>
+<td>Value 3</td>
+</tr>
+<tr>
+<td>Row 2</td>
+<td>Value 4</td>
+<td>Value 5</td>
+<td>Null</td>
+</tr>
+<tr>
+<td>Row 3</td>
+<td>Null</td>
+<td>Value 6</td>
+<td>Value 7</td>
+</tr>
+</tbody></table>
+<p>In this case:</p>
+<ul>
+<li><strong>Definition Levels</strong> for <code>Column B</code> and <code>Column C</code> would show which rows contain nulls.</li>
+<li>The data structure itself would store only the non-null values, reducing storage without explicit placeholders.</li>
+</ul>
+<p>This approach is particularly useful when handling sparse data, as it minimizes the storage footprint and increases reading efficiency.</p>
+<h3 id="Example-in-Spark"><a href="#Example-in-Spark" class="headerlink" title="Example in Spark"></a>Example in Spark</h3><p>Here’s how Spark handles this under the hood when reading Parquet data and converting it back to Avro:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Reading from Parquet</span></span><br><span class="line">Dataset&lt;Row&gt; parquetDF = spark.read().parquet(<span class="string">&quot;path/to/parquet/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Writing back to Avro, reassembling rows</span></span><br><span class="line">parquetDF.write().format(<span class="string">&quot;avro&quot;</span>).save(<span class="string">&quot;path/to/output/avro&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>During this process, Spark ensures that each row’s values across columns are correctly aligned by leveraging Parquet’s row group and column chunk metadata. This alignment allows it to convert back to Avro’s row-based format without losing the association between <code>name</code> and <code>age</code> in each record.</p>
+<hr>
+<p><a name="real-life-production-sample-code-in-spark"></a></p>
+<h2 id="Real-Life-Production-Sample-Code-in-Spark"><a href="#Real-Life-Production-Sample-Code-in-Spark" class="headerlink" title="Real-Life Production Sample Code in Spark"></a>Real-Life Production Sample Code in Spark</h2><p>The following sample code demonstrates how to implement this pipeline in <strong>Apache Spark</strong> with <strong>Structured Streaming</strong>.</p>
+<h3 id="Reading-from-Kafka"><a href="#Reading-from-Kafka" class="headerlink" title=" Reading from Kafka"></a><a name="reading-from-kafka"></a> Reading from Kafka</h3><p>Use Spark to read Avro data from a Kafka topic in real-time.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.SparkSession;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Dataset;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Row;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.avro.functions.from_avro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AvroToParquetPipeline</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SparkSession</span> <span class="variable">spark</span> <span class="operator">=</span> SparkSession.builder()</span><br><span class="line">                .appName(<span class="string">&quot;Avro to Parquet Pipeline&quot;</span>)</span><br><span class="line">                .getOrCreate();</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaBootstrapServers</span> <span class="operator">=</span> <span class="string">&quot;kafka-broker1:9092,kafka-broker2:9092&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaTopic</span> <span class="operator">=</span> <span class="string">&quot;avro-topic&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; avroDF = spark</span><br><span class="line">                .readStream()</span><br><span class="line">                .format(<span class="string">&quot;kafka&quot;</span>)</span><br><span class="line">                .option(<span class="string">&quot;kafka.bootstrap.servers&quot;</span>, kafkaBootstrapServers)</span><br><span class="line">                .option(<span class="string">&quot;subscribe&quot;</span>, kafkaTopic)</span><br><span class="line">                .load()</span><br><span class="line">                .selectExpr(<span class="string">&quot;CAST(value AS BINARY) as avroData&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Define the Avro schema (can be fetched from Schema Registry if available)</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">avroSchema</span> <span class="operator">=</span> <span class="string">&quot;&#123; \&quot;type\&quot;: \&quot;record\&quot;, \&quot;name\&quot;: \&quot;User\&quot;, \&quot;fields\&quot;: [ &#123;\&quot;name\&quot;: \&quot;id\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;age\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125; ] &#125;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; parsedDF = avroDF</span><br><span class="line">                .select(from_avro(avroDF.col(<span class="string">&quot;avroData&quot;</span>), avroSchema).as(<span class="string">&quot;data&quot;</span>))</span><br><span class="line">                .select(<span class="string">&quot;data.*&quot;</span>);</span><br><span class="line"></span><br><span class="line">        parsedDF.printSchema(); <span class="comment">// Debugging schema after parsing Avro</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Converting-Avro-to-Parquet"><a href="#Converting-Avro-to-Parquet" class="headerlink" title=" Converting Avro to Parquet"></a><a name="converting-avro-to-parquet"></a> Converting Avro to Parquet</h3><p>Once we have parsed the Avro data into a DataFrame, we can convert it into Parquet format.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dataset&lt;Row&gt; parquetDF = parsedDF.repartition(<span class="number">1</span>); <span class="comment">// Optional: Customize partitioning as needed</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Writing-to-S3"><a href="#Writing-to-S3" class="headerlink" title=" Writing to S3"></a><a name="writing-to-s3"></a> Writing to S3</h3><p>Writing the data to Amazon S3 requires specifying the destination path and configuring partitioning if necessary.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.streaming.Trigger;</span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s3Path</span> <span class="operator">=</span> <span class="string">&quot;s3a://your-bucket/path/to/destination/&quot;</span>;</span><br><span class="line"></span><br><span class="line">parquetDF.writeStream()</span><br><span class="line">        .format(<span class="string">&quot;parquet&quot;</span>)</span><br><span class="line">        .option(<span class="string">&quot;path&quot;</span>, s3Path)</span><br><span class="line">        .option(<span class="string">&quot;checkpointLocation&quot;</span>, <span class="string">&quot;s3a://your-bucket/path/to/checkpoint/&quot;</span>)</span><br><span class="line">        .partitionBy(<span class="string">&quot;date&quot;</span>) <span class="comment">// Optional: Partitioning by a specific column (e.g., date)</span></span><br><span class="line">        .trigger(Trigger.ProcessingTime(<span class="string">&quot;5 minutes&quot;</span>)) <span class="comment">// Controls batch frequency</span></span><br><span class="line">        .start()</span><br><span class="line">        .awaitTermination();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article covered an architecture for ingesting Avro data from a messaging system, converting it to Parquet, and saving it in Amazon S3. Using Spark Structured Streaming and Amazon S3 for storage, this pipeline is a robust solution for managing Avro-to-Parquet transformations in big data applications. Understanding the structural differences between Avro and Parquet, as well as the conversion process, enables data engineers to design efficient and scalable data pipelines.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -348,7 +728,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2024-10-28 16:20:09 / Modified: 16:21:26" itemprop="dateCreated datePublished" datetime="2024-10-28T16:20:09-04:00">2024-10-28</time>
+      <time title="Created: 2024-10-28 16:20:09 / Modified: 18:48:30" itemprop="dateCreated datePublished" datetime="2024-10-28T16:20:09-04:00">2024-10-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -400,7 +780,16 @@
 <li><a href="#conditional-scheduling-example">Conditional Scheduling Example</a></li>
 </ul>
 </li>
-<li><a href="#real-world-production-sample-code">Real-World Production Sample Code</a></li>
+<li><a href="#all-in-one-sample">All-In-One Sample</a></li>
+<li><a href="#conditionalonproperty-with-scheduled-job-in-depth">ConditionalOnProperty with Scheduled Job in Depth</a><ul>
+<li><a href="#scenario-running-a-scheduled-job-in-only-one-pod-in-a-kubernetes-cluster">Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</a><ul>
+<li><a href="#solution-outline">Solution Outline</a></li>
+<li><a href="#steps-to-implement">Steps to Implement</a></li>
+<li><a href="#additional-consideration-use-leader-election">Additional Consideration: Use Leader Election</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 <hr>
@@ -465,11 +854,45 @@
 
 <p>To enable or disable this task, add <code>scheduler.enabled=true</code> or <code>false</code> in the configuration.</p>
 <hr>
-<p><a name="real-world-production-sample-code"></a></p>
-<h2 id="Real-World-Production-Sample-Code"><a href="#Real-World-Production-Sample-Code" class="headerlink" title="Real-World Production Sample Code"></a>Real-World Production Sample Code</h2><p>Below is a production-level example that schedules multiple jobs with different timings and conditions.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionSchedulerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">3</span>);</span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.run&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0 0 12 * * ?&quot;)</span> <span class="comment">// Executes at noon daily</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailySummaryJob</span><span class="params">()</span> &#123;</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line"> System.out.println(<span class="string">&quot;Executing daily summary job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 15000)</span> <span class="comment">// Executes every 15 seconds after the previous execution ends</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">periodicCleanupJob</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Running periodic cleanup job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="all-in-one-sample"></a></p>
+<h2 id="All-In-One-Sample"><a href="#All-In-One-Sample" class="headerlink" title="All-In-One Sample"></a>All-In-One Sample</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionSchedulerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">3</span>);</span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0 0 12 * * ?&quot;)</span> <span class="comment">// Executes at noon daily</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailySummaryJob</span><span class="params">()</span> &#123;</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line"> System.out.println(<span class="string">&quot;Executing daily summary job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 15000)</span> <span class="comment">// Executes every 15 seconds after the previous execution ends</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">periodicCleanupJob</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Running periodic cleanup job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<hr>
+<p><a name="conditionalonproperty-with-scheduled-job-in-depth"></a></p>
+<h2 id="ConditionalOnProperty-with-Scheduled-Job-in-Depth"><a href="#ConditionalOnProperty-with-Scheduled-Job-in-Depth" class="headerlink" title="ConditionalOnProperty with Scheduled Job in Depth"></a>ConditionalOnProperty with Scheduled Job in Depth</h2><p>The <code>@ConditionalOnProperty</code> annotation in Spring is typically used to conditionally enable or disable beans based on specific configuration properties. In this case:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>This will activate the annotated bean only if the <code>scheduler.enabled</code> property is set to <code>true</code> in your configuration (like in <code>application.properties</code> or environment variables).</p>
+<h3 id="Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster"><a href="#Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster" class="headerlink" title="Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster"></a>Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</h3><p>When deploying a Spring application in a Kubernetes cluster across multiple containers (pods), ensuring that a scheduled job only runs in one specific pod can be tricky because Spring’s <code>@Scheduled</code> jobs will run in every instance where the job bean is active. Here’s how to solve this problem by using the <code>@ConditionalOnProperty</code> annotation in combination with Kubernetes configurations.</p>
+<h4 id="Solution-Outline"><a href="#Solution-Outline" class="headerlink" title="Solution Outline"></a>Solution Outline</h4><ol>
+<li><strong>Set a Leader Pod</strong>: Configure only one of the pods to have <code>scheduler.enabled=true</code> using Kubernetes annotations and environment variables, making it the leader pod responsible for running the scheduled job.</li>
+<li><strong>Configure Pods with Unique Environment Variables</strong>: Use Kubernetes <code>configMaps</code> or <code>Secrets</code> to assign the <code>scheduler.enabled</code> property as <code>true</code> only in the leader pod’s environment. Other pods should not have this property set to <code>true</code>, so they won’t run the job.</li>
+</ol>
+<h4 id="Steps-to-Implement"><a href="#Steps-to-Implement" class="headerlink" title="Steps to Implement"></a>Steps to Implement</h4><ol>
+<li><p><strong>Create a ConfigMap or Secret for the Scheduler Property</strong>:</p>
+<ul>
+<li>Define a ConfigMap that holds the <code>scheduler.enabled</code> setting for the lead pod.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">scheduler.enabled:</span> <span class="string">&quot;true&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Use Pod Annotations to Select the Leader Pod</strong>:</p>
+<ul>
+<li>When deploying multiple replicas, use a label selector or custom script to ensure only one pod is given the <code>scheduler.enabled=true</code> setting.</li>
+</ul>
+</li>
+<li><p><strong>Configure the Deployment to Pass the <code>scheduler.enabled</code> Environment Variable</strong>:</p>
+<ul>
+<li>In your Kubernetes Deployment file, you can use <code>envFrom</code> to load the environment variables from the ConfigMap, but with a selector so only one pod uses this ConfigMap.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-job</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>  <span class="comment"># Running multiple instances</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">scheduler-container</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">your-image</span></span><br><span class="line">          <span class="attr">envFrom:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POD_NAME</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Conditional Logic in Spring Boot</strong>:</p>
+<ul>
+<li>With <code>@ConditionalOnProperty</code>, the <code>@Scheduled</code> method will only activate if the <code>scheduler.enabled</code> property is <code>true</code>. So, only the pod with the <code>scheduler.enabled=true</code> environment variable will run the job.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScheduledJob</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Scheduled job is running on the leader pod!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Additional-Consideration-Use-Leader-Election"><a href="#Additional-Consideration-Use-Leader-Election" class="headerlink" title="Additional Consideration: Use Leader Election"></a>Additional Consideration: Use Leader Election</h4><p>For robust setups, you could implement leader election to dynamically select the leader pod. This can be achieved using tools like <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-kubernetes">Spring Cloud Kubernetes Leader Election</a> or implementing a custom leader election mechanism based on a shared lock in an external data store, such as Redis or ZooKeeper.</p>
+<p>By setting <code>scheduler.enabled=true</code> conditionally based on which pod is the elected leader, you can ensure the scheduled job runs in only one container at a time, with the ability to switch seamlessly if the leader pod goes down.</p>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Scheduler provides flexibility and control over task scheduling. By using <code>@Scheduled</code> with different configurations, we can create complex scheduling workflows that address specific business needs.</p>
 
@@ -528,7 +951,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2024-10-28 16:10:12 / Modified: 16:27:07" itemprop="dateCreated datePublished" datetime="2024-10-28T16:10:12-04:00">2024-10-28</time>
+      <time title="Created: 2024-10-28 16:10:12 / Modified: 18:33:37" itemprop="dateCreated datePublished" datetime="2024-10-28T16:10:12-04:00">2024-10-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -562,6 +985,17 @@
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#understanding-avro-format">Understanding Avro Format</a><ul>
 <li><a href="#avro-schema">Avro Schema</a></li>
+<li><a href="#avro-schema-in-depth">Avro Schema in Depth</a><ul>
+<li><a href="#1-schema-basics">1. <strong>Schema Basics</strong></a></li>
+<li><a href="#2-primitive-data-types">2. <strong>Primitive Data Types</strong></a></li>
+<li><a href="#3-complex-data-types">3. <strong>Complex Data Types</strong></a></li>
+<li><a href="#4-union-types">4. <strong>Union Types</strong></a></li>
+<li><a href="#5-default-values">5. <strong>Default Values</strong></a></li>
+<li><a href="#6-schema-evolution">6. <strong>Schema Evolution</strong></a></li>
+<li><a href="#7-named-types-and-namespaces">7. <strong>Named Types and Namespaces</strong></a></li>
+<li><a href="#8-schema-example-with-namespaces">8. <strong>Schema Example with Namespaces</strong></a></li>
+</ul>
+</li>
 <li><a href="#schema-registry">Schema Registry</a></li>
 <li><a href="#storage-architecture-for-avro-in-hdfss3">Storage Architecture for Avro in HDFS&#x2F;S3</a></li>
 <li><a href="#sample-code-in-spark">Sample Code in Spark</a></li>
@@ -569,6 +1003,25 @@
 </li>
 <li><a href="#exploring-parquet-format">Exploring Parquet Format</a><ul>
 <li><a href="#parquet-schema-and-compression">Parquet Schema and Compression</a></li>
+<li><a href="#parquet-schema">Parquet Schema</a><ul>
+<li><a href="#1-schema-hierarchy-and-structure">1. <strong>Schema Hierarchy and Structure</strong></a></li>
+<li><a href="#2-column-definition-required-optional-repeated">2. <strong>Column Definition: Required, Optional, Repeated</strong></a></li>
+<li><a href="#3-definition-and-repetition-levels">3. <strong>Definition and Repetition Levels</strong></a><ul>
+<li><a href="#example-parquet-schema">Example Parquet Schema</a></li>
+<li><a href="#parquet-structure-definition-and-repetition-levels">Parquet Structure: Definition and Repetition Levels</a></li>
+<li><a href="#1-field-name">1. Field: <code>name</code></a></li>
+<li><a href="#2-field-contacts">2. Field: <code>contacts</code></a></li>
+<li><a href="#3-fields-inside-contacts-type-address-number">3. Fields Inside <code>contacts</code>: <code>type</code>, <code>address</code>, <code>number</code></a></li>
+<li><a href="#4-field-addresses">4. Field: <code>addresses</code></a></li>
+<li><a href="#5-fields-inside-addresses-street-city">5. Fields Inside <code>addresses</code>: <code>street</code>, <code>city</code></a></li>
+<li><a href="#example-encoding-with-levels">Example Encoding with Levels</a></li>
+</ul>
+</li>
+<li><a href="#4-logical-types-and-annotations">4. <strong>Logical Types and Annotations</strong></a></li>
+<li><a href="#5-column-index-and-row-group-metadata">5. <strong>Column Index and Row Group Metadata</strong></a></li>
+<li><a href="#example-of-a-parquet-schema-in-json-representation">Example of a Parquet Schema in JSON Representation</a></li>
+</ul>
+</li>
 <li><a href="#storage-architecture-for-parquet-in-hdfss3">Storage Architecture for Parquet in HDFS&#x2F;S3</a></li>
 <li><a href="#sample-code-in-spark-1">Sample Code in Spark</a></li>
 </ul>
@@ -595,6 +1048,76 @@
 <li>The <code>Employee</code> record has fields <code>id</code>, <code>name</code>, <code>email</code>, and <code>salary</code>.</li>
 <li>The <code>email</code> field is optional, allowing <code>null</code> values.</li>
 </ul>
+<p><a name="avro-schema-in-depth"></a></p>
+<h3 id="Avro-Schema-in-Depth"><a href="#Avro-Schema-in-Depth" class="headerlink" title="Avro Schema in Depth"></a>Avro Schema in Depth</h3><p>Apache Avro is a data serialization framework with a focus on compact storage, schema evolution, and interoperability, especially popular in data pipelines with tools like Apache Kafka, Hadoop, and Spark. Avro schema is a JSON-based definition that describes the structure, types, and constraints of the data. This schema allows for efficient serialization and deserialization, making it versatile for data storage and streaming applications.</p>
+<p>Avro’s schema format is highly adaptable, supporting both simple and complex data structures and allowing schema evolution without disrupting data compatibility. This makes Avro particularly suited for big data pipelines and environments where schemas may need frequent updates. Its JSON-based structure is easy to read and interpret while enabling efficient storage and retrieval in binary format, ideal for high-performance data processing.</p>
+<p>Here’s an in-depth look at Avro schemas:</p>
+<p><a name="1-schema-basics"></a></p>
+<h4 id="1-Schema-Basics"><a href="#1-Schema-Basics" class="headerlink" title="1. Schema Basics"></a>1. <strong>Schema Basics</strong></h4><p>   Avro schemas are written in JSON and define the data types and structure. A schema specifies:</p>
+<ul>
+<li><strong>Type</strong>: The data type, like <code>string</code>, <code>int</code>, <code>float</code>, or complex types like <code>record</code> and <code>array</code>.</li>
+<li><strong>Name</strong>: The name of the field (only required for named types like <code>record</code>).</li>
+<li><strong>Namespace</strong>: Optional, used to provide a unique context for named types, helpful in managing type names in larger systems.</li>
+<li><strong>Fields</strong>: Defines each field within complex types, like <code>record</code>.</li>
+</ul>
+<p>   Example of a simple Avro schema:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;User&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;name&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   This schema defines a <code>User</code> record with three fields: <code>id</code>, <code>name</code>, and <code>email</code>.</p>
+<p><a name="2-primitive-data-types"></a></p>
+<h4 id="2-Primitive-Data-Types"><a href="#2-Primitive-Data-Types" class="headerlink" title="2. Primitive Data Types"></a>2. <strong>Primitive Data Types</strong></h4><p>   Avro supports several primitive data types:</p>
+<ul>
+<li><strong>Null</strong>: Represents a null value.</li>
+<li><strong>Boolean</strong>: Represents <code>true</code> or <code>false</code>.</li>
+<li><strong>Int</strong>: 32-bit signed integer.</li>
+<li><strong>Long</strong>: 64-bit signed integer.</li>
+<li><strong>Float</strong>: 32-bit IEEE floating-point number.</li>
+<li><strong>Double</strong>: 64-bit IEEE floating-point number.</li>
+<li><strong>Bytes</strong>: Sequence of bytes, useful for binary data.</li>
+<li><strong>String</strong>: Unicode character sequence.</li>
+</ul>
+<p><a name="3-complex-data-types"></a></p>
+<h4 id="3-Complex-Data-Types"><a href="#3-Complex-Data-Types" class="headerlink" title="3. Complex Data Types"></a>3. <strong>Complex Data Types</strong></h4><p>   Avro supports complex data types to handle more advanced data structures:</p>
+<ul>
+<li><strong>Record</strong>: Similar to a structured data object or table row; contains fields, each with its own name and type.</li>
+<li><strong>Enum</strong>: Defines a list of allowed values.</li>
+<li><strong>Array</strong>: An ordered collection of values of a specified type.</li>
+<li><strong>Map</strong>: A collection of key-value pairs with <code>string</code> keys and values of a specified type.</li>
+<li><strong>Union</strong>: Allows fields to have multiple types, which supports optional fields and complex structures.</li>
+<li><strong>Fixed</strong>: Represents a fixed-size binary value, useful for things like fixed-length IDs.</li>
+</ul>
+<p>   Example of complex types:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Person&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;name&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;age&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;int&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;emails&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;array&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;items&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;address&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Address&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;street&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;city&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   This schema defines a <code>Person</code> record with an optional <code>age</code>, a list of <code>emails</code>, and a nested <code>Address</code> record.</p>
+<p><a name="4-union-types"></a></p>
+<h4 id="4-Union-Types"><a href="#4-Union-Types" class="headerlink" title="4. Union Types"></a>4. <strong>Union Types</strong></h4><p>   Unions in Avro schemas allow a field to hold one of multiple types, helping to represent optional fields:</p>
+<ul>
+<li>A union is represented by an array of types, such as <code>[&quot;null&quot;, &quot;int&quot;]</code> for a nullable integer.</li>
+<li>The first type in the union is considered the default.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;birthdate&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;string&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   Here, <code>birthdate</code> is either <code>null</code> or a <code>string</code>, allowing it to be optional.</p>
+<p><a name="5-default-values"></a></p>
+<h4 id="5-Default-Values"><a href="#5-Default-Values" class="headerlink" title="5. Default Values"></a>5. <strong>Default Values</strong></h4><ul>
+<li>Fields can have default values if they are missing in the data, which is particularly useful when evolving schemas.</li>
+<li>Default values must match the field type and are defined within the schema.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;isActive&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;boolean&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p><a name="6-schema-evolution"></a></p>
+<h4 id="6-Schema-Evolution"><a href="#6-Schema-Evolution" class="headerlink" title="6. Schema Evolution"></a>6. <strong>Schema Evolution</strong></h4><p>   Avro is designed to handle schema evolution, meaning new schemas can be applied to existing data files without breaking compatibility:</p>
+<ul>
+<li><strong>Backward Compatibility</strong>: New schema can read old data (e.g., adding new fields with default values).</li>
+<li><strong>Forward Compatibility</strong>: Old schema can read new data (e.g., adding optional fields).</li>
+<li><strong>Full Compatibility</strong>: Both backward and forward compatible.</li>
+</ul>
+<p>   Schema evolution rules include:</p>
+<ul>
+<li>Adding a new field with a default value is backward-compatible.</li>
+<li>Removing a field is backward-compatible if it is not required by consumers.</li>
+<li>Changing a field type requires careful consideration to ensure compatibility.</li>
+</ul>
+<p><a name="7-named-types-and-namespaces"></a></p>
+<h4 id="7-Named-Types-and-Namespaces"><a href="#7-Named-Types-and-Namespaces" class="headerlink" title="7. Named Types and Namespaces"></a>7. <strong>Named Types and Namespaces</strong></h4><p>   In Avro, named types like <code>record</code> and <code>enum</code> require unique names, often scoped by namespaces:</p>
+<ul>
+<li><strong>Name</strong>: The unique identifier for a type.</li>
+<li><strong>Namespace</strong>: Provides context to prevent naming conflicts, similar to a package in Java or a module in Python.</li>
+</ul>
+<p><a name="8-schema-example-with-namespaces"></a></p>
+<h4 id="8-Schema-Example-with-Namespaces"><a href="#8-Schema-Example-with-Namespaces" class="headerlink" title="8. Schema Example with Namespaces"></a>8. <strong>Schema Example with Namespaces</strong></h4><p>   Example using namespace for managing complex data:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;namespace&quot;</span><span class="punctuation">:</span> <span class="string">&quot;com.example&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Customer&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;contact&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ContactInfo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;string&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></p>
 <p><a name="schema-registry"></a></p>
 <h3 id="Schema-Registry"><a href="#Schema-Registry" class="headerlink" title="Schema Registry"></a>Schema Registry</h3><p><strong>Schema Registry</strong> is a crucial component that allows the storage and retrieval of schemas used by producers and consumers of data. It ensures that producers and consumers agree on the data structure, supporting <strong>schema evolution</strong> and <strong>compatibility checks</strong>.</p>
 <p><strong>Diagram: Schema Registry Workflow</strong></p>
@@ -633,6 +1156,173 @@
 <ul>
 <li>Each <strong>Row Group</strong> contains columns stored together, optimizing compression and query performance.</li>
 <li><strong>Columnar storage</strong> allows quick access to specific fields, reducing read and write times.</li>
+</ul>
+<p><a name="parquet-schema"></a></p>
+<h3 id="Parquet-Schema"><a href="#Parquet-Schema" class="headerlink" title="Parquet Schema"></a>Parquet Schema</h3><p>Parquet’s schema defines the structure, types, and layout of the data stored in the file, making it highly efficient for analytics and queries. This schema is stored in the file’s metadata and allows query engines to interpret the data without needing to read the entire file, which speeds up operations significantly.</p>
+<p>The Parquet schema plays a crucial role in its columnar storage efficiency, managing data sparsity, and enabling rich, nested data structures with low storage overhead. It facilitates schema evolution, where additional columns or fields can be added without rewriting the entire file, and supports advanced filtering and optimizations for large data analytics tasks.</p>
+<p>Here’s an overview of the main components of the Parquet schema:</p>
+<p><a name="1-schema-hierarchy-and-structure"></a></p>
+<h4 id="1-Schema-Hierarchy-and-Structure"><a href="#1-Schema-Hierarchy-and-Structure" class="headerlink" title="1. Schema Hierarchy and Structure"></a>1. <strong>Schema Hierarchy and Structure</strong></h4><p>   Parquet schema is organized hierarchically and supports complex nested structures:</p>
+<ul>
+<li><strong>Message Type</strong>: This is the root element in a Parquet schema, defining the data structure at the highest level.</li>
+<li><strong>Fields</strong>: Each field in the schema has a name, data type, and potentially nested subfields if the data structure is complex. Parquet supports:<ul>
+<li><strong>Primitive Types</strong>: such as <code>int32</code>, <code>int64</code>, <code>boolean</code>, <code>float</code>, <code>double</code>, and <code>binary</code>.</li>
+<li><strong>Nested Types</strong>: Parquet can store complex structures like lists, maps, and structs, which are stored as nested types in the schema.</li>
+</ul>
+</li>
+</ul>
+<p>   For example, a Parquet schema could look like:<br>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">message schema &#123;</span><br><span class="line">    required int32 id;</span><br><span class="line">    optional group address &#123;</span><br><span class="line">        required binary street (UTF8);</span><br><span class="line">        optional int32 zip_code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>   This schema describes a record with an <code>id</code> and an optional nested <code>address</code> group, which contains a <code>street</code> and an optional <code>zip_code</code>.</p>
+<p><a name="2-column-definition-required-optional-repeated"></a></p>
+<h4 id="2-Column-Definition-Required-Optional-Repeated"><a href="#2-Column-Definition-Required-Optional-Repeated" class="headerlink" title="2. Column Definition: Required, Optional, Repeated"></a>2. <strong>Column Definition: Required, Optional, Repeated</strong></h4><p>   Each field in the Parquet schema has a <strong>repetition level</strong>:</p>
+<ul>
+<li><strong>Required</strong>: Every row must contain a value for this field.</li>
+<li><strong>Optional</strong>: A field that can be present or absent in each row.</li>
+<li><strong>Repeated</strong>: Used to model lists or repeated elements, allowing multiple values for the field in a row.</li>
+</ul>
+<p><a name="3-definition-and-repetition-levels"></a></p>
+<h4 id="3-Definition-and-Repetition-Levels"><a href="#3-Definition-and-Repetition-Levels" class="headerlink" title="3. Definition and Repetition Levels"></a>3. <strong>Definition and Repetition Levels</strong></h4><p>  Parquet’s schema model is hierarchical and optimized for efficient storage and retrieval in columnar format. It uses <strong>Definition Levels</strong> and <strong>Repetition Levels</strong> to handle nullability, optional fields, and nested data structures. Let’s walk through an example to show how these levels work.</p>
+<p>   To manage complex data structures and sparsity, Parquet uses <strong>definition levels</strong> and <strong>repetition levels</strong>:</p>
+<ul>
+<li><strong>Definition Levels</strong> track whether each level in the hierarchy has data or is <code>null</code>, it tells us how deep in the structure a field is defined.</li>
+<li><strong>Repetition Levels</strong> track whether an element is the first instance or a repeated instance in nested lists or repeated fields, it tells us if the field is part of a repeated structure and, if so, how deep the repeat goes.</li>
+</ul>
+<p>   For instance, if a row has a list of addresses, the repetition levels can indicate the position of each address within the list, while definition levels show whether each element is present or missing.</p>
+<h5 id="Example-Parquet-Schema"><a href="#Example-Parquet-Schema" class="headerlink" title="Example Parquet Schema"></a>Example Parquet Schema</h5><p>Consider the following JSON structure, which could be a nested data schema for a Parquet file:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;contacts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice@example.com&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addresses&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main St&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Wonderland&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Here’s the corresponding Parquet schema:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">  required binary name (UTF8);</span><br><span class="line">  repeated group contacts &#123;</span><br><span class="line">    required binary type (UTF8);</span><br><span class="line">    optional binary address (UTF8);</span><br><span class="line">    optional binary number (UTF8);</span><br><span class="line">  &#125;</span><br><span class="line">  repeated group addresses &#123;</span><br><span class="line">    required binary street (UTF8);</span><br><span class="line">    required binary city (UTF8);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Parquet-Structure-Definition-and-Repetition-Levels"><a href="#Parquet-Structure-Definition-and-Repetition-Levels" class="headerlink" title="Parquet Structure: Definition and Repetition Levels"></a>Parquet Structure: Definition and Repetition Levels</h5><ol>
+<li><strong>Definition Level</strong>: Indicates the presence or absence of values at each level in a schema. This level is used to define nullability and optional fields.</li>
+<li><strong>Repetition Level</strong>: Indicates if a field is part of a repeated structure (e.g., a list or an array). This is useful for nested or repeated structures, telling the reader if a given level repeats within the hierarchy.</li>
+</ol>
+<p>Let’s break down how these levels work for each field in the example above:</p>
+<h5 id="1-Field-name"><a href="#1-Field-name" class="headerlink" title="1. Field: name"></a>1. Field: <code>name</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 (required field, so it’s always defined)</li>
+<li><strong>Repetition Level</strong>: 0 (not repeated)</li>
+</ul>
+<h5 id="2-Field-contacts"><a href="#2-Field-contacts" class="headerlink" title="2. Field: contacts"></a>2. Field: <code>contacts</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 to 2, depending on the presence of <code>address</code> and <code>number</code> fields.<ul>
+<li>If both <code>address</code> and <code>number</code> are <code>null</code>, the definition level is lower.</li>
+</ul>
+</li>
+<li><strong>Repetition Level</strong>: 1 (this field is repeated since <code>contacts</code> is a list)</li>
+</ul>
+<h5 id="3-Fields-Inside-contacts-type-address-number"><a href="#3-Fields-Inside-contacts-type-address-number" class="headerlink" title="3. Fields Inside contacts: type, address, number"></a>3. Fields Inside <code>contacts</code>: <code>type</code>, <code>address</code>, <code>number</code></h5><ul>
+<li><strong>type</strong><ul>
+<li><strong>Definition Level</strong>: 2 (required field within the repeated group)</li>
+<li><strong>Repetition Level</strong>: 1</li>
+</ul>
+</li>
+<li><strong>address</strong> and <strong>number</strong><ul>
+<li><strong>Definition Level</strong>: 2 or 3 (optional fields)<ul>
+<li>A definition level of 2 means the <code>contacts</code> object is present but <code>address</code> or <code>number</code> is <code>null</code>.</li>
+<li>A definition level of 3 indicates both fields are filled.</li>
+</ul>
+</li>
+<li><strong>Repetition Level</strong>: 1 (repeated inside <code>contacts</code>)</li>
+</ul>
+</li>
+</ul>
+<h5 id="4-Field-addresses"><a href="#4-Field-addresses" class="headerlink" title="4. Field: addresses"></a>4. Field: <code>addresses</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 to 2</li>
+<li><strong>Repetition Level</strong>: 1 (repeated field)</li>
+</ul>
+<h5 id="5-Fields-Inside-addresses-street-city"><a href="#5-Fields-Inside-addresses-street-city" class="headerlink" title="5. Fields Inside addresses: street, city"></a>5. Fields Inside <code>addresses</code>: <code>street</code>, <code>city</code></h5><ul>
+<li>Both <code>street</code> and <code>city</code> are required within the repeated <code>addresses</code> group.</li>
+<li><strong>Definition Level</strong>: 2</li>
+<li><strong>Repetition Level</strong>: 1 (both are repeated with each <code>addresses</code> group entry)</li>
+</ul>
+<h5 id="Example-Encoding-with-Levels"><a href="#Example-Encoding-with-Levels" class="headerlink" title="Example Encoding with Levels"></a>Example Encoding with Levels</h5><p>Assuming data with these values:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;contacts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123-456-7890&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addresses&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main St&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Wonderland&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>The encoded levels might look like this:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Definition Level</th>
+<th>Repetition Level</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>“Alice”</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>contacts[0].type</td>
+<td>“email”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[0].address</td>
+<td>“<a href="mailto:&#97;&#x6c;&#x69;&#x63;&#101;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;">&#97;&#x6c;&#x69;&#x63;&#101;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;</a>“</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[0].number</td>
+<td>null</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].type</td>
+<td>“phone”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].address</td>
+<td>null</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].number</td>
+<td>“123-456-7890”</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>addresses[0].street</td>
+<td>“123 Main St”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>addresses[0].city</td>
+<td>“Wonderland”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>These levels help Parquet efficiently handle complex nested and repeated data structures, enabling better data compression and faster querying by only storing relevant levels and values for each entry.</p>
+<p><a name="4-logical-types-and-annotations"></a></p>
+<h4 id="4-Logical-Types-and-Annotations"><a href="#4-Logical-Types-and-Annotations" class="headerlink" title="4. Logical Types and Annotations"></a>4. <strong>Logical Types and Annotations</strong></h4><p>   Parquet supports logical types that provide additional context for primitive types:</p>
+<ul>
+<li><strong>Logical Types</strong>: These are type annotations like <code>UTF8</code> for text strings, <code>DATE</code> for dates, and <code>DECIMAL</code> for high-precision decimals.</li>
+<li>Logical types help map data from systems that use richer data types (like SQL databases) to Parquet’s primitive types.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optional int32 birthdate (DATE);</span><br></pre></td></tr></table></figure></p>
+<p><a name="5-column-index-and-row-group-metadata"></a></p>
+<h4 id="5-Column-Index-and-Row-Group-Metadata"><a href="#5-Column-Index-and-Row-Group-Metadata" class="headerlink" title="5. Column Index and Row Group Metadata"></a>5. <strong>Column Index and Row Group Metadata</strong></h4><ul>
+<li><strong>Column Index</strong>: Parquet files include metadata about each column, such as min&#x2F;max values, null counts, and distinct counts. This allows query engines to skip entire blocks if they don’t match the filter criteria.</li>
+<li><strong>Row Group Metadata</strong>: Parquet stores data in row groups (blocks of rows), each containing column data for that group. Each row group stores metadata like the number of rows and data size, which helps with efficient reads.</li>
+</ul>
+<p><a name="example-of-a-parquet-schema-in-json-representation"></a></p>
+<h4 id="Example-of-a-Parquet-Schema-in-JSON-Representation"><a href="#Example-of-a-Parquet-Schema-in-JSON-Representation" class="headerlink" title="Example of a Parquet Schema in JSON Representation"></a>Example of a Parquet Schema in JSON Representation</h4><p>A Parquet schema can also be represented in JSON format to show the hierarchy and structure clearly. For instance:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;schema&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INT32&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REQUIRED&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;address&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;group&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;OPTIONAL&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;street&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BINARY&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;logicalType&quot;</span><span class="punctuation">:</span> <span class="string">&quot;UTF8&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REQUIRED&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;zip_code&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INT32&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;OPTIONAL&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>In this JSON schema:</p>
+<ul>
+<li>The <code>id</code> field is required.</li>
+<li>The <code>address</code> field is optional and has two nested fields: a required <code>street</code> and an optional <code>zip_code</code>.</li>
 </ul>
 <p><a name="storage-architecture-for-parquet-in-hdfs-s3"></a></p>
 <h3 id="Storage-Architecture-for-Parquet-in-HDFS-S3"><a href="#Storage-Architecture-for-Parquet-in-HDFS-S3" class="headerlink" title="Storage Architecture for Parquet in HDFS&#x2F;S3"></a>Storage Architecture for Parquet in HDFS&#x2F;S3</h3><p>In HDFS&#x2F;S3 storage, Parquet files are organized in row groups with each column stored independently within those groups.</p>
@@ -1859,186 +2549,6 @@ This enhanced Markdown document covers each requested update, including detailed
 </ul>
 <hr>
 <p>This article provides a comprehensive overview of Keycloak, covering its architecture, components, and practical applications. By understanding Keycloak, developers and administrators can build secure and scalable applications that meet the demands of today’s digital landscape.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-OAuth-2-0-and-OpenID-Connect/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Deep-Dive-into-OAuth-2-0-and-OpenID-Connect/" class="post-title-link" itemprop="url">Deep Dive into OAuth 2.0 and OpenID Connect</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-27 23:23:58 / Modified: 23:28:14" itemprop="dateCreated datePublished" datetime="2024-10-27T23:23:58-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/OAuth/" itemprop="url" rel="index"><span itemprop="name">OAuth</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#oauth-20-the-authorization-framework">OAuth 2.0: The Authorization Framework</a><ul>
-<li><a href="#11-overview">1.1 Overview</a></li>
-<li><a href="#12-key-components">1.2 Key Components</a></li>
-<li><a href="#13-authorization-grant-types">1.3 Authorization Grant Types</a></li>
-<li><a href="#14-access-tokens-and-refresh-tokens">1.4 Access Tokens and Refresh Tokens</a></li>
-<li><a href="#15-security-considerations">1.5 Security Considerations</a></li>
-</ul>
-</li>
-<li><a href="#openid-connect-the-authentication-layer">OpenID Connect: The Authentication Layer</a><ul>
-<li><a href="#21-overview">2.1 Overview</a></li>
-<li><a href="#22-key-components">2.2 Key Components</a></li>
-<li><a href="#23-authentication-flows">2.3 Authentication Flows</a></li>
-<li><a href="#24-claims-and-scopes">2.4 Claims and Scopes</a></li>
-<li><a href="#25-security-considerations">2.5 Security Considerations</a></li>
-</ul>
-</li>
-<li><a href="#practical-applications">Practical Applications</a><ul>
-<li><a href="#31-single-sign-on-sso">3.1 Single Sign-On (SSO)</a></li>
-<li><a href="#32-api-authorization">3.2 API Authorization</a></li>
-<li><a href="#33-mobile-and-iot-applications">3.3 Mobile and IoT Applications</a></li>
-<li><a href="#34-federated-identity">3.4 Federated Identity</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-<li><a href="#references">References</a></li>
-</ul>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the modern web ecosystem, securing user data and managing authentication and authorization are critical tasks. OAuth 2.0 and OpenID Connect (OIDC) are two widely adopted standards that help developers achieve these goals. OAuth 2.0 focuses on authorization, while OpenID Connect extends OAuth 2.0 to provide authentication. This article will delve into the intricacies of both protocols, exploring their architecture, components, and practical applications.</p>
-<p><a name="oauth-20-the-authorization-framework"></a></p>
-<h2 id="OAuth-2-0-The-Authorization-Framework"><a href="#OAuth-2-0-The-Authorization-Framework" class="headerlink" title="OAuth 2.0: The Authorization Framework"></a>OAuth 2.0: The Authorization Framework</h2><p><a name="11-overview"></a></p>
-<h3 id="1-1-Overview"><a href="#1-1-Overview" class="headerlink" title="1.1 Overview"></a>1.1 Overview</h3><p>OAuth 2.0 is an authorization framework that enables third-party applications to obtain limited access to a user’s resources without exposing the user’s credentials. It is designed to work across different platforms and environments, including web applications, mobile apps, and APIs.</p>
-<p><a name="12-key-components"></a></p>
-<h3 id="1-2-Key-Components"><a href="#1-2-Key-Components" class="headerlink" title="1.2 Key Components"></a>1.2 Key Components</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Owner    |       | Client            |       | Authorization    |</span><br><span class="line">| (User)            |       | (Application)     |       | Server            |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (1) Authorization Request |                           |</span><br><span class="line">        |--------------------------&gt;|                           |</span><br><span class="line">        |                           | (2) Redirect to Auth Server|</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (3) User Authentication  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (4) Authorization Grant  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (5) Access Token Request  |</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (6) Access Token Response|</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (7) Access Resource       |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Server   |       | Client            |       | Authorization    |</span><br><span class="line">| (API)             |       | (Application)     |       | Server            |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<p><a name="13-authorization-grant-types"></a></p>
-<h3 id="1-3-Authorization-Grant-Types"><a href="#1-3-Authorization-Grant-Types" class="headerlink" title="1.3 Authorization Grant Types"></a>1.3 Authorization Grant Types</h3><p>OAuth 2.0 defines several grant types, each suited for different use cases:</p>
-<ul>
-<li><strong>Authorization Code</strong>: Used for server-side web applications. The client receives an authorization code from the authorization server and exchanges it for an access token.</li>
-<li><strong>Implicit</strong>: Used for client-side web applications. The access token is returned directly to the client.</li>
-<li><strong>Resource Owner Password Credentials</strong>: Used when the client has a trusted relationship with the resource owner (e.g., a mobile app).</li>
-<li><strong>Client Credentials</strong>: Used for machine-to-machine communication where the client itself is the resource owner.</li>
-<li><strong>Device Code</strong>: Used for devices with limited input capabilities (e.g., smart TVs).</li>
-</ul>
-<p><a name="14-access-tokens-and-refresh-tokens"></a></p>
-<h3 id="1-4-Access-Tokens-and-Refresh-Tokens"><a href="#1-4-Access-Tokens-and-Refresh-Tokens" class="headerlink" title="1.4 Access Tokens and Refresh Tokens"></a>1.4 Access Tokens and Refresh Tokens</h3><ul>
-<li><strong>Access Token</strong>: A credential that the client uses to access the resource server. It has a limited lifetime and is typically short-lived.</li>
-<li><strong>Refresh Token</strong>: A long-lived token that the client can use to obtain a new access token when the current one expires.</li>
-</ul>
-<p><a name="15-security-considerations"></a></p>
-<h3 id="1-5-Security-Considerations"><a href="#1-5-Security-Considerations" class="headerlink" title="1.5 Security Considerations"></a>1.5 Security Considerations</h3><ul>
-<li><strong>Token Storage</strong>: Access tokens should be stored securely, especially in client-side applications.</li>
-<li><strong>Token Expiry</strong>: Access tokens should have a short expiration time to minimize the risk of misuse.</li>
-<li><strong>Token Revocation</strong>: Mechanisms should be in place to revoke tokens if they are compromised.</li>
-</ul>
-<p><a name="openid-connect-the-authentication-layer"></a></p>
-<h2 id="OpenID-Connect-The-Authentication-Layer"><a href="#OpenID-Connect-The-Authentication-Layer" class="headerlink" title="OpenID Connect: The Authentication Layer"></a>OpenID Connect: The Authentication Layer</h2><p><a name="21-overview"></a></p>
-<h3 id="2-1-Overview"><a href="#2-1-Overview" class="headerlink" title="2.1 Overview"></a>2.1 Overview</h3><p>OpenID Connect (OIDC) is an authentication layer built on top of OAuth 2.0. It allows clients to verify the identity of the end-user based on the authentication performed by an authorization server. OIDC adds an ID token, which contains information about the authenticated user.</p>
-<p><a name="22-key-components"></a></p>
-<h3 id="2-2-Key-Components"><a href="#2-2-Key-Components" class="headerlink" title="2.2 Key Components"></a>2.2 Key Components</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Owner    |       | Client            |       | Authorization    |</span><br><span class="line">| (User)            |       | (Application)     |       | Server            |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (1) Authorization Request |                           |</span><br><span class="line">        |--------------------------&gt;|                           |</span><br><span class="line">        |                           | (2) Redirect to Auth Server|</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (3) User Authentication  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (4) Authorization Grant  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (5) Access Token Request  |</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (6) Access Token Response|</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (7) Access Resource       |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Server   |       | Client            |       | Authorization    |</span><br><span class="line">| (API)             |       | (Application)     |       | Server            |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (8) ID Token             |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (9) UserInfo Request      |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (10) UserInfo Response    |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Server   |       | Client            |       | Authorization    |</span><br><span class="line">| (API)             |       | (Application)     |       | Server            |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<p><a name="23-authentication-flows"></a></p>
-<h3 id="2-3-Authentication-Flows"><a href="#2-3-Authentication-Flows" class="headerlink" title="2.3 Authentication Flows"></a>2.3 Authentication Flows</h3><ul>
-<li><strong>Authorization Code Flow</strong>: Similar to OAuth 2.0’s authorization code grant, but with the addition of the ID token.</li>
-<li><strong>Implicit Flow</strong>: Similar to OAuth 2.0’s implicit grant, but with the addition of the ID token.</li>
-<li><strong>Hybrid Flow</strong>: Combines aspects of both the authorization code and implicit flows.</li>
-</ul>
-<p><a name="24-claims-and-scopes"></a></p>
-<h3 id="2-4-Claims-and-Scopes"><a href="#2-4-Claims-and-Scopes" class="headerlink" title="2.4 Claims and Scopes"></a>2.4 Claims and Scopes</h3><ul>
-<li><strong>Claims</strong>: Information about the authenticated user, such as name, email, and profile picture.</li>
-<li><strong>Scopes</strong>: Permissions requested by the client, such as <code>openid</code>, <code>profile</code>, <code>email</code>, and <code>address</code>.</li>
-</ul>
-<p><a name="25-security-considerations"></a></p>
-<h3 id="2-5-Security-Considerations"><a href="#2-5-Security-Considerations" class="headerlink" title="2.5 Security Considerations"></a>2.5 Security Considerations</h3><ul>
-<li><strong>Token Validation</strong>: Clients must validate ID tokens to ensure they are authentic and have not been tampered with.</li>
-<li><strong>Scope Management</strong>: Clients should request only the scopes necessary for their functionality.</li>
-<li><strong>Session Management</strong>: Mechanisms should be in place to manage user sessions and handle logout.</li>
-</ul>
-<p><a name="practical-applications"></a></p>
-<h2 id="Practical-Applications"><a href="#Practical-Applications" class="headerlink" title="Practical Applications"></a>Practical Applications</h2><p><a name="31-single-sign-on-sso"></a></p>
-<h3 id="3-1-Single-Sign-On-SSO"><a href="#3-1-Single-Sign-On-SSO" class="headerlink" title="3.1 Single Sign-On (SSO)"></a>3.1 Single Sign-On (SSO)</h3><p>OAuth 2.0 and OpenID Connect enable Single Sign-On (SSO), allowing users to authenticate once and access multiple applications without re-entering their credentials. This is particularly useful in enterprise environments where users need to access multiple internal applications.</p>
-<p><a name="32-api-authorization"></a></p>
-<h3 id="3-2-API-Authorization"><a href="#3-2-API-Authorization" class="headerlink" title="3.2 API Authorization"></a>3.2 API Authorization</h3><p>OAuth 2.0 is widely used to secure APIs by providing access tokens that grant limited access to resources. This is essential for building secure microservices architectures.</p>
-<p><a name="33-mobile-and-iot-applications"></a></p>
-<h3 id="3-3-Mobile-and-IoT-Applications"><a href="#3-3-Mobile-and-IoT-Applications" class="headerlink" title="3.3 Mobile and IoT Applications"></a>3.3 Mobile and IoT Applications</h3><p>OAuth 2.0’s device code grant type is particularly useful for devices with limited input capabilities, such as smart TVs and IoT devices. It allows users to authenticate on a secondary device (e.g., a smartphone) and grant access to the primary device.</p>
-<p><a name="34-federated-identity"></a></p>
-<h3 id="3-4-Federated-Identity"><a href="#3-4-Federated-Identity" class="headerlink" title="3.4 Federated Identity"></a>3.4 Federated Identity</h3><p>OpenID Connect enables federated identity, allowing users to authenticate using their existing credentials from a trusted identity provider (e.g., Google, Facebook). This reduces the need for users to create new accounts and manage multiple sets of credentials.</p>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>OAuth 2.0 and OpenID Connect are powerful tools for securing modern web applications. OAuth 2.0 provides a flexible framework for authorization, while OpenID Connect adds an authentication layer on top of it. Together, they enable secure, scalable, and user-friendly authentication and authorization solutions.</p>
-<p>Understanding the intricacies of these protocols is essential for developers building secure applications in today’s interconnected world. By leveraging OAuth 2.0 and OpenID Connect, developers can ensure that their applications are both secure and user-friendly.</p>
-<p><a name="references"></a></p>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6749">OAuth 2.0 Specification</a></li>
-<li><a target="_blank" rel="noopener" href="https://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core 1.0</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.oauth.com/">OAuth 2.0 and OpenID Connect: A Comprehensive Guide</a></li>
-</ul>
-<p>This article provides a comprehensive overview of OAuth 2.0 and OpenID Connect, covering their architecture, components, and practical applications. By understanding these protocols, developers can build secure and scalable applications that meet the demands of today’s digital landscape.</p>
 
       
     </div>
