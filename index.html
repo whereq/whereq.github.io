@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">41</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,418 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/29/Programming-Standards-of-Java-Concurrency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/29/Programming-Standards-of-Java-Concurrency/" class="post-title-link" itemprop="url">Programming Standards of Java Concurrency</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-29 00:56:32 / Modified: 01:04:22" itemprop="dateCreated datePublished" datetime="2024-10-29T00:56:32-04:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/Concurrency/" itemprop="url" rel="index"><span itemprop="name">Concurrency</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/Concurrency/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-thread-safety-in-singleton-objects">1. Thread Safety in Singleton Objects</a></li>
+<li><a href="#2-meaningful-thread-naming">2. Meaningful Thread Naming</a></li>
+<li><a href="#3-thread-pool-usage">3. Thread Pool Usage</a></li>
+<li><a href="#4-explicit-threadpoolexecutor-configuration">4. Explicit ThreadPoolExecutor Configuration</a></li>
+<li><a href="#5-thread-safe-date-formatting">5. Thread-Safe Date Formatting</a></li>
+<li><a href="#6-threadlocal-variable-cleanup">6. ThreadLocal Variable Cleanup</a></li>
+<li><a href="#7-locking-performance-considerations">7. Locking Performance Considerations</a></li>
+<li><a href="#8-consistent-locking-order">8. Consistent Locking Order</a></li>
+<li><a href="#9-exception-handling-in-locking">9. Exception Handling in Locking</a></li>
+<li><a href="#10-optimistic-and-pessimistic-locking">10. Optimistic and Pessimistic Locking</a></li>
+<li><a href="#11-scheduledexecutorservice-for-timed-tasks">11. ScheduledExecutorService for Timed Tasks</a></li>
+<li><a href="#12-countdownlatch-for-synchronization">12. CountDownLatch for Synchronization</a></li>
+<li><a href="#13-random-instance-management">13. Random Instance Management</a></li>
+<li><a href="#14-double-checked-locking">14. Double-Checked Locking</a></li>
+<li><a href="#15-volatile-and-atomic-operations">15. Volatile and Atomic Operations</a></li>
+<li><a href="#16-hashmap-resize-risks">16. HashMap Resize Risks</a></li>
+<li><a href="#17-threadlocal-usage">17. ThreadLocal Usage</a></li>
+</ul>
+<hr>
+<p>Thread safety is a critical aspect of building robust and scalable Java applications. Ensuring that your application handles concurrent operations correctly can prevent many common issues such as race conditions, deadlocks, and data inconsistencies. This article provides best practices and detailed guidelines for achieving thread safety in Java applications.</p>
+<hr>
+<p><a name="1-thread-safety-in-singleton-objects"></a></p>
+<h1 id="1-Thread-Safety-in-Singleton-Objects"><a href="#1-Thread-Safety-in-Singleton-Objects" class="headerlink" title="1. Thread Safety in Singleton Objects"></a>1. Thread Safety in Singleton Objects</h1><ul>
+<li><strong>Requirement</strong>: Ensure that singleton objects and their methods are thread-safe.</li>
+<li><strong>Explanation</strong>: Resource-driven classes, utility classes, and singleton factory classes must be thread-safe to prevent race conditions.</li>
+</ul>
+<p><a name="2-meaningful-thread-naming"></a></p>
+<h1 id="2-Meaningful-Thread-Naming"><a href="#2-Meaningful-Thread-Naming" class="headerlink" title="2. Meaningful Thread Naming"></a>2. Meaningful Thread Naming</h1><ul>
+<li><strong>Requirement</strong>: Assign meaningful names to threads and thread pools for easier debugging.</li>
+<li><strong>Example</strong>: Custom thread factory with grouping based on external features (e.g., datacenter ID).</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserThreadFactory</span> <span class="keyword">implements</span> <span class="title class_">ThreadFactory</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String namePrefix;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">AtomicInteger</span> <span class="variable">nextId</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    UserThreadFactory(String whatFeaturOfGroup) &#123;</span><br><span class="line">        namePrefix = <span class="string">&quot;From UserThreadFactory&#x27;s &quot;</span> + whatFeaturOfGroup + <span class="string">&quot;-Worker-&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Thread <span class="title function_">newThread</span><span class="params">(Runnable task)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> namePrefix + nextId.getAndIncrement();</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="literal">null</span>, task, name, <span class="number">0</span>, <span class="literal">false</span>);</span><br><span class="line">        System.out.println(thread.getName());</span><br><span class="line">        <span class="keyword">return</span> thread;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><a name="3-thread-pool-usage"></a></p>
+<h1 id="3-Thread-Pool-Usage"><a href="#3-Thread-Pool-Usage" class="headerlink" title="3. Thread Pool Usage"></a>3. Thread Pool Usage</h1><ul>
+<li><strong>Requirement</strong>: Use thread pools instead of creating threads manually.</li>
+<li><strong>Explanation</strong>: Thread pools reduce the overhead of thread creation and destruction, preventing resource exhaustion and excessive context switching.</li>
+</ul>
+<hr>
+<p><a name="4-explicit-threadpoolexecutor-configuration"></a></p>
+<h1 id="4-Explicit-ThreadPoolExecutor-Configuration"><a href="#4-Explicit-ThreadPoolExecutor-Configuration" class="headerlink" title="4. Explicit ThreadPoolExecutor Configuration"></a>4. Explicit ThreadPoolExecutor Configuration</h1><ul>
+<li><strong>Requirement</strong>: Use <code>ThreadPoolExecutor</code> instead of <code>Executors</code> for creating thread pools.</li>
+<li><strong>Explanation</strong>: <code>Executors</code> can lead to resource exhaustion due to unbounded queues and thread creation.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    corePoolSize, maxPoolSize, keepAliveTime, TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;&gt;(queueCapacity),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">UserThreadFactory</span>(<span class="string">&quot;Datacenter-1&quot;</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="5-thread-safe-date-formatting"></a></p>
+<h1 id="5-Thread-Safe-Date-Formatting"><a href="#5-Thread-Safe-Date-Formatting" class="headerlink" title="5. Thread-Safe Date Formatting"></a>5. Thread-Safe Date Formatting</h1><ul>
+<li><strong>Requirement</strong>: Use thread-safe date formatting.</li>
+<li><strong>Example</strong>: Use <code>ThreadLocal</code> for <code>SimpleDateFormat</code> or switch to <code>DateTimeFormatter</code> in JDK 8.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;DateFormat&gt; df = ThreadLocal.withInitial(() -&gt; <span class="keyword">new</span> <span class="title class_">SimpleDateFormat</span>(<span class="string">&quot;yyyy-MM-dd&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="6-threadlocal-variable-cleanup"></a></p>
+<h1 id="6-ThreadLocal-Variable-Cleanup"><a href="#6-ThreadLocal-Variable-Cleanup" class="headerlink" title="6. ThreadLocal Variable Cleanup"></a>6. ThreadLocal Variable Cleanup</h1><ul>
+<li><strong>Requirement</strong>: Clean up <code>ThreadLocal</code> variables, especially in thread pools.</li>
+<li><strong>Example</strong>: Use <code>try-finally</code> blocks to ensure cleanup.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">objectThreadLocal.set(userInfo);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    objectThreadLocal.remove();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="7-locking-performance-considerations"></a></p>
+<h1 id="7-Locking-Performance-Considerations"><a href="#7-Locking-Performance-Considerations" class="headerlink" title="7. Locking Performance Considerations"></a>7. Locking Performance Considerations</h1><ul>
+<li><strong>Requirement</strong>: Minimize the performance impact of locks.</li>
+<li><strong>Explanation</strong>: Prefer lock-free data structures, lock only necessary code blocks, and use object-level locks instead of class-level locks.</li>
+</ul>
+<hr>
+<p><a name="8-consistent-locking-order"></a></p>
+<h1 id="8-Consistent-Locking-Order"><a href="#8-Consistent-Locking-Order" class="headerlink" title="8. Consistent Locking Order"></a>8. Consistent Locking Order</h1><ul>
+<li><strong>Requirement</strong>: Maintain consistent locking order to prevent deadlocks.</li>
+<li><strong>Explanation</strong>: Ensure that all threads acquire locks in the same order to avoid circular wait conditions.</li>
+</ul>
+<hr>
+<p><a name="9-exception-handling-in-locking"></a></p>
+<h1 id="9-Exception-Handling-in-Locking"><a href="#9-Exception-Handling-in-Locking" class="headerlink" title="9. Exception Handling in Locking"></a>9. Exception Handling in Locking</h1><ul>
+<li><strong>Requirement</strong>: Handle exceptions properly to avoid lock leaks.</li>
+<li><strong>Example</strong>: Ensure that locks are released even if exceptions occur.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">isLocked</span> <span class="operator">=</span> lock.tryLock();</span><br><span class="line"><span class="keyword">if</span> (isLocked) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        doSomething();</span><br><span class="line">        doOthers();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="10-optimistic-and-pessimistic-locking"></a></p>
+<h1 id="10-Optimistic-and-Pessimistic-Locking"><a href="#10-Optimistic-and-Pessimistic-Locking" class="headerlink" title="10. Optimistic and Pessimistic Locking"></a>10. Optimistic and Pessimistic Locking</h1><ul>
+<li><strong>Requirement</strong>: Use appropriate locking strategies based on conflict probability.</li>
+<li><strong>Explanation</strong>: Use optimistic locking for low conflict scenarios and pessimistic locking for high conflict scenarios.</li>
+</ul>
+<hr>
+<p><a name="11-scheduledexecutorservice-for-timed-tasks"></a></p>
+<h1 id="11-ScheduledExecutorService-for-Timed-Tasks"><a href="#11-ScheduledExecutorService-for-Timed-Tasks" class="headerlink" title="11. ScheduledExecutorService for Timed Tasks"></a>11. ScheduledExecutorService for Timed Tasks</h1><ul>
+<li><strong>Requirement</strong>: Use <code>ScheduledExecutorService</code> instead of <code>Timer</code> for concurrent timed tasks.</li>
+<li><strong>Explanation</strong>: <code>Timer</code> can terminate all tasks if one throws an uncaught exception.</li>
+</ul>
+<hr>
+<p><a name="12-countdownlatch-for-synchronization"></a></p>
+<h1 id="12-CountDownLatch-for-Synchronization"><a href="#12-CountDownLatch-for-Synchronization" class="headerlink" title="12. CountDownLatch for Synchronization"></a>12. CountDownLatch for Synchronization</h1><ul>
+<li><strong>Requirement</strong>: Use <code>CountDownLatch</code> for synchronization in multi-threaded tasks.</li>
+<li><strong>Explanation</strong>: Ensure that all threads call <code>countDown</code> and handle exceptions to avoid blocking the main thread.</li>
+</ul>
+<hr>
+<p><a name="13-random-instance-management"></a></p>
+<h1 id="13-Random-Instance-Management"><a href="#13-Random-Instance-Management" class="headerlink" title="13. Random Instance Management"></a>13. Random Instance Management</h1><ul>
+<li><strong>Requirement</strong>: Avoid sharing <code>Random</code> instances across threads.</li>
+<li><strong>Example</strong>: Use <code>ThreadLocalRandom</code> in JDK 7+ or ensure each thread has its own <code>Random</code> instance.</li>
+</ul>
+<hr>
+<p><a name="14-double-checked-locking"></a></p>
+<h1 id="14-Double-Checked-Locking"><a href="#14-Double-Checked-Locking" class="headerlink" title="14. Double-Checked Locking"></a>14. Double-Checked Locking</h1><ul>
+<li><strong>Requirement</strong>: Use <code>volatile</code> for double-checked locking to avoid initialization issues.</li>
+<li><strong>Example</strong>: Declare the target variable as <code>volatile</code>.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">Helper</span> <span class="variable">helper</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="15-volatile-and-atomic-operations"></a></p>
+<h1 id="15-Volatile-and-Atomic-Operations"><a href="#15-Volatile-and-Atomic-Operations" class="headerlink" title="15. Volatile and Atomic Operations"></a>15. Volatile and Atomic Operations</h1><ul>
+<li><strong>Requirement</strong>: Use <code>volatile</code> for one-write-many-read scenarios and <code>Atomic</code> classes for multi-write scenarios.</li>
+<li><strong>Example</strong>: Use <code>AtomicInteger</code> or <code>LongAdder</code> for atomic operations.</li>
+</ul>
+<hr>
+<p><a name="hashmap-resize-risks"></a></p>
+<h1 id="16-HashMap-Resize-Risks"><a href="#16-HashMap-Resize-Risks" class="headerlink" title="16. HashMap Resize Risks"></a>16. HashMap Resize Risks</h1><ul>
+<li><strong>Requirement</strong>: Be cautious of <code>HashMap</code> resizing in high-concurrency scenarios.</li>
+<li><strong>Explanation</strong>: Resizing can lead to deadlocks and high CPU usage.</li>
+</ul>
+<hr>
+<p><a name="threadlocal-usage"></a></p>
+<h1 id="17-ThreadLocal-Usage"><a href="#17-ThreadLocal-Usage" class="headerlink" title="17. ThreadLocal Usage"></a>17. ThreadLocal Usage</h1><ul>
+<li><strong>Requirement</strong>: Use <code>ThreadLocal</code> with static variables carefully.</li>
+<li><strong>Explanation</strong>: <code>ThreadLocal</code> variables are shared within a thread but can cause issues if not managed properly.</li>
+</ul>
+<hr>
+<p>By following these best practices, you can ensure that your Java application is thread-safe, scalable, and robust. These guidelines cover a wide range of scenarios, from basic thread safety to advanced concurrency patterns, helping you build high-performance applications.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/" class="post-title-link" itemprop="url">Deep Dive into Spring Boot Multi-Threading</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-29 00:40:38 / Modified: 00:48:38" itemprop="dateCreated datePublished" datetime="2024-10-29T00:40:38-04:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction-to-spring-boot-multi-threading">Introduction to Spring Boot Multi-Threading</a></li>
+<li><a href="#best-practices-for-spring-boot-multi-threading">Best Practices for Spring Boot Multi-Threading</a></li>
+<li><a href="#annotation-based-configuration">Annotation-Based Configuration</a></li>
+<li><a href="#diagram-of-multi-threading-in-spring-boot">Diagram of Multi-Threading in Spring Boot</a></li>
+<li><a href="#sample-code-with-detailed-comments">Sample Code with Detailed Comments</a><ul>
+<li><a href="#configuration-class">Configuration Class</a></li>
+<li><a href="#service-class">Service Class</a></li>
+<li><a href="#controller-class">Controller Class</a></li>
+<li><a href="#application-class">Application Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-1-flow-control-and-backpressure-handling">Complex Scenario 1: Flow Control and Backpressure Handling</a><ul>
+<li><a href="#configuration-class-1">Configuration Class</a></li>
+<li><a href="#service-class-1">Service Class</a></li>
+<li><a href="#controller-class-1">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-2-task-prioritization">Complex Scenario 2: Task Prioritization</a><ul>
+<li><a href="#configuration-class-2">Configuration Class</a></li>
+<li><a href="#task-decorator">Task Decorator</a></li>
+<li><a href="#service-class-2">Service Class</a></li>
+<li><a href="#controller-class-2">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-3-handling-long-running-tasks">Complex Scenario 3: Handling Long-Running Tasks</a><ul>
+<li><a href="#configuration-class-3">Configuration Class</a></li>
+<li><a href="#service-class-3">Service Class</a></li>
+<li><a href="#controller-class-3">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction-to-spring-boot-multi-threading"></a></p>
+<h1 id="Introduction-to-Spring-Boot-Multi-Threading"><a href="#Introduction-to-Spring-Boot-Multi-Threading" class="headerlink" title="Introduction to Spring Boot Multi-Threading"></a>Introduction to Spring Boot Multi-Threading</h1><p>Spring Boot provides robust support for multi-threading, enabling developers to build highly concurrent and scalable applications. Leveraging multi-threading in Spring Boot can significantly improve the performance and responsiveness of your application. This article delves into best practices, annotation-based configuration, and real-life production scenarios to help you master multi-threading in Spring Boot.</p>
+<hr>
+<p><a name="best-practices-for-spring-boot-multi-threading"></a></p>
+<h1 id="Best-Practices-for-Spring-Boot-Multi-Threading"><a href="#Best-Practices-for-Spring-Boot-Multi-Threading" class="headerlink" title="Best Practices for Spring Boot Multi-Threading"></a>Best Practices for Spring Boot Multi-Threading</h1><ol>
+<li><strong>Use <code>@Async</code> for Asynchronous Processing</strong>: The <code>@Async</code> annotation allows methods to run in a separate thread, making it easy to implement asynchronous processing.</li>
+<li><strong>Configure Thread Pools</strong>: Use <code>TaskExecutor</code> to configure thread pools with specific characteristics like core pool size, max pool size, and queue capacity.</li>
+<li><strong>Handle Exceptions Gracefully</strong>: Implement exception handling mechanisms to manage exceptions that occur in asynchronous tasks.</li>
+<li><strong>Monitor Thread Pools</strong>: Use Spring Boot Actuator to monitor thread pool metrics and ensure optimal performance.</li>
+<li><strong>Avoid Blocking Operations</strong>: Ensure that asynchronous methods do not perform blocking operations, which can degrade performance.</li>
+</ol>
+<hr>
+<p><a name="annotation-based-configuration"></a></p>
+<h1 id="Annotation-Based-Configuration"><a href="#Annotation-Based-Configuration" class="headerlink" title="Annotation-Based Configuration"></a>Annotation-Based Configuration</h1><p>Spring Boot provides several annotations to configure and manage multi-threading:</p>
+<ul>
+<li><strong><code>@EnableAsync</code></strong>: Enables asynchronous processing in the application.</li>
+<li><strong><code>@Async</code></strong>: Marks a method as asynchronous, meaning it will run in a separate thread.</li>
+<li><strong><code>@Configuration</code></strong>: Indicates that a class declares one or more <code>@Bean</code> methods and may be processed by the Spring container to generate bean definitions.</li>
+<li><strong><code>@Bean</code></strong>: Indicates that a method produces a bean to be managed by the Spring container.</li>
+</ul>
+<hr>
+<p><a name="diagram-of-multi-threading-in-spring-boot"></a></p>
+<h1 id="Diagram-of-Multi-Threading-in-Spring-Boot"><a href="#Diagram-of-Multi-Threading-in-Spring-Boot" class="headerlink" title="Diagram of Multi-Threading in Spring Boot"></a>Diagram of Multi-Threading in Spring Boot</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">+-------------------------+</span><br><span class="line">| Spring Boot Application |</span><br><span class="line">| - @EnableAsync          |</span><br><span class="line">| - @Configuration        |</span><br><span class="line">| - @Bean                 |</span><br><span class="line">+-------------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| TaskExecutor      |</span><br><span class="line">| - corePoolSize    |</span><br><span class="line">| - maxPoolSize     |</span><br><span class="line">| - queueCapacity   |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| @Async Methods    |</span><br><span class="line">| - Method1         |</span><br><span class="line">| - Method2         |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| Thread Pool       |</span><br><span class="line">| - Thread 1        |</span><br><span class="line">| - Thread 2        |</span><br><span class="line">| - Thread 3        |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| Task Execution    |</span><br><span class="line">| - Task 1          |</span><br><span class="line">| - Task 2          |</span><br><span class="line">| - Task 3          |</span><br><span class="line">+-------------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="sample-code-with-detailed-comments"></a></p>
+<h1 id="Sample-Code-with-Detailed-Comments"><a href="#Sample-Code-with-Detailed-Comments" class="headerlink" title="Sample Code with Detailed Comments"></a>Sample Code with Detailed Comments</h1><h3 id="Configuration-Class"><a href="#Configuration-Class" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span> <span class="comment">// Enable asynchronous processing</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;taskExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">10</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">20</span>);  <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">100</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;AsyncThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class"><a href="#Service-Class" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;taskExecutor&quot;)</span> <span class="comment">// Use the taskExecutor bean for this method</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performAsyncTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Starting task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class"><a href="#Controller-Class" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AsyncService asyncService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/performTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">performTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        asyncService.performAsyncTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for asynchronous processing.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Application-Class"><a href="#Application-Class" class="headerlink" title="Application Class"></a>Application Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableAsync</span> <span class="comment">// Enable asynchronous processing</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(AsyncApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a></p>
+<h1 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title="Complex Scenario 1: Flow Control and Backpressure Handling"></a>Complex Scenario 1: Flow Control and Backpressure Handling</h1><p>In high-throughput systems, it’s crucial to manage the flow of tasks to avoid overwhelming the system. Backpressure handling ensures that the system can gracefully handle a large number of incoming tasks.</p>
+<h3 id="Configuration-Class-1"><a href="#Configuration-Class-1" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;backpressureExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">backpressureExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;BackpressureThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-1"><a href="#Service-Class-1" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;backpressureExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Handling task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed handling task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-1"><a href="#Controller-Class-1" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BackpressureService backpressureService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/handleTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        backpressureService.handleTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for backpressure handling.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-2-task-prioritization"></a></p>
+<h1 id="Complex-Scenario-2-Task-Prioritization"><a href="#Complex-Scenario-2-Task-Prioritization" class="headerlink" title="Complex Scenario 2: Task Prioritization"></a>Complex Scenario 2: Task Prioritization</h1><p>In some scenarios, certain tasks may need to be prioritized over others. Spring Boot allows you to configure task executors with priority queues to handle such cases.</p>
+<h3 id="Configuration-Class-2"><a href="#Configuration-Class-2" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.PriorityBlockingQueue;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;priorityExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">priorityExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;PriorityThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.setTaskDecorator(<span class="keyword">new</span> <span class="title class_">PriorityTaskDecorator</span>()); <span class="comment">// Set task decorator for priority</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Task-Decorator"><a href="#Task-Decorator" class="headerlink" title="Task Decorator"></a>Task Decorator</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.core.task.TaskDecorator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityTaskDecorator</span> <span class="keyword">implements</span> <span class="title class_">TaskDecorator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Runnable <span class="title function_">decorate</span><span class="params">(Runnable runnable)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">            <span class="comment">// Set priority logic here</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Setting priority for task: &quot;</span> + runnable);</span><br><span class="line">            runnable.run();</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-2"><a href="#Service-Class-2" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;priorityExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">prioritizeTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Prioritizing task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed prioritizing task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-2"><a href="#Controller-Class-2" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PriorityService priorityService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/prioritizeTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">prioritizeTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        priorityService.prioritizeTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for prioritization.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-3-handling-long-running-tasks"></a></p>
+<h1 id="Complex-Scenario-3-Handling-Long-Running-Tasks"><a href="#Complex-Scenario-3-Handling-Long-Running-Tasks" class="headerlink" title="Complex Scenario 3: Handling Long-Running Tasks"></a>Complex Scenario 3: Handling Long-Running Tasks</h1><p>Long-running tasks can block threads and degrade system performance. Spring Boot provides mechanisms to handle such tasks efficiently.</p>
+<h3 id="Configuration-Class-3"><a href="#Configuration-Class-3" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;longRunningExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">longRunningExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;LongRunningThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-3"><a href="#Service-Class-3" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;longRunningExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleLongRunningTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Handling long-running task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate long-running task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed handling long-running task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-3"><a href="#Controller-Class-3" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> LongRunningService longRunningService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/handleLongRunningTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleLongRunningTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        longRunningService.handleLongRunningTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Long-running task &quot;</span> + taskName + <span class="string">&quot; has been submitted for processing.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Spring Boot’s support for multi-threading allows developers to build highly concurrent and scalable applications. By following best practices and leveraging annotation-based configuration, you can efficiently manage asynchronous tasks, handle backpressure, prioritize tasks, and manage long-running tasks. This article provides a comprehensive guide to mastering multi-threading in Spring Boot, complete with detailed sample code and real-life production scenarios.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1944,386 +2356,6 @@ This enhanced version covers more nuances in `ThreadPoolExecutor` setup, advance
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article covered an architecture for ingesting Avro data from a messaging system, converting it to Parquet, and saving it in Amazon S3. Using Spark Structured Streaming and Amazon S3 for storage, this pipeline is a robust solution for managing Avro-to-Parquet transformations in big data applications. Understanding the structural differences between Avro and Parquet, as well as the conversion process, enables data engineers to design efficient and scalable data pipelines.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Avro-to-Parquet-Pipeline-in-Big-Data-Applications/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/Avro-to-Parquet-Pipeline-in-Big-Data-Applications/" class="post-title-link" itemprop="url">Avro to Parquet Pipeline in Big Data Applications</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-28 16:32:41 / Modified: 16:33:22" itemprop="dateCreated datePublished" datetime="2024-10-28T16:32:41-04:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Avro/" itemprop="url" rel="index"><span itemprop="name">Avro</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Avro/Parquet/" itemprop="url" rel="index"><span itemprop="name">Parquet</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#architecture-overview">Architecture Overview</a><ul>
-<li><a href="#-avro-and-parquet-formats"> Avro and Parquet Formats</a></li>
-<li><a href="#-role-of-messaging-systems"> Role of Messaging Systems</a></li>
-<li><a href="#-storage-in-big-data-storage-solutions"> Storage in Big Data Storage Solutions</a></li>
-</ul>
-</li>
-<li><a href="#data-pipeline-design">Data Pipeline Design</a><ul>
-<li><a href="#ingesting-data-from-messaging-system">Ingesting Data from Messaging System</a></li>
-<li><a href="#processing-and-converting-avro-to-parquet">Processing and Converting Avro to Parquet</a></li>
-<li><a href="#saving-to-big-data-storage-s3">Saving to Big Data Storage (S3)</a></li>
-</ul>
-</li>
-<li><a href="#real-life-production-sample-code-in-spark">Real-Life Production Sample Code in Spark</a><ul>
-<li><a href="#-reading-from-kafka"> Reading from Kafka</a></li>
-<li><a href="#-converting-avro-to-parquet"> Converting Avro to Parquet</a></li>
-<li><a href="#-writing-to-s3"> Writing to S3</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In modern data architectures, Avro data is often used in messaging systems like Apache Kafka due to its compact binary format and schema evolution support. However, in data lakes or data warehouses, Parquet is preferred for storage due to its columnar format and efficient read performance. This article covers the architecture, pipeline design, and real-life sample code for implementing a pipeline that ingests Avro data from a messaging system and saves it in Parquet format in a big data storage solution like Amazon S3.</p>
-<hr>
-<p><a name="architecture-overview"></a></p>
-<h2 id="Architecture-Overview"><a href="#Architecture-Overview" class="headerlink" title="Architecture Overview"></a>Architecture Overview</h2><p>This section provides an overview of the components in a typical architecture that ingests Avro from a messaging system and saves it as Parquet in big data storage.</p>
-<p><strong>Diagram: Avro to Parquet Pipeline Architecture</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Messaging System (Kafka)  ----&gt;  Stream Processing (Spark)  ----&gt;  S3 Storage (Parquet Format)</span><br></pre></td></tr></table></figure>
-
-<h3 id="Avro-and-Parquet-Formats"><a href="#Avro-and-Parquet-Formats" class="headerlink" title=" Avro and Parquet Formats"></a><a name="avro-and-parquet-formats"></a> Avro and Parquet Formats</h3><ul>
-<li><strong>Avro</strong>: A row-based binary format, commonly used for serializing data in messaging systems due to its compact size and schema evolution capabilities.</li>
-<li><strong>Parquet</strong>: A columnar storage format optimized for reading specific columns, making it highly efficient for analytics and big data storage solutions.</li>
-</ul>
-<h3 id="Role-of-Messaging-Systems"><a href="#Role-of-Messaging-Systems" class="headerlink" title=" Role of Messaging Systems"></a><a name="role-of-messaging-systems"></a> Role of Messaging Systems</h3><p>Messaging systems like <strong>Apache Kafka</strong> are widely used to transport streaming data across systems in real time. Kafka provides fault-tolerance and durability, ensuring data is safely delivered to downstream applications for processing.</p>
-<h3 id="Storage-in-Big-Data-Storage-Solutions"><a href="#Storage-in-Big-Data-Storage-Solutions" class="headerlink" title=" Storage in Big Data Storage Solutions"></a><a name="storage-in-big-data-storage-solutions"></a> Storage in Big Data Storage Solutions</h3><p>Big data storage solutions, such as <strong>Amazon S3</strong>, offer durable and cost-effective storage for large-scale data. Storing data in Parquet format on S3 enables easy integration with data analytics frameworks like Spark, Presto, and Hive.</p>
-<hr>
-<p><a name="data-pipeline-design"></a></p>
-<h2 id="Data-Pipeline-Design"><a href="#Data-Pipeline-Design" class="headerlink" title="Data Pipeline Design"></a>Data Pipeline Design</h2><p>The pipeline includes the following key stages:</p>
-<ol>
-<li><strong>Data Ingestion</strong>: Consuming Avro-encoded messages from Kafka.</li>
-<li><strong>Processing and Transformation</strong>: Converting Avro data to Parquet format.</li>
-<li><strong>Storage</strong>: Saving the transformed Parquet files to Amazon S3.</li>
-</ol>
-<p><a name="ingesting-data-from-messaging-system"></a></p>
-<h3 id="Ingesting-Data-from-Messaging-System"><a href="#Ingesting-Data-from-Messaging-System" class="headerlink" title="Ingesting Data from Messaging System"></a>Ingesting Data from Messaging System</h3><p>The first step in the pipeline is ingesting data from a messaging system like Kafka. Spark Structured Streaming can be used to consume Avro-encoded messages from Kafka topics in real-time.</p>
-<p><strong>Diagram: Ingesting Avro Data from Kafka</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kafka Topic (Avro Messages)  ---&gt;  Spark Structured Streaming  ---&gt;  Data Transformation</span><br></pre></td></tr></table></figure>
-
-<p><a name="processing-and-converting-avro-to-parquet"></a></p>
-<h3 id="Processing-and-Converting-Avro-to-Parquet"><a href="#Processing-and-Converting-Avro-to-Parquet" class="headerlink" title="Processing and Converting Avro to Parquet"></a>Processing and Converting Avro to Parquet</h3><p>Spark Structured Streaming allows us to process and transform the incoming Avro data. To convert Avro to Parquet, the schema needs to be mapped, and the data is then serialized to the Parquet format.</p>
-<p><strong>Diagram: Converting Avro to Parquet in Spark</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Avro Data (Spark DataFrame)  ---&gt;  Schema Mapping  ---&gt;  Parquet Data</span><br></pre></td></tr></table></figure>
-
-<p><a name="saving-to-big-data-storage-s3"></a></p>
-<h3 id="Saving-to-Big-Data-Storage-S3"><a href="#Saving-to-Big-Data-Storage-S3" class="headerlink" title="Saving to Big Data Storage (S3)"></a>Saving to Big Data Storage (S3)</h3><p>Once converted to Parquet, the data can be written to Amazon S3 in a structured format. Parquet files in S3 are organized by partitions (e.g., by date or another logical grouping) to optimize retrieval and querying performance.</p>
-<p><strong>Diagram: Saving to S3</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Parquet Data (Partitioned by Date)  ---&gt;  Amazon S3 Bucket  ---&gt;  Analytics-ready Storage</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="real-life-production-sample-code-in-spark"></a></p>
-<h2 id="Real-Life-Production-Sample-Code-in-Spark"><a href="#Real-Life-Production-Sample-Code-in-Spark" class="headerlink" title="Real-Life Production Sample Code in Spark"></a>Real-Life Production Sample Code in Spark</h2><p>The following sample code demonstrates how to implement this pipeline in <strong>Apache Spark</strong> with <strong>Structured Streaming</strong>.</p>
-<h3 id="Reading-from-Kafka"><a href="#Reading-from-Kafka" class="headerlink" title=" Reading from Kafka"></a><a name="reading-from-kafka"></a> Reading from Kafka</h3><p>Use Spark to read Avro data from a Kafka topic in real-time.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.SparkSession;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Dataset;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Row;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.avro.functions.from_avro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AvroToParquetPipeline</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SparkSession</span> <span class="variable">spark</span> <span class="operator">=</span> SparkSession.builder()</span><br><span class="line">                .appName(<span class="string">&quot;Avro to Parquet Pipeline&quot;</span>)</span><br><span class="line">                .getOrCreate();</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaBootstrapServers</span> <span class="operator">=</span> <span class="string">&quot;kafka-broker1:9092,kafka-broker2:9092&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaTopic</span> <span class="operator">=</span> <span class="string">&quot;avro-topic&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; avroDF = spark</span><br><span class="line">                .readStream()</span><br><span class="line">                .format(<span class="string">&quot;kafka&quot;</span>)</span><br><span class="line">                .option(<span class="string">&quot;kafka.bootstrap.servers&quot;</span>, kafkaBootstrapServers)</span><br><span class="line">                .option(<span class="string">&quot;subscribe&quot;</span>, kafkaTopic)</span><br><span class="line">                .load()</span><br><span class="line">                .selectExpr(<span class="string">&quot;CAST(value AS BINARY) as avroData&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Define the Avro schema (can be fetched from Schema Registry if available)</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">avroSchema</span> <span class="operator">=</span> <span class="string">&quot;&#123; \&quot;type\&quot;: \&quot;record\&quot;, \&quot;name\&quot;: \&quot;User\&quot;, \&quot;fields\&quot;: [ &#123;\&quot;name\&quot;: \&quot;id\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;age\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125; ] &#125;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; parsedDF = avroDF</span><br><span class="line">                .select(from_avro(avroDF.col(<span class="string">&quot;avroData&quot;</span>), avroSchema).as(<span class="string">&quot;data&quot;</span>))</span><br><span class="line">                .select(<span class="string">&quot;data.*&quot;</span>);</span><br><span class="line"></span><br><span class="line">        parsedDF.printSchema(); <span class="comment">// Debugging schema after parsing Avro</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Converting-Avro-to-Parquet"><a href="#Converting-Avro-to-Parquet" class="headerlink" title=" Converting Avro to Parquet"></a><a name="converting-avro-to-parquet"></a> Converting Avro to Parquet</h3><p>Once we have parsed the Avro data into a DataFrame, we can convert it into Parquet format.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dataset&lt;Row&gt; parquetDF = parsedDF.repartition(<span class="number">1</span>); <span class="comment">// Optional: Customize partitioning as needed</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Writing-to-S3"><a href="#Writing-to-S3" class="headerlink" title=" Writing to S3"></a><a name="writing-to-s3"></a> Writing to S3</h3><p>Writing the data to Amazon S3 requires specifying the destination path and configuring partitioning if necessary.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.streaming.Trigger;</span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s3Path</span> <span class="operator">=</span> <span class="string">&quot;s3a://your-bucket/path/to/destination/&quot;</span>;</span><br><span class="line"></span><br><span class="line">parquetDF.writeStream()</span><br><span class="line">        .format(<span class="string">&quot;parquet&quot;</span>)</span><br><span class="line">        .option(<span class="string">&quot;path&quot;</span>, s3Path)</span><br><span class="line">        .option(<span class="string">&quot;checkpointLocation&quot;</span>, <span class="string">&quot;s3a://your-bucket/path/to/checkpoint/&quot;</span>)</span><br><span class="line">        .partitionBy(<span class="string">&quot;date&quot;</span>) <span class="comment">// Optional: Partitioning by a specific column (e.g., date)</span></span><br><span class="line">        .trigger(Trigger.ProcessingTime(<span class="string">&quot;5 minutes&quot;</span>)) <span class="comment">// Controls batch frequency</span></span><br><span class="line">        .start()</span><br><span class="line">        .awaitTermination();</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article covered an architecture for ingesting Avro data from a messaging system, converting it to Parquet, and saving it in Amazon S3. Using Spark Structured Streaming and Amazon S3 for storage, this pipeline is a robust solution for managing Avro-to-Parquet transformations in big data applications.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/Deep-Dive-into-Spring-Scheduler/" class="post-title-link" itemprop="url">Deep Dive into Spring Scheduler</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-28 16:20:09 / Modified: 18:48:30" itemprop="dateCreated datePublished" datetime="2024-10-28T16:20:09-04:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Spring-Boot/Spring-Scheduler/" itemprop="url" rel="index"><span itemprop="name">Spring Scheduler</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#understanding-spring-scheduler-basics">Understanding Spring Scheduler Basics</a><ul>
-<li><a href="#enabling-scheduling">Enabling Scheduling</a></li>
-<li><a href="#simple-scheduling-with-scheduled">Simple Scheduling with <code>@Scheduled</code></a></li>
-</ul>
-</li>
-<li><a href="#scheduling-scenarios">Scheduling Scenarios</a><ul>
-<li><a href="#sequential-job-execution">Sequential Job Execution</a></li>
-<li><a href="#parallel-job-execution">Parallel Job Execution</a></li>
-<li><a href="#job-waiting-until-previous-job-completes">Job Waiting Until Previous Job Completes</a></li>
-</ul>
-</li>
-<li><a href="#cron-expressions-and-fixed-rates">Cron Expressions and Fixed Rates</a><ul>
-<li><a href="#fixed-rate-vs-fixed-delay">Fixed Rate vs Fixed Delay</a></li>
-<li><a href="#using-cron-expressions">Using Cron Expressions</a></li>
-</ul>
-</li>
-<li><a href="#conditional-scheduling-with-annotations">Conditional Scheduling with Annotations</a><ul>
-<li><a href="#conditional-scheduling-example">Conditional Scheduling Example</a></li>
-</ul>
-</li>
-<li><a href="#all-in-one-sample">All-In-One Sample</a></li>
-<li><a href="#conditionalonproperty-with-scheduled-job-in-depth">ConditionalOnProperty with Scheduled Job in Depth</a><ul>
-<li><a href="#scenario-running-a-scheduled-job-in-only-one-pod-in-a-kubernetes-cluster">Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</a><ul>
-<li><a href="#solution-outline">Solution Outline</a></li>
-<li><a href="#steps-to-implement">Steps to Implement</a></li>
-<li><a href="#additional-consideration-use-leader-election">Additional Consideration: Use Leader Election</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><strong>Spring Scheduler</strong> provides a simple way to schedule tasks within a Spring application. It offers flexibility in managing <strong>time-based events</strong> and <strong>task execution</strong>, allowing developers to configure tasks in a variety of ways, including sequential, parallel, and conditional execution.</p>
-<hr>
-<p><a name="understanding-spring-scheduler-basics"></a></p>
-<h2 id="Understanding-Spring-Scheduler-Basics"><a href="#Understanding-Spring-Scheduler-Basics" class="headerlink" title="Understanding Spring Scheduler Basics"></a>Understanding Spring Scheduler Basics</h2><p>Spring Scheduler uses annotations to simplify the scheduling of methods within beans. The primary annotation used is <code>@Scheduled</code>, which can define various timing configurations, such as fixed rate, fixed delay, and cron expressions.</p>
-<p><a name="enabling-scheduling"></a></p>
-<h3 id="Enabling-Scheduling"><a href="#Enabling-Scheduling" class="headerlink" title="Enabling Scheduling"></a>Enabling Scheduling</h3><p>Before defining tasks, enable scheduling in your Spring application by adding the <code>@EnableScheduling</code> annotation.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SchedulingConfig</span> &#123;</span><br><span class="line">    <span class="comment">// Any other scheduling-related configuration if needed</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="simple-scheduling-with-scheduled"></a></p>
-<h3 id="Simple-Scheduling-with-Scheduled"><a href="#Simple-Scheduling-with-Scheduled" class="headerlink" title="Simple Scheduling with @Scheduled"></a>Simple Scheduling with <code>@Scheduled</code></h3><p>The <code>@Scheduled</code> annotation can be applied to any method to enable scheduling. Below is a simple example:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">printMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This message prints every 5 seconds.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example, <code>printMessage()</code> runs every 5 seconds.</p>
-<hr>
-<p><a name="scheduling-scenarios"></a></p>
-<h2 id="Scheduling-Scenarios"><a href="#Scheduling-Scenarios" class="headerlink" title="Scheduling Scenarios"></a>Scheduling Scenarios</h2><p>Spring Scheduler supports various scenarios for task scheduling, which can be useful for specific use cases in a production environment.</p>
-<p><a name="sequential-job-execution"></a></p>
-<h3 id="Sequential-Job-Execution"><a href="#Sequential-Job-Execution" class="headerlink" title="Sequential Job Execution"></a>Sequential Job Execution</h3><p>In sequential execution, jobs run in a specific order, with each job waiting for the previous one to complete before starting.</p>
-<p><strong>Example: Sequential Scheduling Using Fixed Delay</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SequentialScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job1</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 started.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">2000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job2</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 started after Job 1.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">3000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>With <code>fixedDelay</code>, Job 2 only begins after Job 1 completes.</p>
-<p><a name="parallel-job-execution"></a></p>
-<h3 id="Parallel-Job-Execution"><a href="#Parallel-Job-Execution" class="headerlink" title="Parallel Job Execution"></a>Parallel Job Execution</h3><p>To execute jobs in parallel, we configure a task executor that runs multiple tasks concurrently.</p>
-<p><strong>Example: Parallel Scheduling Using a Custom Task Executor</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelSchedulingConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">2</span>); <span class="comment">// Number of concurrent tasks allowed</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobA</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job A started.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobB</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job B started concurrently with Job A.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>With <code>@Async</code>, <code>jobA</code> and <code>jobB</code> run concurrently, allowing for parallel execution.</p>
-<p><a name="job-waiting-until-previous-job-completes"></a></p>
-<h3 id="Job-Waiting-Until-Previous-Job-Completes"><a href="#Job-Waiting-Until-Previous-Job-Completes" class="headerlink" title="Job Waiting Until Previous Job Completes"></a>Job Waiting Until Previous Job Completes</h3><p>To configure jobs to wait for previous jobs to finish, use <code>fixedDelay</code> with asynchronous methods to ensure that each task waits until its predecessor is completed.</p>
-<p><strong>Diagram: Job Waiting until Previous Job Completes</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Job 1   ---&gt; Wait ---&gt;   Job 2   ---&gt; Wait ---&gt;   Job 3</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WaitingScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 12000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job started and waits until the previous instance completes.&quot;</span>);</span><br><span class="line">        <span class="comment">// Simulate processing time</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">5000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this scenario, each new execution waits until the previous one finishes.</p>
-<hr>
-<p><a name="cron-expressions-and-fixed-rates"></a></p>
-<h2 id="Cron-Expressions-and-Fixed-Rates"><a href="#Cron-Expressions-and-Fixed-Rates" class="headerlink" title="Cron Expressions and Fixed Rates"></a>Cron Expressions and Fixed Rates</h2><p>Spring Scheduler allows defining precise timing patterns using <strong>fixed rate</strong>, <strong>fixed delay</strong>, and <strong>cron expressions</strong>.</p>
-<p><a name="fixed-rate-vs-fixed-delay"></a></p>
-<h3 id="Fixed-Rate-vs-Fixed-Delay"><a href="#Fixed-Rate-vs-Fixed-Delay" class="headerlink" title="Fixed Rate vs Fixed Delay"></a>Fixed Rate vs Fixed Delay</h3><ul>
-<li><strong>Fixed Rate</strong>: Executes a task at a specified interval, regardless of task completion time.</li>
-<li><strong>Fixed Delay</strong>: Executes a task with a delay between the end of the previous execution and the start of the next.</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(fixedRate = 60000)</span> <span class="comment">// Executes every 60 seconds</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedRateTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Rate Task&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Scheduled(fixedDelay = 60000)</span> <span class="comment">// Executes with a 60-second delay after completion</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedDelayTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Delay Task&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="using-cron-expressions"></a></p>
-<h3 id="Using-Cron-Expressions"><a href="#Using-Cron-Expressions" class="headerlink" title="Using Cron Expressions"></a>Using Cron Expressions</h3><p>Cron expressions allow precise scheduling based on time. Format: <code>second minute hour day month weekday</code>.</p>
-<p><strong>Example: Scheduling a Task for 5:00 AM Every Day</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(cron = &quot;0 0 5 * * ?&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailyTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;This task runs at 5:00 AM every day.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conditional-scheduling-with-annotations"></a></p>
-<h2 id="Conditional-Scheduling-with-Annotations"><a href="#Conditional-Scheduling-with-Annotations" class="headerlink" title="Conditional Scheduling with Annotations"></a>Conditional Scheduling with Annotations</h2><p>Spring allows scheduling tasks based on conditions. Combining <code>@ConditionalOnProperty</code> with <code>@Scheduled</code>, we can configure tasks to run only when certain conditions are met.</p>
-<p><a name="conditional-scheduling-example"></a></p>
-<h3 id="Conditional-Scheduling-Example"><a href="#Conditional-Scheduling-Example" class="headerlink" title="Conditional Scheduling Example"></a>Conditional Scheduling Example</h3><p>This example schedules a job only if a specific property is set to <code>true</code>.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConditionalScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">conditionalTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This task runs only if &#x27;scheduler.enabled=true&#x27;.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>To enable or disable this task, add <code>scheduler.enabled=true</code> or <code>false</code> in the configuration.</p>
-<hr>
-<p><a name="all-in-one-sample"></a></p>
-<h2 id="All-In-One-Sample"><a href="#All-In-One-Sample" class="headerlink" title="All-In-One Sample"></a>All-In-One Sample</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionSchedulerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">3</span>);</span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0 0 12 * * ?&quot;)</span> <span class="comment">// Executes at noon daily</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailySummaryJob</span><span class="params">()</span> &#123;</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line"> System.out.println(<span class="string">&quot;Executing daily summary job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 15000)</span> <span class="comment">// Executes every 15 seconds after the previous execution ends</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">periodicCleanupJob</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Running periodic cleanup job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conditionalonproperty-with-scheduled-job-in-depth"></a></p>
-<h2 id="ConditionalOnProperty-with-Scheduled-Job-in-Depth"><a href="#ConditionalOnProperty-with-Scheduled-Job-in-Depth" class="headerlink" title="ConditionalOnProperty with Scheduled Job in Depth"></a>ConditionalOnProperty with Scheduled Job in Depth</h2><p>The <code>@ConditionalOnProperty</code> annotation in Spring is typically used to conditionally enable or disable beans based on specific configuration properties. In this case:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br></pre></td></tr></table></figure>
-
-<p>This will activate the annotated bean only if the <code>scheduler.enabled</code> property is set to <code>true</code> in your configuration (like in <code>application.properties</code> or environment variables).</p>
-<h3 id="Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster"><a href="#Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster" class="headerlink" title="Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster"></a>Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</h3><p>When deploying a Spring application in a Kubernetes cluster across multiple containers (pods), ensuring that a scheduled job only runs in one specific pod can be tricky because Spring’s <code>@Scheduled</code> jobs will run in every instance where the job bean is active. Here’s how to solve this problem by using the <code>@ConditionalOnProperty</code> annotation in combination with Kubernetes configurations.</p>
-<h4 id="Solution-Outline"><a href="#Solution-Outline" class="headerlink" title="Solution Outline"></a>Solution Outline</h4><ol>
-<li><strong>Set a Leader Pod</strong>: Configure only one of the pods to have <code>scheduler.enabled=true</code> using Kubernetes annotations and environment variables, making it the leader pod responsible for running the scheduled job.</li>
-<li><strong>Configure Pods with Unique Environment Variables</strong>: Use Kubernetes <code>configMaps</code> or <code>Secrets</code> to assign the <code>scheduler.enabled</code> property as <code>true</code> only in the leader pod’s environment. Other pods should not have this property set to <code>true</code>, so they won’t run the job.</li>
-</ol>
-<h4 id="Steps-to-Implement"><a href="#Steps-to-Implement" class="headerlink" title="Steps to Implement"></a>Steps to Implement</h4><ol>
-<li><p><strong>Create a ConfigMap or Secret for the Scheduler Property</strong>:</p>
-<ul>
-<li>Define a ConfigMap that holds the <code>scheduler.enabled</code> setting for the lead pod.</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">scheduler.enabled:</span> <span class="string">&quot;true&quot;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>Use Pod Annotations to Select the Leader Pod</strong>:</p>
-<ul>
-<li>When deploying multiple replicas, use a label selector or custom script to ensure only one pod is given the <code>scheduler.enabled=true</code> setting.</li>
-</ul>
-</li>
-<li><p><strong>Configure the Deployment to Pass the <code>scheduler.enabled</code> Environment Variable</strong>:</p>
-<ul>
-<li>In your Kubernetes Deployment file, you can use <code>envFrom</code> to load the environment variables from the ConfigMap, but with a selector so only one pod uses this ConfigMap.</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-job</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>  <span class="comment"># Running multiple instances</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">scheduler-container</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">your-image</span></span><br><span class="line">          <span class="attr">envFrom:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POD_NAME</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>Conditional Logic in Spring Boot</strong>:</p>
-<ul>
-<li>With <code>@ConditionalOnProperty</code>, the <code>@Scheduled</code> method will only activate if the <code>scheduler.enabled</code> property is <code>true</code>. So, only the pod with the <code>scheduler.enabled=true</code> environment variable will run the job.</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScheduledJob</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Scheduled job is running on the leader pod!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="Additional-Consideration-Use-Leader-Election"><a href="#Additional-Consideration-Use-Leader-Election" class="headerlink" title="Additional Consideration: Use Leader Election"></a>Additional Consideration: Use Leader Election</h4><p>For robust setups, you could implement leader election to dynamically select the leader pod. This can be achieved using tools like <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-kubernetes">Spring Cloud Kubernetes Leader Election</a> or implementing a custom leader election mechanism based on a shared lock in an external data store, such as Redis or ZooKeeper.</p>
-<p>By setting <code>scheduler.enabled=true</code> conditionally based on which pod is the elected leader, you can ensure the scheduled job runs in only one container at a time, with the ability to switch seamlessly if the leader pod goes down.</p>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Scheduler provides flexibility and control over task scheduling. By using <code>@Scheduled</code> with different configurations, we can create complex scheduling workflows that address specific business needs.</p>
 
       
     </div>

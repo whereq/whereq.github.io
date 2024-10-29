@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">41</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,422 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice/" class="post-title-link" itemprop="url">Approaches to Rolling Back or Canceling Transactions in Microservice</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-24 23:17:16 / Modified: 23:19:37" itemprop="dateCreated datePublished" datetime="2024-10-24T23:17:16-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/" itemprop="url" rel="index"><span itemprop="name">Transaction</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/Microservice/" itemprop="url" rel="index"><span itemprop="name">Microservice</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Handling rollback or cancellation of transactions in a <strong>Microservice Architecture</strong> when multiple writes are involved is a complex process because each microservice typically has its own database, and there is no central point of coordination like in monolithic applications. Traditional database transactions (ACID) are difficult to apply in microservices, especially when services span across multiple databases, message brokers, and external APIs. Therefore, rollback in microservices needs a more sophisticated approach.</p>
+<h3 id="Key-Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice-Architecture"><a href="#Key-Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice-Architecture" class="headerlink" title="Key Approaches to Rolling Back or Canceling Transactions in Microservice Architecture"></a>Key Approaches to Rolling Back or Canceling Transactions in Microservice Architecture</h3><p>There are several strategies to handle rollback or cancellation in microservices when multiple services and writes are involved. These include:</p>
+<ul>
+<li><a href="#1-saga-pattern">1. Saga Pattern</a><ul>
+<li><a href="#a-choreography-based-saga">a. Choreography-based Saga</a></li>
+<li><a href="#b-orchestration-based-saga">b. Orchestration-based Saga</a></li>
+</ul>
+</li>
+<li><a href="#2-compensation-mechanism">2. Compensation Mechanism</a></li>
+<li><a href="#3-two-phase-commit-2pc">3. Two-Phase Commit (2PC)</a><ul>
+<li><a href="#how-2pc-works">How 2PC Works:</a></li>
+</ul>
+</li>
+<li><a href="#4-eventual-consistency">4. Eventual Consistency</a><ul>
+<li><a href="#how-to-handle-rollbacks-with-eventual-consistency">How to Handle Rollbacks with Eventual Consistency:</a></li>
+</ul>
+</li>
+<li><a href="#5-idempotency-and-retries">5. Idempotency and Retries</a><ul>
+<li><a href="#idempotency">Idempotency:</a></li>
+<li><a href="#best-practices-for-idempotency">Best Practices for Idempotency:</a></li>
+</ul>
+</li>
+<li><a href="#6-conclusion">6. Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="saga-pattern"></a></p>
+<h2 id="1-Saga-Pattern"><a href="#1-Saga-Pattern" class="headerlink" title="1. Saga Pattern"></a>1. Saga Pattern</h2><p>The <strong>Saga Pattern</strong> is the most popular strategy for handling distributed transactions in microservices. It breaks a large transaction into a sequence of smaller, independent transactions, each handled by a microservice. If any part of the sequence fails, compensating actions (i.e., rollbacks) are triggered to undo the work done by previous steps.</p>
+<p>There are two common approaches to implementing the Saga Pattern:</p>
+<ul>
+<li><strong>Choreography-based Saga</strong></li>
+<li><strong>Orchestration-based Saga</strong></li>
+</ul>
+<p><a name="choreography-based-saga"></a></p>
+<h3 id="a-Choreography-based-Saga"><a href="#a-Choreography-based-Saga" class="headerlink" title="a. Choreography-based Saga"></a>a. Choreography-based Saga</h3><p>In a <strong>Choreography-based Saga</strong>, each service involved in the transaction emits an event upon completion of its task. Other services listen to these events and take action accordingly. If an error occurs, the service responsible for the failed transaction emits a failure event, and other services listening for that failure event perform compensating actions.</p>
+<p><strong>Example</strong>:<br>Imagine an e-commerce system where you place an order that spans multiple microservices:</p>
+<ol>
+<li><strong>Order Service</strong>: Creates the order.</li>
+<li><strong>Inventory Service</strong>: Reserves the product.</li>
+<li><strong>Payment Service</strong>: Charges the customer.</li>
+<li><strong>Shipping Service</strong>: Ships the product.</li>
+</ol>
+<p>If the <strong>Payment Service</strong> fails after reserving the inventory, it can emit a failure event, and the <strong>Inventory Service</strong> would listen to this and release the reserved product (compensating action).</p>
+<p><strong>Advantages</strong>:</p>
+<ul>
+<li>Fully decentralized and scalable.</li>
+<li>Easy to add new services without affecting others.</li>
+</ul>
+<p><strong>Challenges</strong>:</p>
+<ul>
+<li>Harder to track and manage because there is no central coordinator.</li>
+<li>More complex error handling logic in each service.</li>
+</ul>
+<p><a name="orchestration-based-saga"></a></p>
+<h3 id="b-Orchestration-based-Saga"><a href="#b-Orchestration-based-Saga" class="headerlink" title="b. Orchestration-based Saga"></a>b. Orchestration-based Saga</h3><p>In an <strong>Orchestration-based Saga</strong>, a central coordinator (Orchestrator) is responsible for managing the workflow of the transaction. The Orchestrator sends commands to each service to execute a step in the transaction and handles failures by issuing compensating commands if any service fails.</p>
+<p><strong>Example</strong>:</p>
+<ul>
+<li>The <strong>Orchestrator</strong> sends a command to the <strong>Order Service</strong> to create an order.</li>
+<li>After receiving success, the Orchestrator asks the <strong>Inventory Service</strong> to reserve the product.</li>
+<li>If the <strong>Payment Service</strong> fails, the Orchestrator issues a compensating command to the <strong>Inventory Service</strong> to release the product.</li>
+</ul>
+<p><strong>Advantages</strong>:</p>
+<ul>
+<li>Easier to implement because the Orchestrator handles the entire workflow.</li>
+<li>Centralized error handling and compensations.</li>
+</ul>
+<p><strong>Challenges</strong>:</p>
+<ul>
+<li>The Orchestrator can become a single point of failure or bottleneck.</li>
+<li>Needs to manage state and retries, making it potentially complex.</li>
+</ul>
+<hr>
+<p><a name="compensation-mechanism"></a></p>
+<h2 id="2-Compensation-Mechanism"><a href="#2-Compensation-Mechanism" class="headerlink" title="2. Compensation Mechanism"></a>2. Compensation Mechanism</h2><p>The <strong>Compensation Mechanism</strong> is the core of both the Saga Pattern and other eventual consistency models. A compensation transaction is essentially the “undo” operation that reverses the effects of a previously completed step in case of failure.</p>
+<p><strong>How It Works</strong>:<br>Each microservice is responsible for defining and implementing compensating actions for its operations. For example:</p>
+<ul>
+<li>If the <strong>Inventory Service</strong> reserves stock but the <strong>Payment Service</strong> fails, the Inventory Service must implement logic to release the stock.</li>
+<li>If the <strong>Payment Service</strong> successfully charges a customer but the <strong>Shipping Service</strong> fails, the Payment Service must issue a refund.</li>
+</ul>
+<p><strong>Key Considerations</strong>:</p>
+<ul>
+<li><strong>Compensation is not always straightforward</strong>: Rolling back a transaction isn’t always as simple as undoing a change. Some operations might be irreversible (e.g., shipping a product), requiring compensating actions that mitigate the issue (e.g., issuing a refund).</li>
+<li><strong>State-driven compensation</strong>: Services must maintain state information to understand which transactions require compensation.</li>
+</ul>
+<hr>
+<p><a name="two-phase-commit-2pc"></a></p>
+<h2 id="3-Two-Phase-Commit-2PC"><a href="#3-Two-Phase-Commit-2PC" class="headerlink" title="3. Two-Phase Commit (2PC)"></a>3. Two-Phase Commit (2PC)</h2><p><strong>Two-Phase Commit (2PC)</strong> is a protocol used for coordinating distributed transactions across multiple systems. It’s traditionally used in tightly coupled distributed systems but is less popular in microservice architectures due to performance and complexity concerns.</p>
+<h3 id="How-2PC-Works"><a href="#How-2PC-Works" class="headerlink" title="How 2PC Works:"></a>How 2PC Works:</h3><ol>
+<li><strong>Prepare Phase</strong>: The transaction coordinator asks each microservice if they are ready to commit the transaction. The services reply with “yes” or “no.”</li>
+<li><strong>Commit&#x2F;Rollback Phase</strong>: If all services reply with “yes,” the coordinator instructs them to commit. If any service replies with “no,” the coordinator sends a rollback command to all participating services.</li>
+</ol>
+<p><strong>Pros</strong>:</p>
+<ul>
+<li>Strong consistency guarantees.</li>
+<li>Ensures atomicity across distributed systems.</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li><strong>Performance overhead</strong>: 2PC introduces a blocking wait time for services to prepare and commit, which can hurt performance in a microservices architecture.</li>
+<li><strong>Risk of blocking</strong>: If one service crashes, it can leave other services waiting indefinitely, potentially causing system-wide issues.</li>
+</ul>
+<p>Given these challenges, 2PC is rarely used in modern, large-scale microservice architectures.</p>
+<hr>
+<p><a name="eventual-consistency"></a></p>
+<h2 id="4-Eventual-Consistency"><a href="#4-Eventual-Consistency" class="headerlink" title="4. Eventual Consistency"></a>4. Eventual Consistency</h2><p>In distributed microservice architectures, <strong>eventual consistency</strong> is often the goal rather than strong consistency (ACID). Eventual consistency ensures that after some time, all participants in a distributed transaction will reach a consistent state, even if there are temporary inconsistencies.</p>
+<h3 id="How-to-Handle-Rollbacks-with-Eventual-Consistency"><a href="#How-to-Handle-Rollbacks-with-Eventual-Consistency" class="headerlink" title="How to Handle Rollbacks with Eventual Consistency:"></a>How to Handle Rollbacks with Eventual Consistency:</h3><ul>
+<li><strong>Delayed reconciliation</strong>: Some systems may use periodic reconciliation processes to detect inconsistencies and trigger compensating actions to ensure data integrity.</li>
+<li><strong>State-based updates</strong>: Services track their state, and if a failure is detected, each service is responsible for ensuring consistency through compensation.</li>
+</ul>
+<p><strong>Example</strong>:<br>If a <strong>Payment Service</strong> charges a customer but the <strong>Shipping Service</strong> fails to ship the item, the system might temporarily be in an inconsistent state (payment made, no shipment). Over time, a reconciliation job or event listener detects the issue and initiates a refund to bring the system back to consistency.</p>
+<p><strong>Pros</strong>:</p>
+<ul>
+<li>High scalability and resilience.</li>
+<li>Tolerates temporary inconsistencies while ensuring long-term data integrity.</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Complex to reason about, as temporary inconsistencies can confuse users and developers.</li>
+<li>Some actions (e.g., shipping a product) may be difficult to compensate.</li>
+</ul>
+<hr>
+<p><a name="idempotency-and-retries"></a></p>
+<h2 id="5-Idempotency-and-Retries"><a href="#5-Idempotency-and-Retries" class="headerlink" title="5. Idempotency and Retries"></a>5. Idempotency and Retries</h2><p>In microservice architectures, <strong>idempotency</strong> and <strong>retries</strong> play a critical role in handling rollbacks and retries, ensuring that repeated operations do not result in unwanted side effects.</p>
+<h3 id="Idempotency"><a href="#Idempotency" class="headerlink" title="Idempotency:"></a>Idempotency:</h3><p>An operation is <strong>idempotent</strong> if performing it multiple times has the same result as performing it once. For example, if a <strong>Payment Service</strong> is asked to process a payment twice, it should charge the customer only once.</p>
+<p><strong>Why It Matters</strong>:</p>
+<ul>
+<li>When rolling back a transaction, services may need to retry operations (e.g., issuing a refund). These retries must be idempotent to prevent issues like charging a customer multiple times or reserving inventory repeatedly.</li>
+<li><strong>Retry policies</strong> are often implemented in communication mechanisms (e.g., message brokers) to ensure reliability.</li>
+</ul>
+<h3 id="Best-Practices-for-Idempotency"><a href="#Best-Practices-for-Idempotency" class="headerlink" title="Best Practices for Idempotency:"></a>Best Practices for Idempotency:</h3><ul>
+<li>Use unique transaction IDs for requests so that services can detect duplicate requests.</li>
+<li>Design APIs and actions to ensure they are safe for retries.</li>
+</ul>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="6-Conclusion"><a href="#6-Conclusion" class="headerlink" title="6. Conclusion"></a>6. Conclusion</h2><p>Rolling back or canceling transactions in a <strong>Microservice Architecture</strong> requires careful design to handle distributed data, asynchronous operations, and eventual consistency. The <strong>Saga Pattern</strong> (both choreography and orchestration) is the most widely used approach, allowing each service to independently handle parts of the transaction and apply compensating actions in case of failure. Other techniques like <strong>compensation mechanisms</strong>, <strong>eventual consistency</strong>, and <strong>idempotency</strong> ensure that microservices can maintain integrity, even across complex, distributed environments.</p>
+<p>When choosing a rollback strategy, it’s essential to balance the need for consistency with the performance and scalability requirements of the system.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/" class="post-title-link" itemprop="url">Considerations on Transactions Across Distributed Systems</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-24 20:43:50 / Modified: 23:17:55" itemprop="dateCreated datePublished" datetime="2024-10-24T20:43:50-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/" itemprop="url" rel="index"><span itemprop="name">Transaction</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/Distributed-System/" itemprop="url" rel="index"><span itemprop="name">Distributed System</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="Online-Systems-Defining-Transactions-Database-Transaction-Management-and-Lock-Management"><a href="#Online-Systems-Defining-Transactions-Database-Transaction-Management-and-Lock-Management" class="headerlink" title="Online Systems: Defining Transactions, Database Transaction Management, and Lock Management"></a>Online Systems: Defining Transactions, Database Transaction Management, and Lock Management</h3><p>When working with <strong>complex online systems</strong> (e.g., e-commerce platforms, distributed systems, microservices architecture), transactions span beyond a single database. This requires a broader understanding of transaction management, involving <strong>distributed transactions</strong>, <strong>data consistency across systems</strong>, and sophisticated <strong>lock management</strong> techniques. Let’s break this down with a focus on the key topics: defining transactions in online systems, transaction management (beyond the database), and lock management in such environments.</p>
+<hr>
+<h3 id="1-Defining-Transactions-in-Online-Systems"><a href="#1-Defining-Transactions-in-Online-Systems" class="headerlink" title="1. Defining Transactions in Online Systems"></a>1. Defining Transactions in Online Systems</h3><p>In an <strong>online system</strong>, a <strong>transaction</strong> is a <strong>sequence of operations</strong> performed as a single logical unit, ensuring <strong>consistency, correctness, and isolation</strong> across different subsystems. These operations could involve:</p>
+<ul>
+<li><strong>Database operations</strong> (e.g., updating inventory, placing an order)</li>
+<li><strong>Third-party API calls</strong> (e.g., payment gateways, external services)</li>
+<li><strong>Message queue handling</strong> (e.g., Kafka, RabbitMQ for event-driven architecture)</li>
+<li><strong>Microservices interaction</strong> (e.g., coordination between an inventory service and an order service)</li>
+</ul>
+<p>In simple terms, a transaction in an online system is any series of related actions across multiple components that must either <strong>complete successfully together</strong> or <strong>fail together</strong> to maintain a consistent system state.</p>
+<h4 id="Key-Transaction-Properties-ACID-vs-BASE"><a href="#Key-Transaction-Properties-ACID-vs-BASE" class="headerlink" title="Key Transaction Properties: ACID vs BASE"></a>Key Transaction Properties: ACID vs BASE</h4><p>In large-scale systems, transactions must be designed for both <strong>strong consistency</strong> (ACID) or <strong>eventual consistency</strong> (BASE), depending on the use case.</p>
+<ol>
+<li><p><strong>ACID (Atomicity, Consistency, Isolation, Durability)</strong>:</p>
+<ul>
+<li>Guarantees <strong>strong consistency</strong>.</li>
+<li>Used when all subsystems must maintain a single consistent state.</li>
+<li>Common in <strong>single database</strong> transactions or within tightly-coupled services.</li>
+</ul>
+</li>
+<li><p><strong>BASE (Basically Available, Soft-state, Eventually consistent)</strong>:</p>
+<ul>
+<li>Sacrifices immediate consistency for <strong>availability</strong> and <strong>scalability</strong>.</li>
+<li>Often used in <strong>distributed systems</strong> where components may not always be in sync (e.g., eventual consistency in NoSQL databases).</li>
+</ul>
+</li>
+</ol>
+<p>In online systems, distributed transactions often require a mix of <strong>ACID</strong> and <strong>BASE</strong> properties, depending on the criticality of the operation.</p>
+<hr>
+<h3 id="2-Transaction-Management-in-Complex-Online-Systems"><a href="#2-Transaction-Management-in-Complex-Online-Systems" class="headerlink" title="2. Transaction Management in Complex Online Systems"></a>2. Transaction Management in Complex Online Systems</h3><p>Transaction management in online systems can no longer rely solely on single-database transaction managers. These systems often require <strong>distributed transaction management</strong>. Some of the most critical techniques include:</p>
+<h4 id="a-Distributed-Transactions-Two-Phase-Commit"><a href="#a-Distributed-Transactions-Two-Phase-Commit" class="headerlink" title="a. Distributed Transactions (Two-Phase Commit)"></a>a. <strong>Distributed Transactions (Two-Phase Commit)</strong></h4><p>When a transaction spans across <strong>multiple services</strong> or databases, a <strong>Two-Phase Commit (2PC)</strong> protocol is commonly used to ensure atomicity. </p>
+<ul>
+<li><strong>Phase 1 - Prepare</strong>: All participating systems are asked to <strong>prepare</strong> (lock resources and confirm they can commit the transaction).</li>
+<li><strong>Phase 2 - Commit&#x2F;Rollback</strong>: If all participants agree, the transaction is <strong>committed</strong>. If any participant fails, the entire transaction is <strong>rolled back</strong>.</li>
+</ul>
+<p>Example:</p>
+<ul>
+<li>An order is placed in an online store:<ul>
+<li>The <strong>Order Service</strong> inserts an order into the database.</li>
+<li>The <strong>Payment Service</strong> processes the payment.</li>
+<li>The <strong>Inventory Service</strong> updates the stock.</li>
+</ul>
+</li>
+</ul>
+<p>All three operations must be successful for the order to be confirmed. The <strong>2PC</strong> ensures that if any step fails, all previous operations are rolled back.</p>
+<p>However, <strong>2PC</strong> can be slow and does not scale well in high-throughput environments due to blocking resources during the “prepare” phase.</p>
+<h4 id="b-Saga-Pattern"><a href="#b-Saga-Pattern" class="headerlink" title="b. Saga Pattern"></a>b. <strong>Saga Pattern</strong></h4><p>The <strong>Saga Pattern</strong> is an alternative to 2PC, often used in <strong>microservices architectures</strong> where long-lived transactions are undesirable. Instead of blocking resources, the Saga breaks a distributed transaction into a series of smaller transactions.</p>
+<ul>
+<li>Each service involved in the transaction performs its work independently.</li>
+<li>If one step fails, the previous steps are <strong>compensated</strong> by executing defined rollback actions.</li>
+</ul>
+<p>Example:</p>
+<ol>
+<li><strong>Order Service</strong> places an order.</li>
+<li><strong>Payment Service</strong> charges the customer.</li>
+<li><strong>Inventory Service</strong> updates the stock.</li>
+<li>If the <strong>Inventory Service</strong> fails, a compensating transaction <strong>refunds</strong> the payment and <strong>cancels</strong> the order.</li>
+</ol>
+<p><strong>Sagas</strong> offer better <strong>scalability</strong> compared to 2PC and are particularly suited for <strong>event-driven</strong> architectures where each microservice manages its own transaction.</p>
+<h4 id="c-Eventual-Consistency-and-Compensation"><a href="#c-Eventual-Consistency-and-Compensation" class="headerlink" title="c. Eventual Consistency and Compensation"></a>c. <strong>Eventual Consistency and Compensation</strong></h4><p>In some distributed systems, strict ACID properties are relaxed for <strong>eventual consistency</strong>, especially in <strong>BASE systems</strong> (e.g., NoSQL databases, cloud-native architectures). Instead of locking resources, systems rely on <strong>compensation</strong> logic:</p>
+<ul>
+<li>If a downstream service fails or an external API does not respond, the system might retry the operation or initiate compensating actions to restore consistency.</li>
+</ul>
+<p><strong>Eventual Consistency Example</strong>:</p>
+<ul>
+<li>In a <strong>global payment system</strong>, payments made across multiple time zones and currencies may not reflect immediately but will eventually be reconciled to ensure data consistency.</li>
+</ul>
+<h4 id="d-Message-Driven-Transactions"><a href="#d-Message-Driven-Transactions" class="headerlink" title="d. Message-Driven Transactions"></a>d. <strong>Message-Driven Transactions</strong></h4><p>In <strong>event-driven systems</strong>, message queues (e.g., <strong>Kafka</strong>, <strong>RabbitMQ</strong>) help decouple services, allowing them to handle transactions asynchronously. Here, services:</p>
+<ul>
+<li><strong>Emit events</strong> for actions like “Order Placed” or “Payment Processed”.</li>
+<li><strong>Listen</strong> for events from other services to trigger corresponding actions (e.g., update inventory when an order is placed).</li>
+</ul>
+<p>By designing for <strong>idempotency</strong> (ensuring repeated operations have the same effect as a single operation), these systems can handle eventual consistency and retries gracefully.</p>
+<hr>
+<h3 id="3-Lock-Management"><a href="#3-Lock-Management" class="headerlink" title="3. Lock Management"></a>3. Lock Management</h3><p>In online systems, <strong>lock management</strong> becomes complex due to multiple participants, different types of data stores, and network latencies. Locking is crucial to prevent data corruption or race conditions during concurrent transactions.</p>
+<h4 id="a-Optimistic-vs-Pessimistic-Locking"><a href="#a-Optimistic-vs-Pessimistic-Locking" class="headerlink" title="a. Optimistic vs Pessimistic Locking"></a>a. <strong>Optimistic vs Pessimistic Locking</strong></h4><ul>
+<li><p><strong>Pessimistic Locking</strong>: A <strong>resource is locked</strong> for the entire duration of the transaction, preventing any other transaction from accessing it.</p>
+<ul>
+<li>Used when <strong>contention</strong> for the resource is high or when updates must be serialized (e.g., bank account transfers).</li>
+<li>Example: A row in the <code>Inventory</code> table is locked while updating stock.</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Products <span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Optimistic Locking</strong>: Assumes conflicts are rare and does not lock the resource. Instead, it checks for conflicts only at the end of the transaction.</p>
+<ul>
+<li><strong>Version columns</strong> or <strong>timestamps</strong> are used to detect if another transaction modified the same data. If so, the transaction fails, and a retry is triggered.</li>
+<li>Example: Update an order only if no other transaction has modified it.</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Orders</span><br><span class="line"><span class="keyword">SET</span> status <span class="operator">=</span> <span class="string">&#x27;SHIPPED&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> order_id <span class="operator">=</span> <span class="number">101</span> <span class="keyword">AND</span> version <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="b-Distributed-Locks"><a href="#b-Distributed-Locks" class="headerlink" title="b. Distributed Locks"></a>b. <strong>Distributed Locks</strong></h4><p>In distributed systems, transactions may need to span multiple nodes or databases. To handle this, <strong>distributed locks</strong> ensure that shared resources are not modified concurrently by different parts of the system.</p>
+<ol>
+<li><p><strong>Redis-Based Locks</strong>: A simple solution is to use <strong>Redis</strong> to acquire distributed locks.</p>
+<p>Example:<br>When updating inventory, each microservice tries to acquire a lock for the product:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET product_lock:1 my_unique_id NX PX 10000</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>NX</code> ensures the lock is acquired only if it doesn’t exist.</li>
+<li><code>PX 10000</code> ensures the lock expires after 10 seconds if not released.</li>
+</ul>
+</li>
+<li><p><strong>Zookeeper or Etcd</strong>: More robust systems like <strong>Zookeeper</strong> or <strong>Etcd</strong> can handle distributed coordination, offering <strong>leader election</strong>, <strong>mutexes</strong>, and <strong>barriers</strong>.</p>
+<p>Example: Distributed systems can use Zookeeper to ensure that <strong>only one instance</strong> of a service performs a critical operation (e.g., process payments in a sharded environment).</p>
+</li>
+</ol>
+<h4 id="c-Deadlock-Detection-and-Prevention"><a href="#c-Deadlock-Detection-and-Prevention" class="headerlink" title="c. Deadlock Detection and Prevention"></a>c. <strong>Deadlock Detection and Prevention</strong></h4><p>In systems with complex transactions and lock dependencies, <strong>deadlocks</strong> can occur, where two transactions are waiting for resources locked by each other.</p>
+<ul>
+<li><p><strong>Deadlock Detection</strong>: The system detects circular dependencies and aborts one of the transactions to resolve the deadlock.</p>
+<p>Example:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> innodb_lock_wait_timeout <span class="operator">=</span> <span class="number">50</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Deadlock Prevention</strong>: In systems like <strong>databases</strong> or <strong>distributed systems</strong>, adopting strategies like <strong>acquiring locks in a consistent order</strong> can prevent deadlocks.</p>
+</li>
+</ul>
+<hr>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>In an <strong>online system</strong>, transaction management and lock management are more complex than in a simple intranet application. The system must account for <strong>distributed transactions</strong> across multiple services and databases, often relying on protocols like <strong>2PC</strong>, <strong>Sagas</strong>, or <strong>message-driven event handling</strong> to ensure consistency and reliability. Locks, whether in-database or distributed, are critical for managing concurrency and ensuring data integrity but must be handled with care to avoid performance bottlenecks or deadlocks.</p>
+<p>In essence, designing transactions in a modern online system requires a mix of strategies from <strong>distributed transaction management</strong>, <strong>eventual consistency models</strong>, and <strong>advanced locking mechanisms</strong> to maintain data reliability, availability, and scalability.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1537,320 +1953,6 @@
 <p><a name="conclusion"></a></p>
 <h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>In this article, we summarized the best practices for developing Spring WebFlux applications and highlighted common pitfalls to avoid during development. By following these practices and avoiding common mistakes, developers can build more robust, scalable, and efficient reactive applications.</p>
 <p>Staying mindful of performance, error handling, and resource management while leveraging reactive programming concepts will lead to high-performing, non-blocking systems capable of handling large volumes of traffic efficiently.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - X</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-24 14:07:01 / Modified: 17:00:34" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:01-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#deployment-and-operations">Deployment and Operations</a></li>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#pre-deployment-preparation">Pre-deployment Preparation</a><ul>
-<li><a href="#1-configuration-optimization">1. Configuration Optimization</a></li>
-<li><a href="#2-security-configuration">2. Security Configuration</a></li>
-</ul>
-</li>
-<li><a href="#deploying-spring-webflux-applications">Deploying Spring WebFlux Applications</a><ul>
-<li><a href="#1-deploying-with-docker">1. Deploying with Docker</a><ul>
-<li><a href="#creating-a-dockerfile">Creating a Dockerfile</a></li>
-<li><a href="#building-and-running-the-docker-image">Building and Running the Docker Image</a></li>
-</ul>
-</li>
-<li><a href="#2-deploying-with-kubernetes">2. Deploying with Kubernetes</a><ul>
-<li><a href="#creating-a-kubernetes-deployment-file">Creating a Kubernetes Deployment File</a></li>
-<li><a href="#deploying-to-a-kubernetes-cluster">Deploying to a Kubernetes Cluster</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#operations-and-monitoring">Operations and Monitoring</a><ul>
-<li><a href="#1-using-spring-boot-actuator">1. Using Spring Boot Actuator</a></li>
-<li><a href="#2-using-prometheus-and-grafana">2. Using Prometheus and Grafana</a><ul>
-<li><a href="#configuring-prometheus">Configuring Prometheus</a></li>
-<li><a href="#configuring-grafana">Configuring Grafana</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<h1 id="Deployment-and-Operations"><a href="#Deployment-and-Operations" class="headerlink" title="Deployment and Operations"></a>Deployment and Operations</h1><hr>
-<p><a name="introduction"></a></p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we explored foundational concepts of Spring WebFlux, including Reactor, error handling, data flow transformation, reactive database access, performance optimization, security, and testing. In this article, we’ll delve into how to deploy and maintain Spring WebFlux applications in a production environment to ensure they run efficiently and reliably.</p>
-<p><a name="pre-deployment-preparation"></a></p>
-<h1 id="Pre-deployment-Preparation"><a href="#Pre-deployment-Preparation" class="headerlink" title="Pre-deployment Preparation"></a>Pre-deployment Preparation</h1><p>Before deploying a Spring WebFlux application to a production environment, there are several critical preparations to ensure the application’s reliability and performance.</p>
-<p><a name="configuration-optimization"></a></p>
-<h2 id="1-Configuration-Optimization"><a href="#1-Configuration-Optimization" class="headerlink" title="1. Configuration Optimization"></a>1. Configuration Optimization</h2><p>Tuning the configuration of Spring Boot and Netty is essential for production. This includes adjusting parameters to handle high-concurrency scenarios.</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Increase Netty thread count</span></span><br><span class="line"><span class="attr">reactor.netty.ioWorkerCount</span>=<span class="string">16</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Configure database connection pool</span></span><br><span class="line"><span class="attr">spring.r2dbc.url</span>=<span class="string">r2dbc:pool:postgresql://localhost:5432/mydb</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.initialSize</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.maxSize</span>=<span class="string">50</span></span><br></pre></td></tr></table></figure>
-
-<p>Optimizing thread pools and connection pools is crucial for handling increased traffic in production environments, especially when working with reactive systems.</p>
-<p><a name="security-configuration"></a></p>
-<h2 id="2-Security-Configuration"><a href="#2-Security-Configuration" class="headerlink" title="2. Security Configuration"></a>2. Security Configuration</h2><p>Ensure that all necessary security configurations are enabled in the production environment, such as HTTPS, CSRF protection, and XSS protection.</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Enable SSL</span></span><br><span class="line"><span class="attr">server.ssl.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">server.ssl.key-store</span>=<span class="string">classpath:keystore.jks</span></span><br><span class="line"><span class="attr">server.ssl.key-store-password</span>=<span class="string">changeit</span></span><br></pre></td></tr></table></figure>
-
-<p>These settings help secure communication between the client and server, protecting sensitive data.</p>
-<p><a name="deploying-spring-webflux-applications"></a></p>
-<h1 id="Deploying-Spring-WebFlux-Applications"><a href="#Deploying-Spring-WebFlux-Applications" class="headerlink" title="Deploying Spring WebFlux Applications"></a>Deploying Spring WebFlux Applications</h1><p>There are various ways to deploy Spring WebFlux applications, including traditional server deployment, Docker containerization, and Kubernetes orchestration. We will focus on Docker and Kubernetes deployment methods.</p>
-<p><a name="deploying-with-docker"></a></p>
-<h2 id="1-Deploying-with-Docker"><a href="#1-Deploying-with-Docker" class="headerlink" title="1. Deploying with Docker"></a>1. Deploying with Docker</h2><p>Docker simplifies the deployment process, making it easier to run applications consistently across different environments.</p>
-<h3 id="Creating-a-Dockerfile"><a href="#Creating-a-Dockerfile" class="headerlink" title="Creating a Dockerfile"></a>Creating a Dockerfile</h3><p>Create a <code>Dockerfile</code> to build your application’s Docker image:</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use the official OpenJDK base image</span></span><br><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">11</span>-jre-slim</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the working directory</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copy the JAR file into the container</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> target/myapp.jar /app/myapp.jar</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Expose the application port</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start the application</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;myapp.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Building-and-Running-the-Docker-Image"><a href="#Building-and-Running-the-Docker-Image" class="headerlink" title="Building and Running the Docker Image"></a>Building and Running the Docker Image</h3><p>Use the following commands to build and run the Docker image:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Build the Docker image</span></span><br><span class="line">docker build -t myapp:latest .</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the Docker container</span></span><br><span class="line">docker run -d -p 8080:8080 myapp:latest</span><br></pre></td></tr></table></figure>
-
-<p><a name="deploying-with-kubernetes"></a></p>
-<h2 id="2-Deploying-with-Kubernetes"><a href="#2-Deploying-with-Kubernetes" class="headerlink" title="2. Deploying with Kubernetes"></a>2. Deploying with Kubernetes</h2><p>Kubernetes is a popular container orchestration platform suited for managing large-scale distributed applications.</p>
-<h3 id="Creating-a-Kubernetes-Deployment-File"><a href="#Creating-a-Kubernetes-Deployment-File" class="headerlink" title="Creating a Kubernetes Deployment File"></a>Creating a Kubernetes Deployment File</h3><p>Create a <code>deployment.yaml</code> file to define the Kubernetes deployment:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">myapp:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Deploying-to-a-Kubernetes-Cluster"><a href="#Deploying-to-a-Kubernetes-Cluster" class="headerlink" title="Deploying to a Kubernetes Cluster"></a>Deploying to a Kubernetes Cluster</h3><p>Use the following commands to deploy the application to a Kubernetes cluster:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Apply the deployment and service configurations</span></span><br><span class="line">kubectl apply -f deployment.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check the deployment status</span></span><br><span class="line">kubectl get deployments</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check the service status</span></span><br><span class="line">kubectl get services</span><br></pre></td></tr></table></figure>
-
-<p><a name="operations-and-monitoring"></a></p>
-<h1 id="Operations-and-Monitoring"><a href="#Operations-and-Monitoring" class="headerlink" title="Operations and Monitoring"></a>Operations and Monitoring</h1><p>After deploying to a production environment, ongoing operations and monitoring are key to ensuring the application runs smoothly.</p>
-<p><a name="using-spring-boot-actuator"></a></p>
-<h2 id="1-Using-Spring-Boot-Actuator"><a href="#1-Using-Spring-Boot-Actuator" class="headerlink" title="1. Using Spring Boot Actuator"></a>1. Using Spring Boot Actuator</h2><p>Spring Boot Actuator provides rich monitoring and management capabilities, allowing real-time health checks and performance tracking.</p>
-<p>Add the dependency to your <code>pom.xml</code>:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Enable Actuator endpoints in the <code>application.properties</code> file:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management.endpoints.web.exposure.include</span>=<span class="string">health,info,metrics,prometheus</span></span><br></pre></td></tr></table></figure>
-
-<p><a name="using-prometheus-and-grafana"></a></p>
-<h2 id="2-Using-Prometheus-and-Grafana"><a href="#2-Using-Prometheus-and-Grafana" class="headerlink" title="2. Using Prometheus and Grafana"></a>2. Using Prometheus and Grafana</h2><p>Prometheus and Grafana are popular open-source monitoring tools suitable for tracking the performance and health of Spring WebFlux applications.</p>
-<h3 id="Configuring-Prometheus"><a href="#Configuring-Prometheus" class="headerlink" title="Configuring Prometheus"></a>Configuring Prometheus</h3><p>In the <code>prometheus.yml</code> file, add the Spring Boot Actuator’s Prometheus endpoint:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;spring-webflux&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:8080&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Grafana"><a href="#Configuring-Grafana" class="headerlink" title="Configuring Grafana"></a>Configuring Grafana</h3><p>Add Prometheus as a data source in Grafana and create dashboards to monitor key application metrics such as memory usage, response times, and request rates.</p>
-<p>This setup provides a full observability stack to keep your Spring WebFlux application under constant monitoring for proactive performance tuning and anomaly detection.</p>
-<p><a name="conclusion"></a></p>
-<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>In this article, we discussed how to deploy and operate Spring WebFlux applications in a production environment. With proper configuration optimization, Docker and Kubernetes deployment methods, and continuous monitoring and operations, we can ensure that our applications run efficiently and reliably in production.</p>
-<p>By integrating monitoring tools like Prometheus and Grafana, and leveraging Spring Boot Actuator, you can maintain high visibility into your application’s performance and quickly address any issues that arise.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - IX</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-24 14:06:56 / Modified: 16:59:12" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:56-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <hr>
-<ul>
-<li><a href="#test">Test</a></li>
-<li><a href="#introduction">Introduction</a><ul>
-<li><a href="#why-testing-is-necessary">Why Testing is Necessary</a></li>
-<li><a href="#types-of-testing-in-spring-webflux">Types of Testing in Spring WebFlux</a><ul>
-<li><a href="#1-unit-testing">1. Unit Testing</a><ul>
-<li><a href="#11-testing-controllers-with-webtestclient">1.1 Testing Controllers with WebTestClient</a></li>
-<li><a href="#12-testing-services-with-mockito">1.2 Testing Services with Mockito</a></li>
-</ul>
-</li>
-<li><a href="#2-integration-testing">2. Integration Testing</a></li>
-<li><a href="#3-end-to-end-testing">3. End-to-End Testing</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h1><hr>
-<p><a name="introduction"></a></p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we explored the foundational concepts of Spring WebFlux, Reactor, error handling, data flow transformation, reactive database access, performance optimization, complex scenarios, and security. This article delves into how to conduct testing in Spring WebFlux to ensure that our reactive applications run reliably in both development and production environments.</p>
-<p><a name="why-testing-is-necessary"></a></p>
-<h2 id="Why-Testing-is-Necessary"><a href="#Why-Testing-is-Necessary" class="headerlink" title="Why Testing is Necessary"></a>Why Testing is Necessary</h2><p>Testing is an indispensable part of the software development process. Through testing, we can validate code correctness, ensure individual modules function as expected, and promptly identify and resolve potential issues. For reactive applications like those built with Spring WebFlux, testing is particularly important because reactive programming introduces asynchronous and non-blocking operations, which increase the complexity of debugging and validation.</p>
-<p><a name="types-of-testing-in-spring-webflux"></a></p>
-<h2 id="Types-of-Testing-in-Spring-WebFlux"><a href="#Types-of-Testing-in-Spring-WebFlux" class="headerlink" title="Types of Testing in Spring WebFlux"></a>Types of Testing in Spring WebFlux</h2><p>In Spring WebFlux, there are typically three main types of tests:</p>
-<ul>
-<li>Unit Testing: Testing individual modules or components to ensure their behavior matches expectations.</li>
-<li>Integration Testing: Testing the interactions between multiple modules to ensure they work together correctly.</li>
-<li>End-to-End Testing: Simulating real user actions and verifying the behavior of the entire system.</li>
-</ul>
-<p><a name="unit-testing"></a></p>
-<h3 id="1-Unit-Testing"><a href="#1-Unit-Testing" class="headerlink" title="1. Unit Testing"></a>1. Unit Testing</h3><p>Unit testing is the smallest test scope, focusing on individual functionality or components. In Spring WebFlux, we commonly test controllers, services, and data access layers.</p>
-<p><a name="testing-controllers-with-webtestclient"></a></p>
-<h4 id="1-1-Testing-Controllers-with-WebTestClient"><a href="#1-1-Testing-Controllers-with-WebTestClient" class="headerlink" title="1.1 Testing Controllers with WebTestClient"></a>1.1 Testing Controllers with WebTestClient</h4><p><code>WebTestClient</code> is a powerful tool for testing the web layer of Spring WebFlux applications.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebFluxTest(UserHandler.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandlerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/user/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This example shows how to test a controller using <code>WebTestClient</code>, focusing on the <code>GET /user/1</code> and <code>GET /users</code> endpoints.</p>
-<p><a name="testing-services-with-mockito"></a></p>
-<h4 id="1-2-Testing-Services-with-Mockito"><a href="#1-2-Testing-Services-with-Mockito" class="headerlink" title="1.2 Testing Services with Mockito"></a>1.2 Testing Services with Mockito</h4><p>Mockito is a popular mocking framework used to create and manage dependencies in tests.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.jupiter.api.Assertions.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.mockito.InjectMocks;</span><br><span class="line"><span class="keyword">import</span> org.mockito.Mock;</span><br><span class="line"><span class="keyword">import</span> org.mockito.MockitoAnnotations;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserServiceTest</span><span class="params">()</span> &#123;</span><br><span class="line">        MockitoAnnotations.openMocks(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">        when(userRepository.findById(<span class="string">&quot;1&quot;</span>)).thenReturn(Mono.just(user));</span><br><span class="line"></span><br><span class="line">        Mono&lt;User&gt; result = userService.getUser(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        assertEquals(<span class="string">&quot;John Doe&quot;</span>, result.block().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example, we use Mockito to mock the <code>UserRepository</code> and verify that the <code>UserService</code> correctly retrieves the user.</p>
-<p><a name="integration-testing"></a></p>
-<h3 id="2-Integration-Testing"><a href="#2-Integration-Testing" class="headerlink" title="2. Integration Testing"></a>2. Integration Testing</h3><p>Integration tests validate the interactions between multiple modules. In Spring WebFlux, we usually use the <code>@SpringBootTest</code> annotation to load the entire application context and use <code>WebTestClient</code> to perform tests.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApplicationIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/user/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example, the entire application is loaded and tested for correctness across modules using <code>WebTestClient</code>.</p>
-<p><a name="end-to-end-testing"></a></p>
-<h3 id="3-End-to-End-Testing"><a href="#3-End-to-End-Testing" class="headerlink" title="3. End-to-End Testing"></a>3. End-to-End Testing</h3><p>End-to-end testing simulates real user actions and verifies the behavior of the entire system. These tests are generally more complex as they involve starting the whole application and mimicking various user interaction scenarios.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EndToEndTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUserFlow</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Create a new user</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">newUser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="literal">null</span>, <span class="string">&quot;Alice&quot;</span>);</span><br><span class="line">        webTestClient.post().uri(<span class="string">&quot;/user&quot;</span>)</span><br><span class="line">            .bodyValue(newUser)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;Alice&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Get all users</span></span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This example tests the flow of creating a new user and then retrieving all users to ensure the system works end-to-end.</p>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we discussed how to perform testing in Spring WebFlux. By conducting unit tests, integration tests, and end-to-end tests, you can ensure that every part of your application functions as expected. Additionally, understanding common vulnerabilities like CSRF and XSS is crucial for building secure applications.</p>
 
       
     </div>
