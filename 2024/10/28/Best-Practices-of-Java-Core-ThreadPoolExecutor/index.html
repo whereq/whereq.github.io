@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Introduction 2. Overview of ThreadPoolExecutor 3. Core Configuration Parameters Best Practice: Choose configuration values based on workload type and system capacity.   4. Advanced Queue Managemen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices of Java Core ThreadPoolExecutor">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. Introduction 2. Overview of ThreadPoolExecutor 3. Core Configuration Parameters Best Practice: Choose configuration values based on workload type and system capacity.   4. Advanced Queue Managemen">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-29T03:01:49.000Z">
+<meta property="article:modified_time" content="2024-10-29T03:02:52.945Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Java Core">
+<meta property="article:tag" content="Best Practices">
+<meta property="article:tag" content="Multi-Threading">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/","path":"2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/","title":"Best Practices of Java Core ThreadPoolExecutor"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices of Java Core ThreadPoolExecutor | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Overview-of-ThreadPoolExecutor"><span class="nav-number">2.</span> <span class="nav-text">2. Overview of ThreadPoolExecutor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Core-Configuration-Parameters"><span class="nav-number">3.</span> <span class="nav-text">3. Core Configuration Parameters</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Best-Practice-Choose-configuration-values-based-on-workload-type-and-system-capacity"><span class="nav-number">3.0.1.</span> <span class="nav-text">Best Practice: Choose configuration values based on workload type and system capacity.</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Advanced-Queue-Management"><span class="nav-number">4.</span> <span class="nav-text">4. Advanced Queue Management</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Best-Practice-Select-a-queue-type-aligned-with-task-load-duration-and-resource-availability"><span class="nav-number">4.0.1.</span> <span class="nav-text">Best Practice: Select a queue type aligned with task load, duration, and resource availability.</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Thread-Pool-Scaling-Strategies"><span class="nav-number">5.</span> <span class="nav-text">5. Thread Pool Scaling Strategies</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Recommended-Scaling"><span class="nav-number">5.0.1.</span> <span class="nav-text">Recommended Scaling:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Enhanced-Monitoring-Techniques"><span class="nav-number">6.</span> <span class="nav-text">6. Enhanced Monitoring Techniques</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Backpressure-Handling-in-Production"><span class="nav-number">7.</span> <span class="nav-text">7. Backpressure Handling in Production</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Diagram-Dynamic-Task-Flow-and-Backpressure"><span class="nav-number">7.0.1.</span> <span class="nav-text">Diagram: Dynamic Task Flow and Backpressure</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Optimized-Rejection-Policies"><span class="nav-number">8.</span> <span class="nav-text">8. Optimized Rejection Policies</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Best-Practice-Customize-RejectedExecutionHandler-based-on-workload-characteristics"><span class="nav-number">8.0.1.</span> <span class="nav-text">Best Practice: Customize RejectedExecutionHandler based on workload characteristics.</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Sample-Code-with-Detailed-Comments"><span class="nav-number">9.</span> <span class="nav-text">9. Sample Code with Detailed Comments</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Conclusion"><span class="nav-number">10.</span> <span class="nav-text">10. Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices of Java Core ThreadPoolExecutor | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices of Java Core ThreadPoolExecutor
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-28 23:01:49 / Modified: 23:02:52" itemprop="dateCreated datePublished" datetime="2024-10-28T23:01:49-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-overview-of-threadpoolexecutor">2. Overview of <code>ThreadPoolExecutor</code></a></li>
+<li><a href="#3-core-configuration-parameters">3. Core Configuration Parameters</a><ul>
+<li><a href="#best-practice-choose-configuration-values-based-on-workload-type-and-system-capacity">Best Practice: Choose configuration values based on workload type and system capacity.</a></li>
+</ul>
+</li>
+<li><a href="#4-advanced-queue-management">4. Advanced Queue Management</a><ul>
+<li><a href="#best-practice-select-a-queue-type-aligned-with-task-load-duration-and-resource-availability">Best Practice: Select a queue type aligned with task load, duration, and resource availability.</a></li>
+</ul>
+</li>
+<li><a href="#5-thread-pool-scaling-strategies">5. Thread Pool Scaling Strategies</a><ul>
+<li><a href="#recommended-scaling">Recommended Scaling:</a></li>
+</ul>
+</li>
+<li><a href="#6-enhanced-monitoring-techniques">6. Enhanced Monitoring Techniques</a></li>
+<li><a href="#7-backpressure-handling-in-production">7. Backpressure Handling in Production</a><ul>
+<li><a href="#diagram-dynamic-task-flow-and-backpressure">Diagram: Dynamic Task Flow and Backpressure</a></li>
+</ul>
+</li>
+<li><a href="#8-optimized-rejection-policies">8. Optimized Rejection Policies</a><ul>
+<li><a href="#best-practice-customize-rejectedexecutionhandler-based-on-workload-characteristics">Best Practice: Customize <code>RejectedExecutionHandler</code> based on workload characteristics.</a></li>
+</ul>
+</li>
+<li><a href="#9-sample-code-with-detailed-comments">9. Sample Code with Detailed Comments</a></li>
+<li><a href="#10-conclusion">10. Conclusion</a></li>
+</ul>
+<hr>
+<p>This article provides an in-depth overview of best practices for using Java’s <code>ThreadPoolExecutor</code>, including textual diagrams, sample code, and production-tested strategies for enhancing performance, resource management, and handling complex concurrency requirements.</p>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>Java’s <code>ThreadPoolExecutor</code> is a cornerstone of concurrent programming. It provides a high-performance, versatile API for managing threads and handling tasks, but it requires careful configuration to prevent resource wastage, improve system responsiveness, and enhance maintainability.</p>
+<hr>
+<p><a name="overview-of-threadpoolexecutor"></a></p>
+<h2 id="2-Overview-of-ThreadPoolExecutor"><a href="#2-Overview-of-ThreadPoolExecutor" class="headerlink" title="2. Overview of ThreadPoolExecutor"></a>2. Overview of <code>ThreadPoolExecutor</code></h2><p>The <code>ThreadPoolExecutor</code> manages thread allocation, scaling, and task queueing while optimizing thread lifecycle to minimize system overhead. Here is a basic textual model of a <code>ThreadPoolExecutor</code> lifecycle and memory model:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">          +-----------------------------+</span><br><span class="line">          |         Task Queue          |</span><br><span class="line">          |   (BlockingQueue&lt;Runnable&gt;) |</span><br><span class="line">          +------------+----------------+</span><br><span class="line">                       |</span><br><span class="line">     +-----------------v-----------------+</span><br><span class="line">     |                                   |</span><br><span class="line">     |       ThreadPoolExecutor          |</span><br><span class="line">     |                                   |</span><br><span class="line">     +----------------+------------------+</span><br><span class="line">                       |</span><br><span class="line">+----------------------+--------------------+</span><br><span class="line">|      Worker Threads                       |</span><br><span class="line">|   +-----------------------------------+  |</span><br><span class="line">|   |           Worker Thread 1         |  |</span><br><span class="line">|   |-----------------------------------|  |</span><br><span class="line">|   |           Worker Thread 2         |  |</span><br><span class="line">|   |-----------------------------------|  |</span><br><span class="line">|   |           Worker Thread N         |  |</span><br><span class="line">+-----------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Worker Threads</strong>: Execute tasks within a controlled environment.</li>
+<li><strong>Task Queue</strong>: Holds tasks awaiting execution, preventing unnecessary thread creation.</li>
+<li><strong>ThreadPoolExecutor</strong>: Controls the execution strategy, pool scaling, and task rejection policies.</li>
+</ul>
+<hr>
+<p><a name="core-configuration-parameters"></a></p>
+<h2 id="3-Core-Configuration-Parameters"><a href="#3-Core-Configuration-Parameters" class="headerlink" title="3. Core Configuration Parameters"></a>3. Core Configuration Parameters</h2><p>The <code>ThreadPoolExecutor</code> relies on several key configuration parameters:</p>
+<ul>
+<li><strong>corePoolSize</strong>: Minimum number of threads in the pool.</li>
+<li><strong>maximumPoolSize</strong>: Maximum threads allowed in the pool.</li>
+<li><strong>keepAliveTime</strong>: The time a thread can remain idle before termination if beyond corePoolSize.</li>
+<li><strong>workQueue</strong>: Queue holding tasks before they are assigned to threads.</li>
+</ul>
+<h4 id="Best-Practice-Choose-configuration-values-based-on-workload-type-and-system-capacity"><a href="#Best-Practice-Choose-configuration-values-based-on-workload-type-and-system-capacity" class="headerlink" title="Best Practice: Choose configuration values based on workload type and system capacity."></a>Best Practice: Choose configuration values based on workload type and system capacity.</h4><hr>
+<p><a name="advanced-queue-management"></a></p>
+<h2 id="4-Advanced-Queue-Management"><a href="#4-Advanced-Queue-Management" class="headerlink" title="4. Advanced Queue Management"></a>4. Advanced Queue Management</h2><p><strong>Choosing the Right Queue</strong>:</p>
+<ol>
+<li><strong>SynchronousQueue</strong>: No internal capacity, ideal for transient spikes.</li>
+<li><strong>LinkedBlockingQueue</strong>: Unbounded, suitable for long-running processes.</li>
+<li><strong>ArrayBlockingQueue</strong>: Fixed size, optimal for bounded workloads.</li>
+</ol>
+<h4 id="Best-Practice-Select-a-queue-type-aligned-with-task-load-duration-and-resource-availability"><a href="#Best-Practice-Select-a-queue-type-aligned-with-task-load-duration-and-resource-availability" class="headerlink" title="Best Practice: Select a queue type aligned with task load, duration, and resource availability."></a>Best Practice: Select a queue type aligned with task load, duration, and resource availability.</h4><hr>
+<p><a name="thread-pool-scaling-strategies"></a></p>
+<h2 id="5-Thread-Pool-Scaling-Strategies"><a href="#5-Thread-Pool-Scaling-Strategies" class="headerlink" title="5. Thread Pool Scaling Strategies"></a>5. Thread Pool Scaling Strategies</h2><p>Efficient scaling balances resource use against workload demands. Consider using dynamic scaling mechanisms for responsive systems.</p>
+<h4 id="Recommended-Scaling"><a href="#Recommended-Scaling" class="headerlink" title="Recommended Scaling:"></a>Recommended Scaling:</h4><ul>
+<li><strong>FixedThreadPool</strong>: When task load and timing are predictable.</li>
+<li><strong>CachedThreadPool</strong>: For unpredictable or short-lived task loads.</li>
+</ul>
+<hr>
+<p><a name="enhanced-monitoring-techniques"></a></p>
+<h2 id="6-Enhanced-Monitoring-Techniques"><a href="#6-Enhanced-Monitoring-Techniques" class="headerlink" title="6. Enhanced Monitoring Techniques"></a>6. Enhanced Monitoring Techniques</h2><p>Monitoring thread and queue activity is essential for real-time scaling and troubleshooting. Use the following tools and approaches:</p>
+<ul>
+<li><strong>JMX (Java Management Extensions)</strong>: For real-time metrics on threads, tasks, and system load.</li>
+<li><strong>Thread Pool Executor’s <code>getPoolSize</code> and <code>getQueue().size()</code> Methods</strong>: To track runtime capacity and pending task counts.</li>
+</ul>
+<hr>
+<p><a name="backpressure-handling-in-production"></a></p>
+<h2 id="7-Backpressure-Handling-in-Production"><a href="#7-Backpressure-Handling-in-Production" class="headerlink" title="7. Backpressure Handling in Production"></a>7. Backpressure Handling in Production</h2><p>Backpressure handling in high-demand environments prevents overloads by controlling the flow of tasks:</p>
+<ul>
+<li><strong>Rejection Policies</strong>: Define fallback strategies for rejected tasks.</li>
+<li><strong>Queue Sizing</strong>: Set boundaries on task input rate.</li>
+</ul>
+<h4 id="Diagram-Dynamic-Task-Flow-and-Backpressure"><a href="#Diagram-Dynamic-Task-Flow-and-Backpressure" class="headerlink" title="Diagram: Dynamic Task Flow and Backpressure"></a>Diagram: Dynamic Task Flow and Backpressure</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Client Requests</span><br><span class="line">      |</span><br><span class="line"> +----v----+     Backpressure Control</span><br><span class="line"> | Task    |--------------------+</span><br><span class="line"> | Queue   |                    |</span><br><span class="line"> +---------+                    |</span><br><span class="line">       |                        |</span><br><span class="line">+------v-------+                |</span><br><span class="line">| Thread       |                |</span><br><span class="line">| Pool         |                |</span><br><span class="line">+--------------+----------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="optimized-rejection-policies"></a></p>
+<h2 id="8-Optimized-Rejection-Policies"><a href="#8-Optimized-Rejection-Policies" class="headerlink" title="8. Optimized Rejection Policies"></a>8. Optimized Rejection Policies</h2><p>Java provides four main rejection policies, each suited to different use cases:</p>
+<ol>
+<li><strong>AbortPolicy</strong>: Throws an exception.</li>
+<li><strong>CallerRunsPolicy</strong>: Executes tasks in the calling thread.</li>
+<li><strong>DiscardPolicy</strong>: Silently discards tasks.</li>
+<li><strong>DiscardOldestPolicy</strong>: Discards oldest unhandled task in the queue.</li>
+</ol>
+<h4 id="Best-Practice-Customize-RejectedExecutionHandler-based-on-workload-characteristics"><a href="#Best-Practice-Customize-RejectedExecutionHandler-based-on-workload-characteristics" class="headerlink" title="Best Practice: Customize RejectedExecutionHandler based on workload characteristics."></a>Best Practice: Customize <code>RejectedExecutionHandler</code> based on workload characteristics.</h4><hr>
+<p><a name="sample-code-with-detailed-comments"></a></p>
+<h2 id="9-Sample-Code-with-Detailed-Comments"><a href="#9-Sample-Code-with-Detailed-Comments" class="headerlink" title="9. Sample Code with Detailed Comments"></a>9. Sample Code with Detailed Comments</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OptimizedThreadPoolExecutor</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. Configure core parameters with scaling strategy</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">            <span class="number">4</span>,                <span class="comment">// core pool size</span></span><br><span class="line">            <span class="number">10</span>,               <span class="comment">// maximum pool size</span></span><br><span class="line">            <span class="number">30</span>,               <span class="comment">// keep-alive time</span></span><br><span class="line">            TimeUnit.SECONDS, <span class="comment">// keep-alive time unit</span></span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">100</span>), <span class="comment">// task queue type</span></span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">// rejection policy</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. Simulate task submission</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">200</span>; i++) &#123;</span><br><span class="line">            executor.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> taskId;</span><br><span class="line"></span><br><span class="line">        Task(<span class="type">int</span> taskId) &#123;</span><br><span class="line">            <span class="built_in">this</span>.taskId = taskId;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;Executing Task &quot;</span> + taskId);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">500</span>); <span class="comment">// Simulate work</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                Thread.currentThread().interrupt();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="10-Conclusion"><a href="#10-Conclusion" class="headerlink" title="10. Conclusion"></a>10. Conclusion</h2><p>Mastering <code>ThreadPoolExecutor</code> for complex, production-grade applications requires an understanding of core parameters, workload patterns, and monitoring needs. These best practices are intended to improve performance, efficiency, and system resilience in multithreaded environments.</p>
+<pre><code>
+This enhanced version covers more nuances in `ThreadPoolExecutor` setup, advanced queue management, and specific monitoring strategies. Let me know if you&#39;d like more focus on any other areas!
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-Core/" rel="tag"><i class="fa fa-tag"></i> Java Core</a>
+              <a href="/tags/Best-Practices/" rel="tag"><i class="fa fa-tag"></i> Best Practices</a>
+              <a href="/tags/Multi-Threading/" rel="tag"><i class="fa fa-tag"></i> Multi-Threading</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Best-Practices-of-Java-Core-Multi-Threading-Programming/" rel="prev" title="Best Practices of Java Core Multi-Threading Programming">
+                  <i class="fa fa-angle-left"></i> Best Practices of Java Core Multi-Threading Programming
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading/" rel="next" title="Deep Dive into Java Core Multi-Threading">
+                  Deep Dive into Java Core Multi-Threading <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
