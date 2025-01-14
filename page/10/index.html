@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">113</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,172 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XI</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-24 14:07:07 / Modified: 17:08:31" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:07-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#best-practices-and-common-pitfalls">Best Practices and Common Pitfalls</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#best-practices">Best Practices</a><ul>
+<li><a href="#1-proper-use-of-mono-and-flux">1. Proper Use of Mono and Flux</a></li>
+<li><a href="#2-error-handling">2. Error Handling</a></li>
+<li><a href="#3-backpressure-management">3. Backpressure Management</a></li>
+<li><a href="#4-non-blocking-io-operations">4. Non-blocking I&#x2F;O Operations</a></li>
+<li><a href="#5-proper-thread-model-configuration">5. Proper Thread Model Configuration</a></li>
+</ul>
+</li>
+<li><a href="#common-pitfalls">Common Pitfalls</a><ul>
+<li><a href="#1-blocking-operations">1. Blocking Operations</a></li>
+<li><a href="#2-ignoring-error-handling">2. Ignoring Error Handling</a></li>
+<li><a href="#3-resource-leaks">3. Resource Leaks</a></li>
+<li><a href="#4-over-reliance-on-default-configurations">4. Over-reliance on Default Configurations</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<h1 id="Best-Practices-and-Common-Pitfalls"><a href="#Best-Practices-and-Common-Pitfalls" class="headerlink" title="Best Practices and Common Pitfalls"></a>Best Practices and Common Pitfalls</h1><hr>
+<p><a name="introduction"></a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In the first ten articles of this series, we discussed the foundational concepts of Spring WebFlux, including Reactor, error handling, data flow transformation, reactive database access, performance optimization, security, testing, and deployment. In this article, we will summarize the best practices for developing Spring WebFlux applications and highlight common pitfalls to help developers build more robust and efficient reactive systems.</p>
+<p><a name="best-practices"></a></p>
+<h1 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h1><p><a name="proper-use-of-mono-and-flux"></a></p>
+<h2 id="1-Proper-Use-of-Mono-and-Flux"><a href="#1-Proper-Use-of-Mono-and-Flux" class="headerlink" title="1. Proper Use of Mono and Flux"></a>1. Proper Use of Mono and Flux</h2><ul>
+<li><strong>Mono</strong>: Used for handling asynchronous sequences containing a single element or none. For example, when querying a database for a single user object.</li>
+<li><strong>Flux</strong>: Used for handling asynchronous sequences containing multiple elements. For example, retrieving multiple user objects from a database.</li>
+</ul>
+<p>Ensure that <strong>Mono</strong> and <strong>Flux</strong> are used in appropriate contexts to keep the code simple and readable.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">findAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findAll();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="error-handling"></a></p>
+<h2 id="2-Error-Handling"><a href="#2-Error-Handling" class="headerlink" title="2. Error Handling"></a>2. Error Handling</h2><ul>
+<li><strong>onErrorReturn</strong>: Returns a default value when an error occurs.</li>
+<li><strong>onErrorResume</strong>: Switches to another <code>Publisher</code> upon encountering an error.</li>
+<li><strong>onErrorMap</strong>: Transforms one type of error into another.</li>
+</ul>
+<p>These operators can be used to handle errors gracefully and ensure the application recovers from failures efficiently.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .onErrorReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;default&quot;</span>, <span class="string">&quot;Default User&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="backpressure-management"></a></p>
+<h2 id="3-Backpressure-Management"><a href="#3-Backpressure-Management" class="headerlink" title="3. Backpressure Management"></a>3. Backpressure Management</h2><p>In high-concurrency environments, managing <strong>backpressure</strong> is critical to maintaining system stability. Operators like <code>limitRate</code>, <code>onBackpressureBuffer</code>, and <code>onBackpressureDrop</code> help control the flow of data to prevent overloading.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findAll()</span><br><span class="line">            .limitRate(<span class="number">100</span>)</span><br><span class="line">            .onBackpressureBuffer(<span class="number">50</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="non-blocking-io-operations"></a></p>
+<h2 id="4-Non-blocking-I-O-Operations"><a href="#4-Non-blocking-I-O-Operations" class="headerlink" title="4. Non-blocking I&#x2F;O Operations"></a>4. Non-blocking I&#x2F;O Operations</h2><p>Ensure that all I&#x2F;O operations are non-blocking. Avoid using blocking APIs such as <code>RestTemplate</code>, and instead use <strong>WebClient</strong> for HTTP requests.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create(<span class="string">&quot;http://example.com&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUser</span><span class="params">(String id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/users/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">                .retrieve()</span><br><span class="line">                .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>WebClient provides an efficient and reactive way to make HTTP calls without blocking the thread.</p>
+<p><a name="proper-thread-model-configuration"></a></p>
+<h2 id="5-Proper-Thread-Model-Configuration"><a href="#5-Proper-Thread-Model-Configuration" class="headerlink" title="5. Proper Thread Model Configuration"></a>5. Proper Thread Model Configuration</h2><p>Adjust Reactor and Netty thread configurations based on application requirements to optimize performance in high-concurrency environments.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">reactor.netty.ioWorkerCount</span>=<span class="string">16</span></span><br></pre></td></tr></table></figure>
+
+<p>Fine-tuning the thread pool ensures the application can handle more requests efficiently under high loads.</p>
+<p><a name="common-pitfalls"></a></p>
+<h1 id="Common-Pitfalls"><a href="#Common-Pitfalls" class="headerlink" title="Common Pitfalls"></a>Common Pitfalls</h1><p><a name="blocking-operations"></a></p>
+<h2 id="1-Blocking-Operations"><a href="#1-Blocking-Operations" class="headerlink" title="1. Blocking Operations"></a>1. Blocking Operations</h2><p>Avoid using <strong>blocking operations</strong> in reactive programming, such as thread sleeps or blocking database queries. Blocking calls reduce system performance by causing threads to wait unnecessarily.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="comment">// Avoid using blocking calls</span></span><br><span class="line">    <span class="keyword">return</span> Mono.fromCallable(() -&gt; &#123;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>); <span class="comment">// This is a blocking call</span></span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Blocking operations can be detrimental in a reactive context, where non-blocking operations are essential for throughput.</p>
+<p><a name="ignoring-error-handling"></a></p>
+<h2 id="2-Ignoring-Error-Handling"><a href="#2-Ignoring-Error-Handling" class="headerlink" title="2. Ignoring Error Handling"></a>2. Ignoring Error Handling</h2><p>Ignoring error handling in reactive streams can lead to application crashes when exceptions occur. Ensure that potential errors are handled at every stage of the stream.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .onErrorResume(e -&gt; &#123;</span><br><span class="line">                log.error(<span class="string">&quot;Error occurred&quot;</span>, e);</span><br><span class="line">                <span class="keyword">return</span> Mono.empty();</span><br><span class="line">            &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Proper error handling ensures the system remains resilient under failure conditions.</p>
+<p><a name="resource-leaks"></a></p>
+<h2 id="3-Resource-Leaks"><a href="#3-Resource-Leaks" class="headerlink" title="3. Resource Leaks"></a>3. Resource Leaks</h2><p>Ensure that resources such as files, database connections, or network sockets are properly closed after usage to avoid <strong>resource leaks</strong>. For instance, when handling file streams, ensure the file is closed after processing.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Flux&lt;String&gt; <span class="title function_">readFile</span><span class="params">(String path)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Flux.using(</span><br><span class="line">            () -&gt; Files.lines(Paths.get(path)),</span><br><span class="line">            Flux::fromStream,</span><br><span class="line">            Stream::close</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Using the <code>Flux.using</code> construct ensures that resources are cleaned up when no longer needed.</p>
+<p><a name="over-reliance-on-default-configurations"></a></p>
+<h2 id="4-Over-reliance-on-Default-Configurations"><a href="#4-Over-reliance-on-Default-Configurations" class="headerlink" title="4. Over-reliance on Default Configurations"></a>4. Over-reliance on Default Configurations</h2><p>While Spring Boot provides many default configurations, relying on them in a production environment can be risky. Adjust configurations such as <strong>Netty thread count</strong> and <strong>database connection pool size</strong> based on the specific needs of your application.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.r2dbc.pool.initialSize</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.maxSize</span>=<span class="string">50</span></span><br></pre></td></tr></table></figure>
+
+<p>By customizing these settings, you can optimize resource usage and ensure smooth scaling under different load conditions.</p>
+<p><a name="conclusion"></a></p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>In this article, we summarized the best practices for developing Spring WebFlux applications and highlighted common pitfalls to avoid during development. By following these practices and avoiding common mistakes, developers can build more robust, scalable, and efficient reactive applications.</p>
+<p>Staying mindful of performance, error handling, and resource management while leveraging reactive programming concepts will lead to high-performing, non-blocking systems capable of handling large volumes of traffic efficiently.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1478,163 +1644,6 @@
 <hr>
 <p><a name="conclusion"></a> </p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we took a deep dive into Reactor and its application in Spring WebFlux. By understanding <strong>Mono</strong> and <strong>Flux</strong> and how to handle asynchronous data streams with these tools, we can build more efficient reactive applications.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-I/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-I/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - I </a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-24 12:55:22 / Modified: 13:05:53" itemprop="dateCreated datePublished" datetime="2024-10-24T12:55:22-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#overview-and-fundamentals">Overview and Fundamentals</a><ul>
-<li><a href="#what-is-reactive-programming">What is Reactive Programming?</a></li>
-<li><a href="#why-choose-spring-webflux">Why Choose Spring WebFlux?</a></li>
-<li><a href="#core-concepts-and-components">Core Concepts and Components</a><ul>
-<li><a href="#1-reactive-streams">1. Reactive Streams</a></li>
-<li><a href="#2-project-reactor">2. Project Reactor</a></li>
-<li><a href="#3-webflux">3. WebFlux</a></li>
-</ul>
-</li>
-<li><a href="#practical-example-building-a-simple-webflux-application">Practical Example: Building a Simple WebFlux Application</a><ul>
-<li><a href="#1-project-setup">1. Project Setup</a></li>
-<li><a href="#2-define-data-model">2. Define Data Model</a></li>
-<li><a href="#3-create-handler-and-router">3. Create Handler and Router</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Overview-and-Fundamentals"><a href="#Overview-and-Fundamentals" class="headerlink" title="Overview and Fundamentals"></a>Overview and Fundamentals</h1><p><a name="what-is-reactive-programming"></a> </p>
-<h2 id="What-is-Reactive-Programming"><a href="#What-is-Reactive-Programming" class="headerlink" title="What is Reactive Programming?"></a>What is Reactive Programming?</h2><p>Reactive programming is a programming paradigm oriented around data flows and the propagation of changes. Unlike traditional imperative programming, reactive programming allows you to declare data dependencies, and changes are automatically propagated when the data source changes. The core idea of reactive programming involves asynchronous data stream processing and non-blocking operations, making applications more efficient in utilizing system resources.</p>
-<hr>
-<p><a name="why-choose-spring-webflux"></a> </p>
-<h2 id="Why-Choose-Spring-WebFlux"><a href="#Why-Choose-Spring-WebFlux" class="headerlink" title="Why Choose Spring WebFlux?"></a>Why Choose Spring WebFlux?</h2><p>Spring WebFlux is an asynchronous, non-blocking web framework introduced in Spring 5 that handles non-blocking asynchronous requests. Unlike traditional Spring MVC, Spring WebFlux is built on the Reactive Streams specification and supports a fully non-blocking reactive programming model. Some key reasons to choose Spring WebFlux include:</p>
-<ul>
-<li><strong>Non-blocking I&#x2F;O</strong>: Allows handling of more concurrent requests, improving system throughput and response times.</li>
-<li><strong>Reactive Programming Model</strong>: Offers reactive programming support based on Project Reactor, making the code more concise and maintainable.</li>
-<li><strong>Flexible Programming Model</strong>: Supports both annotation-driven and functional programming models, catering to different developer needs.</li>
-<li><strong>High Scalability</strong>: Ideal for microservices and distributed systems, making it easy to scale and integrate.</li>
-</ul>
-<hr>
-<p><a name="core-concepts-and-components"></a> </p>
-<h2 id="Core-Concepts-and-Components"><a href="#Core-Concepts-and-Components" class="headerlink" title="Core Concepts and Components"></a>Core Concepts and Components</h2><p><a name="1-reactive-streams"></a> </p>
-<h3 id="1-Reactive-Streams"><a href="#1-Reactive-Streams" class="headerlink" title="1. Reactive Streams"></a>1. Reactive Streams</h3><p>Reactive Streams is the foundation of reactive programming, defining the standards for asynchronous stream processing. It consists of four core interfaces:</p>
-<ul>
-<li><strong>Publisher</strong>: Responsible for producing data.</li>
-<li><strong>Subscriber</strong>: Consumes data.</li>
-<li><strong>Subscription</strong>: Manages the relationship between publishers and subscribers.</li>
-<li><strong>Processor</strong>: Acts as both a publisher and a subscriber.</li>
-</ul>
-<p><a name="2-project-reactor"></a> </p>
-<h3 id="2-Project-Reactor"><a href="#2-Project-Reactor" class="headerlink" title="2. Project Reactor"></a>2. Project Reactor</h3><p>Project Reactor is the underlying implementation for Spring WebFlux, providing support for reactive streams. It has two main types:</p>
-<ul>
-<li><strong>Mono</strong>: Represents an asynchronous sequence of 0 or 1 element.</li>
-<li><strong>Flux</strong>: Represents an asynchronous sequence of 0 to N elements.</li>
-</ul>
-<p><a name="3-webflux"></a> </p>
-<h3 id="3-WebFlux"><a href="#3-WebFlux" class="headerlink" title="3. WebFlux"></a>3. WebFlux</h3><p>Spring WebFlux is an asynchronous, non-blocking web framework based on Reactive Streams API and Project Reactor. The main components include:</p>
-<ul>
-<li><strong>Router Functions</strong>: Define mappings between requests and handlers in a functional style.</li>
-<li><strong>Handler Functions</strong>: Handle HTTP requests and return responses.</li>
-</ul>
-<hr>
-<p><a name="practical-example-building-a-simple-webflux-application"></a> </p>
-<h2 id="Practical-Example-Building-a-Simple-WebFlux-Application"><a href="#Practical-Example-Building-a-Simple-WebFlux-Application" class="headerlink" title="Practical Example: Building a Simple WebFlux Application"></a>Practical Example: Building a Simple WebFlux Application</h2><p><a name="1-project-setup"></a> </p>
-<h3 id="1-Project-Setup"><a href="#1-Project-Setup" class="headerlink" title="1. Project Setup"></a>1. Project Setup</h3><p>Start by creating a Spring Boot project and adding the necessary dependencies:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.projectreactor<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>reactor-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><a name="2-define-data-model"></a> </p>
-<h3 id="2-Define-Data-Model"><a href="#2-Define-Data-Model" class="headerlink" title="2. Define Data Model"></a>2. Define Data Model</h3><p>Define a simple user data model:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Constructors, Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="3-create-handler-and-router"></a> </p>
-<h3 id="3-Create-Handler-and-Router"><a href="#3-Create-Handler-and-Router" class="headerlink" title="3. Create Handler and Router"></a>3. Create Handler and Router</h3><p>Create a handler function and a router function:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandler</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getUser</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> ServerResponse.ok().body(Mono.just(user), User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RouterConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title function_">route</span><span class="params">(UserHandler handler)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route(RequestPredicates.GET(<span class="string">&quot;/user&quot;</span>), handler::getUser);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a> </p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we introduced the basic concepts and core components of Spring WebFlux and demonstrated how to build a simple reactive application using WebFlux.</p>
 
       
     </div>
