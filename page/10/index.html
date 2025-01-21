@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,155 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XII/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XII/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XII</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-24 14:07:10 / Modified: 23:36:21" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:10-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>In the previous 11 articles, we explored Spring WebFlux fundamentals, Reactor, error handling, data transformation, reactive database access, performance optimization, security, testing, deployment, operations, and best practices. This article will demonstrate how to build a practical Spring WebFlux application through a comprehensive case study.</p>
+<ul>
+<li><a href="#case-study">Case Study</a><ul>
+<li><a href="#1-case-background">1. Case Background</a></li>
+<li><a href="#2-project-setup">2. Project Setup</a></li>
+<li><a href="#3-data-model">3. Data Model</a></li>
+<li><a href="#4-repository-layer">4. Repository Layer</a></li>
+<li><a href="#5-service-layer">5. Service Layer</a></li>
+<li><a href="#6-handler-and-routing-configuration">6. Handler and Routing Configuration</a></li>
+<li><a href="#7-testing">7. Testing</a><ul>
+<li><a href="#unit-testing">Unit Testing</a></li>
+<li><a href="#integration-testing">Integration Testing</a></li>
+</ul>
+</li>
+<li><a href="#8-deployment-and-monitoring">8. Deployment and Monitoring</a></li>
+<li><a href="#9-conclusion">9. Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Case-Study"><a href="#Case-Study" class="headerlink" title="Case Study"></a>Case Study</h1><hr>
+<p><a name="case-background"></a></p>
+<h2 id="1-Case-Background"><a href="#1-Case-Background" class="headerlink" title="1. Case Background"></a>1. Case Background</h2><p>We will build a simple book management system with the following features:</p>
+<ul>
+<li>Add a book</li>
+<li>Retrieve all books</li>
+<li>Retrieve a book by ID</li>
+<li>Update book details</li>
+<li>Delete a book</li>
+</ul>
+<p><a name="project-setup"></a></p>
+<h2 id="2-Project-Setup"><a href="#2-Project-Setup" class="headerlink" title="2. Project Setup"></a>2. Project Setup</h2><p>First, create a Spring Boot project and include the required dependencies:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-r2dbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.r2dbc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>r2dbc-h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="data-model"></a></p>
+<h2 id="3-Data-Model"><a href="#3-Data-Model" class="headerlink" title="3. Data Model"></a>3. Data Model</h2><p>Define a <code>Book</code> entity:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Id;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.relational.core.mapping.Table;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Table(&quot;books&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Book</span> &#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String title;</span><br><span class="line">    <span class="keyword">private</span> String author;</span><br><span class="line">    <span class="keyword">private</span> Double price;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="repository-layer"></a></p>
+<h2 id="4-Repository-Layer"><a href="#4-Repository-Layer" class="headerlink" title="4. Repository Layer"></a>4. Repository Layer</h2><p>Create a reactive <code>BookRepository</code> interface:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.repository.reactive.ReactiveCrudRepository;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BookRepository</span> <span class="keyword">extends</span> <span class="title class_">ReactiveCrudRepository</span>&lt;Book, Long&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="service-layer"></a></p>
+<h2 id="5-Service-Layer"><a href="#5-Service-Layer" class="headerlink" title="5. Service Layer"></a>5. Service Layer</h2><p>Create a service class for business logic handling:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(BookRepository bookRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">addBook</span><span class="params">(Book book)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.save(book);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;Book&gt; <span class="title function_">getAllBooks</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">updateBook</span><span class="params">(Long id, Book book)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .flatMap(existingBook -&gt; &#123;</span><br><span class="line">                existingBook.setTitle(book.getTitle());</span><br><span class="line">                existingBook.setAuthor(book.getAuthor());</span><br><span class="line">                existingBook.setPrice(book.getPrice());</span><br><span class="line">                <span class="keyword">return</span> bookRepository.save(existingBook);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">deleteBook</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.deleteById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="handler-and-routing-configuration"></a></p>
+<h2 id="6-Handler-and-Routing-Configuration"><a href="#6-Handler-and-Routing-Configuration" class="headerlink" title="6. Handler and Routing Configuration"></a>6. Handler and Routing Configuration</h2><p>Define handler functions and routing configuration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunction;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunctions;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookService bookService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookHandler</span><span class="params">(BookService bookService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.bookService = bookService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">addBook</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> request.bodyToMono(Book.class)</span><br><span class="line">            .flatMap(bookService::addBook)</span><br><span class="line">            .flatMap(book -&gt; ServerResponse.ok().body(Mono.just(book), Book.class));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getAllBooks</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ServerResponse.ok().body(bookService.getAllBooks(), Book.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getBookById</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">Long</span> <span class="variable">id</span> <span class="operator">=</span> Long.valueOf(request.pathVariable(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> bookService.getBookById(id)</span><br><span class="line">            .flatMap(book -&gt; ServerResponse.ok().body(Mono.just(book), Book.class))</span><br><span class="line">            .switchIfEmpty(ServerResponse.notFound().build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">updateBook</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">Long</span> <span class="variable">id</span> <span class="operator">=</span> Long.valueOf(request.pathVariable(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> request.bodyToMono(Book.class)</span><br><span class="line">            .flatMap(book -&gt; bookService.updateBook(id, book))</span><br><span class="line">            .flatMap(updatedBook -&gt; ServerResponse.ok().body(Mono.just(updatedBook), Book.class))</span><br><span class="line">            .switchIfEmpty(ServerResponse.notFound().build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">deleteBook</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">Long</span> <span class="variable">id</span> <span class="operator">=</span> Long.valueOf(request.pathVariable(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> bookService.deleteBook(id)</span><br><span class="line">            .then(ServerResponse.ok().build());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RouterConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title function_">route</span><span class="params">(BookHandler handler)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route()</span><br><span class="line">            .POST(<span class="string">&quot;/books&quot;</span>, handler::addBook)</span><br><span class="line">            .GET(<span class="string">&quot;/books&quot;</span>, handler::getAllBooks)</span><br><span class="line">            .GET(<span class="string">&quot;/books/&#123;id&#125;&quot;</span>, handler::getBookById)</span><br><span class="line">            .PUT(<span class="string">&quot;/books/&#123;id&#125;&quot;</span>, handler::updateBook)</span><br><span class="line">            .DELETE(<span class="string">&quot;/books/&#123;id&#125;&quot;</span>, handler::deleteBook)</span><br><span class="line">            .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="testing"></a></p>
+<h2 id="7-Testing"><a href="#7-Testing" class="headerlink" title="7. Testing"></a>7. Testing</h2><p><a name="unit-testing"></a></p>
+<h3 id="Unit-Testing"><a href="#Unit-Testing" class="headerlink" title="Unit Testing"></a>Unit Testing</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebFluxTest(BookHandler.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookHandlerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testAddBook</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Book</span> <span class="variable">book</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Book</span>(<span class="literal">null</span>, <span class="string">&quot;Spring WebFlux&quot;</span>, <span class="string">&quot;Author&quot;</span>, <span class="number">39.99</span>);</span><br><span class="line">        webTestClient.post().uri(<span class="string">&quot;/books&quot;</span>)</span><br><span class="line">            .bodyValue(book)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.title&quot;</span>).isEqualTo(<span class="string">&quot;Spring WebFlux&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAllBooks</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/books&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(Book.class).hasSize(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetBookById</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/books/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.title&quot;</span>).isEqualTo(<span class="string">&quot;Spring WebFlux&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="integration-testing"></a></p>
+<h3 id="Integration-Testing"><a href="#Integration-Testing" class="headerlink" title="Integration Testing"></a>Integration Testing</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApplicationIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testBookFlow</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Add book</span></span><br><span class="line">        <span class="type">Book</span> <span class="variable">book</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Book</span>(<span class="literal">null</span>, <span class="string">&quot;Spring WebFlux&quot;</span>, <span class="string">&quot;Author&quot;</span>, <span class="number">39.99</span>);</span><br><span class="line">        webTestClient.post().uri(<span class="string">&quot;/books&quot;</span>)</span><br><span class="line">            .bodyValue(book)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.title&quot;</span>).isEqualTo(<span class="string">&quot;Spring WebFlux&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Retrieve all books</span></span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/books&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(Book.class).hasSize(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Retrieve book by ID</span></span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/books/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.title&quot;</span>).isEqualTo(<span class="string">&quot;Spring WebFlux&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update book</span></span><br><span class="line">        <span class="type">Book</span> <span class="variable">updatedBook</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Book</span>(<span class="literal">null</span>, <span class="string">&quot;Spring WebFlux Updated&quot;</span>, <span class="string">&quot;Author&quot;</span>, <span class="number">49.99</span>);</span><br><span class="line">        webTestClient.put().uri(<span class="string">&quot;/books/1&quot;</span>)</span><br><span class="line">            .bodyValue(updatedBook)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.title&quot;</span>).isEqualTo(<span class="string">&quot;Spring WebFlux Updated&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Delete book</span></span><br><span class="line">        webTestClient.delete().uri(<span class="string">&quot;/books/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            .expectStatus().isOk();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Verify deletion</span></span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/books/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isNotFound();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="deployment-and-monitoring"></a></p>
+<h2 id="8-Deployment-and-Monitoring"><a href="#8-Deployment-and-Monitoring" class="headerlink" title="8. Deployment and Monitoring"></a>8. Deployment and Monitoring</h2><p>Ensure the application is deployed to production and properly monitored. Use <strong>Spring Boot Actuator</strong> with <strong>Prometheus</strong> and <strong>Grafana</strong> for monitoring:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management.endpoints.web.exposure.include</span>=<span class="string">health,info,metrics,prometheus</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="9-Conclusion"><a href="#9-Conclusion" class="headerlink" title="9. Conclusion"></a>9. Conclusion</h2><p>In this article, we demonstrated how to build a real-world reactive application using Spring WebFlux by integrating the concepts from earlier articles and applying best practices.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1497,153 +1646,6 @@
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to handle errors and debug reactive applications in Spring WebFlux, providing techniques for both stream-level and global error handling.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-II/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-II/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - II</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-24 13:10:13 / Modified: 13:13:05" itemprop="dateCreated datePublished" datetime="2024-10-24T13:10:13-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h2><ul>
-<li><a href="#in-depth-understanding-of-reactor-and-asynchronous-data-streams">In-depth Understanding of Reactor and Asynchronous Data Streams</a><ul>
-<li><a href="#introduction-to-reactor">Introduction to Reactor</a></li>
-<li><a href="#mono-and-flux">Mono and Flux</a><ul>
-<li><a href="#mono">Mono</a></li>
-<li><a href="#flux">Flux</a></li>
-</ul>
-</li>
-<li><a href="#basic-operations">Basic Operations</a></li>
-<li><a href="#practical-example-building-a-reactive-application-with-reactor">Practical Example: Building a Reactive Application with Reactor</a><ul>
-<li><a href="#1-project-setup">1. Project Setup</a></li>
-<li><a href="#2-define-data-model">2. Define Data Model</a></li>
-<li><a href="#3-simulated-data-source">3. Simulated Data Source</a></li>
-<li><a href="#4-handlers-and-router-configuration">4. Handlers and Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="In-depth-Understanding-of-Reactor-and-Asynchronous-Data-Streams"><a href="#In-depth-Understanding-of-Reactor-and-Asynchronous-Data-Streams" class="headerlink" title="In-depth Understanding of Reactor and Asynchronous Data Streams"></a>In-depth Understanding of Reactor and Asynchronous Data Streams</h1><hr>
-<p><a name="introduction-to-reactor"></a> </p>
-<h2 id="Introduction-to-Reactor"><a href="#Introduction-to-Reactor" class="headerlink" title="Introduction to Reactor"></a>Introduction to Reactor</h2><p>Reactor is at the core of Spring WebFlux, providing powerful reactive programming support based on the Reactive Streams standard. Reactor mainly offers two core classes: <strong>Mono</strong> and <strong>Flux</strong>, which are used to represent asynchronous sequences of one or multiple elements, respectively.</p>
-<hr>
-<p><a name="mono-and-flux"></a></p>
-<h2 id="Mono-and-Flux"><a href="#Mono-and-Flux" class="headerlink" title="Mono and Flux"></a>Mono and Flux</h2><p><a name="mono"></a></p>
-<h3 id="Mono"><a href="#Mono" class="headerlink" title="Mono"></a>Mono</h3><p>Mono represents an asynchronous sequence of 0 or 1 element. It is typically used when dealing with operations that might return a single result or no result at all.</p>
-<p><a name="flux"></a></p>
-<h3 id="Flux"><a href="#Flux" class="headerlink" title="Flux"></a>Flux</h3><p>Flux represents an asynchronous sequence of 0 to N elements. It is suitable for cases where multiple results need to be handled, such as querying a database that returns multiple records.</p>
-<hr>
-<p><a name="basic-operations"></a></p>
-<h2 id="Basic-Operations"><a href="#Basic-Operations" class="headerlink" title="Basic Operations"></a>Basic Operations</h2><p>Reactor provides a rich set of operators for manipulating data streams, such as transformations, filtering, and aggregations. Some of the commonly used operators include:</p>
-<ul>
-<li><strong>map</strong>: Transforms each element in the data stream.</li>
-<li><strong>filter</strong>: Filters elements in the data stream, retaining only those that meet the criteria.</li>
-<li><strong>flatMap</strong>: Maps each element to a new Publisher and merges these Publishers into a single Flux.</li>
-<li><strong>concatMap</strong>: Similar to flatMap but maintains the order of the elements.</li>
-<li><strong>zip</strong>: Combines multiple Publishers by pairing elements based on their indices.</li>
-</ul>
-<hr>
-<p><a name="practical-example-building-a-reactive-application-with-reactor"></a></p>
-<h2 id="Practical-Example-Building-a-Reactive-Application-with-Reactor"><a href="#Practical-Example-Building-a-Reactive-Application-with-Reactor" class="headerlink" title="Practical Example: Building a Reactive Application with Reactor"></a>Practical Example: Building a Reactive Application with Reactor</h2><p><a name="1-project-setup"></a></p>
-<h3 id="1-Project-Setup"><a href="#1-Project-Setup" class="headerlink" title="1. Project Setup"></a>1. Project Setup</h3><p>Ensure your project contains the following dependencies:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.projectreactor<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>reactor-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><a name="2-define-data-model"></a></p>
-<h3 id="2-Define-Data-Model"><a href="#2-Define-Data-Model" class="headerlink" title="2. Define Data Model"></a>2. Define Data Model</h3><p>Define a simple user data model:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Constructors, Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="3-simulated-data-source"></a></p>
-<h3 id="3-Simulated-Data-Source"><a href="#3-Simulated-Data-Source" class="headerlink" title="3. Simulated Data Source"></a>3. Simulated Data Source</h3><p>Create a simulated data source to generate user data:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;User&gt; users = Arrays.asList(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;John Doe&quot;</span>),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;2&quot;</span>, <span class="string">&quot;Jane Doe&quot;</span>),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;3&quot;</span>, <span class="string">&quot;Sam Smith&quot;</span>)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.justOrEmpty(users.stream()</span><br><span class="line">            .filter(user -&gt; user.getId().equals(id))</span><br><span class="line">            .findFirst());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">findAll</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Flux.fromIterable(users);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="4-handlers-and-router-configuration"></a></p>
-<h3 id="4-Handlers-and-Router-Configuration"><a href="#4-Handlers-and-Router-Configuration" class="headerlink" title="4. Handlers and Router Configuration"></a>4. Handlers and Router Configuration</h3><p>Create handler functions and router configurations to handle HTTP requests and return responses:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunction;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunctions;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserHandler</span><span class="params">(UserRepository userRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userRepository = userRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getUser</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">userId</span> <span class="operator">=</span> request.pathVariable(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(userId)</span><br><span class="line">            .flatMap(user -&gt; ServerResponse.ok().body(Mono.just(user), User.class))</span><br><span class="line">            .switchIfEmpty(ServerResponse.notFound().build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getAllUsers</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ServerResponse.ok().body(userRepository.findAll(), User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RouterConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title function_">route</span><span class="params">(UserHandler handler)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route()</span><br><span class="line">            .GET(<span class="string">&quot;/user/&#123;id&#125;&quot;</span>, handler::getUser)</span><br><span class="line">            .GET(<span class="string">&quot;/users&quot;</span>, handler::getAllUsers)</span><br><span class="line">            .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a> </p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we took a deep dive into Reactor and its application in Spring WebFlux. By understanding <strong>Mono</strong> and <strong>Flux</strong> and how to handle asynchronous data streams with these tools, we can build more efficient reactive applications.</p>
 
       
     </div>
