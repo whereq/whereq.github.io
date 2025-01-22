@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">116</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,155 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/" class="post-title-link" itemprop="url">One Real Production Issue Fix About Race Condition in Adobe LiveCycle</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-27 18:48:58 / Modified: 18:53:29" itemprop="dateCreated datePublished" datetime="2024-10-27T18:48:58-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Weird-Issue/" itemprop="url" rel="index"><span itemprop="name">Weird Issue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-real-life-production-issue">2. Real-Life Production Issue</a></li>
+<li><a href="#3-what-is-a-race-condition">3. What is a Race Condition?</a><ul>
+<li><a href="#example">Example:</a></li>
+</ul>
+</li>
+<li><a href="#4-how-race-conditions-occur-in-apache-velocity">4. How Race Conditions Occur in Apache Velocity</a><ul>
+<li><a href="#key-factors">Key Factors:</a></li>
+</ul>
+</li>
+<li><a href="#5-example-scenario">5. Example Scenario</a><ul>
+<li><a href="#code-example">Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#6-solutions-to-race-conditions">6. Solutions to Race Conditions</a><ul>
+<li><a href="#1-use-a-thread-safe-velocity-engine">1. Use a Thread-Safe Velocity Engine</a></li>
+<li><a href="#2-synchronization">2. Synchronization</a></li>
+<li><a href="#3-connection-pooling">3. Connection Pooling</a></li>
+<li><a href="#4-lightweight-objects">4. Lightweight Objects</a></li>
+</ul>
+</li>
+<li><a href="#7-sample-code-and-configuration">7. Sample Code and Configuration</a><ul>
+<li><a href="#configuration-example">Configuration Example:</a></li>
+<li><a href="#verifying-the-configuration">Verifying the Configuration</a></li>
+</ul>
+</li>
+<li><a href="#8-conclusion">8. Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>In software development, race conditions can lead to unpredictable behavior, particularly in multi-threaded environments. This article explores race conditions, particularly in the context of using the Apache Velocity templating engine, and provides insights into avoiding such issues in production systems.</p>
+<p><a name="real-life-production-issue"></a></p>
+<h2 id="2-Real-Life-Production-Issue"><a href="#2-Real-Life-Production-Issue" class="headerlink" title="2. Real-Life Production Issue"></a>2. Real-Life Production Issue</h2><p>During my time at a major telecommunications company, I was involved in a project that utilized Apache Velocity within Adobe LiveCycle to generate PDFs from templates. Although PDF generation had been functioning smoothly, we encountered a serious issue in the production environment where, on certain days each month, PDF generation would intermittently result in <code>NullPointerExceptions</code> (NPEs). </p>
+<p>The production environment was more robust than development and UAT, resulting in higher concurrency levels. The frequent NPEs led to the application needing to be rebooted to restore functionality. Initial investigations did not yield immediate clues, as the errors stemmed deep within the Adobe LiveCycle source code, obscuring the connection to Apache Velocity. </p>
+<p>Despite increasing system resources and tuning the template generator’s maximum thread limit, the issue persisted and even worsened. After extensive debugging, including analyzing process dumps during PDF rendering and testing various concurrency scenarios, I identified that the root cause was tied to the <code>VelocityEngine</code>. This engine was being instantiated for every template rendering request, leading to <code>Race Conditions</code> due to concurrent access.</p>
+<p><a name="what-is-a-race-condition"></a></p>
+<h2 id="3-What-is-a-Race-Condition"><a href="#3-What-is-a-Race-Condition" class="headerlink" title="3. What is a Race Condition?"></a>3. What is a Race Condition?</h2><p>A race condition occurs when multiple threads or processes attempt to change shared data at the same time. This can lead to inconsistent results, unexpected behavior, or application crashes, particularly when the sequence of thread execution is not managed correctly.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h3><p>Imagine two threads updating the same bank account balance simultaneously. If both threads read the current balance before either has written back the new balance, one thread’s update could overwrite the other, leading to a final balance that doesn’t reflect both transactions.</p>
+<p><a name="how-race-conditions-occur-in-apache-velocity"></a></p>
+<h2 id="4-How-Race-Conditions-Occur-in-Apache-Velocity"><a href="#4-How-Race-Conditions-Occur-in-Apache-Velocity" class="headerlink" title="4. How Race Conditions Occur in Apache Velocity"></a>4. How Race Conditions Occur in Apache Velocity</h2><p>In the case of Apache Velocity, the <code>VelocityEngine</code> is not thread-safe by default. If multiple threads instantiate and manipulate the same <code>VelocityEngine</code> instance concurrently, it can lead to race conditions and unpredictable behaviors, such as <code>NullPointerExceptions</code>. This is particularly critical in a high-throughput environment, such as the one experienced in the production instance at Rogers.</p>
+<h3 id="Key-Factors"><a href="#Key-Factors" class="headerlink" title="Key Factors:"></a>Key Factors:</h3><ul>
+<li><strong>Multiple Concurrent Requests</strong>: In high-concurrency scenarios, simultaneous requests can create contention for resources managed by shared instances.</li>
+<li><strong>Stateful Objects</strong>: Objects like <code>VelocityEngine</code> that maintain state can exhibit unexpected behaviors when accessed by multiple threads.</li>
+</ul>
+<p><a name="example-scenario"></a></p>
+<h2 id="5-Example-Scenario"><a href="#5-Example-Scenario" class="headerlink" title="5. Example Scenario"></a>5. Example Scenario</h2><p>In our case, PDF generation would involve creating a <code>VelocityEngine</code> instance for each template rendering request. The absence of synchronization or proper handling of concurrent requests led to conditions where one thread’s updates conflicted with another’s, causing NPEs during PDF rendering.</p>
+<h3 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example:"></a>Code Example:</h3><p>Here’s a simplified representation of how <code>VelocityEngine</code> was used improperly:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line">        engine.init();</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, every call to <code>generatePdf</code> creates a new instance of <code>VelocityEngine</code>, leading to potential race conditions.</p>
+<p><a name="solutions-to-race-conditions"></a></p>
+<h2 id="6-Solutions-to-Race-Conditions"><a href="#6-Solutions-to-Race-Conditions" class="headerlink" title="6. Solutions to Race Conditions"></a>6. Solutions to Race Conditions</h2><p>To mitigate race conditions in Apache Velocity, several approaches can be employed:</p>
+<h3 id="1-Use-a-Thread-Safe-Velocity-Engine"><a href="#1-Use-a-Thread-Safe-Velocity-Engine" class="headerlink" title="1. Use a Thread-Safe Velocity Engine"></a>1. Use a Thread-Safe Velocity Engine</h3><p>Utilize a single shared instance of <code>VelocityEngine</code>, initialized once and reused across multiple requests.</p>
+<h3 id="2-Synchronization"><a href="#2-Synchronization" class="headerlink" title="2. Synchronization"></a>2. Synchronization</h3><p>Wrap access to the <code>VelocityEngine</code> in synchronized blocks to ensure that only one thread can access it at a time.</p>
+<h3 id="3-Connection-Pooling"><a href="#3-Connection-Pooling" class="headerlink" title="3. Connection Pooling"></a>3. Connection Pooling</h3><p>Implement connection pooling for managing <code>VelocityEngine</code> instances, allowing for better resource management and concurrency handling.</p>
+<h3 id="4-Lightweight-Objects"><a href="#4-Lightweight-Objects" class="headerlink" title="4. Lightweight Objects"></a>4. Lightweight Objects</h3><p>If possible, use lighter objects that do not maintain state or can be safely reused.</p>
+<p><a name="sample-code-and-configuration"></a></p>
+<h2 id="7-Sample-Code-and-Configuration"><a href="#7-Sample-Code-and-Configuration" class="headerlink" title="7. Sample Code and Configuration"></a>7. Sample Code and Configuration</h2><p>Here’s an improved approach using a singleton <code>VelocityEngine</code> instance:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.ResourceManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.Resource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        engine.init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuration-Example"><a href="#Configuration-Example" class="headerlink" title="Configuration Example:"></a>Configuration Example:</h3><p>To ensure that the <code>VelocityEngine</code> is properly configured, the following configuration might be included:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># velocity.properties</span></span><br><span class="line"><span class="attr">resource.loader</span> = <span class="string">file</span></span><br><span class="line"><span class="attr">file.resource.loader.path</span> = <span class="string">/path/to/templates</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Verifying-the-Configuration"><a href="#Verifying-the-Configuration" class="headerlink" title="Verifying the Configuration"></a>Verifying the Configuration</h3><p>To check if the <code>VelocityEngine</code> is initialized properly and functioning as expected:</p>
+<ul>
+<li><strong>Logging</strong>: Enable logging within the Velocity framework to capture initialization events and errors.</li>
+<li><strong>Unit Tests</strong>: Implement unit tests that trigger concurrent PDF generation requests and verify output consistency.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="8-Conclusion"><a href="#8-Conclusion" class="headerlink" title="8. Conclusion"></a>8. Conclusion</h2><p>Race conditions in multi-threaded environments, especially when using libraries like Apache Velocity, can lead to severe application issues. Understanding how these conditions arise and employing strategies to mitigate them is crucial for building robust systems. By adopting best practices, such as using a singleton <code>VelocityEngine</code>, synchronizing access, and implementing pooling strategies, developers can significantly reduce the likelihood of encountering race conditions, ensuring smooth operation even under high-load scenarios.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2291,147 +2440,6 @@
 
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The <code>java.util.function</code> package provides a rich set of functional interfaces that are essential for writing modern, concise, and expressive Java code. By understanding and leveraging these interfaces, you can significantly improve the readability and maintainability of your code. Real-life use cases and sample code demonstrate how these interfaces can be applied in various scenarios, making them indispensable tools for Java developers.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/26/Deep-Dive-Comparing-Spring-REST-Clients-with-Spring-Cloud-OpenFeign/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/26/Deep-Dive-Comparing-Spring-REST-Clients-with-Spring-Cloud-OpenFeign/" class="post-title-link" itemprop="url">Deep Dive: Comparing Spring REST Clients with Spring Cloud OpenFeign</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-26 19:42:35 / Modified: 19:45:53" itemprop="dateCreated datePublished" datetime="2024-10-26T19:42:35-04:00">2024-10-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#overview-of-spring-rest-clients">Overview of Spring REST Clients</a></li>
-<li><a href="#overview-of-spring-cloud-openfeign">Overview of Spring Cloud OpenFeign</a></li>
-<li><a href="#key-differences">Key Differences</a></li>
-<li><a href="#why-spring-rest-clients-are-replacing-openfeign">Why Spring REST Clients are Replacing OpenFeign</a></li>
-<li><a href="#sample-code-comparison">Sample Code Comparison</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ol>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the realm of microservices and RESTful APIs, efficient and maintainable client-side HTTP communication is crucial. Spring provides two prominent solutions for this: Spring REST Clients and Spring Cloud OpenFeign. This article delves into a detailed comparison of these two approaches, highlighting their key differences and discussing why Spring REST Clients are increasingly replacing OpenFeign in modern applications.</p>
-<p><a name="overview-of-spring-rest-clients"></a></p>
-<h2 id="Overview-of-Spring-REST-Clients"><a href="#Overview-of-Spring-REST-Clients" class="headerlink" title="Overview of Spring REST Clients"></a>Overview of Spring REST Clients</h2><h3 id="What-is-Spring-REST-Clients"><a href="#What-is-Spring-REST-Clients" class="headerlink" title="What is Spring REST Clients?"></a>What is Spring REST Clients?</h3><p>Spring REST Clients, introduced in Spring 5, is a set of tools and libraries that facilitate HTTP client-side communication. It includes <code>RestTemplate</code> and <code>WebClient</code>, both of which are designed to simplify the process of making HTTP requests and handling responses.</p>
-<h3 id="Key-Features"><a href="#Key-Features" class="headerlink" title="Key Features"></a>Key Features</h3><ul>
-<li><strong>RestTemplate</strong>: A synchronous client that provides a simple, template method API over underlying HTTP client libraries.</li>
-<li><strong>WebClient</strong>: A reactive, non-blocking client introduced in Spring 5, suitable for modern, asynchronous applications.</li>
-<li><strong>Integration with Spring WebFlux</strong>: WebClient is part of the Spring WebFlux framework, making it ideal for reactive programming.</li>
-<li><strong>Flexibility</strong>: Supports both synchronous and asynchronous operations.</li>
-</ul>
-<p><a name="overview-of-spring-cloud-openfeign"></a></p>
-<h2 id="Overview-of-Spring-Cloud-OpenFeign"><a href="#Overview-of-Spring-Cloud-OpenFeign" class="headerlink" title="Overview of Spring Cloud OpenFeign"></a>Overview of Spring Cloud OpenFeign</h2><h3 id="What-is-Spring-Cloud-OpenFeign"><a href="#What-is-Spring-Cloud-OpenFeign" class="headerlink" title="What is Spring Cloud OpenFeign?"></a>What is Spring Cloud OpenFeign?</h3><p>Spring Cloud OpenFeign is a declarative HTTP client that simplifies the process of consuming RESTful services. It allows you to define interfaces with annotations to describe the REST API you want to consume, handling the HTTP requests and responses automatically.</p>
-<h3 id="Key-Features-1"><a href="#Key-Features-1" class="headerlink" title="Key Features"></a>Key Features</h3><ul>
-<li><strong>Declarative REST Client</strong>: Define interfaces with annotations to describe the REST API.</li>
-<li><strong>Integration with Spring Boot</strong>: Automatically integrates with Spring Boot’s dependency injection and configuration mechanisms.</li>
-<li><strong>Load Balancing</strong>: Integrates with Spring Cloud LoadBalancer for client-side load balancing.</li>
-<li><strong>Error Handling</strong>: Provides mechanisms to handle errors and exceptions gracefully.</li>
-<li><strong>Interceptors</strong>: Allows adding custom interceptors to modify requests and responses.</li>
-</ul>
-<p><a name="key-differences"></a></p>
-<h2 id="Key-Differences"><a href="#Key-Differences" class="headerlink" title="Key Differences"></a>Key Differences</h2><h3 id="1-Programming-Model"><a href="#1-Programming-Model" class="headerlink" title="1. Programming Model"></a>1. <strong>Programming Model</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Offers both synchronous (<code>RestTemplate</code>) and reactive (<code>WebClient</code>) models, providing flexibility based on the application’s needs.</li>
-<li><strong>OpenFeign</strong>: Primarily declarative, focusing on defining interfaces with annotations for HTTP communication.</li>
-</ul>
-<h3 id="2-Reactive-Support"><a href="#2-Reactive-Support" class="headerlink" title="2. Reactive Support"></a>2. <strong>Reactive Support</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: WebClient provides full support for reactive programming, making it suitable for modern, asynchronous applications.</li>
-<li><strong>OpenFeign</strong>: Limited reactive support; primarily designed for synchronous communication.</li>
-</ul>
-<h3 id="3-Integration-and-Ecosystem"><a href="#3-Integration-and-Ecosystem" class="headerlink" title="3. Integration and Ecosystem"></a>3. <strong>Integration and Ecosystem</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Deeply integrated with the Spring ecosystem, including Spring WebFlux and Spring Boot.</li>
-<li><strong>OpenFeign</strong>: Integrates well with Spring Cloud, providing additional features like load balancing and service discovery.</li>
-</ul>
-<h3 id="4-Error-Handling-and-Customization"><a href="#4-Error-Handling-and-Customization" class="headerlink" title="4. Error Handling and Customization"></a>4. <strong>Error Handling and Customization</strong></h3><ul>
-<li><strong>Spring REST Clients</strong>: Provides robust error handling and customization options through exception handling and interceptors.</li>
-<li><strong>OpenFeign</strong>: Offers error handling through custom error decoders and interceptors, but with a more declarative approach.</li>
-</ul>
-<p><a name="why-spring-rest-clients-are-replacing-openfeign"></a></p>
-<h2 id="Why-Spring-REST-Clients-are-Replacing-OpenFeign"><a href="#Why-Spring-REST-Clients-are-Replacing-OpenFeign" class="headerlink" title="Why Spring REST Clients are Replacing OpenFeign"></a>Why Spring REST Clients are Replacing OpenFeign</h2><h3 id="1-Reactive-Programming"><a href="#1-Reactive-Programming" class="headerlink" title="1. Reactive Programming"></a>1. <strong>Reactive Programming</strong></h3><p>With the rise of reactive programming and the need for non-blocking, asynchronous communication, <code>WebClient</code> has become the preferred choice over <code>RestTemplate</code> and OpenFeign. WebClient’s reactive nature aligns well with modern application architectures.</p>
-<h3 id="2-Flexibility-and-Control"><a href="#2-Flexibility-and-Control" class="headerlink" title="2. Flexibility and Control"></a>2. <strong>Flexibility and Control</strong></h3><p>Spring REST Clients provide more flexibility and control over HTTP communication. Developers can choose between synchronous and asynchronous models based on their specific requirements, whereas OpenFeign is more opinionated and less flexible.</p>
-<h3 id="3-Ecosystem-Integration"><a href="#3-Ecosystem-Integration" class="headerlink" title="3. Ecosystem Integration"></a>3. <strong>Ecosystem Integration</strong></h3><p>Spring REST Clients are deeply integrated with the broader Spring ecosystem, including Spring WebFlux and Spring Boot. This integration provides a seamless development experience and leverages the full capabilities of the Spring framework.</p>
-<h3 id="4-Community-and-Support"><a href="#4-Community-and-Support" class="headerlink" title="4. Community and Support"></a>4. <strong>Community and Support</strong></h3><p>As part of the core Spring framework, Spring REST Clients benefit from continuous updates, improvements, and community support. OpenFeign, while powerful, is part of the Spring Cloud ecosystem and may not receive the same level of attention and updates.</p>
-<p><a name="sample-code-comparison"></a></p>
-<h2 id="Sample-Code-Comparison"><a href="#Sample-Code-Comparison" class="headerlink" title="Sample Code Comparison"></a>Sample Code Comparison</h2><h3 id="Using-Spring-REST-Clients-WebClient"><a href="#Using-Spring-REST-Clients-WebClient" class="headerlink" title="Using Spring REST Clients (WebClient)"></a>Using Spring REST Clients (<code>WebClient</code>)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductServiceClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient webClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProductServiceClient</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClient = webClientBuilder.baseUrl(<span class="string">&quot;http://localhost:8081&quot;</span>).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Product&gt; <span class="title function_">getProduct</span><span class="params">(Long productId)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                        .uri(<span class="string">&quot;/products/&#123;productId&#125;&quot;</span>, productId)</span><br><span class="line">                        .retrieve()</span><br><span class="line">                        .bodyToMono(Product.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Using-Spring-Cloud-OpenFeign"><a href="#Using-Spring-Cloud-OpenFeign" class="headerlink" title="Using Spring Cloud OpenFeign"></a>Using Spring Cloud OpenFeign</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient(name = &quot;product-service&quot;, url = &quot;http://localhost:8081&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ProductServiceClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/products/&#123;productId&#125;&quot;)</span></span><br><span class="line">    Product <span class="title function_">getProduct</span><span class="params">(<span class="meta">@PathVariable(&quot;productId&quot;)</span> Long productId)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>While Spring Cloud OpenFeign offers a declarative and simplified approach to HTTP client communication, Spring REST Clients provide more flexibility, reactive support, and deep integration with the Spring ecosystem. As modern applications increasingly adopt reactive programming and require more control over HTTP communication, Spring REST Clients, particularly <code>WebClient</code>, are becoming the preferred choice over OpenFeign. By understanding the key differences and advantages of each approach, developers can make informed decisions to build robust and scalable microservices architectures.</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-openfeign">https://spring.io/projects/spring-cloud-openfeign</a><br><strong>Warning:</strong> As announced in <a target="_blank" rel="noopener" href="https://spring.io/blog/2022/12/16/spring-cloud-2022-0-0-codename-kilburn-has-been-released#spring-cloud-openfeign-feature-complete-announcement">Spring Cloud 2022.0.0 release blog entry</a>, Spring Cloud OpenFeign is now considered feature-complete. We will only be focusing on bug fixes and potentially merging small community feature pull requests. We recommend migrating to <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface">Spring Interface Clients</a> instead.</p>
 
       
     </div>
