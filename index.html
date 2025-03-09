@@ -197,7 +197,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-07 18:00:13" itemprop="dateModified" datetime="2025-03-07T18:00:13-05:00">2025-03-07</time>
+      <time title="Modified: 2025-03-09 13:35:53" itemprop="dateModified" datetime="2025-03-09T13:35:53-04:00">2025-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -390,6 +390,15 @@
 <li><p>Add dark mode styles in <code>src/index.css</code>:</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@layer</span> components &#123;</span><br><span class="line">  <span class="selector-class">.dark</span> &#123;</span><br><span class="line">    <span class="keyword">@apply</span> bg-gray-<span class="number">900</span> text-white;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
+<h3 id="Customizing-Login-Page"><a href="#Customizing-Login-Page" class="headerlink" title="Customizing Login Page"></a>Customizing Login Page</h3><p><img src="/images/Building-a-ChatGPT-like-SystemDeveloping-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/kc-header-wrapper-customization.png" alt="Customize kc-header-wrapper clss"></p>
+<p>In this case, the issue stemmed from the <code>kc-header-wrapper</code> class, which is part of Keycloak’s original default theme (<code>login.css</code>). This class had predefined styles (e.g., <code>padding</code>, <code>line-height</code>, <code>font-size</code>, etc.) that were overriding the Tailwind CSS styles applied via inline classes in the React component. The <code>kc-</code> prefixed classes are part of Keycloak’s default theme, and customizing them with Tailwind CSS can be challenging because Tailwind’s utility classes are often overridden by these predefined styles.</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>A separate CSS file (<code>template.css</code>) was created to reset the problematic properties of <code>#kc-header-wrapper</code> using <code>!important</code>. This ensured that the styles from <code>login.css</code> were overridden.</li>
+<li>The <code>template.css</code> file was imported into the <code>Template.tsx</code> component to apply the reset styles.</li>
+</ul>
+<h4 id="Final-Solution-Code"><a href="#Final-Solution-Code" class="headerlink" title="Final Solution Code:"></a>Final Solution Code:</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* template.css */</span></span><br><span class="line"><span class="selector-id">#kc-header-wrapper</span> &#123;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: inherit <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">text-transform</span>: none <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">letter-spacing</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">white-space</span>: normal <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="Customizing-Keycloak-Pages"><a href="#Customizing-Keycloak-Pages" class="headerlink" title="Customizing Keycloak Pages"></a>Customizing Keycloak Pages</h3><ol>
 <li><p>Add story<br>Choose <code>login.ftl</code></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx keycloakify add-story</span><br></pre></td></tr></table></figure>
