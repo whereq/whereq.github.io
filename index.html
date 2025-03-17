@@ -191,7 +191,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2025-03-17 09:52:55 / Modified: 10:05:43" itemprop="dateCreated datePublished" datetime="2025-03-17T09:52:55-04:00">2025-03-17</time>
+      <time title="Created: 2025-03-17 09:52:55 / Modified: 10:59:25" itemprop="dateCreated datePublished" datetime="2025-03-17T09:52:55-04:00">2025-03-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -218,14 +218,15 @@
     
     <div class="post-body" itemprop="articleBody">
           <h3 id="How-the-Form-is-Rendered"><a href="#How-the-Form-is-Rendered" class="headerlink" title="How the Form is Rendered"></a>How the Form is Rendered</h3><ol>
-<li><p><strong>Component Structure</strong>:</p>
-<ul>
+<li><strong>Component Structure</strong>:<ul>
 <li>The <code>UserProfileFields</code> component is the main entry point, receiving props like <code>t</code> (translation function), <code>form</code> (React Hook Form instance), <code>userProfileMetadata</code> (attribute metadata), and others.</li>
 <li>It renders a <code>ScrollForm</code> component, which takes a <code>sections</code> prop to display grouped form fields.</li>
 </ul>
 </li>
-<li><p><strong>Grouping Attributes</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="2">
+<li><strong>Grouping Attributes</strong>:<ul>
 <li><strong>Logic</strong>: Inside <code>UserProfileFields</code>, <code>groupsWithAttributes</code> is computed using <code>useMemo</code>:<ul>
 <li>If <code>userProfileMetadata.attributes</code> is empty, it returns an empty array.</li>
 <li>Filters attributes based on <code>hideReadOnly</code> (excludes read-only fields if <code>true</code>).</li>
@@ -236,8 +237,10 @@
 <li><strong>Outcome</strong>: Only groups with attributes are rendered (filtered by <code>.filter((group) =&gt; group.attributes.length &gt; 0)</code>).</li>
 </ul>
 </li>
-<li><p><strong>Rendering Sections</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="3">
+<li><strong>Rendering Sections</strong>:<ul>
 <li><strong>ScrollForm</strong>: The <code>ScrollForm</code> component receives <code>sections</code>, where each section is an object with:<ul>
 <li><code>title</code>: Derived from <code>group.displayHeader</code> or <code>group.name</code>, falling back to <code>t(&quot;general&quot;)</code>.</li>
 <li><code>panel</code>: A <code>&lt;div className=&quot;space-y-4&quot;&gt;</code> containing:<ul>
@@ -250,8 +253,10 @@
 <li><strong>Rendering</strong>: <code>ScrollForm</code> likely renders these sections as collapsible or navigable panels (exact behavior depends on <code>ScrollForm</code> implementation, not shown here).</li>
 </ul>
 </li>
-<li><p><strong>FormField Rendering</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="4">
+<li><strong>FormField Rendering</strong>:<ul>
 <li><strong>Logic</strong>: The <code>FormField</code> component determines how each attribute is rendered:<ul>
 <li><strong>Special Case</strong>: If <code>attribute.name === &quot;locale&quot;</code>, it renders a <code>LocaleSelector</code>.</li>
 <li><strong>General Case</strong>: Otherwise, it selects a component from <code>FIELDS</code> based on <code>inputType</code>:<ul>
@@ -266,8 +271,10 @@
 <li><strong>Outcome</strong>: Each attribute is rendered as a form field (e.g., text input, select dropdown) based on its metadata.</li>
 </ul>
 </li>
-<li><p><strong>Field Types</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="5">
+<li><strong>Field Types</strong>:<ul>
 <li><strong>Mapping</strong>: The <code>FIELDS</code> object maps <code>InputType</code> to components:<ul>
 <li><code>&quot;text&quot;</code>, <code>&quot;html5-*&quot;</code> → <code>TextComponent</code>.</li>
 <li><code>&quot;textarea&quot;</code> → <code>TextAreaComponent</code>.</li>
@@ -284,8 +291,10 @@
 </li>
 </ul>
 </li>
-<li><p><strong>Visual Layout</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="6">
+<li><strong>Visual Layout</strong>:<ul>
 <li><strong>TailwindCSS</strong>: <code>&lt;div className=&quot;space-y-4&quot;&gt;</code> adds vertical spacing between fields; <code>&lt;p className=&quot;pb-6 text-gray-700&quot;&gt;</code> styles group descriptions.</li>
 <li><strong>Result</strong>: A scrollable form with sections, each containing a group title, optional description, and a list of input fields.</li>
 </ul>
@@ -306,14 +315,15 @@
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">ScrollForm</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">    <span class="attr">label</span>=<span class="string">&#123;t(</span>&quot;<span class="attr">jumpToSection</span>&quot;)&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">    <span class="attr">sections</span>=<span class="string">&#123;groupsWithAttributes</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">.filter</span>((<span class="attr">group</span>) =&gt;</span> group.attributes.length &gt; 0)</span></span><br><span class="line"><span class="language-xml">      .map((&#123; group, attributes &#125;) =&gt; (&#123;</span></span><br><span class="line"><span class="language-xml">        title: label(t, group.displayHeader, group.name) || t(&quot;general&quot;),</span></span><br><span class="line"><span class="language-xml">        panel: (</span></span><br><span class="line"><span class="language-xml">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;space-y-4&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            &#123;group.displayDescription &amp;&amp; (</span></span><br><span class="line"><span class="language-xml">              <span class="tag">&lt;<span class="name">p</span> <span class="attr">className</span>=<span class="string">&quot;pb-6 text-gray-700&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                &#123;label(t, group.displayDescription, &quot;&quot;)&#125;</span></span><br><span class="line"><span class="language-xml">              <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            )&#125;</span></span><br><span class="line"><span class="language-xml">            &#123;attributes.map((attribute) =&gt; (</span></span><br><span class="line"><span class="language-xml">              <span class="tag">&lt;<span class="name">FormField</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">key</span>=<span class="string">&#123;attribute.name&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">t</span>=<span class="string">&#123;t&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">form</span>=<span class="string">&#123;form&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">supportedLocales</span>=<span class="string">&#123;supportedLocales&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">currentLocale</span>=<span class="string">&#123;currentLocale&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">renderer</span>=<span class="string">&#123;renderer&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">attribute</span>=<span class="string">&#123;attribute&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">              /&gt;</span></span></span><br><span class="line"><span class="language-xml">            ))&#125;</span></span><br><span class="line"><span class="language-xml">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        ),</span></span><br><span class="line"><span class="language-xml">      &#125;))&#125;</span></span><br><span class="line"><span class="language-xml">  /&gt;</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <h3 id="How-Field-Values-are-Populated"><a href="#How-Field-Values-are-Populated" class="headerlink" title="How Field Values are Populated"></a>How Field Values are Populated</h3><ol>
-<li><p><strong>Form State</strong>:</p>
-<ul>
+<li><strong>Form State</strong>:<ul>
 <li><strong>Source</strong>: The <code>form</code> prop is a <code>UseFormReturn&lt;UserFormFields&gt;</code> from React Hook Form, managing the form state.</li>
 <li><strong>Type</strong>: <code>UserFormFields</code> (from <code>utils.ts</code>) includes user properties (e.g., <code>username</code>, <code>email</code>) and an <code>attributes</code> object or array for custom fields.</li>
 </ul>
 </li>
-<li><p><strong>Value Retrieval</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="2">
+<li><strong>Value Retrieval</strong>:<ul>
 <li><strong>Logic</strong>: In <code>FormField</code>, <code>form.watch(fieldName(attribute.name))</code> retrieves the current value of each field:<ul>
 <li><code>fieldName</code> (from <code>utils.ts</code>) transforms the attribute name:<ul>
 <li>Root attributes (<code>username</code>, <code>firstName</code>, etc.) → direct property (e.g., <code>&quot;username&quot;</code>).</li>
@@ -325,25 +335,32 @@
 </li>
 </ul>
 </li>
-<li><p><strong>Initial Population</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="3">
+<li><strong>Initial Population</strong>:<ul>
 <li><strong>Not Shown</strong>: The initial values aren’t set in this file. They’re likely passed to <code>form</code> via <code>useForm(&#123; defaultValues &#125;)</code> in a parent component (e.g., a user profile editor).</li>
 <li><strong>Assumption</strong>: <code>defaultValues</code> would match <code>UserFormFields</code>, populated from a <code>UserRepresentation</code> object (e.g., <code>&#123; username: &quot;john.doe&quot;, attributes: &#123; &quot;custom.field&quot;: &quot;value&quot; &#125; &#125;</code>).</li>
 </ul>
 </li>
-<li><p><strong>Dynamic Behavior</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="4">
+<li><strong>Dynamic Behavior</strong>:<ul>
 <li><strong>Watching Values</strong>: <code>form.watch</code> ensures the rendered component reflects real-time updates (e.g., user typing in a <code>TextComponent</code>).</li>
 <li><strong>Multi-Valued Check</strong>: <code>isMultiValue(value)</code> determines if the value is an array with multiple items, influencing the choice of <code>MultiInputComponent</code>.</li>
 </ul>
 </li>
-<li><p><strong>Component Role</strong>:</p>
-<ul>
+</ol>
+<hr>
+<ol start="5">
+<li><strong>Component Role</strong>:<ul>
 <li><strong>Field Components</strong>: Each <code>FIELDS</code> component (e.g., <code>TextComponent</code>) uses <code>form</code> to register its input (via <code>register</code>, <code>control</code>, etc., not shown here) and display the <code>value</code>.</li>
 <li><strong>Example</strong>: For <code>TextComponent</code>, it might render <code>&lt;input &#123;...form.register(fieldName(attribute.name))&#125; value=&#123;value&#125; /&gt;</code>.</li>
 </ul>
 </li>
 </ol>
+<hr>
 <h3 id="2-Field-Rendering-and-Value-Population"><a href="#2-Field-Rendering-and-Value-Population" class="headerlink" title="2. Field Rendering and Value Population"></a>2. <strong>Field Rendering and Value Population</strong></h3><p>The <code>FormField</code> component is responsible for rendering individual form fields and populating their values. Here’s how it works:</p>
 <h4 id="Step-1-Determine-the-Input-Type"><a href="#Step-1-Determine-the-Input-Type" class="headerlink" title="Step 1: Determine the Input Type"></a><strong>Step 1: Determine the Input Type</strong></h4><ul>
 <li>The <code>inputType</code> is determined based on the attribute’s metadata. For example, if the attribute is multivalued, the <code>multi-input</code> type is used.</li>
