@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">124</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,160 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Troubleshooting-Kubernetes-Pod-Stuck-in-Terminating-State-After-Deletion/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Troubleshooting-Kubernetes-Pod-Stuck-in-Terminating-State-After-Deletion/" class="post-title-link" itemprop="url">Troubleshooting Kubernetes: Pod Stuck in Terminating State After Deletion</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-28 21:10:13 / Modified: 21:45:27" itemprop="dateCreated datePublished" datetime="2024-10-28T21:10:13-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#problem-background">Problem Background</a></li>
+<li><a href="#cause-analysis">Cause Analysis</a><ul>
+<li><a href="#-initial-investigation"> Initial Investigation</a></li>
+<li><a href="#-kubelet-logs-analysis"> Kubelet Logs Analysis</a><ul>
+<li><a href="#suspicious-point-1-pod-ip-retrieval-failure">Suspicious Point 1: Pod IP Retrieval Failure</a></li>
+<li><a href="#suspicious-point-2-unmount-failure">Suspicious Point 2: Unmount Failure</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#suspicious-points">Suspicious Points</a><ul>
+<li><a href="#-suspicious-point-1-pod-ip-retrieval-failure"> Suspicious Point 1: Pod IP Retrieval Failure</a></li>
+<li><a href="#-suspicious-point-2-unmount-failure"> Suspicious Point 2: Unmount Failure</a></li>
+</ul>
+</li>
+<li><a href="#pod-deletion-process">Pod Deletion Process</a></li>
+<li><a href="#verification-and-testing">Verification and Testing</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>This document provides a detailed troubleshooting guide for a common Kubernetes issue where a Pod remains in the <code>Terminating</code> state after being deleted using the <code>kubectl delete</code> command. The analysis includes examining logs, identifying suspicious points, and understanding the underlying causes.</p>
+<hr>
+<p><a name="problem-background"></a></p>
+<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>After deleting a business Pod using the <code>kubectl delete</code> command, the Pod remained in the <code>Terminating</code> state.</p>
+<hr>
+<p><a name="cause-analysis"></a></p>
+<h2 id="Cause-Analysis"><a href="#Cause-Analysis" class="headerlink" title="Cause Analysis"></a>Cause Analysis</h2><h3 id="Initial-Investigation"><a href="#Initial-Investigation" class="headerlink" title=" Initial Investigation"></a><a name="initial-investigation"></a> Initial Investigation</h3><p>To begin with, the <code>kubectl describe</code> command was used to inspect the Pod:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl describe pod -n xxx cam1-78b6fc6bc8-cjsw5</span><br></pre></td></tr></table></figure>
+
+<p>No obvious anomalies were found in the output.</p>
+<h3 id="Kubelet-Logs-Analysis"><a href="#Kubelet-Logs-Analysis" class="headerlink" title=" Kubelet Logs Analysis"></a><a name="kubelet-logs-analysis"></a> Kubelet Logs Analysis</h3><p>Next, the kubelet component logs were examined for any anomalies during the Pod deletion process. The following logs were filtered for relevance:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">I0728 16:24:57.339295    9744 kubelet.go:1904] SyncLoop (DELETE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span></span><br><span class="line">I0728 16:24:57.339720    9744 kuberuntime_container.go:581] Killing container <span class="string">&quot;docker://a73082a4a9a4cec174bb0d1c256cc11d804d93137551b9bfd3e6fa1522e98589&quot;</span> with 60 second grace period</span><br><span class="line">I0728 16:25:18.259418    9744 kubelet.go:1904] SyncLoop (DELETE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span></span><br><span class="line">2021-07-28 16:25:19.247 [INFO][394011] ipam.go 1173: Releasing all IPs with handle <span class="string">&#x27;cam.cam1-78b6fc6bc8-cjsw5&#x27;</span></span><br><span class="line">2021-07-28 16:25:19.254 [INFO][393585] k8s.go 498: Teardown processing complete.</span><br></pre></td></tr></table></figure>
+
+<h4 id="Suspicious-Point-1-Pod-IP-Retrieval-Failure"><a href="#Suspicious-Point-1-Pod-IP-Retrieval-Failure" class="headerlink" title="Suspicious Point 1: Pod IP Retrieval Failure"></a>Suspicious Point 1: Pod IP Retrieval Failure</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">W0728 16:25:19.303513    9744 docker_sandbox.go:384] failed to <span class="built_in">read</span> pod IP from plugin/docker: NetworkPlugin cni failed on the status hook <span class="keyword">for</span> pod <span class="string">&quot;cam1-78b6fc6bc8-cjsw5_cam&quot;</span>: Unexpected <span class="built_in">command</span> output Device <span class="string">&quot;eth0&quot;</span> does not exist.</span><br><span class="line"> with error: <span class="built_in">exit</span> status 1</span><br></pre></td></tr></table></figure>
+
+<h4 id="Suspicious-Point-2-Unmount-Failure"><a href="#Suspicious-Point-2-Unmount-Failure" class="headerlink" title="Suspicious Point 2: Unmount Failure"></a>Suspicious Point 2: Unmount Failure</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E0728 16:25:20.939400    9744 nestedpendingoperations.go:301] Operation <span class="keyword">for</span> <span class="string">&quot;&#123;volumeName:kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g podName:5c948341-c030-4996-b888-f032577d97b0 nodeName:&#125;&quot;</span> failed. No retries permitted <span class="keyword">until</span> 2021-07-28 16:25:21.439325811 +0800 CST m=+199182.605079651 (durationBeforeRetry 500ms). Error: <span class="string">&quot;UnmountVolume.TearDown failed for volume \&quot;diag-log\&quot; (UniqueName: \&quot;kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g\&quot;) pod \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot; (UID: \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot;) : Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g：Target is busy.\n        (In some case using lsof(8) or fuser(1) can\n find useful information about the process using the device)\n\n&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="suspicious-points"></a></p>
+<h2 id="Suspicious-Points"><a href="#Suspicious-Points" class="headerlink" title="Suspicious Points"></a>Suspicious Points</h2><h3 id="Suspicious-Point-1-Pod-IP-Retrieval-Failure-1"><a href="#Suspicious-Point-1-Pod-IP-Retrieval-Failure-1" class="headerlink" title=" Suspicious Point 1: Pod IP Retrieval Failure"></a><a name="suspicious-point-1-pod-ip-retrieval-failure"></a> Suspicious Point 1: Pod IP Retrieval Failure</h3><p>The log indicates a failure to retrieve the Pod IP:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">W0728 16:25:19.303513    9744 docker_sandbox.go:384] failed to <span class="built_in">read</span> pod IP from plugin/docker: NetworkPlugin cni failed on the status hook <span class="keyword">for</span> pod <span class="string">&quot;cam1-78b6fc6bc8-cjsw5_cam&quot;</span>: Unexpected <span class="built_in">command</span> output Device <span class="string">&quot;eth0&quot;</span> does not exist.</span><br><span class="line"> with error: <span class="built_in">exit</span> status 1</span><br></pre></td></tr></table></figure>
+
+<p>This error was traced to the <code>getIP</code> method in the <code>docker_sandbox.go</code> file:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ds *dockerService)</span></span> getIP(podSandboxID <span class="type">string</span>, sandbox *dockertypes.ContainerJSON) <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> sandbox.NetworkSettings == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> networkNamespaceMode(sandbox) == runtimeapi.NamespaceMode_NODE &#123;</span><br><span class="line">        <span class="comment">// For sandboxes using host network, the shim is not responsible for</span></span><br><span class="line">        <span class="comment">// reporting the IP.</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Don&#x27;t bother getting IP if the pod is known and networking isn&#x27;t ready</span></span><br><span class="line">    ready, ok := ds.getNetworkReady(podSandboxID)</span><br><span class="line">    <span class="keyword">if</span> ok &amp;&amp; !ready &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ip, err := ds.getIPFromPlugin(sandbox)</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ip</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> sandbox.NetworkSettings.IPAddress != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> sandbox.NetworkSettings.IPAddress</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> sandbox.NetworkSettings.GlobalIPv6Address != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> sandbox.NetworkSettings.GlobalIPv6Address</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error log here</span></span><br><span class="line">    klog.Warningf(<span class="string">&quot;failed to read pod IP from plugin/docker: %v&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Suspicious-Point-2-Unmount-Failure-1"><a href="#Suspicious-Point-2-Unmount-Failure-1" class="headerlink" title=" Suspicious Point 2: Unmount Failure"></a><a name="suspicious-point-2-unmount-failure"></a> Suspicious Point 2: Unmount Failure</h3><p>The unmount failure was logged as an ERROR:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E0728 16:25:20.939400    9744 nestedpendingoperations.go:301] Operation <span class="keyword">for</span> <span class="string">&quot;&#123;volumeName:kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g podName:5c948341-c030-4996-b888-f032577d97b0 nodeName:&#125;&quot;</span> failed. No retries permitted <span class="keyword">until</span> 2021-07-28 16:25:21.439325811 +0800 CST m=+199182.605079651 (durationBeforeRetry 500ms). Error: <span class="string">&quot;UnmountVolume.TearDown failed for volume \&quot;diag-log\&quot; (UniqueName: \&quot;kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g\&quot;) pod \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot; (UID: \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot;) : Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g：Target is busy.\n        (In some case using lsof(8) or fuser(1) can\n find useful information about the process using the device)\n\n&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="pod-deletion-process"></a></p>
+<h2 id="Pod-Deletion-Process"><a href="#Pod-Deletion-Process" class="headerlink" title="Pod Deletion Process"></a>Pod Deletion Process</h2><p>The deletion of a Pod in Kubernetes follows these steps:</p>
+<ol>
+<li><strong>API Server DELETE Call</strong>: The <code>kubectl delete</code> command triggers a DELETE request to the Kubernetes API server with a default grace period of 30 seconds.</li>
+<li><strong>Update Pod Metadata</strong>: The Pod’s metadata is updated with <code>DeletionTimestamp</code> and <code>DeletionGracePeriodSeconds</code> fields, but the Pod is not yet deleted from etcd.</li>
+<li><strong>Kubelet Event Handling</strong>: The kubelet component listens for Pod updates and initiates the <code>killPod()</code> method.</li>
+<li><strong>Second DELETE Call</strong>: The kubelet makes a second DELETE request to the API server with a grace period of 0 seconds.</li>
+<li><strong>Pod Deletion from etcd</strong>: The API server deletes the Pod from etcd.</li>
+</ol>
+<hr>
+<p><a name="verification-and-testing"></a></p>
+<h2 id="Verification-and-Testing"><a href="#Verification-and-Testing" class="headerlink" title="Verification and Testing"></a>Verification and Testing</h2><p>To verify the deletion process, a test was conducted in a test environment:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node2 ~]# kubectl delete pod -n xxx testpodrc2-7b749f6c9c-qh68l</span><br><span class="line">pod <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l&quot;</span> deleted</span><br></pre></td></tr></table></figure>
+
+<p>Filtered kubelet logs:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">I0730 13:27:31.854178   24588 kubelet.go:1904] SyncLoop (DELETE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span></span><br><span class="line">I0730 13:27:31.854511   24588 kuberuntime_container.go:581] Killing container <span class="string">&quot;docker://e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot;</span> with 30 second grace period</span><br><span class="line">I0730 13:27:32.203167   24588 kubelet.go:1904] SyncLoop (DELETE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span></span><br><span class="line">I0730 13:27:32.993294   24588 kubelet.go:1933] SyncLoop (PLEG): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span>, event: &amp;pleg.PodLifecycleEvent&#123;ID:<span class="string">&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;</span>, Type:<span class="string">&quot;ContainerDied&quot;</span>, Data:<span class="string">&quot;e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot;</span>&#125;</span><br><span class="line">I0730 13:27:32.993428   24588 kubelet.go:1933] SyncLoop (PLEG): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span>, event: &amp;pleg.PodLifecycleEvent&#123;ID:<span class="string">&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;</span>, Type:<span class="string">&quot;ContainerDied&quot;</span>, Data:<span class="string">&quot;c6a587614976beed0cbb6e5fabf70a2d039eec6c160154fce007fe2bb1ba3b4f&quot;</span>&#125;</span><br><span class="line">I0730 13:27:34.072494   24588 kubelet_pods.go:1090] Killing unwanted pod <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l&quot;</span></span><br><span class="line">I0730 13:27:40.084182   24588 kubelet.go:1904] SyncLoop (DELETE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span></span><br><span class="line">I0730 13:27:40.085735   24588 kubelet.go:1898] SyncLoop (REMOVE, <span class="string">&quot;api&quot;</span>): <span class="string">&quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The analysis revealed that the Pod remained in the <code>Terminating</code> state due to a failure in unmounting the GlusterFS volume. The unmount failure was caused by the volume being busy, which prevented the second DELETE</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2395,166 +2549,6 @@ This enhanced Markdown document covers each requested update, including detailed
 </ul>
 <hr>
 <p>This article provides a comprehensive comparison of Spring Boot and Quarkus, covering their architecture, performance, ecosystem, and community support. By understanding these frameworks, developers can choose the best tool for their projects and build efficient and scalable applications.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Keycloak/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Deep-Dive-into-Keycloak/" class="post-title-link" itemprop="url">Deep Dive into Keycloak</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-27 23:31:11 / Modified: 23:32:50" itemprop="dateCreated datePublished" datetime="2024-10-27T23:31:11-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#keycloak-architecture">Keycloak Architecture</a><ul>
-<li><a href="#21-overview">2.1 Overview</a></li>
-<li><a href="#22-key-components">2.2 Key Components</a></li>
-<li><a href="#23-authentication-flows">2.3 Authentication Flows</a></li>
-<li><a href="#24-authorization-services">2.4 Authorization Services</a></li>
-<li><a href="#25-user-federation">2.5 User Federation</a></li>
-<li><a href="#26-identity-brokering">2.6 Identity Brokering</a></li>
-<li><a href="#27-admin-console">2.7 Admin Console</a></li>
-</ul>
-</li>
-<li><a href="#practical-applications">Practical Applications</a><ul>
-<li><a href="#31-single-sign-on-sso">3.1 Single Sign-On (SSO)</a></li>
-<li><a href="#32-api-security">3.2 API Security</a></li>
-<li><a href="#33-user-management">3.3 User Management</a></li>
-<li><a href="#34-custom-extensions">3.4 Custom Extensions</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-<li><a href="#references">References</a></li>
-</ul>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Keycloak is an open-source Identity and Access Management (IAM) solution that provides authentication, authorization, and user management for modern applications and services. It is designed to be easy to integrate with existing systems and supports a wide range of protocols and standards, including OAuth 2.0, OpenID Connect, and SAML. This article will delve into the architecture of Keycloak, exploring its components, features, and practical applications.</p>
-<p><a name="keycloak-architecture"></a></p>
-<h2 id="Keycloak-Architecture"><a href="#Keycloak-Architecture" class="headerlink" title="Keycloak Architecture"></a>Keycloak Architecture</h2><p><a name="21-overview"></a></p>
-<h3 id="2-1-Overview"><a href="#2-1-Overview" class="headerlink" title="2.1 Overview"></a>2.1 Overview</h3><p>Keycloak is built on a modular architecture that allows for flexibility and extensibility. It consists of several key components that work together to provide a comprehensive IAM solution. The architecture can be divided into the following main areas:</p>
-<ul>
-<li><strong>Authentication</strong>: Handles user authentication and session management.</li>
-<li><strong>Authorization</strong>: Provides fine-grained access control and permissions management.</li>
-<li><strong>User Federation</strong>: Integrates with external user stores.</li>
-<li><strong>Identity Brokering</strong>: Allows users to authenticate using external identity providers.</li>
-<li><strong>Admin Console</strong>: Provides a web-based interface for managing Keycloak.</li>
-</ul>
-<p><a name="22-key-components"></a></p>
-<h3 id="2-2-Key-Components"><a href="#2-2-Key-Components" class="headerlink" title="2.2 Key Components"></a>2.2 Key Components</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Client Application|       | Keycloak Server   |       | External Identity |</span><br><span class="line">| (e.g., Web App)   |       | (Auth Server)     |       | Provider (e.g.,   |</span><br><span class="line">|                   |       |                   |       | Google, Facebook)|</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (1) Authentication Request|                           |</span><br><span class="line">        |--------------------------&gt;|                           |</span><br><span class="line">        |                           | (2) Redirect to Auth Server|</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (3) User Authentication  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (4) Authorization Grant  |</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (5) Access Token Request  |</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        |                           | (6) Access Token Response|</span><br><span class="line">        |                           |&lt;--------------------------|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (7) Access Resource       |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Resource Server   |       | Keycloak Server   |       | External Identity |</span><br><span class="line">| (e.g., API)       |       | (Auth Server)     |       | Provider (e.g.,   |</span><br><span class="line">|                   |       |                   |       | Google, Facebook)|</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<p><a name="23-authentication-flows"></a></p>
-<h3 id="2-3-Authentication-Flows"><a href="#2-3-Authentication-Flows" class="headerlink" title="2.3 Authentication Flows"></a>2.3 Authentication Flows</h3><p>Keycloak supports various authentication flows, including:</p>
-<ul>
-<li><strong>Standard Flow</strong>: The default flow where the client redirects the user to the Keycloak server for authentication.</li>
-<li><strong>Implicit Flow</strong>: Suitable for client-side applications where the access token is returned directly to the client.</li>
-<li><strong>Direct Access Grants</strong>: Allows clients to obtain an access token using the resource owner’s credentials.</li>
-<li><strong>Client Credentials</strong>: Used for machine-to-machine communication.</li>
-</ul>
-<p><a name="24-authorization-services"></a></p>
-<h3 id="2-4-Authorization-Services"><a href="#2-4-Authorization-Services" class="headerlink" title="2.4 Authorization Services"></a>2.4 Authorization Services</h3><p>Keycloak provides fine-grained authorization services, including:</p>
-<ul>
-<li><strong>Role-Based Access Control (RBAC)</strong>: Assigns roles to users and defines permissions based on those roles.</li>
-<li><strong>Policy-Based Access Control (PBAC)</strong>: Uses policies to define complex access control rules.</li>
-<li><strong>Permission Management</strong>: Allows administrators to manage permissions for resources and users.</li>
-</ul>
-<p><a name="25-user-federation"></a></p>
-<h3 id="2-5-User-Federation"><a href="#2-5-User-Federation" class="headerlink" title="2.5 User Federation"></a>2.5 User Federation</h3><p>Keycloak supports user federation, allowing integration with external user stores such as LDAP and Active Directory. This enables organizations to manage users in their existing user stores while leveraging Keycloak for authentication and authorization.</p>
-<p><a name="26-identity-brokering"></a></p>
-<h3 id="2-6-Identity-Brokering"><a href="#2-6-Identity-Brokering" class="headerlink" title="2.6 Identity Brokering"></a>2.6 Identity Brokering</h3><p>Keycloak supports identity brokering, allowing users to authenticate using external identity providers such as Google, Facebook, and GitHub. This enables organizations to provide a seamless authentication experience for users who prefer to use their existing accounts.</p>
-<p><a name="27-admin-console"></a></p>
-<h3 id="2-7-Admin-Console"><a href="#2-7-Admin-Console" class="headerlink" title="2.7 Admin Console"></a>2.7 Admin Console</h3><p>Keycloak provides a web-based admin console that allows administrators to manage users, roles, clients, and other Keycloak entities. The admin console is a powerful tool for configuring and managing Keycloak.</p>
-<p><a name="practical-applications"></a></p>
-<h2 id="Practical-Applications"><a href="#Practical-Applications" class="headerlink" title="Practical Applications"></a>Practical Applications</h2><p><a name="31-single-sign-on-sso"></a></p>
-<h3 id="3-1-Single-Sign-On-SSO"><a href="#3-1-Single-Sign-On-SSO" class="headerlink" title="3.1 Single Sign-On (SSO)"></a>3.1 Single Sign-On (SSO)</h3><p>Keycloak enables Single Sign-On (SSO), allowing users to authenticate once and access multiple applications without re-entering their credentials. This is particularly useful in enterprise environments where users need to access multiple internal applications.</p>
-<p><a name="32-api-security"></a></p>
-<h3 id="3-2-API-Security"><a href="#3-2-API-Security" class="headerlink" title="3.2 API Security"></a>3.2 API Security</h3><p>Keycloak is widely used to secure APIs by providing access tokens that grant limited access to resources. This is essential for building secure microservices architectures.</p>
-<p><a name="33-user-management"></a></p>
-<h3 id="3-3-User-Management"><a href="#3-3-User-Management" class="headerlink" title="3.3 User Management"></a>3.3 User Management</h3><p>Keycloak provides comprehensive user management features, including user registration, profile management, and password management. It also supports user federation, allowing integration with external user stores.</p>
-<p><a name="34-custom-extensions"></a></p>
-<h3 id="3-4-Custom-Extensions"><a href="#3-4-Custom-Extensions" class="headerlink" title="3.4 Custom Extensions"></a>3.4 Custom Extensions</h3><p>Keycloak is highly extensible, allowing developers to create custom extensions to meet specific requirements. This includes custom authentication flows, custom user federation providers, and custom identity providers.</p>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Keycloak is a powerful and flexible Identity and Access Management solution that provides comprehensive authentication, authorization, and user management capabilities. Its modular architecture and support for various protocols and standards make it a popular choice for securing modern applications and services.</p>
-<p>Understanding the architecture and features of Keycloak is essential for developers and administrators who want to leverage its capabilities to build secure and scalable applications. By leveraging Keycloak, organizations can provide a seamless and secure authentication and authorization experience for their users.</p>
-<p><a name="references"></a></p>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://www.keycloak.org/documentation">Keycloak Documentation</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/keycloak/keycloak">Keycloak GitHub Repository</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.keycloak.org/getting-started">Keycloak: A Comprehensive Guide</a></li>
-</ul>
-<hr>
-<p>This article provides a comprehensive overview of Keycloak, covering its architecture, components, and practical applications. By understanding Keycloak, developers and administrators can build secure and scalable applications that meet the demands of today’s digital landscape.</p>
 
       
     </div>
