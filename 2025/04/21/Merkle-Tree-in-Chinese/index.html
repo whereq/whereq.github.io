@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Merkle Tree（默克尔树）在区块链、密码学和数据完整性验证中是一个非常核心的概念。它是一种树状数据结构，用来高效而安全地验证数据的完整性。  🌳 一、Merkle Tree 是什么？Merkle Tree 是一种二叉树结构，每个叶子节点是某一笔数据的哈希值，每个非叶子节点是其子节点哈希值的组合再哈希后的结果，直到根节点 —— Merkle Root。 📌 特点： 快速验证某条数据是否属">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Merkle Tree in Chinese">
+<meta property="og:url" content="https://www.whereq.com/2025/04/21/Merkle-Tree-in-Chinese/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Merkle Tree（默克尔树）在区块链、密码学和数据完整性验证中是一个非常核心的概念。它是一种树状数据结构，用来高效而安全地验证数据的完整性。  🌳 一、Merkle Tree 是什么？Merkle Tree 是一种二叉树结构，每个叶子节点是某一笔数据的哈希值，每个非叶子节点是其子节点哈希值的组合再哈希后的结果，直到根节点 —— Merkle Root。 📌 特点： 快速验证某条数据是否属">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-04-21T22:54:45.000Z">
+<meta property="article:modified_time" content="2025-04-21T22:57:00.920Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Cypto Currency">
+<meta property="article:tag" content="Ethereum">
+<meta property="article:tag" content="Data Structure">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/04/21/Merkle-Tree-in-Chinese/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/04/21/Merkle-Tree-in-Chinese/","path":"2025/04/21/Merkle-Tree-in-Chinese/","title":"Merkle Tree in Chinese"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Merkle Tree in Chinese | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8C%B3-%E4%B8%80%E3%80%81Merkle-Tree-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">🌳 一、Merkle Tree 是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%93%8C-%E7%89%B9%E7%82%B9%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">📌 特点：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E4%BA%8C%E3%80%81%E5%9B%BE%E7%A4%BA%E8%AF%B4%E6%98%8E"><span class="nav-number">2.</span> <span class="nav-text">🧩 二、图示说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">哈希过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%92%A1-%E4%B8%89%E3%80%81Merkle-Tree-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">💡 三、Merkle Tree 的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-%E5%9C%A8%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%AD%E4%B8%BB%E8%A6%81%E7%94%A8%E6%9D%A5%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">✅ 在区块链中主要用来：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AA-%E5%9B%9B%E3%80%81%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84-Merkle-Tree-%E5%AE%9E%E7%8E%B0%EF%BC%88%E7%94%A8-JavaScript%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">🧪 四、一个简单的 Merkle Tree 实现（用 JavaScript）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%8D-%E4%BA%94%E3%80%81%E5%A6%82%E4%BD%95%E9%AA%8C%E8%AF%81%E6%9F%90%E7%AC%94%E4%BA%A4%E6%98%93%E5%9C%A8-Merkle-Tree-%E4%B8%AD%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">🔍 五、如何验证某笔交易在 Merkle Tree 中？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%A6-%E5%85%AD%E3%80%81%E7%9C%9F%E5%AE%9E%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9C%BA%E6%99%AF"><span class="nav-number">6.</span> <span class="nav-text">📦 六、真实区块链场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%A4%AA%E5%9D%8A%E4%B8%AD%EF%BC%9A"><span class="nav-number">6.1.</span> <span class="nav-text">以太坊中：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E7%89%B9%E5%B8%81%E4%B8%AD%EF%BC%9A"><span class="nav-number">6.2.</span> <span class="nav-text">比特币中：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%BE-%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93%E9%87%8D%E7%82%B9"><span class="nav-number">7.</span> <span class="nav-text">🧾 七、总结重点</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">130</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/04/21/Merkle-Tree-in-Chinese/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Merkle Tree in Chinese | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Merkle Tree in Chinese
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-04-21 18:54:45 / Modified: 18:57:00" itemprop="dateCreated datePublished" datetime="2025-04-21T18:54:45-04:00">2025-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/" itemprop="url" rel="index"><span itemprop="name">Cypto Currency</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/Ethereum/" itemprop="url" rel="index"><span itemprop="name">Ethereum</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/Ethereum/Data-Structure/" itemprop="url" rel="index"><span itemprop="name">Data Structure</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Merkle Tree（默克尔树）在区块链、密码学和数据完整性验证中是一个非常核心的概念。它是一种<strong>树状数据结构</strong>，用来高效而安全地验证数据的完整性。</p>
+<hr>
+<h2 id="🌳-一、Merkle-Tree-是什么？"><a href="#🌳-一、Merkle-Tree-是什么？" class="headerlink" title="🌳 一、Merkle Tree 是什么？"></a>🌳 一、Merkle Tree 是什么？</h2><p>Merkle Tree 是一种<strong>二叉树结构</strong>，每个叶子节点是某一笔数据的哈希值，每个非叶子节点是其子节点哈希值的组合再哈希后的结果，直到根节点 —— Merkle Root。</p>
+<h3 id="📌-特点："><a href="#📌-特点：" class="headerlink" title="📌 特点："></a>📌 特点：</h3><ul>
+<li>快速验证某条数据是否属于某批数据（O(log n)）</li>
+<li>数据完整性校验非常高效</li>
+<li>广泛用于区块链中（比特币、以太坊）以验证交易</li>
+</ul>
+<hr>
+<h2 id="🧩-二、图示说明"><a href="#🧩-二、图示说明" class="headerlink" title="🧩 二、图示说明"></a>🧩 二、图示说明</h2><p>假设我们有 4 个交易 <code>Tx0, Tx1, Tx2, Tx3</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">             Merkle Root</span><br><span class="line">                 │</span><br><span class="line">         ┌───────┴────────┐</span><br><span class="line">         │                │</span><br><span class="line">      Hash01           Hash23</span><br><span class="line">     ┌────┴────┐      ┌────┴────┐</span><br><span class="line">  Hash0      Hash1  Hash2     Hash3</span><br><span class="line">  │            │     │          │</span><br><span class="line">Tx0          Tx1   Tx2        Tx3</span><br></pre></td></tr></table></figure>
+
+<h3 id="哈希过程："><a href="#哈希过程：" class="headerlink" title="哈希过程："></a>哈希过程：</h3><ul>
+<li><code>Hash0 = hash(Tx0)</code>，<code>Hash1 = hash(Tx1)</code></li>
+<li><code>Hash01 = hash(Hash0 + Hash1)</code></li>
+<li><code>Merkle Root = hash(Hash01 + Hash23)</code></li>
+</ul>
+<hr>
+<h2 id="💡-三、Merkle-Tree-的作用"><a href="#💡-三、Merkle-Tree-的作用" class="headerlink" title="💡 三、Merkle Tree 的作用"></a>💡 三、Merkle Tree 的作用</h2><h3 id="✅-在区块链中主要用来："><a href="#✅-在区块链中主要用来：" class="headerlink" title="✅ 在区块链中主要用来："></a>✅ 在区块链中主要用来：</h3><table>
+<thead>
+<tr>
+<th>用途</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>验证交易是否在区块中</td>
+<td>比如比特币 SPV（轻节点）用来验证一笔交易是否在区块中，无需下载整个区块</td>
+</tr>
+<tr>
+<td>保证数据不可篡改</td>
+<td>即使更改一笔交易，Merkle Root 也会完全不同</td>
+</tr>
+<tr>
+<td>批量处理大量数据的完整性验证</td>
+<td>用于 IPFS、文件校验、区块快照</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧪-四、一个简单的-Merkle-Tree-实现（用-JavaScript）"><a href="#🧪-四、一个简单的-Merkle-Tree-实现（用-JavaScript）" class="headerlink" title="🧪 四、一个简单的 Merkle Tree 实现（用 JavaScript）"></a>🧪 四、一个简单的 Merkle Tree 实现（用 JavaScript）</h2><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createHash &#125; <span class="keyword">from</span> <span class="string">&#x27;crypto&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sha256</span>(<span class="params"><span class="attr">data</span>: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">createHash</span>(<span class="string">&#x27;sha256&#x27;</span>).<span class="title function_">update</span>(data).<span class="title function_">digest</span>(<span class="string">&#x27;hex&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建 Merkle Tree 并返回根节点</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">buildMerkleTree</span>(<span class="params"><span class="attr">leaves</span>: <span class="built_in">string</span>[]</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (leaves.<span class="property">length</span> === <span class="number">0</span>) <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> level = leaves.<span class="title function_">map</span>(sha256);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (level.<span class="property">length</span> &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="attr">nextLevel</span>: <span class="built_in">string</span>[] = [];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; level.<span class="property">length</span>; i += <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> left = level[i];</span><br><span class="line">      <span class="keyword">const</span> right = level[i + <span class="number">1</span>] ?? left; <span class="comment">// 如果是奇数，复制最后一个</span></span><br><span class="line">      nextLevel.<span class="title function_">push</span>(<span class="title function_">sha256</span>(left + right));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    level = nextLevel;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> level[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例</span></span><br><span class="line"><span class="keyword">const</span> txs = [<span class="string">&#x27;tx0&#x27;</span>, <span class="string">&#x27;tx1&#x27;</span>, <span class="string">&#x27;tx2&#x27;</span>, <span class="string">&#x27;tx3&#x27;</span>];</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Merkle Root:&#x27;</span>, <span class="title function_">buildMerkleTree</span>(txs));</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🔍-五、如何验证某笔交易在-Merkle-Tree-中？"><a href="#🔍-五、如何验证某笔交易在-Merkle-Tree-中？" class="headerlink" title="🔍 五、如何验证某笔交易在 Merkle Tree 中？"></a>🔍 五、如何验证某笔交易在 Merkle Tree 中？</h2><p>验证步骤是：</p>
+<ol>
+<li>获取你那笔交易的哈希（比如 <code>tx1 → h1</code>）</li>
+<li>获取你需要验证路径的兄弟节点哈希（称为“Merkle Proof”）</li>
+<li>逐层拼接并计算，直到得出 Merkle Root</li>
+<li>看是否和真正的 Merkle Root 匹配</li>
+</ol>
+<p>这样你就可以<strong>仅凭部分数据验证整批数据完整性</strong>，这在区块链轻节点中尤为重要。</p>
+<hr>
+<h2 id="📦-六、真实区块链场景"><a href="#📦-六、真实区块链场景" class="headerlink" title="📦 六、真实区块链场景"></a>📦 六、真实区块链场景</h2><h3 id="以太坊中："><a href="#以太坊中：" class="headerlink" title="以太坊中："></a>以太坊中：</h3><ul>
+<li>并不直接使用二叉 Merkle Tree，而是使用改进版：<strong>Merkle Patricia Trie</strong> 来处理状态（账户、余额等）</li>
+<li>区块头中的 <code>transactionsRoot</code>、<code>stateRoot</code> 等字段就是 Merkle 根</li>
+</ul>
+<h3 id="比特币中："><a href="#比特币中：" class="headerlink" title="比特币中："></a>比特币中：</h3><ul>
+<li>区块中的 <code>merkle_root</code> 字段是所有交易的 Merkle 根</li>
+<li>支持轻节点（SPV）通过 Merkle Proof 验证交易</li>
+</ul>
+<hr>
+<h2 id="🧾-七、总结重点"><a href="#🧾-七、总结重点" class="headerlink" title="🧾 七、总结重点"></a>🧾 七、总结重点</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是什么</td>
+<td>二叉哈希树，用于验证大批数据中某一条数据是否存在</td>
+</tr>
+<tr>
+<td>为什么重要</td>
+<td>高效验证、防篡改、轻节点支持</td>
+</tr>
+<tr>
+<td>区块链用途</td>
+<td>交易验证、状态验证、数据完整性证明</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>空间占用小，验证时间快（对数级别），可组合证明</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cypto-Currency/" rel="tag"><i class="fa fa-tag"></i> Cypto Currency</a>
+              <a href="/tags/Ethereum/" rel="tag"><i class="fa fa-tag"></i> Ethereum</a>
+              <a href="/tags/Data-Structure/" rel="tag"><i class="fa fa-tag"></i> Data Structure</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/21/Merkle-Tree/" rel="prev" title="Merkle Tree">
+                  <i class="fa fa-angle-left"></i> Merkle Tree
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
