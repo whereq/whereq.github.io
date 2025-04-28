@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">130</span>
+          <span class="site-state-item-count">131</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,239 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/Best-Practices-of-kubectl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/03/Best-Practices-of-kubectl/" class="post-title-link" itemprop="url">Best Practices of kubectl</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-11-03 12:14:08 / Modified: 13:13:54" itemprop="dateCreated datePublished" datetime="2024-11-03T12:14:08-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Kubernetes/Kubectl/" itemprop="url" rel="index"><span itemprop="name">Kubectl</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#basic-cluster-information">Basic Cluster Information</a><ul>
+<li><a href="#-get-cluster-info"> Get Cluster Info</a></li>
+<li><a href="#-list-nodes"> List Nodes</a></li>
+<li><a href="#-list-namespaces"> List Namespaces</a></li>
+</ul>
+</li>
+<li><a href="#resource-monitoring">Resource Monitoring</a><ul>
+<li><a href="#-list-pods"> List Pods</a></li>
+<li><a href="#-list-deployments"> List Deployments</a></li>
+<li><a href="#-list-services"> List Services</a></li>
+<li><a href="#-list-configmaps"> List ConfigMaps</a></li>
+<li><a href="#-list-secrets"> List Secrets</a></li>
+</ul>
+</li>
+<li><a href="#advanced-resource-analysis">Advanced Resource Analysis</a><ul>
+<li><a href="#-describe-resources"> Describe Resources</a></li>
+<li><a href="#-logs"> Logs</a></li>
+<li><a href="#-exec-into-pod"> Exec into Pod</a></li>
+<li><a href="#-port-forwarding"> Port Forwarding</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting">Troubleshooting</a><ul>
+<li><a href="#-check-pod-status"> Check Pod Status</a></li>
+<li><a href="#-check-node-status"> Check Node Status</a></li>
+<li><a href="#-check-events"> Check Events</a></li>
+<li><a href="#-check-resource-limits"> Check Resource Limits</a></li>
+</ul>
+</li>
+<li><a href="#advanced-scenarios">Advanced Scenarios</a><ul>
+<li><a href="#-scaling-deployments"> Scaling Deployments</a></li>
+<li><a href="#-rolling-updates"> Rolling Updates</a></li>
+<li><a href="#-debugging-with-kubectl"> Debugging with <code>kubectl</code></a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>Best Practices of Using <code>kubectl</code> to Analyze Kubernetes Cluster Status</strong></p>
+</blockquote>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Monitoring and analyzing the status of a Kubernetes (K8s) cluster is crucial for maintaining the health and efficiency of your applications. The <code>kubectl</code> command-line tool provides powerful capabilities for interacting with and analyzing your Kubernetes cluster. This article provides a comprehensive guide to the best practices of using <code>kubectl</code> to analyze cluster status, covering various scenarios such as checking cluster information, monitoring resources, troubleshooting issues, and performing advanced operations.</p>
+<hr>
+<p><a name="basic-cluster-information"></a></p>
+<h2 id="Basic-Cluster-Information"><a href="#Basic-Cluster-Information" class="headerlink" title="Basic Cluster Information"></a>Basic Cluster Information</h2><h3 id="Get-Cluster-Info"><a href="#Get-Cluster-Info" class="headerlink" title=" Get Cluster Info"></a><a name="get-cluster-info"></a> Get Cluster Info</h3><p>To get basic information about the cluster, use the <code>kubectl cluster-info</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl cluster-info</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the Kubernetes master and DNS endpoints.</p>
+<h3 id="List-Nodes"><a href="#List-Nodes" class="headerlink" title=" List Nodes"></a><a name="list-nodes"></a> List Nodes</h3><p>To list all nodes in the cluster, use the <code>kubectl get nodes</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the status, roles, age, and version of each node.</p>
+<h3 id="List-Namespaces"><a href="#List-Namespaces" class="headerlink" title=" List Namespaces"></a><a name="list-namespaces"></a> List Namespaces</h3><p>To list all namespaces in the cluster, use the <code>kubectl get namespaces</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get namespaces</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name and status of each namespace.</p>
+<hr>
+<p><a name="resource-monitoring"></a></p>
+<h2 id="Resource-Monitoring"><a href="#Resource-Monitoring" class="headerlink" title="Resource Monitoring"></a>Resource Monitoring</h2><h3 id="List-Pods"><a href="#List-Pods" class="headerlink" title=" List Pods"></a><a name="list-pods"></a> List Pods</h3><p>To list all pods in a namespace, use the <code>kubectl get pods</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name, ready status, status, restarts, and age of each pod.</p>
+<h3 id="List-Deployments"><a href="#List-Deployments" class="headerlink" title=" List Deployments"></a><a name="list-deployments"></a> List Deployments</h3><p>To list all deployments in a namespace, use the <code>kubectl get deployments</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name, desired replicas, current replicas, up-to-date replicas, and available replicas of each deployment.</p>
+<h3 id="List-Services"><a href="#List-Services" class="headerlink" title=" List Services"></a><a name="list-services"></a> List Services</h3><p>To list all services in a namespace, use the <code>kubectl get services</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get services -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name, type, cluster IP, external IP, and ports of each service.</p>
+<h3 id="List-ConfigMaps"><a href="#List-ConfigMaps" class="headerlink" title=" List ConfigMaps"></a><a name="list-configmaps"></a> List ConfigMaps</h3><p>To list all ConfigMaps in a namespace, use the <code>kubectl get configmaps</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get configmaps -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name and age of each ConfigMap.</p>
+<h3 id="List-Secrets"><a href="#List-Secrets" class="headerlink" title=" List Secrets"></a><a name="list-secrets"></a> List Secrets</h3><p>To list all Secrets in a namespace, use the <code>kubectl get secrets</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secrets -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the name and age of each Secret.</p>
+<hr>
+<p><a name="advanced-resource-analysis"></a></p>
+<h2 id="Advanced-Resource-Analysis"><a href="#Advanced-Resource-Analysis" class="headerlink" title="Advanced Resource Analysis"></a>Advanced Resource Analysis</h2><h3 id="Describe-Resources"><a href="#Describe-Resources" class="headerlink" title=" Describe Resources"></a><a name="describe-resources"></a> Describe Resources</h3><p>To get detailed information about a specific resource, use the <code>kubectl describe</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe &lt;resource&gt; &lt;name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>For example, to describe a pod:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command provides detailed information about the resource, including events and status.</p>
+<h3 id="Logs"><a href="#Logs" class="headerlink" title=" Logs"></a><a name="logs"></a> Logs</h3><p>To view the logs of a pod, use the <code>kubectl logs</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>To follow the logs in real-time, use the <code>-f</code> flag:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -f &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Exec-into-Pod"><a href="#Exec-into-Pod" class="headerlink" title=" Exec into Pod"></a><a name="exec-into-pod"></a> Exec into Pod</h3><p>To execute a command inside a running pod, use the <code>kubectl exec</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -it &lt;pod-name&gt; -n &lt;namespace&gt; -- /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>This command opens an interactive shell inside the pod.</p>
+<h3 id="Port-Forwarding"><a href="#Port-Forwarding" class="headerlink" title=" Port Forwarding"></a><a name="port-forwarding"></a> Port Forwarding</h3><p>To forward a local port to a port on a pod, use the <code>kubectl port-forward</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl port-forward &lt;pod-name&gt; &lt;local-port&gt;:&lt;pod-port&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command allows you to access the pod’s service locally.</p>
+<hr>
+<p><a name="troubleshooting"></a></p>
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Check-Pod-Status"><a href="#Check-Pod-Status" class="headerlink" title=" Check Pod Status"></a><a name="check-pod-status"></a> Check Pod Status</h3><p>To check the status of a specific pod, use the <code>kubectl get pods</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the status and other details of the pod.</p>
+<h3 id="Check-Node-Status"><a href="#Check-Node-Status" class="headerlink" title=" Check Node Status"></a><a name="check-node-status"></a> Check Node Status</h3><p>To check the status of a specific node, use the <code>kubectl get nodes</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes &lt;node-name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the status and other details of the node.</p>
+<h3 id="Check-Events"><a href="#Check-Events" class="headerlink" title=" Check Events"></a><a name="check-events"></a> Check Events</h3><p>To check recent events in the cluster, use the <code>kubectl get events</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get events -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command displays recent events, which can help diagnose issues.</p>
+<h3 id="Check-Resource-Limits"><a href="#Check-Resource-Limits" class="headerlink" title=" Check Resource Limits"></a><a name="check-resource-limits"></a> Check Resource Limits</h3><p>To check resource limits and requests for a pod, use the <code>kubectl describe</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command provides detailed information about resource limits and requests.</p>
+<hr>
+<p><a name="advanced-scenarios"></a></p>
+<h2 id="Advanced-Scenarios"><a href="#Advanced-Scenarios" class="headerlink" title="Advanced Scenarios"></a>Advanced Scenarios</h2><h3 id="Scaling-Deployments"><a href="#Scaling-Deployments" class="headerlink" title=" Scaling Deployments"></a><a name="scaling-deployments"></a> Scaling Deployments</h3><p>To scale a deployment, use the <code>kubectl scale</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale deployment &lt;deployment-name&gt; --replicas=&lt;number&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command scales the deployment to the specified number of replicas.</p>
+<h3 id="Rolling-Updates"><a href="#Rolling-Updates" class="headerlink" title=" Rolling Updates"></a><a name="rolling-updates"></a> Rolling Updates</h3><p>To perform a rolling update on a deployment, use the <code>kubectl rollout</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout restart deployment &lt;deployment-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command restarts the deployment, performing a rolling update.</p>
+<h3 id="Debugging-with-kubectl"><a href="#Debugging-with-kubectl" class="headerlink" title=" Debugging with kubectl"></a><a name="debugging-with-kubectl"></a> Debugging with <code>kubectl</code></h3><p>To debug a pod, use the <code>kubectl debug</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl debug &lt;pod-name&gt; -n &lt;namespace&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command creates a debugging container inside the pod.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Monitoring and analyzing the status of a Kubernetes cluster is essential for maintaining the health and efficiency of your applications. By mastering the various options and scenarios covered in this article, you can effectively use <code>kubectl</code> to interact with and analyze your Kubernetes cluster.</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">kubectl Cheat Sheet</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands">kubectl Command Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/">Kubernetes Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/best-practices/">Kubernetes Best Practices</a></li>
+</ol>
+<p>By following these best practices, you can leverage <code>kubectl</code> to its full potential and efficiently manage your Kubernetes cluster monitoring and troubleshooting tasks.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1853,148 +2086,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/31/Deep-Dive-into-Kubernetes-Ingress/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/31/Deep-Dive-into-Kubernetes-Ingress/" class="post-title-link" itemprop="url">Deep Dive into Kubernetes Ingress</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-31 13:20:57 / Modified: 13:22:00" itemprop="dateCreated datePublished" datetime="2024-10-31T13:20:57-04:00">2024-10-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#what-is-kubernetes-ingress">What is Kubernetes Ingress?</a><ul>
-<li><a href="#ingress-types">Ingress Types</a></li>
-</ul>
-</li>
-<li><a href="#ingress-controllers">Ingress Controllers</a></li>
-<li><a href="#ingress-rules-and-annotations">Ingress Rules and Annotations</a><ul>
-<li><a href="#example-of-an-ingress-rule">Example of an Ingress Rule</a></li>
-</ul>
-</li>
-<li><a href="#ingress-architecture-diagram">Ingress Architecture Diagram</a><ul>
-<li><a href="#ingress-with-path-based-routing">Ingress with Path-Based Routing</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<p>In Kubernetes, <strong>Ingress</strong> is a crucial component that manages external access to services within a cluster, typically via HTTP or HTTPS. It provides a centralized entry point for external traffic, applying routing rules to direct requests to appropriate services. This article explores the architecture and responsibilities of Kubernetes Ingress, how it interacts with other components, and provides visual architecture diagrams.</p>
-<hr>
-<p><a name="kubernetes-ingress"></a></p>
-<h2 id="What-is-Kubernetes-Ingress"><a href="#What-is-Kubernetes-Ingress" class="headerlink" title="What is Kubernetes Ingress?"></a>What is Kubernetes Ingress?</h2><p><strong>Ingress</strong> in Kubernetes is an API object that manages external access to services, usually HTTP. Instead of exposing each service individually through a <strong>Service</strong> object of type <code>LoadBalancer</code> or <code>NodePort</code>, Ingress offers a central route, managing traffic with a single IP address or DNS name for the entire cluster. Key benefits include:</p>
-<ul>
-<li><strong>Centralized Traffic Management</strong>: Ingress consolidates traffic through a single point of entry, allowing easy route management.</li>
-<li><strong>Path-Based Routing</strong>: Requests can be directed to specific services based on request paths or hostnames.</li>
-<li><strong>SSL Termination</strong>: Ingress can terminate SSL&#x2F;TLS connections, ensuring secure HTTPS access.</li>
-</ul>
-<h3 id="Ingress-Types"><a href="#Ingress-Types" class="headerlink" title="Ingress Types"></a>Ingress Types</h3><p>Kubernetes supports two main Ingress types:</p>
-<ul>
-<li><strong>Simple Ingress</strong>: For straightforward routing to backend services based on path or hostname.</li>
-<li><strong>Advanced Ingress</strong>: With more complex routing rules, integrating SSL termination, URL rewrites, and custom filtering.</li>
-</ul>
-<hr>
-<p><a name="ingress-controllers"></a></p>
-<h2 id="Ingress-Controllers"><a href="#Ingress-Controllers" class="headerlink" title="Ingress Controllers"></a>Ingress Controllers</h2><p>An <strong>Ingress Controller</strong> is the implementation that enforces Ingress rules, usually deployed as a Pod within the cluster. Popular Ingress controllers include <strong>NGINX</strong>, <strong>HAProxy</strong>, <strong>Traefik</strong>, and <strong>Istio</strong>. The Ingress Controller is responsible for:</p>
-<ol>
-<li><strong>Monitoring Ingress Resources</strong>: Watching for any changes in Ingress resources and updating routing rules accordingly.</li>
-<li><strong>Load Balancing and SSL Termination</strong>: Providing efficient load balancing for HTTP&#x2F;HTTPS requests.</li>
-<li><strong>Proxying and Forwarding</strong>: Accepting requests on behalf of the Ingress and forwarding them to the correct Service and Pod.</li>
-</ol>
-<p>The Ingress Controller must be installed in the cluster to interpret and apply Ingress resources, as Kubernetes does not ship with a default controller.</p>
-<hr>
-<p><a name="ingress-rules"></a></p>
-<h2 id="Ingress-Rules-and-Annotations"><a href="#Ingress-Rules-and-Annotations" class="headerlink" title="Ingress Rules and Annotations"></a>Ingress Rules and Annotations</h2><p>Ingress rules define the routing policy for external traffic. These rules can direct traffic based on URL paths or hostnames, and each rule specifies the <code>Service</code> and <code>Port</code> the request should route to. Annotations add configurations like timeouts, request limits, and additional routing options.</p>
-<h3 id="Example-of-an-Ingress-Rule"><a href="#Example-of-an-Ingress-Rule" class="headerlink" title="Example of an Ingress Rule"></a>Example of an Ingress Rule</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">example-ingress</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/app</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">app-service</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<p>In this example, requests to <code>example.com/app</code> are routed to the <code>app-service</code> on port <code>80</code>.</p>
-<hr>
-<p><a name="architecture-diagram"></a></p>
-<h2 id="Ingress-Architecture-Diagram"><a href="#Ingress-Architecture-Diagram" class="headerlink" title="Ingress Architecture Diagram"></a>Ingress Architecture Diagram</h2><h3 id="Ingress-with-Path-Based-Routing"><a href="#Ingress-with-Path-Based-Routing" class="headerlink" title="Ingress with Path-Based Routing"></a>Ingress with Path-Based Routing</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------+</span><br><span class="line">|        External User        |</span><br><span class="line">+-----------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+-----------------------------+</span><br><span class="line">|      Ingress Controller     |        &lt;-- Manages Ingress Rules</span><br><span class="line">+-----------------------------+</span><br><span class="line">              |</span><br><span class="line">      +-------+------+--------+</span><br><span class="line">      |              |        |</span><br><span class="line">      v              v        v</span><br><span class="line">+-----------+    +-----------+   +-----------+</span><br><span class="line">| Service A |    | Service B |   | Service C |</span><br><span class="line">+-----------+    +-----------+   +-----------+</span><br><span class="line">      |              |                |</span><br><span class="line">      v              v                v</span><br><span class="line">+-----------+    +-----------+   +-----------+</span><br><span class="line">| Pod A1    |    | Pod B1    |   | Pod C1    |</span><br><span class="line">+-----------+    +-----------+   +-----------+</span><br></pre></td></tr></table></figure>
-
-<p>In this diagram:</p>
-<ul>
-<li><strong>Ingress Controller</strong> routes based on rules that direct traffic to Services.</li>
-<li><strong>Services</strong> are abstractions that select Pods through labels.</li>
-<li><strong>Pods</strong> run the actual applications and receive traffic forwarded by the Ingress Controller.</li>
-</ul>
-<p>This setup allows centralized and managed external access to cluster resources.</p>
-<hr>
-<p>By centralizing access with Ingress, Kubernetes can handle complex routing configurations, ensuring that traffic flows efficiently and securely across the cluster.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

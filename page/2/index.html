@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">130</span>
+          <span class="site-state-item-count">131</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,136 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/03/09/Customize-kc-css-classes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/03/09/Customize-kc-css-classes/" class="post-title-link" itemprop="url">Customize kc-* css classes</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-03-09 13:39:10 / Modified: 13:43:07" itemprop="dateCreated datePublished" datetime="2025-03-09T13:39:10-04:00">2025-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/Keycloakify/" itemprop="url" rel="index"><span itemprop="name">Keycloakify</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="Summary-of-the-Debugging-Process-and-Solutions-about-Customzing-Template-tsx"><a href="#Summary-of-the-Debugging-Process-and-Solutions-about-Customzing-Template-tsx" class="headerlink" title="Summary of the Debugging Process, and Solutions about Customzing Template.tsx"></a>Summary of the Debugging Process, and Solutions about Customzing Template.tsx</h3><p><img src="/images/Customize-kc-css-classes/kc-header-wrapper-customization.png" alt="Customize kc-header-wrapper clss"></p>
+<p>In this case, the issue stemmed from the <code>kc-header-wrapper</code> class, which is part of Keycloak’s original default theme (<code>login.css</code>). This class had predefined styles (e.g., <code>padding</code>, <code>line-height</code>, <code>font-size</code>, etc.) that were overriding the Tailwind CSS styles applied via inline classes in the React component. The <code>kc-</code> prefixed classes are part of Keycloak’s default theme, and customizing them with Tailwind CSS can be challenging because Tailwind’s utility classes are often overridden by these predefined styles.</p>
+<h4 id="Debugging-Process"><a href="#Debugging-Process" class="headerlink" title="Debugging Process:"></a>Debugging Process:</h4><ol>
+<li><p><strong>Initial Observation</strong>:</p>
+<ul>
+<li>The <code>kc-header-wrapper</code> was exceeding the height of its parent (<code>kc-header</code>), causing layout issues.</li>
+<li>The <code>h-full</code> Tailwind class was not working as expected.</li>
+</ul>
+</li>
+<li><p><strong>Root Cause Identification</strong>:</p>
+<ul>
+<li>The <code>kc-header-wrapper</code> class from Keycloak’s <code>login.css</code> was overriding the Tailwind styles with its own <code>padding</code>, <code>line-height</code>, and other properties.</li>
+</ul>
+</li>
+<li><p><strong>Attempted Fixes</strong>:</p>
+<ul>
+<li>Initially, Tailwind CSS classes like <code>p-0</code>, <code>m-0</code>, and <code>h-full</code> were used inline, but they were ineffective due to the higher specificity of the <code>login.css</code> styles.</li>
+<li>The <code>!important</code> rule was considered to force override the styles.</li>
+</ul>
+</li>
+<li><p><strong>Final Solution</strong>:</p>
+<ul>
+<li>A separate CSS file (<code>template.css</code>) was created to reset the problematic properties of <code>#kc-header-wrapper</code> using <code>!important</code>. This ensured that the styles from <code>login.css</code> were overridden.</li>
+<li>The <code>template.css</code> file was imported into the <code>Template.tsx</code> component to apply the reset styles.</li>
+</ul>
+</li>
+</ol>
+<h4 id="Final-Solution-Code"><a href="#Final-Solution-Code" class="headerlink" title="Final Solution Code:"></a>Final Solution Code:</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* template.css */</span></span><br><span class="line"><span class="selector-id">#kc-header-wrapper</span> &#123;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: inherit <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">text-transform</span>: none <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">letter-spacing</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">white-space</span>: normal <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="comment">/* Header */</span>&#125;</span><br><span class="line">&lt;div id=<span class="string">&quot;kc-header&quot;</span> className=&#123;<span class="title function_">clsx</span>(<span class="title function_">kcClsx</span>(<span class="string">&quot;kcHeaderClass&quot;</span>), <span class="string">&quot;bg-blue-700 border-b border-orange-700 h-[3.125rem] flex items-center px-4 fixed top-0 left-0 right-0 z-50 w-full&quot;</span>)&#125;&gt;</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-header-wrapper&quot;</span> <span class="attr">className</span>=<span class="string">&#123;clsx(kcClsx(</span>&quot;<span class="attr">kcHeaderWrapperClass</span>&quot;), &quot;<span class="attr">flex</span> <span class="attr">items-center</span> <span class="attr">h-full</span>&quot;)&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;logoPngUrl&#125;</span> <span class="attr">width</span>=<span class="string">&#123;40&#125;</span> <span class="attr">height</span>=<span class="string">&#123;40&#125;</span> <span class="attr">className</span>=<span class="string">&quot;mr-2&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">        &#123;msg(&quot;loginTitleHtml&quot;, realm.displayNameHtml)&#125;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Alternatives"><a href="#Alternatives" class="headerlink" title="Alternatives:"></a>Alternatives:</h4><ol>
+<li><p><strong>Inline Styles</strong>:</p>
+<ul>
+<li>As a temporary debugging measure, inline styles can be used to override the <code>login.css</code> styles:<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-header-wrapper&quot;</span> style=&#123;&#123; <span class="attr">padding</span>: <span class="number">0</span>, <span class="attr">margin</span>: <span class="number">0</span>, <span class="attr">lineHeight</span>: <span class="string">&quot;normal&quot;</span>, <span class="attr">fontSize</span>: <span class="string">&quot;inherit&quot;</span>, <span class="attr">textTransform</span>: <span class="string">&quot;none&quot;</span>, <span class="attr">letterSpacing</span>: <span class="string">&quot;normal&quot;</span>, <span class="attr">whiteSpace</span>: <span class="string">&quot;normal&quot;</span> &#125;&#125;&gt;</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;logoPngUrl&#125;</span> <span class="attr">width</span>=<span class="string">&#123;40&#125;</span> <span class="attr">height</span>=<span class="string">&#123;40&#125;</span> <span class="attr">className</span>=<span class="string">&quot;mr-2&quot;</span> /&gt;</span></span></span><br><span class="line">    &#123;<span class="title function_">msg</span>(<span class="string">&quot;loginTitleHtml&quot;</span>, realm.<span class="property">displayNameHtml</span>)&#125;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>Tailwind <code>!important</code> Utility</strong>:</p>
+<ul>
+<li>Tailwind CSS supports the <code>!important</code> utility (e.g., <code>p-0!</code>), but this may not always work due to specificity issues with Keycloak’s default styles.</li>
+</ul>
+</li>
+<li><p><strong>Custom CSS File</strong>:</p>
+<ul>
+<li>The most robust solution is to use a separate CSS file to reset or override the <code>kc-</code> prefixed classes, as shown in the final solution.</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1956,135 +2086,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/" class="post-title-link" itemprop="url">Deep Dive into Local Storage Usage in React with TypeScript</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-12-27 16:00:44 / Modified: 16:02:08" itemprop="dateCreated datePublished" datetime="2024-12-27T16:00:44-05:00">2024-12-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/React/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Local storage is a simple yet powerful tool for persisting data in web applications. In this article, we’ll explore every detail of local storage usage in React with TypeScript, including best practices, sample code, and test cases. The illustrations are based on the latest versions of React (18.x) and TypeScript (5.x).</p>
-<hr>
-<h2 id="What-is-Local-Storage"><a href="#What-is-Local-Storage" class="headerlink" title="What is Local Storage?"></a><strong>What is Local Storage?</strong></h2><p>Local storage is a web API that allows developers to store key-value pairs in a web browser. The data persists even after the browser is closed, making it ideal for saving user preferences, authentication tokens, and other non-sensitive data.</p>
-<h3 id="Key-Characteristics-of-Local-Storage"><a href="#Key-Characteristics-of-Local-Storage" class="headerlink" title="Key Characteristics of Local Storage:"></a>Key Characteristics of Local Storage:</h3><ul>
-<li><strong>Synchronous API</strong>: Operations are blocking.</li>
-<li><strong>Storage Limit</strong>: Approximately 5MB per domain.</li>
-<li><strong>Data Lifetime</strong>: Persists until explicitly deleted.</li>
-<li><strong>Data Scope</strong>: Accessible only within the same origin.</li>
-</ul>
-<hr>
-<h2 id="Using-Local-Storage-in-React-with-TypeScript"><a href="#Using-Local-Storage-in-React-with-TypeScript" class="headerlink" title="Using Local Storage in React with TypeScript"></a><strong>Using Local Storage in React with TypeScript</strong></h2><h3 id="1-Basic-CRUD-Operations"><a href="#1-Basic-CRUD-Operations" class="headerlink" title="1. Basic CRUD Operations"></a>1. <strong>Basic CRUD Operations</strong></h3><p>Local storage provides three core methods:</p>
-<ul>
-<li><code>localStorage.setItem(key, value)</code></li>
-<li><code>localStorage.getItem(key)</code></li>
-<li><code>localStorage.removeItem(key)</code></li>
-</ul>
-<h3 id="Example-Wrapper-Utility-for-Local-Storage"><a href="#Example-Wrapper-Utility-for-Local-Storage" class="headerlink" title="Example: Wrapper Utility for Local Storage"></a>Example: Wrapper Utility for Local Storage</h3><p>We can create a type-safe utility to handle common operations:</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/localStorage.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">LocalStorageHelper</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> setItem&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">value</span>: T): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(key, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(value));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> getItem&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>): T | <span class="literal">null</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> value = <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(key);</span><br><span class="line">        <span class="keyword">return</span> value ? <span class="title class_">JSON</span>.<span class="title function_">parse</span>(value) <span class="keyword">as</span> T : <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="title function_">removeItem</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">removeItem</span>(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Test-Cases"><a href="#Test-Cases" class="headerlink" title="Test Cases"></a>Test Cases</h3><p>Using Jest, we can write unit tests to validate the utility:</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/localStorage.test.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">LocalStorageHelper</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./localStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">describe</span>(<span class="string">&quot;LocalStorageHelper&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">beforeEach</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">clear</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should set and retrieve an item&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;key&quot;</span>, &#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="property">getItem</span>&lt;&#123; <span class="attr">name</span>: <span class="built_in">string</span> &#125;&gt;(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toEqual</span>(&#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should return null for non-existent keys&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="title function_">getItem</span>(<span class="string">&quot;nonexistent&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toBeNull</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should remove an item&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">removeItem</span>(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="title function_">getItem</span>(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toBeNull</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="2-Integrating-Local-Storage-in-React-Components"><a href="#2-Integrating-Local-Storage-in-React-Components" class="headerlink" title="2. Integrating Local Storage in React Components"></a>2. <strong>Integrating Local Storage in React Components</strong></h3><h4 id="Example-Using-Local-Storage-with-useState"><a href="#Example-Using-Local-Storage-with-useState" class="headerlink" title="Example: Using Local Storage with useState"></a>Example: Using Local Storage with <code>useState</code></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/Counter.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">LocalStorageHelper</span> &#125; <span class="keyword">from</span> <span class="string">&quot;../utils/localStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Counter</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = useState&lt;<span class="built_in">number</span>&gt;(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title class_">LocalStorageHelper</span>.<span class="property">getItem</span>&lt;<span class="built_in">number</span>&gt;(<span class="string">&quot;count&quot;</span>) || <span class="number">0</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;count&quot;</span>, count);</span><br><span class="line">    &#125;, [count]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Counter: &#123;count&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount((prev) =&gt; prev + 1)&#125;&gt;Increment<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount((prev) =&gt; prev - 1)&#125;&gt;Decrement<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Counter</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Test-Cases-1"><a href="#Test-Cases-1" class="headerlink" title="Test Cases"></a>Test Cases</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/Counter.test.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; render, screen, fireEvent &#125; <span class="keyword">from</span> <span class="string">&quot;@testing-library/react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Counter</span> <span class="keyword">from</span> <span class="string">&quot;./Counter&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">describe</span>(<span class="string">&quot;Counter Component&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should initialize with value from local storage&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&quot;count&quot;</span>, <span class="string">&quot;5&quot;</span>);</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: 5/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should increment the counter&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Increment/i</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: 1/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should decrement the counter&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Decrement/i</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: -1/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="3-React-Hooks-for-Local-Storage"><a href="#3-React-Hooks-for-Local-Storage" class="headerlink" title="3. React Hooks for Local Storage"></a>3. <strong>React Hooks for Local Storage</strong></h3><p>We can create a custom hook to encapsulate the logic for interacting with local storage.</p>
-<h4 id="Example-Custom-Hook"><a href="#Example-Custom-Hook" class="headerlink" title="Example: Custom Hook"></a>Example: Custom Hook</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hooks/useLocalStorage.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; useState &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> useLocalStorage&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">initialValue</span>: T) &#123;</span><br><span class="line">    <span class="keyword">const</span> [storedValue, setStoredValue] = useState&lt;T&gt;(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> item = <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(key);</span><br><span class="line">            <span class="keyword">return</span> item ? <span class="title class_">JSON</span>.<span class="title function_">parse</span>(item) : initialValue;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error reading localStorage key&quot;</span>, key, error);</span><br><span class="line">            <span class="keyword">return</span> initialValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">setValue</span> = (<span class="params"><span class="attr">value</span>: T</span>) =&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="title function_">setStoredValue</span>(value);</span><br><span class="line">            <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(key, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(value));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error setting localStorage key&quot;</span>, key, error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [storedValue, setValue] <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> useLocalStorage;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Usage-Example"><a href="#Usage-Example" class="headerlink" title="Usage Example"></a>Usage Example</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/ThemeSwitcher.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> useLocalStorage <span class="keyword">from</span> <span class="string">&quot;../hooks/useLocalStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">ThemeSwitcher</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> [theme, setTheme] = useLocalStorage&lt;<span class="built_in">string</span>&gt;(<span class="string">&quot;theme&quot;</span>, <span class="string">&quot;light&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&#123;</span>`<span class="attr">theme-</span>$&#123;<span class="attr">theme</span>&#125;`&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Current Theme: &#123;theme&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setTheme(&quot;light&quot;)&#125;&gt;Light<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setTheme(&quot;dark&quot;)&#125;&gt;Dark<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">ThemeSwitcher</span>;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="4-Best-Practices-for-Local-Storage-in-React"><a href="#4-Best-Practices-for-Local-Storage-in-React" class="headerlink" title="4. Best Practices for Local Storage in React"></a>4. <strong>Best Practices for Local Storage in React</strong></h3><ol>
-<li><strong>Avoid Storing Sensitive Data</strong>: Local storage is not secure; avoid storing sensitive information like passwords or tokens.</li>
-<li><strong>Validate Stored Data</strong>: Always validate and sanitize data retrieved from local storage.</li>
-<li><strong>Error Handling</strong>: Wrap local storage operations in <code>try-catch</code> blocks to handle potential errors.</li>
-<li><strong>Abstract Logic</strong>: Use utilities or hooks to encapsulate local storage interactions for reusability and type safety.</li>
-<li><strong>Synchronize Across Tabs</strong>: Use the <code>storage</code> event to synchronize data across multiple tabs.</li>
-</ol>
-<h4 id="Example-Tab-Synchronization"><a href="#Example-Tab-Synchronization" class="headerlink" title="Example: Tab Synchronization"></a>Example: Tab Synchronization</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hooks/useSyncLocalStorage.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">useSyncLocalStorage</span>(<span class="params"><span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">callback</span>: (newValue: <span class="built_in">string</span> | <span class="literal">null</span>) =&gt; <span class="built_in">void</span></span>) &#123;</span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="title function_">handler</span> = (<span class="params"><span class="attr">event</span>: <span class="title class_">StorageEvent</span></span>) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (event.<span class="property">key</span> === key) &#123;</span><br><span class="line">                <span class="title function_">callback</span>(event.<span class="property">newValue</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;storage&quot;</span>, handler);</span><br><span class="line">        <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="variable language_">window</span>.<span class="title function_">removeEventListener</span>(<span class="string">&quot;storage&quot;</span>, handler);</span><br><span class="line">    &#125;, [key, callback]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
