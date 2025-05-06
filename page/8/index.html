@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">131</span>
+          <span class="site-state-item-count">132</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-count">119</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-count">78</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,229 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Deep-Dive-into-Spring-Scheduler/" class="post-title-link" itemprop="url">Deep Dive into Spring Scheduler</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-28 16:20:09 / Modified: 18:48:30" itemprop="dateCreated datePublished" datetime="2024-10-28T16:20:09-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/Spring-Scheduler/" itemprop="url" rel="index"><span itemprop="name">Spring Scheduler</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#understanding-spring-scheduler-basics">Understanding Spring Scheduler Basics</a><ul>
+<li><a href="#enabling-scheduling">Enabling Scheduling</a></li>
+<li><a href="#simple-scheduling-with-scheduled">Simple Scheduling with <code>@Scheduled</code></a></li>
+</ul>
+</li>
+<li><a href="#scheduling-scenarios">Scheduling Scenarios</a><ul>
+<li><a href="#sequential-job-execution">Sequential Job Execution</a></li>
+<li><a href="#parallel-job-execution">Parallel Job Execution</a></li>
+<li><a href="#job-waiting-until-previous-job-completes">Job Waiting Until Previous Job Completes</a></li>
+</ul>
+</li>
+<li><a href="#cron-expressions-and-fixed-rates">Cron Expressions and Fixed Rates</a><ul>
+<li><a href="#fixed-rate-vs-fixed-delay">Fixed Rate vs Fixed Delay</a></li>
+<li><a href="#using-cron-expressions">Using Cron Expressions</a></li>
+</ul>
+</li>
+<li><a href="#conditional-scheduling-with-annotations">Conditional Scheduling with Annotations</a><ul>
+<li><a href="#conditional-scheduling-example">Conditional Scheduling Example</a></li>
+</ul>
+</li>
+<li><a href="#all-in-one-sample">All-In-One Sample</a></li>
+<li><a href="#conditionalonproperty-with-scheduled-job-in-depth">ConditionalOnProperty with Scheduled Job in Depth</a><ul>
+<li><a href="#scenario-running-a-scheduled-job-in-only-one-pod-in-a-kubernetes-cluster">Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</a><ul>
+<li><a href="#solution-outline">Solution Outline</a></li>
+<li><a href="#steps-to-implement">Steps to Implement</a></li>
+<li><a href="#additional-consideration-use-leader-election">Additional Consideration: Use Leader Election</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><strong>Spring Scheduler</strong> provides a simple way to schedule tasks within a Spring application. It offers flexibility in managing <strong>time-based events</strong> and <strong>task execution</strong>, allowing developers to configure tasks in a variety of ways, including sequential, parallel, and conditional execution.</p>
+<hr>
+<p><a name="understanding-spring-scheduler-basics"></a></p>
+<h2 id="Understanding-Spring-Scheduler-Basics"><a href="#Understanding-Spring-Scheduler-Basics" class="headerlink" title="Understanding Spring Scheduler Basics"></a>Understanding Spring Scheduler Basics</h2><p>Spring Scheduler uses annotations to simplify the scheduling of methods within beans. The primary annotation used is <code>@Scheduled</code>, which can define various timing configurations, such as fixed rate, fixed delay, and cron expressions.</p>
+<p><a name="enabling-scheduling"></a></p>
+<h3 id="Enabling-Scheduling"><a href="#Enabling-Scheduling" class="headerlink" title="Enabling Scheduling"></a>Enabling Scheduling</h3><p>Before defining tasks, enable scheduling in your Spring application by adding the <code>@EnableScheduling</code> annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SchedulingConfig</span> &#123;</span><br><span class="line">    <span class="comment">// Any other scheduling-related configuration if needed</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="simple-scheduling-with-scheduled"></a></p>
+<h3 id="Simple-Scheduling-with-Scheduled"><a href="#Simple-Scheduling-with-Scheduled" class="headerlink" title="Simple Scheduling with @Scheduled"></a>Simple Scheduling with <code>@Scheduled</code></h3><p>The <code>@Scheduled</code> annotation can be applied to any method to enable scheduling. Below is a simple example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">printMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This message prints every 5 seconds.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>printMessage()</code> runs every 5 seconds.</p>
+<hr>
+<p><a name="scheduling-scenarios"></a></p>
+<h2 id="Scheduling-Scenarios"><a href="#Scheduling-Scenarios" class="headerlink" title="Scheduling Scenarios"></a>Scheduling Scenarios</h2><p>Spring Scheduler supports various scenarios for task scheduling, which can be useful for specific use cases in a production environment.</p>
+<p><a name="sequential-job-execution"></a></p>
+<h3 id="Sequential-Job-Execution"><a href="#Sequential-Job-Execution" class="headerlink" title="Sequential Job Execution"></a>Sequential Job Execution</h3><p>In sequential execution, jobs run in a specific order, with each job waiting for the previous one to complete before starting.</p>
+<p><strong>Example: Sequential Scheduling Using Fixed Delay</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SequentialScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job1</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 started.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">2000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job2</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 started after Job 1.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">3000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>With <code>fixedDelay</code>, Job 2 only begins after Job 1 completes.</p>
+<p><a name="parallel-job-execution"></a></p>
+<h3 id="Parallel-Job-Execution"><a href="#Parallel-Job-Execution" class="headerlink" title="Parallel Job Execution"></a>Parallel Job Execution</h3><p>To execute jobs in parallel, we configure a task executor that runs multiple tasks concurrently.</p>
+<p><strong>Example: Parallel Scheduling Using a Custom Task Executor</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelSchedulingConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">2</span>); <span class="comment">// Number of concurrent tasks allowed</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobA</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job A started.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobB</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job B started concurrently with Job A.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>With <code>@Async</code>, <code>jobA</code> and <code>jobB</code> run concurrently, allowing for parallel execution.</p>
+<p><a name="job-waiting-until-previous-job-completes"></a></p>
+<h3 id="Job-Waiting-Until-Previous-Job-Completes"><a href="#Job-Waiting-Until-Previous-Job-Completes" class="headerlink" title="Job Waiting Until Previous Job Completes"></a>Job Waiting Until Previous Job Completes</h3><p>To configure jobs to wait for previous jobs to finish, use <code>fixedDelay</code> with asynchronous methods to ensure that each task waits until its predecessor is completed.</p>
+<p><strong>Diagram: Job Waiting until Previous Job Completes</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Job 1   ---&gt; Wait ---&gt;   Job 2   ---&gt; Wait ---&gt;   Job 3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WaitingScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 12000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job started and waits until the previous instance completes.&quot;</span>);</span><br><span class="line">        <span class="comment">// Simulate processing time</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">5000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this scenario, each new execution waits until the previous one finishes.</p>
+<hr>
+<p><a name="cron-expressions-and-fixed-rates"></a></p>
+<h2 id="Cron-Expressions-and-Fixed-Rates"><a href="#Cron-Expressions-and-Fixed-Rates" class="headerlink" title="Cron Expressions and Fixed Rates"></a>Cron Expressions and Fixed Rates</h2><p>Spring Scheduler allows defining precise timing patterns using <strong>fixed rate</strong>, <strong>fixed delay</strong>, and <strong>cron expressions</strong>.</p>
+<p><a name="fixed-rate-vs-fixed-delay"></a></p>
+<h3 id="Fixed-Rate-vs-Fixed-Delay"><a href="#Fixed-Rate-vs-Fixed-Delay" class="headerlink" title="Fixed Rate vs Fixed Delay"></a>Fixed Rate vs Fixed Delay</h3><ul>
+<li><strong>Fixed Rate</strong>: Executes a task at a specified interval, regardless of task completion time.</li>
+<li><strong>Fixed Delay</strong>: Executes a task with a delay between the end of the previous execution and the start of the next.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(fixedRate = 60000)</span> <span class="comment">// Executes every 60 seconds</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedRateTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Rate Task&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Scheduled(fixedDelay = 60000)</span> <span class="comment">// Executes with a 60-second delay after completion</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedDelayTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Delay Task&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="using-cron-expressions"></a></p>
+<h3 id="Using-Cron-Expressions"><a href="#Using-Cron-Expressions" class="headerlink" title="Using Cron Expressions"></a>Using Cron Expressions</h3><p>Cron expressions allow precise scheduling based on time. Format: <code>second minute hour day month weekday</code>.</p>
+<p><strong>Example: Scheduling a Task for 5:00 AM Every Day</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(cron = &quot;0 0 5 * * ?&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailyTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;This task runs at 5:00 AM every day.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conditional-scheduling-with-annotations"></a></p>
+<h2 id="Conditional-Scheduling-with-Annotations"><a href="#Conditional-Scheduling-with-Annotations" class="headerlink" title="Conditional Scheduling with Annotations"></a>Conditional Scheduling with Annotations</h2><p>Spring allows scheduling tasks based on conditions. Combining <code>@ConditionalOnProperty</code> with <code>@Scheduled</code>, we can configure tasks to run only when certain conditions are met.</p>
+<p><a name="conditional-scheduling-example"></a></p>
+<h3 id="Conditional-Scheduling-Example"><a href="#Conditional-Scheduling-Example" class="headerlink" title="Conditional Scheduling Example"></a>Conditional Scheduling Example</h3><p>This example schedules a job only if a specific property is set to <code>true</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConditionalScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">conditionalTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This task runs only if &#x27;scheduler.enabled=true&#x27;.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To enable or disable this task, add <code>scheduler.enabled=true</code> or <code>false</code> in the configuration.</p>
+<hr>
+<p><a name="all-in-one-sample"></a></p>
+<h2 id="All-In-One-Sample"><a href="#All-In-One-Sample" class="headerlink" title="All-In-One Sample"></a>All-In-One Sample</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionSchedulerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">3</span>);</span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0 0 12 * * ?&quot;)</span> <span class="comment">// Executes at noon daily</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailySummaryJob</span><span class="params">()</span> &#123;</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line"> System.out.println(<span class="string">&quot;Executing daily summary job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 15000)</span> <span class="comment">// Executes every 15 seconds after the previous execution ends</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">periodicCleanupJob</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Running periodic cleanup job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conditionalonproperty-with-scheduled-job-in-depth"></a></p>
+<h2 id="ConditionalOnProperty-with-Scheduled-Job-in-Depth"><a href="#ConditionalOnProperty-with-Scheduled-Job-in-Depth" class="headerlink" title="ConditionalOnProperty with Scheduled Job in Depth"></a>ConditionalOnProperty with Scheduled Job in Depth</h2><p>The <code>@ConditionalOnProperty</code> annotation in Spring is typically used to conditionally enable or disable beans based on specific configuration properties. In this case:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>This will activate the annotated bean only if the <code>scheduler.enabled</code> property is set to <code>true</code> in your configuration (like in <code>application.properties</code> or environment variables).</p>
+<h3 id="Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster"><a href="#Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster" class="headerlink" title="Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster"></a>Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</h3><p>When deploying a Spring application in a Kubernetes cluster across multiple containers (pods), ensuring that a scheduled job only runs in one specific pod can be tricky because Spring’s <code>@Scheduled</code> jobs will run in every instance where the job bean is active. Here’s how to solve this problem by using the <code>@ConditionalOnProperty</code> annotation in combination with Kubernetes configurations.</p>
+<h4 id="Solution-Outline"><a href="#Solution-Outline" class="headerlink" title="Solution Outline"></a>Solution Outline</h4><ol>
+<li><strong>Set a Leader Pod</strong>: Configure only one of the pods to have <code>scheduler.enabled=true</code> using Kubernetes annotations and environment variables, making it the leader pod responsible for running the scheduled job.</li>
+<li><strong>Configure Pods with Unique Environment Variables</strong>: Use Kubernetes <code>configMaps</code> or <code>Secrets</code> to assign the <code>scheduler.enabled</code> property as <code>true</code> only in the leader pod’s environment. Other pods should not have this property set to <code>true</code>, so they won’t run the job.</li>
+</ol>
+<h4 id="Steps-to-Implement"><a href="#Steps-to-Implement" class="headerlink" title="Steps to Implement"></a>Steps to Implement</h4><ol>
+<li><p><strong>Create a ConfigMap or Secret for the Scheduler Property</strong>:</p>
+<ul>
+<li>Define a ConfigMap that holds the <code>scheduler.enabled</code> setting for the lead pod.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">scheduler.enabled:</span> <span class="string">&quot;true&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Use Pod Annotations to Select the Leader Pod</strong>:</p>
+<ul>
+<li>When deploying multiple replicas, use a label selector or custom script to ensure only one pod is given the <code>scheduler.enabled=true</code> setting.</li>
+</ul>
+</li>
+<li><p><strong>Configure the Deployment to Pass the <code>scheduler.enabled</code> Environment Variable</strong>:</p>
+<ul>
+<li>In your Kubernetes Deployment file, you can use <code>envFrom</code> to load the environment variables from the ConfigMap, but with a selector so only one pod uses this ConfigMap.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-job</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>  <span class="comment"># Running multiple instances</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">scheduler-container</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">your-image</span></span><br><span class="line">          <span class="attr">envFrom:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POD_NAME</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Conditional Logic in Spring Boot</strong>:</p>
+<ul>
+<li>With <code>@ConditionalOnProperty</code>, the <code>@Scheduled</code> method will only activate if the <code>scheduler.enabled</code> property is <code>true</code>. So, only the pod with the <code>scheduler.enabled=true</code> environment variable will run the job.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScheduledJob</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Scheduled job is running on the leader pod!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Additional-Consideration-Use-Leader-Election"><a href="#Additional-Consideration-Use-Leader-Election" class="headerlink" title="Additional Consideration: Use Leader Election"></a>Additional Consideration: Use Leader Election</h4><p>For robust setups, you could implement leader election to dynamically select the leader pod. This can be achieved using tools like <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-kubernetes">Spring Cloud Kubernetes Leader Election</a> or implementing a custom leader election mechanism based on a shared lock in an external data store, such as Redis or ZooKeeper.</p>
+<p>By setting <code>scheduler.enabled=true</code> conditionally based on which pod is the elected leader, you can ensure the scheduled job runs in only one container at a time, with the ability to switch seamlessly if the leader pod goes down.</p>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Scheduler provides flexibility and control over task scheduling. By using <code>@Scheduled</code> with different configurations, we can create complex scheduling workflows that address specific business needs.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2137,223 +2360,6 @@ This enhanced Markdown document covers each requested update, including detailed
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>MapStruct is a powerful and efficient Java bean mapping framework that simplifies the process of mapping between different Java bean types. By generating type-safe and performant mapping code at compile time, MapStruct reduces boilerplate code, improves maintainability, and enhances the overall quality of your Spring Boot applications. Whether you are working on a small project or a large enterprise application, MapStruct is a valuable tool that can significantly streamline your development process.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Understanding-Object-Types-in-Application-Development/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Understanding-Object-Types-in-Application-Development/" class="post-title-link" itemprop="url">Understanding Object Types in Application Development</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-27 22:27:41 / Modified: 22:31:28" itemprop="dateCreated datePublished" datetime="2024-10-27T22:27:41-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Theory/" itemprop="url" rel="index"><span itemprop="name">Theory</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#object-types">Object Types</a><ul>
-<li><a href="#value-object-vo">Value Object (VO)</a></li>
-<li><a href="#plain-old-java-object-pojo">Plain Old Java Object (POJO)</a></li>
-<li><a href="#data-transfer-object-dto">Data Transfer Object (DTO)</a></li>
-<li><a href="#entity">Entity</a></li>
-<li><a href="#model">Model</a></li>
-<li><a href="#persistent-object-po">Persistent Object (PO)</a></li>
-<li><a href="#business-object-bo">Business Object (BO)</a></li>
-<li><a href="#data-access-object-dao">Data Access Object (DAO)</a></li>
-</ul>
-</li>
-<li><a href="#transition-diagram">Transition Diagram</a><ul>
-<li><a href="#explanation">Explanation</a></li>
-</ul>
-</li>
-<li><a href="#scenarios">Scenarios</a><ul>
-<li><a href="#value-object-vo-1">Value Object (VO)</a></li>
-<li><a href="#plain-old-java-object-pojo-1">Plain Old Java Object (POJO)</a></li>
-<li><a href="#data-transfer-object-dto-1">Data Transfer Object (DTO)</a></li>
-<li><a href="#entity-1">Entity</a></li>
-<li><a href="#model-1">Model</a></li>
-<li><a href="#persistent-object-po-1">Persistent Object (PO)</a></li>
-<li><a href="#business-object-bo-1">Business Object (BO)</a></li>
-<li><a href="#data-access-object-dao-1">Data Access Object (DAO)</a></li>
-</ul>
-</li>
-<li><a href="#sample-code">Sample Code</a><ul>
-<li><a href="#value-object-vo-2">Value Object (VO)</a></li>
-<li><a href="#plain-old-java-object-pojo-2">Plain Old Java Object (POJO)</a></li>
-<li><a href="#data-transfer-object-dto-2">Data Transfer Object (DTO)</a></li>
-<li><a href="#entity-2">Entity</a></li>
-<li><a href="#model-2">Model</a></li>
-<li><a href="#persistent-object-po-2">Persistent Object (PO)</a></li>
-<li><a href="#business-object-bo-2">Business Object (BO)</a></li>
-<li><a href="#data-access-object-dao-2">Data Access Object (DAO)</a></li>
-<li><a href="#transition-example">Transition Example</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In application development, different types of objects serve various purposes. Understanding these objects and their roles is crucial for designing scalable and maintainable systems. This article will explain common object types such as Value Object (VO), Plain Old Java Object (POJO), Data Transfer Object (DTO), Entity, Model, Persistent Object (PO), Business Object (BO), and Data Access Object (DAO). We will also provide a textual diagram to illustrate the transition between these objects and sample code to demonstrate their usage.</p>
-<hr>
-<p><a name="object-types"></a></p>
-<h2 id="Object-Types"><a href="#Object-Types" class="headerlink" title="Object Types"></a>Object Types</h2><h3 id="Value-Object-VO"><a href="#Value-Object-VO" class="headerlink" title="Value Object (VO)"></a><a name="value-object-vo"></a>Value Object (VO)</h3><p>A Value Object is an object that represents a simple entity whose equality is not based on identity but on the value of its properties. VOs are immutable and typically used to represent concepts that are naturally comparable by value.</p>
-<h3 id="Plain-Old-Java-Object-POJO"><a href="#Plain-Old-Java-Object-POJO" class="headerlink" title="Plain Old Java Object (POJO)"></a><a name="plain-old-java-object-pojo"></a>Plain Old Java Object (POJO)</h3><p>A POJO is a simple Java object that does not require any specific framework or library. It is a plain Java object that follows basic Java conventions and does not extend or implement any special classes or interfaces.</p>
-<h3 id="Data-Transfer-Object-DTO"><a href="#Data-Transfer-Object-DTO" class="headerlink" title="Data Transfer Object (DTO)"></a><a name="data-transfer-object-dto"></a>Data Transfer Object (DTO)</h3><p>A DTO is an object used to transfer data between different layers of an application, such as between the service layer and the presentation layer. DTOs are typically simple objects that contain data but do not contain any business logic.</p>
-<h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a><a name="entity"></a>Entity</h3><p>An Entity is an object that represents a persistent domain object, typically mapped to a database table. Entities have a unique identity and are often used to represent business concepts.</p>
-<h3 id="Model"><a href="#Model" class="headerlink" title="Model"></a><a name="model"></a>Model</h3><p>A Model represents the data and business logic of an application. It encapsulates the state and behavior of the application’s domain. Models are often used in the service layer to perform business operations.</p>
-<h3 id="Persistent-Object-PO"><a href="#Persistent-Object-PO" class="headerlink" title="Persistent Object (PO)"></a><a name="persistent-object-po"></a>Persistent Object (PO)</h3><p>A Persistent Object is an object that is mapped to a database table. It is similar to an Entity but is often used in older or specific frameworks where the term Entity is not used.</p>
-<h3 id="Business-Object-BO"><a href="#Business-Object-BO" class="headerlink" title="Business Object (BO)"></a><a name="business-object-bo"></a>Business Object (BO)</h3><p>A Business Object encapsulates the business logic of an application. It is responsible for performing business operations and often interacts with DAOs to persist data.</p>
-<h3 id="Data-Access-Object-DAO"><a href="#Data-Access-Object-DAO" class="headerlink" title="Data Access Object (DAO)"></a><a name="data-access-object-dao"></a>Data Access Object (DAO)</h3><p>A DAO is an object that provides an abstract interface to some type of database or other persistence mechanism. It allows the application to access and manipulate data without exposing the underlying data source.</p>
-<hr>
-<p><a name="transition-diagram"></a></p>
-<h2 id="Transition-Diagram"><a href="#Transition-Diagram" class="headerlink" title="Transition Diagram"></a>Transition Diagram</h2><pre><code class="highlight mermaid">graph TD
-    A[Entity] --&gt;|Map to Database| B[Repository]
-    B --&gt;|Fetch Data| C[Service Layer]
-    C --&gt;|Transform| D[DTO]
-    D --&gt;|Transfer Data| E[Controller]
-    E --&gt;|Present Data| F[View]
-    C --&gt;|Business Logic| G[Model]
-    G --&gt;|Represent Value| H[Value Object]
-    C --&gt;|Business Logic| I[Business Object]
-    I --&gt;|Access Data| J[DAO]
-    J --&gt;|Map to Database| K[Persistent Object]</code></pre>
-
-<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ol>
-<li><strong>Entity</strong>: Represents a persistent domain object.</li>
-<li><strong>Repository</strong>: Manages the persistence of entities.</li>
-<li><strong>Service Layer</strong>: Contains business logic and transforms entities into DTOs.</li>
-<li><strong>DTO</strong>: Transfers data between layers.</li>
-<li><strong>Controller</strong>: Handles HTTP requests and responses.</li>
-<li><strong>View</strong>: Presents data to the user.</li>
-<li><strong>Model</strong>: Contains business logic and encapsulates state.</li>
-<li><strong>Value Object</strong>: Represents a simple, immutable value.</li>
-<li><strong>Business Object</strong>: Encapsulates business logic.</li>
-<li><strong>DAO</strong>: Provides an abstract interface to the database.</li>
-<li><strong>Persistent Object</strong>: Mapped to a database table.</li>
-</ol>
-<hr>
-<p><a name="scenarios"></a></p>
-<h2 id="Scenarios"><a href="#Scenarios" class="headerlink" title="Scenarios"></a>Scenarios</h2><h3 id="Value-Object-VO-1"><a href="#Value-Object-VO-1" class="headerlink" title="Value Object (VO)"></a>Value Object (VO)</h3><ul>
-<li><strong>Scenario</strong>: Representing a monetary value or a date range.</li>
-<li><strong>Usage</strong>: Used in business logic to ensure immutability and value-based equality.</li>
-</ul>
-<h3 id="Plain-Old-Java-Object-POJO-1"><a href="#Plain-Old-Java-Object-POJO-1" class="headerlink" title="Plain Old Java Object (POJO)"></a>Plain Old Java Object (POJO)</h3><ul>
-<li><strong>Scenario</strong>: Simple data structures without any framework dependencies.</li>
-<li><strong>Usage</strong>: Used in any layer of the application where a simple data structure is needed.</li>
-</ul>
-<h3 id="Data-Transfer-Object-DTO-1"><a href="#Data-Transfer-Object-DTO-1" class="headerlink" title="Data Transfer Object (DTO)"></a>Data Transfer Object (DTO)</h3><ul>
-<li><strong>Scenario</strong>: Transferring data between different layers of the application.</li>
-<li><strong>Usage</strong>: Used in the service layer to transfer data to the presentation layer.</li>
-</ul>
-<h3 id="Entity-1"><a href="#Entity-1" class="headerlink" title="Entity"></a>Entity</h3><ul>
-<li><strong>Scenario</strong>: Representing a persistent domain object.</li>
-<li><strong>Usage</strong>: Used in the persistence layer to map to database tables.</li>
-</ul>
-<h3 id="Model-1"><a href="#Model-1" class="headerlink" title="Model"></a>Model</h3><ul>
-<li><strong>Scenario</strong>: Representing the business logic and state of the application.</li>
-<li><strong>Usage</strong>: Used in the service layer to perform business operations.</li>
-</ul>
-<h3 id="Persistent-Object-PO-1"><a href="#Persistent-Object-PO-1" class="headerlink" title="Persistent Object (PO)"></a>Persistent Object (PO)</h3><ul>
-<li><strong>Scenario</strong>: Mapping to a database table in older or specific frameworks.</li>
-<li><strong>Usage</strong>: Used in the persistence layer to represent database records.</li>
-</ul>
-<h3 id="Business-Object-BO-1"><a href="#Business-Object-BO-1" class="headerlink" title="Business Object (BO)"></a>Business Object (BO)</h3><ul>
-<li><strong>Scenario</strong>: Encapsulating business logic.</li>
-<li><strong>Usage</strong>: Used in the service layer to perform business operations.</li>
-</ul>
-<h3 id="Data-Access-Object-DAO-1"><a href="#Data-Access-Object-DAO-1" class="headerlink" title="Data Access Object (DAO)"></a>Data Access Object (DAO)</h3><ul>
-<li><strong>Scenario</strong>: Providing an abstract interface to the database.</li>
-<li><strong>Usage</strong>: Used in the persistence layer to access and manipulate data.</li>
-</ul>
-<hr>
-<p><a name="sample-code"></a></p>
-<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Value-Object-VO-2"><a href="#Value-Object-VO-2" class="headerlink" title="Value Object (VO)"></a>Value Object (VO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Money</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">double</span> amount;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String currency;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Money</span><span class="params">(<span class="type">double</span> amount, String currency)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.amount = amount;</span><br><span class="line">        <span class="built_in">this</span>.currency = currency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">getAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> amount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getCurrency</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> currency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span> == o) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="literal">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="type">Money</span> <span class="variable">money</span> <span class="operator">=</span> (Money) o;</span><br><span class="line">        <span class="keyword">return</span> Double.compare(money.amount, amount) == <span class="number">0</span> &amp;&amp;</span><br><span class="line">                currency.equals(money.currency);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Objects.hash(amount, currency);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Plain-Old-Java-Object-POJO-2"><a href="#Plain-Old-Java-Object-POJO-2" class="headerlink" title="Plain Old Java Object (POJO)"></a>Plain Old Java Object (POJO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Data-Transfer-Object-DTO-2"><a href="#Data-Transfer-Object-DTO-2" class="headerlink" title="Data Transfer Object (DTO)"></a>Data Transfer Object (DTO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDTO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Entity-2"><a href="#Entity-2" class="headerlink" title="Entity"></a>Entity</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserEntity</span> &#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Model-2"><a href="#Model-2" class="headerlink" title="Model"></a>Model</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserModel</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">validateAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (age &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Age cannot be negative&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Persistent-Object-PO-2"><a href="#Persistent-Object-PO-2" class="headerlink" title="Persistent Object (PO)"></a>Persistent Object (PO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserPO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Business-Object-BO-2"><a href="#Business-Object-BO-2" class="headerlink" title="Business Object (BO)"></a>Business Object (BO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserBO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserDAO userDAO;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserBO</span><span class="params">(UserDAO userDAO)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userDAO = userDAO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> userDAO.findById(id);</span><br><span class="line">        <span class="type">UserDTO</span> <span class="variable">userDTO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserDTO</span>();</span><br><span class="line">        userDTO.setName(userPO.getName());</span><br><span class="line">        userDTO.setAge(userPO.getAge());</span><br><span class="line">        <span class="keyword">return</span> userDTO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserPO</span>();</span><br><span class="line">        userPO.setName(userDTO.getName());</span><br><span class="line">        userPO.setAge(userDTO.getAge());</span><br><span class="line">        userDAO.save(userPO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Data-Access-Object-DAO-2"><a href="#Data-Access-Object-DAO-2" class="headerlink" title="Data Access Object (DAO)"></a>Data Access Object (DAO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserDAO</span> &#123;</span><br><span class="line">    UserPO <span class="title function_">findById</span><span class="params">(Long id)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(UserPO userPO)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDAOImpl</span> <span class="keyword">implements</span> <span class="title class_">UserDAO</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> UserPO <span class="title function_">findById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation to fetch user from database</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">UserPO</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(UserPO userPO)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation to save user to database</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Transition-Example"><a href="#Transition-Example" class="headerlink" title="Transition Example"></a>Transition Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserBO userBO;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserService</span><span class="params">(UserBO userBO)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userBO = userBO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userBO.getUserById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        userBO.createUser(userDTO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Understanding the different types of objects in application development is crucial for designing robust and maintainable systems. Each object type serves a specific purpose and is used in different scenarios. By following best practices and adhering to design principles, developers can create applications that are easier to extend, test, and maintain.</p>
 
       
     </div>
