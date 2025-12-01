@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Why Use MapStruct? How to Use MapStruct in Spring Boot Benefits and Advantages Textual Diagram Sample Code Generated Mapper Code Excluding Certain Attributes Conclusion    IntroductionMa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into MapStruct: A Java Bean Mapping Framework">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Why Use MapStruct? How to Use MapStruct in Spring Boot Benefits and Advantages Textual Diagram Sample Code Generated Mapper Code Excluding Certain Attributes Conclusion    IntroductionMa">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T02:41:24.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="MapStruct">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/","path":"2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/","title":"Deep Dive into MapStruct: A Java Bean Mapping Framework"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into MapStruct: A Java Bean Mapping Framework | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Use-MapStruct"><span class="nav-number">2.</span> <span class="nav-text">Why Use MapStruct?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Manual-Mapping"><span class="nav-number">2.1.</span> <span class="nav-text">Manual Mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reflection-Based-Mapping"><span class="nav-number">2.2.</span> <span class="nav-text">Reflection-Based Mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapStruct"><span class="nav-number">2.3.</span> <span class="nav-text">MapStruct</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-Use-MapStruct-in-Spring-Boot"><span class="nav-number">3.</span> <span class="nav-text">How to Use MapStruct in Spring Boot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-Add-Dependencies"><span class="nav-number">3.1.</span> <span class="nav-text">Step 1: Add Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-Define-Mapping-Interface"><span class="nav-number">3.2.</span> <span class="nav-text">Step 2: Define Mapping Interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-Use-the-Mapper"><span class="nav-number">3.3.</span> <span class="nav-text">Step 3: Use the Mapper</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Benefits-and-Advantages"><span class="nav-number">4.</span> <span class="nav-text">Benefits and Advantages</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Type-Safety"><span class="nav-number">4.1.</span> <span class="nav-text">Type Safety</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Performance"><span class="nav-number">4.2.</span> <span class="nav-text">Performance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Maintainability"><span class="nav-number">4.3.</span> <span class="nav-text">Maintainability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Customization"><span class="nav-number">4.4.</span> <span class="nav-text">Customization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Textual-Diagram"><span class="nav-number">5.</span> <span class="nav-text">Textual Diagram</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation"><span class="nav-number">5.1.</span> <span class="nav-text">Explanation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code"><span class="nav-number">6.</span> <span class="nav-text">Sample Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Entity"><span class="nav-number">6.1.</span> <span class="nav-text">User Entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-DTO"><span class="nav-number">6.2.</span> <span class="nav-text">User DTO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Mapper"><span class="nav-number">6.3.</span> <span class="nav-text">User Mapper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Service"><span class="nav-number">6.4.</span> <span class="nav-text">User Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Controller"><span class="nav-number">6.5.</span> <span class="nav-text">User Controller</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generated-Mapper-Code"><span class="nav-number">7.</span> <span class="nav-text">Generated Mapper Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Excluding-Certain-Attributes"><span class="nav-number">8.</span> <span class="nav-text">Excluding Certain Attributes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Exclude-Attribute-Example"><span class="nav-number">8.1.</span> <span class="nav-text">Exclude Attribute Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generated-Mapper-Code-with-Exclusion"><span class="nav-number">8.2.</span> <span class="nav-text">Generated Mapper Code with Exclusion</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">9.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into MapStruct: A Java Bean Mapping Framework | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into MapStruct: A Java Bean Mapping Framework
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 22:41:24" itemprop="dateCreated datePublished" datetime="2024-10-27T22:41:24-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/MapStruct/" itemprop="url" rel="index"><span itemprop="name">MapStruct</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#why-use-mapstruct">Why Use MapStruct?</a></li>
+<li><a href="#how-to-use-mapstruct-in-spring-boot">How to Use MapStruct in Spring Boot</a></li>
+<li><a href="#benefits-and-advantages">Benefits and Advantages</a></li>
+<li><a href="#textual-diagram">Textual Diagram</a></li>
+<li><a href="#sample-code">Sample Code</a></li>
+<li><a href="#generated-mapper-code">Generated Mapper Code</a></li>
+<li><a href="#excluding-certain-attributes">Excluding Certain Attributes</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>MapStruct is a Java annotation processor for the generation of type-safe and performant bean mapping code. It simplifies the mapping between different Java bean types by automatically generating the necessary mapping code at compile time. This article will explore why and how to use MapStruct in a Spring Boot application, its benefits and advantages, and provide detailed sample code.</p>
+<hr>
+<p><a name="why-use-mapstruct"></a></p>
+<h2 id="Why-Use-MapStruct"><a href="#Why-Use-MapStruct" class="headerlink" title="Why Use MapStruct?"></a>Why Use MapStruct?</h2><h3 id="Manual-Mapping"><a href="#Manual-Mapping" class="headerlink" title="Manual Mapping"></a>Manual Mapping</h3><p>Manual mapping between Java beans can be tedious and error-prone. It often involves writing repetitive and boilerplate code, which can lead to maintenance issues.</p>
+<h3 id="Reflection-Based-Mapping"><a href="#Reflection-Based-Mapping" class="headerlink" title="Reflection-Based Mapping"></a>Reflection-Based Mapping</h3><p>Frameworks like Dozer use reflection to map beans, which can be slow and difficult to debug. Reflection-based mapping also lacks type safety and can lead to runtime errors.</p>
+<h3 id="MapStruct"><a href="#MapStruct" class="headerlink" title="MapStruct"></a>MapStruct</h3><p>MapStruct generates mapping code at compile time, ensuring type safety and performance. It reduces boilerplate code and makes the mapping process more maintainable and easier to debug.</p>
+<hr>
+<p><a name="how-to-use-mapstruct-in-spring-boot"></a></p>
+<h2 id="How-to-Use-MapStruct-in-Spring-Boot"><a href="#How-to-Use-MapStruct-in-Spring-Boot" class="headerlink" title="How to Use MapStruct in Spring Boot"></a>How to Use MapStruct in Spring Boot</h2><h3 id="Step-1-Add-Dependencies"><a href="#Step-1-Add-Dependencies" class="headerlink" title="Step 1: Add Dependencies"></a>Step 1: Add Dependencies</h3><p>Add the necessary dependencies to your <code>pom.xml</code> file. Note that we are using the latest version of MapStruct.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Spring Boot Starter --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- MapStruct --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.5.3.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- MapStruct Processor --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.5.3.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-2-Define-Mapping-Interface"><a href="#Step-2-Define-Mapping-Interface" class="headerlink" title="Step 2: Define Mapping Interface"></a>Step 2: Define Mapping Interface</h3><p>Create a mapping interface using the <code>@Mapper</code> annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.mapstruct.Mapper;</span><br><span class="line"><span class="keyword">import</span> org.mapstruct.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.mapstruct.factory.Mappers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDate;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line">    <span class="type">UserMapper</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> Mappers.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;emailAddress&quot;, target = &quot;email&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;birthDate&quot;, target = &quot;birthDate&quot;, dateFormat = &quot;yyyyMMdd&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    UserDTO <span class="title function_">userToUserDTO</span><span class="params">(User user)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;email&quot;, target = &quot;emailAddress&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;birthDate&quot;, expression = &quot;java(LocalDate.parse(userDTO.getBirthDate(), DateTimeFormatter.ofPattern(\&quot;yyyyMMdd\&quot;)))&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    User <span class="title function_">userDTOToUser</span><span class="params">(UserDTO userDTO)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-3-Use-the-Mapper"><a href="#Step-3-Use-the-Mapper" class="headerlink" title="Step 3: Use the Mapper"></a>Step 3: Use the Mapper</h3><p>Inject the mapper into your service or controller and use it to map between beans.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">UserMapper</span> <span class="variable">userMapper</span> <span class="operator">=</span> UserMapper.INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserDTO</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userMapper.userToUserDTO(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userMapper.userDTOToUser(userDTO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="benefits-and-advantages"></a></p>
+<h2 id="Benefits-and-Advantages"><a href="#Benefits-and-Advantages" class="headerlink" title="Benefits and Advantages"></a>Benefits and Advantages</h2><h3 id="Type-Safety"><a href="#Type-Safety" class="headerlink" title="Type Safety"></a>Type Safety</h3><p>MapStruct generates type-safe mapping code at compile time, reducing the risk of runtime errors.</p>
+<h3 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h3><p>Since the mapping code is generated at compile time, it avoids the performance overhead associated with reflection-based mapping.</p>
+<h3 id="Maintainability"><a href="#Maintainability" class="headerlink" title="Maintainability"></a>Maintainability</h3><p>MapStruct reduces boilerplate code, making the mapping process more maintainable and easier to understand.</p>
+<h3 id="Customization"><a href="#Customization" class="headerlink" title="Customization"></a>Customization</h3><p>MapStruct allows for easy customization of mappings through annotations and configuration options.</p>
+<hr>
+<p><a name="textual-diagram"></a></p>
+<h2 id="Textual-Diagram"><a href="#Textual-Diagram" class="headerlink" title="Textual Diagram"></a>Textual Diagram</h2><pre><code class="highlight mermaid">graph TD
+    A[User Entity] --&gt;|MapStruct| B[User DTO]
+    B --&gt;|MapStruct| C[User Entity]
+    D[User Service] --&gt;|Uses| A
+    D --&gt;|Uses| B
+    E[User Controller] --&gt;|Uses| D</code></pre>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ol>
+<li><strong>User Entity</strong>: Represents the domain object.</li>
+<li><strong>User DTO</strong>: Represents the data transfer object.</li>
+<li><strong>MapStruct</strong>: Generates mapping code between User Entity and User DTO.</li>
+<li><strong>User Service</strong>: Uses the MapStruct-generated mapper to convert between User Entity and User DTO.</li>
+<li><strong>User Controller</strong>: Uses the User Service to handle requests and responses.</li>
+</ol>
+<hr>
+<p><a name="sample-code"></a></p>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="User-Entity"><a href="#User-Entity" class="headerlink" title="User Entity"></a>User Entity</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.time.LocalDate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String emailAddress;</span><br><span class="line">    <span class="keyword">private</span> LocalDate birthDate;</span><br><span class="line">    <span class="keyword">private</span> String password; <span class="comment">// Password attribute to be excluded</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="User-DTO"><a href="#User-DTO" class="headerlink" title="User DTO"></a>User DTO</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDTO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="keyword">private</span> String birthDate;</span><br><span class="line">    <span class="keyword">private</span> String password; <span class="comment">// Password attribute to be excluded</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="User-Mapper"><a href="#User-Mapper" class="headerlink" title="User Mapper"></a>User Mapper</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.mapstruct.Mapper;</span><br><span class="line"><span class="keyword">import</span> org.mapstruct.Mapping;</span><br><span class="line"><span class="keyword">import</span> org.mapstruct.factory.Mappers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDate;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line">    <span class="type">UserMapper</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> Mappers.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;emailAddress&quot;, target = &quot;email&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;birthDate&quot;, target = &quot;birthDate&quot;, dateFormat = &quot;yyyyMMdd&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    UserDTO <span class="title function_">userToUserDTO</span><span class="params">(User user)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;email&quot;, target = &quot;emailAddress&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;birthDate&quot;, expression = &quot;java(LocalDate.parse(userDTO.getBirthDate(), DateTimeFormatter.ofPattern(\&quot;yyyyMMdd\&quot;)))&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    User <span class="title function_">userDTOToUser</span><span class="params">(UserDTO userDTO)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="User-Service"><a href="#User-Service" class="headerlink" title="User Service"></a>User Service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">UserMapper</span> <span class="variable">userMapper</span> <span class="operator">=</span> UserMapper.INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserDTO</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userMapper.userToUserDTO(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userMapper.userDTOToUser(userDTO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="User-Controller"><a href="#User-Controller" class="headerlink" title="User Controller"></a>User Controller</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserDTO</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(); <span class="comment">// Assume this is fetched from a repository</span></span><br><span class="line">        <span class="keyword">return</span> userService.getUserDTO(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">createUser</span><span class="params">(<span class="meta">@RequestBody</span> UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.getUser(userDTO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="generated-mapper-code"></a></p>
+<h2 id="Generated-Mapper-Code"><a href="#Generated-Mapper-Code" class="headerlink" title="Generated Mapper Code"></a>Generated Mapper Code</h2><p>After compiling the project, MapStruct will generate the following mapper implementation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.time.LocalDate;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserMapperImpl</span> <span class="keyword">implements</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">userToUserDTO</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (user == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">UserDTO</span> <span class="variable">userDTO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserDTO</span>();</span><br><span class="line">        userDTO.setId(user.getId());</span><br><span class="line">        userDTO.setName(user.getName());</span><br><span class="line">        userDTO.setEmail(user.getEmailAddress());</span><br><span class="line">        userDTO.setBirthDate(user.getBirthDate().format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyyMMdd&quot;</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> userDTO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">userDTOToUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (userDTO == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setId(userDTO.getId());</span><br><span class="line">        user.setName(userDTO.getName());</span><br><span class="line">        user.setEmailAddress(userDTO.getEmail());</span><br><span class="line">        user.setBirthDate(LocalDate.parse(userDTO.getBirthDate(), DateTimeFormatter.ofPattern(<span class="string">&quot;yyyyMMdd&quot;</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="excluding-certain-attributes"></a></p>
+<h2 id="Excluding-Certain-Attributes"><a href="#Excluding-Certain-Attributes" class="headerlink" title="Excluding Certain Attributes"></a>Excluding Certain Attributes</h2><h3 id="Exclude-Attribute-Example"><a href="#Exclude-Attribute-Example" class="headerlink" title="Exclude Attribute Example"></a>Exclude Attribute Example</h3><p>In the <code>UserMapper</code> interface, we use the <code>@Mapping</code> annotation with <code>ignore = true</code> to exclude the <code>password</code> attribute from the mapping.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line">    <span class="type">UserMapper</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> Mappers.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;emailAddress&quot;, target = &quot;email&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;birthDate&quot;, target = &quot;birthDate&quot;, dateFormat = &quot;yyyyMMdd&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    UserDTO <span class="title function_">userToUserDTO</span><span class="params">(User user)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mapping(source = &quot;email&quot;, target = &quot;emailAddress&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;birthDate&quot;, expression = &quot;java(LocalDate.parse(userDTO.getBirthDate(), DateTimeFormatter.ofPattern(\&quot;yyyyMMdd\&quot;)))&quot;)</span></span><br><span class="line">    <span class="meta">@Mapping(target = &quot;password&quot;, ignore = true)</span> <span class="comment">// Exclude password attribute</span></span><br><span class="line">    User <span class="title function_">userDTOToUser</span><span class="params">(UserDTO userDTO)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Generated-Mapper-Code-with-Exclusion"><a href="#Generated-Mapper-Code-with-Exclusion" class="headerlink" title="Generated Mapper Code with Exclusion"></a>Generated Mapper Code with Exclusion</h3><p>The generated mapper code will exclude the <code>password</code> attribute from the mapping.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.time.LocalDate;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserMapperImpl</span> <span class="keyword">implements</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">userToUserDTO</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (user == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">UserDTO</span> <span class="variable">userDTO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserDTO</span>();</span><br><span class="line">        userDTO.setId(user.getId());</span><br><span class="line">        userDTO.setName(user.getName());</span><br><span class="line">        userDTO.setEmail(user.getEmailAddress());</span><br><span class="line">        userDTO.setBirthDate(user.getBirthDate().format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyyMMdd&quot;</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> userDTO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">userDTOToUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (userDTO == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setId(userDTO.getId());</span><br><span class="line">        user.setName(userDTO.getName());</span><br><span class="line">        user.setEmailAddress(userDTO.getEmail());</span><br><span class="line">        user.setBirthDate(LocalDate.parse(userDTO.getBirthDate(), DateTimeFormatter.ofPattern(<span class="string">&quot;yyyyMMdd&quot;</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>MapStruct is a powerful and efficient Java bean mapping framework that simplifies the process of mapping between different Java bean types. By generating type-safe and performant mapping code at compile time, MapStruct reduces boilerplate code, improves maintainability, and enhances the overall quality of your Spring Boot applications. Whether you are working on a small project or a large enterprise application, MapStruct is a valuable tool that can significantly streamline your development process.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/MapStruct/" rel="tag"><i class="fa fa-tag"></i> MapStruct</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Understanding-Object-Types-in-Application-Development/" rel="prev" title="Understanding Object Types in Application Development">
+                  <i class="fa fa-angle-left"></i> Understanding Object Types in Application Development
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-OAuth-2-0-and-OpenID-Connect/" rel="next" title="Deep Dive into OAuth 2.0 and OpenID Connect">
+                  Deep Dive into OAuth 2.0 and OpenID Connect <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

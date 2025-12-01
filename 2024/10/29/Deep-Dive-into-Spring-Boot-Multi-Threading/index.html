@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction to Spring Boot Multi-Threading Best Practices for Spring Boot Multi-Threading Annotation-Based Configuration Diagram of Multi-Threading in Spring Boot Sample Code with Detailed Comments">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Spring Boot Multi-Threading">
+<meta property="og:url" content="https://www.whereq.com/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction to Spring Boot Multi-Threading Best Practices for Spring Boot Multi-Threading Annotation-Based Configuration Diagram of Multi-Threading in Spring Boot Sample Code with Detailed Comments">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-29T04:40:38.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Multi-Threading">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/","path":"2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/","title":"Deep Dive into Spring Boot Multi-Threading"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Spring Boot Multi-Threading | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction-to-Spring-Boot-Multi-Threading"><span class="nav-number">1.</span> <span class="nav-text">Introduction to Spring Boot Multi-Threading</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Best-Practices-for-Spring-Boot-Multi-Threading"><span class="nav-number">2.</span> <span class="nav-text">Best Practices for Spring Boot Multi-Threading</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Annotation-Based-Configuration"><span class="nav-number">3.</span> <span class="nav-text">Annotation-Based Configuration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Diagram-of-Multi-Threading-in-Spring-Boot"><span class="nav-number">4.</span> <span class="nav-text">Diagram of Multi-Threading in Spring Boot</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sample-Code-with-Detailed-Comments"><span class="nav-number">5.</span> <span class="nav-text">Sample Code with Detailed Comments</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuration-Class"><span class="nav-number">5.0.1.</span> <span class="nav-text">Configuration Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Class"><span class="nav-number">5.0.2.</span> <span class="nav-text">Service Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-Class"><span class="nav-number">5.0.3.</span> <span class="nav-text">Controller Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Application-Class"><span class="nav-number">5.0.4.</span> <span class="nav-text">Application Class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><span class="nav-number">6.</span> <span class="nav-text">Complex Scenario 1: Flow Control and Backpressure Handling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuration-Class-1"><span class="nav-number">6.0.1.</span> <span class="nav-text">Configuration Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Class-1"><span class="nav-number">6.0.2.</span> <span class="nav-text">Service Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-Class-1"><span class="nav-number">6.0.3.</span> <span class="nav-text">Controller Class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Complex-Scenario-2-Task-Prioritization"><span class="nav-number">7.</span> <span class="nav-text">Complex Scenario 2: Task Prioritization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuration-Class-2"><span class="nav-number">7.0.1.</span> <span class="nav-text">Configuration Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Task-Decorator"><span class="nav-number">7.0.2.</span> <span class="nav-text">Task Decorator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Class-2"><span class="nav-number">7.0.3.</span> <span class="nav-text">Service Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-Class-2"><span class="nav-number">7.0.4.</span> <span class="nav-text">Controller Class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Complex-Scenario-3-Handling-Long-Running-Tasks"><span class="nav-number">8.</span> <span class="nav-text">Complex Scenario 3: Handling Long-Running Tasks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuration-Class-3"><span class="nav-number">8.0.1.</span> <span class="nav-text">Configuration Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Class-3"><span class="nav-number">8.0.2.</span> <span class="nav-text">Service Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-Class-3"><span class="nav-number">8.0.3.</span> <span class="nav-text">Controller Class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">9.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Spring Boot Multi-Threading | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Spring Boot Multi-Threading
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-29 00:40:38" itemprop="dateCreated datePublished" datetime="2024-10-29T00:40:38-04:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction-to-spring-boot-multi-threading">Introduction to Spring Boot Multi-Threading</a></li>
+<li><a href="#best-practices-for-spring-boot-multi-threading">Best Practices for Spring Boot Multi-Threading</a></li>
+<li><a href="#annotation-based-configuration">Annotation-Based Configuration</a></li>
+<li><a href="#diagram-of-multi-threading-in-spring-boot">Diagram of Multi-Threading in Spring Boot</a></li>
+<li><a href="#sample-code-with-detailed-comments">Sample Code with Detailed Comments</a><ul>
+<li><a href="#configuration-class">Configuration Class</a></li>
+<li><a href="#service-class">Service Class</a></li>
+<li><a href="#controller-class">Controller Class</a></li>
+<li><a href="#application-class">Application Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-1-flow-control-and-backpressure-handling">Complex Scenario 1: Flow Control and Backpressure Handling</a><ul>
+<li><a href="#configuration-class-1">Configuration Class</a></li>
+<li><a href="#service-class-1">Service Class</a></li>
+<li><a href="#controller-class-1">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-2-task-prioritization">Complex Scenario 2: Task Prioritization</a><ul>
+<li><a href="#configuration-class-2">Configuration Class</a></li>
+<li><a href="#task-decorator">Task Decorator</a></li>
+<li><a href="#service-class-2">Service Class</a></li>
+<li><a href="#controller-class-2">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-3-handling-long-running-tasks">Complex Scenario 3: Handling Long-Running Tasks</a><ul>
+<li><a href="#configuration-class-3">Configuration Class</a></li>
+<li><a href="#service-class-3">Service Class</a></li>
+<li><a href="#controller-class-3">Controller Class</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction-to-spring-boot-multi-threading"></a></p>
+<h1 id="Introduction-to-Spring-Boot-Multi-Threading"><a href="#Introduction-to-Spring-Boot-Multi-Threading" class="headerlink" title="Introduction to Spring Boot Multi-Threading"></a>Introduction to Spring Boot Multi-Threading</h1><p>Spring Boot provides robust support for multi-threading, enabling developers to build highly concurrent and scalable applications. Leveraging multi-threading in Spring Boot can significantly improve the performance and responsiveness of your application. This article delves into best practices, annotation-based configuration, and real-life production scenarios to help you master multi-threading in Spring Boot.</p>
+<hr>
+<p><a name="best-practices-for-spring-boot-multi-threading"></a></p>
+<h1 id="Best-Practices-for-Spring-Boot-Multi-Threading"><a href="#Best-Practices-for-Spring-Boot-Multi-Threading" class="headerlink" title="Best Practices for Spring Boot Multi-Threading"></a>Best Practices for Spring Boot Multi-Threading</h1><ol>
+<li><strong>Use <code>@Async</code> for Asynchronous Processing</strong>: The <code>@Async</code> annotation allows methods to run in a separate thread, making it easy to implement asynchronous processing.</li>
+<li><strong>Configure Thread Pools</strong>: Use <code>TaskExecutor</code> to configure thread pools with specific characteristics like core pool size, max pool size, and queue capacity.</li>
+<li><strong>Handle Exceptions Gracefully</strong>: Implement exception handling mechanisms to manage exceptions that occur in asynchronous tasks.</li>
+<li><strong>Monitor Thread Pools</strong>: Use Spring Boot Actuator to monitor thread pool metrics and ensure optimal performance.</li>
+<li><strong>Avoid Blocking Operations</strong>: Ensure that asynchronous methods do not perform blocking operations, which can degrade performance.</li>
+</ol>
+<hr>
+<p><a name="annotation-based-configuration"></a></p>
+<h1 id="Annotation-Based-Configuration"><a href="#Annotation-Based-Configuration" class="headerlink" title="Annotation-Based Configuration"></a>Annotation-Based Configuration</h1><p>Spring Boot provides several annotations to configure and manage multi-threading:</p>
+<ul>
+<li><strong><code>@EnableAsync</code></strong>: Enables asynchronous processing in the application.</li>
+<li><strong><code>@Async</code></strong>: Marks a method as asynchronous, meaning it will run in a separate thread.</li>
+<li><strong><code>@Configuration</code></strong>: Indicates that a class declares one or more <code>@Bean</code> methods and may be processed by the Spring container to generate bean definitions.</li>
+<li><strong><code>@Bean</code></strong>: Indicates that a method produces a bean to be managed by the Spring container.</li>
+</ul>
+<hr>
+<p><a name="diagram-of-multi-threading-in-spring-boot"></a></p>
+<h1 id="Diagram-of-Multi-Threading-in-Spring-Boot"><a href="#Diagram-of-Multi-Threading-in-Spring-Boot" class="headerlink" title="Diagram of Multi-Threading in Spring Boot"></a>Diagram of Multi-Threading in Spring Boot</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">+-------------------------+</span><br><span class="line">| Spring Boot Application |</span><br><span class="line">| - @EnableAsync          |</span><br><span class="line">| - @Configuration        |</span><br><span class="line">| - @Bean                 |</span><br><span class="line">+-------------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| TaskExecutor      |</span><br><span class="line">| - corePoolSize    |</span><br><span class="line">| - maxPoolSize     |</span><br><span class="line">| - queueCapacity   |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| @Async Methods    |</span><br><span class="line">| - Method1         |</span><br><span class="line">| - Method2         |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| Thread Pool       |</span><br><span class="line">| - Thread 1        |</span><br><span class="line">| - Thread 2        |</span><br><span class="line">| - Thread 3        |</span><br><span class="line">+-------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------------+</span><br><span class="line">| Task Execution    |</span><br><span class="line">| - Task 1          |</span><br><span class="line">| - Task 2          |</span><br><span class="line">| - Task 3          |</span><br><span class="line">+-------------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="sample-code-with-detailed-comments"></a></p>
+<h1 id="Sample-Code-with-Detailed-Comments"><a href="#Sample-Code-with-Detailed-Comments" class="headerlink" title="Sample Code with Detailed Comments"></a>Sample Code with Detailed Comments</h1><h3 id="Configuration-Class"><a href="#Configuration-Class" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span> <span class="comment">// Enable asynchronous processing</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;taskExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">10</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">20</span>);  <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">100</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;AsyncThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class"><a href="#Service-Class" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;taskExecutor&quot;)</span> <span class="comment">// Use the taskExecutor bean for this method</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performAsyncTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Starting task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class"><a href="#Controller-Class" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AsyncService asyncService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/performTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">performTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        asyncService.performAsyncTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for asynchronous processing.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Application-Class"><a href="#Application-Class" class="headerlink" title="Application Class"></a>Application Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableAsync</span> <span class="comment">// Enable asynchronous processing</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(AsyncApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a></p>
+<h1 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title="Complex Scenario 1: Flow Control and Backpressure Handling"></a>Complex Scenario 1: Flow Control and Backpressure Handling</h1><p>In high-throughput systems, it’s crucial to manage the flow of tasks to avoid overwhelming the system. Backpressure handling ensures that the system can gracefully handle a large number of incoming tasks.</p>
+<h3 id="Configuration-Class-1"><a href="#Configuration-Class-1" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;backpressureExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">backpressureExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;BackpressureThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-1"><a href="#Service-Class-1" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;backpressureExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Handling task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed handling task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-1"><a href="#Controller-Class-1" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BackpressureController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BackpressureService backpressureService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/handleTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        backpressureService.handleTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for backpressure handling.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-2-task-prioritization"></a></p>
+<h1 id="Complex-Scenario-2-Task-Prioritization"><a href="#Complex-Scenario-2-Task-Prioritization" class="headerlink" title="Complex Scenario 2: Task Prioritization"></a>Complex Scenario 2: Task Prioritization</h1><p>In some scenarios, certain tasks may need to be prioritized over others. Spring Boot allows you to configure task executors with priority queues to handle such cases.</p>
+<h3 id="Configuration-Class-2"><a href="#Configuration-Class-2" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.PriorityBlockingQueue;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;priorityExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">priorityExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;PriorityThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.setTaskDecorator(<span class="keyword">new</span> <span class="title class_">PriorityTaskDecorator</span>()); <span class="comment">// Set task decorator for priority</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Task-Decorator"><a href="#Task-Decorator" class="headerlink" title="Task Decorator"></a>Task Decorator</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.core.task.TaskDecorator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityTaskDecorator</span> <span class="keyword">implements</span> <span class="title class_">TaskDecorator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Runnable <span class="title function_">decorate</span><span class="params">(Runnable runnable)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">            <span class="comment">// Set priority logic here</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Setting priority for task: &quot;</span> + runnable);</span><br><span class="line">            runnable.run();</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-2"><a href="#Service-Class-2" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;priorityExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">prioritizeTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Prioritizing task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed prioritizing task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-2"><a href="#Controller-Class-2" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PriorityController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PriorityService priorityService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/prioritizeTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">prioritizeTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        priorityService.prioritizeTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Task &quot;</span> + taskName + <span class="string">&quot; has been submitted for prioritization.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="complex-scenario-3-handling-long-running-tasks"></a></p>
+<h1 id="Complex-Scenario-3-Handling-Long-Running-Tasks"><a href="#Complex-Scenario-3-Handling-Long-Running-Tasks" class="headerlink" title="Complex Scenario 3: Handling Long-Running Tasks"></a>Complex Scenario 3: Handling Long-Running Tasks</h1><p>Long-running tasks can block threads and degrade system performance. Spring Boot provides mechanisms to handle such tasks efficiently.</p>
+<h3 id="Configuration-Class-3"><a href="#Configuration-Class-3" class="headerlink" title="Configuration Class"></a>Configuration Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(name = &quot;longRunningExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">longRunningExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>); <span class="comment">// Core pool size</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>); <span class="comment">// Maximum pool size</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">50</span>); <span class="comment">// Queue capacity</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;LongRunningThread-&quot;</span>); <span class="comment">// Thread name prefix</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Class-3"><a href="#Service-Class-3" class="headerlink" title="Service Class"></a>Service Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;longRunningExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleLongRunningTask</span><span class="params">(String taskName)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Handling long-running task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulate long-running task execution time</span></span><br><span class="line">            Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Completed handling long-running task: &quot;</span> + taskName + <span class="string">&quot; on thread: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Class-3"><a href="#Controller-Class-3" class="headerlink" title="Controller Class"></a>Controller Class</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LongRunningController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> LongRunningService longRunningService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/handleLongRunningTask&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleLongRunningTask</span><span class="params">(<span class="meta">@RequestParam</span> String taskName)</span> &#123;</span><br><span class="line">        longRunningService.handleLongRunningTask(taskName);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Long-running task &quot;</span> + taskName + <span class="string">&quot; has been submitted for processing.&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Spring Boot’s support for multi-threading allows developers to build highly concurrent and scalable applications. By following best practices and leveraging annotation-based configuration, you can efficiently manage asynchronous tasks, handle backpressure, prioritize tasks, and manage long-running tasks. This article provides a comprehensive guide to mastering multi-threading in Spring Boot, complete with detailed sample code and real-life production scenarios.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/Multi-Threading/" rel="tag"><i class="fa fa-tag"></i> Multi-Threading</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/" rel="prev" title="Create a Java Thread Pool From Scratch">
+                  <i class="fa fa-angle-left"></i> Create a Java Thread Pool From Scratch
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/29/Programming-Standards-of-Java-Concurrency/" rel="next" title="Programming Standards of Java Concurrency">
+                  Programming Standards of Java Concurrency <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

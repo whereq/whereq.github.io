@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction to Google Maps Overlays Markers Basic Marker Custom Marker with AdvancedMarkerElement   Polygons Drawing a Polygon Handling Polygon Events   Polylines Drawing a Polyline Handling Polylin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Google Maps Overlay Types with React + TypeScript">
+<meta property="og:url" content="https://www.whereq.com/2025/01/22/Deep-Dive-into-Google-Maps-Overlay-Types-with-React-TypeScript/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction to Google Maps Overlays Markers Basic Marker Custom Marker with AdvancedMarkerElement   Polygons Drawing a Polygon Handling Polygon Events   Polylines Drawing a Polyline Handling Polylin">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-01-22T17:05:47.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="TypeScript">
+<meta property="article:tag" content="ReactJS">
+<meta property="article:tag" content="GIS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/01/22/Deep-Dive-into-Google-Maps-Overlay-Types-with-React-TypeScript/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/01/22/Deep-Dive-into-Google-Maps-Overlay-Types-with-React-TypeScript/","path":"2025/01/22/Deep-Dive-into-Google-Maps-Overlay-Types-with-React-TypeScript/","title":"Deep Dive into Google Maps Overlay Types with React + TypeScript"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Google Maps Overlay Types with React + TypeScript | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-to-Google-Maps-Overlays"><span class="nav-number">1.</span> <span class="nav-text">Introduction to Google Maps Overlays</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Markers"><span class="nav-number">2.</span> <span class="nav-text">Markers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basic-Marker"><span class="nav-number">2.1.</span> <span class="nav-text">Basic Marker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Custom-Marker-with-AdvancedMarkerElement"><span class="nav-number">2.2.</span> <span class="nav-text">Custom Marker with AdvancedMarkerElement</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Polygons"><span class="nav-number">3.</span> <span class="nav-text">Polygons</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Drawing-a-Polygon"><span class="nav-number">3.1.</span> <span class="nav-text">Drawing a Polygon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling-Polygon-Events"><span class="nav-number">3.2.</span> <span class="nav-text">Handling Polygon Events</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Polylines"><span class="nav-number">4.</span> <span class="nav-text">Polylines</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Drawing-a-Polyline"><span class="nav-number">4.1.</span> <span class="nav-text">Drawing a Polyline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling-Polyline-Events"><span class="nav-number">4.2.</span> <span class="nav-text">Handling Polyline Events</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Circles"><span class="nav-number">5.</span> <span class="nav-text">Circles</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Drawing-a-Circle"><span class="nav-number">5.1.</span> <span class="nav-text">Drawing a Circle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling-Circle-Events"><span class="nav-number">5.2.</span> <span class="nav-text">Handling Circle Events</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rectangles"><span class="nav-number">6.</span> <span class="nav-text">Rectangles</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Drawing-a-Rectangle"><span class="nav-number">6.1.</span> <span class="nav-text">Drawing a Rectangle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling-Rectangle-Events"><span class="nav-number">6.2.</span> <span class="nav-text">Handling Rectangle Events</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InfoWindows"><span class="nav-number">7.</span> <span class="nav-text">InfoWindows</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-an-InfoWindow"><span class="nav-number">7.1.</span> <span class="nav-text">Adding an InfoWindow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling-InfoWindow-Events"><span class="nav-number">7.2.</span> <span class="nav-text">Handling InfoWindow Events</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GroundOverlay"><span class="nav-number">8.</span> <span class="nav-text">GroundOverlay</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-a-GroundOverlay"><span class="nav-number">8.1.</span> <span class="nav-text">Adding a GroundOverlay</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Custom-Overlays"><span class="nav-number">9.</span> <span class="nav-text">Custom Overlays</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Creating-a-Custom-Overlay"><span class="nav-number">9.1.</span> <span class="nav-text">Creating a Custom Overlay</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">10.</span> <span class="nav-text">References:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Up-Google-Maps-in-React"><span class="nav-number">10.1.</span> <span class="nav-text">Setting Up Google Maps in React</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/01/22/Deep-Dive-into-Google-Maps-Overlay-Types-with-React-TypeScript/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Google Maps Overlay Types with React + TypeScript | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Google Maps Overlay Types with React + TypeScript
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-22 12:05:47" itemprop="dateCreated datePublished" datetime="2025-01-22T12:05:47-05:00">2025-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/GIS/" itemprop="url" rel="index"><span itemprop="name">GIS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ol>
+<li><a href="#introduction-to-google-maps-overlays">Introduction to Google Maps Overlays</a></li>
+<li><a href="#markers">Markers</a><ul>
+<li><a href="#basic-marker">Basic Marker</a></li>
+<li><a href="#custom-marker-with-advancedmarkerelement">Custom Marker with <code>AdvancedMarkerElement</code></a></li>
+</ul>
+</li>
+<li><a href="#polygons">Polygons</a><ul>
+<li><a href="#drawing-a-polygon">Drawing a Polygon</a></li>
+<li><a href="#handling-polygon-events">Handling Polygon Events</a></li>
+</ul>
+</li>
+<li><a href="#polylines">Polylines</a><ul>
+<li><a href="#drawing-a-polyline">Drawing a Polyline</a></li>
+<li><a href="#handling-polyline-events">Handling Polyline Events</a></li>
+</ul>
+</li>
+<li><a href="#circles">Circles</a><ul>
+<li><a href="#drawing-a-circle">Drawing a Circle</a></li>
+<li><a href="#handling-circle-events">Handling Circle Events</a></li>
+</ul>
+</li>
+<li><a href="#rectangles">Rectangles</a><ul>
+<li><a href="#drawing-a-rectangle">Drawing a Rectangle</a></li>
+<li><a href="#handling-rectangle-events">Handling Rectangle Events</a></li>
+</ul>
+</li>
+<li><a href="#infowindows">InfoWindows</a><ul>
+<li><a href="#adding-an-infowindow">Adding an InfoWindow</a></li>
+<li><a href="#handling-infowindow-events">Handling InfoWindow Events</a></li>
+</ul>
+</li>
+<li><a href="#groundoverlay">GroundOverlay</a><ul>
+<li><a href="#adding-a-groundoverlay">Adding a GroundOverlay</a></li>
+</ul>
+</li>
+<li><a href="#custom-overlays">Custom Overlays</a><ul>
+<li><a href="#creating-a-custom-overlay">Creating a Custom Overlay</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<hr>
+<h2 id="Introduction-to-Google-Maps-Overlays"><a href="#Introduction-to-Google-Maps-Overlays" class="headerlink" title="Introduction to Google Maps Overlays"></a>Introduction to Google Maps Overlays</h2><p>Overlays are graphical elements that you can add to a Google Map to represent data or highlight specific areas. Google Maps supports the following overlay types:</p>
+<ul>
+<li><strong>Markers</strong>: Represent points of interest.</li>
+<li><strong>Polygons</strong>: Represent closed shapes with multiple vertices.</li>
+<li><strong>Polylines</strong>: Represent lines with multiple vertices.</li>
+<li><strong>Circles</strong>: Represent circular areas.</li>
+<li><strong>Rectangles</strong>: Represent rectangular areas.</li>
+<li><strong>InfoWindows:</strong> Display information about a specific location when a marker is clicked.</li>
+<li><strong>GroundOverlay:</strong> Displays an image or a video over a defined geographical area.</li>
+<li><strong>Custom Overlays:</strong> Allows developers to create their own custom overlays using HTML elements and JavaScript.</li>
+</ul>
+<hr>
+<h2 id="Markers"><a href="#Markers" class="headerlink" title="Markers"></a>Markers</h2><p>Markers are used to represent points of interest on the map. Google Maps provides two types of markers:</p>
+<ul>
+<li><strong>Basic Marker</strong>: The traditional marker with a default icon.</li>
+<li><strong>AdvancedMarkerElement</strong>: A customizable marker with support for custom icons and content.</li>
+</ul>
+<h3 id="Basic-Marker"><a href="#Basic-Marker" class="headerlink" title="Basic Marker"></a>Basic Marker</h3><p>Here’s how to create a basic marker:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">BasicMarker</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Add a basic marker</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Marker</span>(&#123;</span><br><span class="line">        <span class="attr">position</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">        <span class="attr">title</span>: <span class="string">&quot;San Francisco&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">BasicMarker</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Custom-Marker-with-AdvancedMarkerElement"><a href="#Custom-Marker-with-AdvancedMarkerElement" class="headerlink" title="Custom Marker with AdvancedMarkerElement"></a>Custom Marker with <code>AdvancedMarkerElement</code></h3><p>The <code>AdvancedMarkerElement</code> allows you to create highly customizable markers. Here’s an example:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">CustomMarker</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Create a custom marker</span></span><br><span class="line">      <span class="keyword">const</span> pinElement = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">      pinElement.<span class="property">innerHTML</span> = <span class="string">&quot;📍&quot;</span>; <span class="comment">// Custom icon</span></span><br><span class="line">      pinElement.<span class="property">style</span>.<span class="property">fontSize</span> = <span class="string">&quot;24px&quot;</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="property">marker</span>.<span class="title class_">AdvancedMarkerElement</span>(&#123;</span><br><span class="line">        <span class="attr">position</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">        <span class="attr">content</span>: pinElement,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">CustomMarker</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Polygons"><a href="#Polygons" class="headerlink" title="Polygons"></a>Polygons</h2><p>Polygons are used to represent closed shapes with multiple vertices. You can customize their appearance and handle user interactions.</p>
+<h3 id="Drawing-a-Polygon"><a href="#Drawing-a-Polygon" class="headerlink" title="Drawing a Polygon"></a>Drawing a Polygon</h3><p>Here’s how to draw a polygon:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">PolygonOverlay</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Define the polygon&#x27;s path</span></span><br><span class="line">      <span class="keyword">const</span> polygonCoords = [</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7849</span>, <span class="attr">lng</span>: -<span class="number">122.4294</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7949</span>, <span class="attr">lng</span>: -<span class="number">122.4094</span> &#125;,</span><br><span class="line">      ];</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Draw the polygon</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Polygon</span>(&#123;</span><br><span class="line">        <span class="attr">paths</span>: polygonCoords,</span><br><span class="line">        <span class="attr">strokeColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">        <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">        <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">fillColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">        <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">PolygonOverlay</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Handling-Polygon-Events"><a href="#Handling-Polygon-Events" class="headerlink" title="Handling Polygon Events"></a>Handling Polygon Events</h3><p>You can handle events like <code>click</code>, <code>mouseover</code>, and <code>mouseout</code> on polygons:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> polygon = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Polygon</span>(&#123;</span><br><span class="line">  <span class="attr">paths</span>: polygonCoords,</span><br><span class="line">  <span class="attr">strokeColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">  <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">  <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">fillColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">  <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">polygon.<span class="title function_">addListener</span>(<span class="string">&quot;click&quot;</span>, <span class="function">(<span class="params"><span class="attr">event</span>: google.maps.<span class="title class_">PolyMouseEvent</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Polygon clicked at:&quot;</span>, event.<span class="property">latLng</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Polylines"><a href="#Polylines" class="headerlink" title="Polylines"></a>Polylines</h2><p>Polylines are used to represent lines with multiple vertices. They are useful for drawing routes or paths.</p>
+<h3 id="Drawing-a-Polyline"><a href="#Drawing-a-Polyline" class="headerlink" title="Drawing a Polyline"></a>Drawing a Polyline</h3><p>Here’s how to draw a polyline:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">PolylineOverlay</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Define the polyline&#x27;s path</span></span><br><span class="line">      <span class="keyword">const</span> polylineCoords = [</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7849</span>, <span class="attr">lng</span>: -<span class="number">122.4294</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">lat</span>: <span class="number">37.7949</span>, <span class="attr">lng</span>: -<span class="number">122.4094</span> &#125;,</span><br><span class="line">      ];</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Draw the polyline</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Polyline</span>(&#123;</span><br><span class="line">        <span class="attr">path</span>: polylineCoords,</span><br><span class="line">        <span class="attr">strokeColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">        <span class="attr">strokeOpacity</span>: <span class="number">1.0</span>,</span><br><span class="line">        <span class="attr">strokeWeight</span>: <span class="number">4</span>,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">PolylineOverlay</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Handling-Polyline-Events"><a href="#Handling-Polyline-Events" class="headerlink" title="Handling Polyline Events"></a>Handling Polyline Events</h3><p>You can handle events like <code>click</code> on polylines:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> polyline = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Polyline</span>(&#123;</span><br><span class="line">  <span class="attr">path</span>: polylineCoords,</span><br><span class="line">  <span class="attr">strokeColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">  <span class="attr">strokeOpacity</span>: <span class="number">1.0</span>,</span><br><span class="line">  <span class="attr">strokeWeight</span>: <span class="number">4</span>,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">polyline.<span class="title function_">addListener</span>(<span class="string">&quot;click&quot;</span>, <span class="function">(<span class="params"><span class="attr">event</span>: google.maps.<span class="title class_">PolyMouseEvent</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Polyline clicked at:&quot;</span>, event.<span class="property">latLng</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Circles"><a href="#Circles" class="headerlink" title="Circles"></a>Circles</h2><p>Circles are used to represent circular areas on the map. You can customize their radius, color, and opacity.</p>
+<h3 id="Drawing-a-Circle"><a href="#Drawing-a-Circle" class="headerlink" title="Drawing a Circle"></a>Drawing a Circle</h3><p>Here’s how to draw a circle:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">CircleOverlay</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Draw the circle</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Circle</span>(&#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">radius</span>: <span class="number">1000</span>, <span class="comment">// Radius in meters</span></span><br><span class="line">        <span class="attr">strokeColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">        <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">        <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">fillColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">        <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">CircleOverlay</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Handling-Circle-Events"><a href="#Handling-Circle-Events" class="headerlink" title="Handling Circle Events"></a>Handling Circle Events</h3><p>You can handle events like <code>click</code> on circles:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> circle = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Circle</span>(&#123;</span><br><span class="line">  <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">  <span class="attr">radius</span>: <span class="number">1000</span>,</span><br><span class="line">  <span class="attr">strokeColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">  <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">  <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">fillColor</span>: <span class="string">&quot;#FF0000&quot;</span>,</span><br><span class="line">  <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">circle.<span class="title function_">addListener</span>(<span class="string">&quot;click&quot;</span>, <span class="function">(<span class="params"><span class="attr">event</span>: google.maps.<span class="title class_">MapMouseEvent</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Circle clicked at:&quot;</span>, event.<span class="property">latLng</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Rectangles"><a href="#Rectangles" class="headerlink" title="Rectangles"></a>Rectangles</h2><p>Rectangles are used to represent rectangular areas on the map. You can customize their bounds, color, and opacity.</p>
+<h3 id="Drawing-a-Rectangle"><a href="#Drawing-a-Rectangle" class="headerlink" title="Drawing a Rectangle"></a>Drawing a Rectangle</h3><p>Here’s how to draw a rectangle:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">RectangleOverlay</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Define the rectangle&#x27;s bounds</span></span><br><span class="line">      <span class="keyword">const</span> rectangleBounds = &#123;</span><br><span class="line">        <span class="attr">north</span>: <span class="number">37.7849</span>,</span><br><span class="line">        <span class="attr">south</span>: <span class="number">37.7649</span>,</span><br><span class="line">        <span class="attr">east</span>: -<span class="number">122.4094</span>,</span><br><span class="line">        <span class="attr">west</span>: -<span class="number">122.4294</span>,</span><br><span class="line">      &#125;;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Draw the rectangle</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Rectangle</span>(&#123;</span><br><span class="line">        <span class="attr">bounds</span>: rectangleBounds,</span><br><span class="line">        <span class="attr">strokeColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">        <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">        <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">fillColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">        <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">RectangleOverlay</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Handling-Rectangle-Events"><a href="#Handling-Rectangle-Events" class="headerlink" title="Handling Rectangle Events"></a>Handling Rectangle Events</h3><p>You can handle events like <code>click</code> on rectangles:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> rectangle = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Rectangle</span>(&#123;</span><br><span class="line">  <span class="attr">bounds</span>: rectangleBounds,</span><br><span class="line">  <span class="attr">strokeColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">  <span class="attr">strokeOpacity</span>: <span class="number">0.8</span>,</span><br><span class="line">  <span class="attr">strokeWeight</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">fillColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">  <span class="attr">fillOpacity</span>: <span class="number">0.35</span>,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">rectangle.<span class="title function_">addListener</span>(<span class="string">&quot;click&quot;</span>, <span class="function">(<span class="params"><span class="attr">event</span>: google.maps.<span class="title class_">MapMouseEvent</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Rectangle clicked at:&quot;</span>, event.<span class="property">latLng</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="InfoWindows"><a href="#InfoWindows" class="headerlink" title="InfoWindows"></a>InfoWindows</h2><p>InfoWindows are used to display additional information about a location on the map. They are typically attached to markers but can also be used independently.</p>
+<h3 id="Adding-an-InfoWindow"><a href="#Adding-an-InfoWindow" class="headerlink" title="Adding an InfoWindow"></a>Adding an InfoWindow</h3><p>Here’s how to add an InfoWindow to a marker:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">InfoWindowExample</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Create a marker</span></span><br><span class="line">      <span class="keyword">const</span> marker = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Marker</span>(&#123;</span><br><span class="line">        <span class="attr">position</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">        <span class="attr">title</span>: <span class="string">&quot;San Francisco&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Create an InfoWindow</span></span><br><span class="line">      <span class="keyword">const</span> infoWindow = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">InfoWindow</span>(&#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="string">&quot;&lt;h3&gt;San Francisco&lt;/h3&gt;&lt;p&gt;Welcome to the Golden City!&lt;/p&gt;&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Attach the InfoWindow to the marker</span></span><br><span class="line">      marker.<span class="title function_">addListener</span>(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        infoWindow.<span class="title function_">open</span>(mapRef.<span class="property">current</span>, marker);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">InfoWindowExample</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Handling-InfoWindow-Events"><a href="#Handling-InfoWindow-Events" class="headerlink" title="Handling InfoWindow Events"></a>Handling InfoWindow Events</h3><p>You can handle events like <code>closeclick</code> on InfoWindows:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">infoWindow.<span class="title function_">addListener</span>(<span class="string">&quot;closeclick&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;InfoWindow closed&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="GroundOverlay"><a href="#GroundOverlay" class="headerlink" title="GroundOverlay"></a>GroundOverlay</h2><p>GroundOverlays are used to overlay images (e.g., maps, satellite imagery) on specific areas of the map.</p>
+<h3 id="Adding-a-GroundOverlay"><a href="#Adding-a-GroundOverlay" class="headerlink" title="Adding a GroundOverlay"></a>Adding a GroundOverlay</h3><p>Here’s how to add a GroundOverlay:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">GroundOverlayExample</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Define the bounds for the GroundOverlay</span></span><br><span class="line">      <span class="keyword">const</span> bounds = &#123;</span><br><span class="line">        <span class="attr">north</span>: <span class="number">37.7849</span>,</span><br><span class="line">        <span class="attr">south</span>: <span class="number">37.7649</span>,</span><br><span class="line">        <span class="attr">east</span>: -<span class="number">122.4094</span>,</span><br><span class="line">        <span class="attr">west</span>: -<span class="number">122.4294</span>,</span><br><span class="line">      &#125;;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Add a GroundOverlay</span></span><br><span class="line">      <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">GroundOverlay</span>(</span><br><span class="line">        <span class="string">&quot;https://www.example.com/image.png&quot;</span>, <span class="comment">// URL of the image</span></span><br><span class="line">        bounds,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">          <span class="attr">opacity</span>: <span class="number">0.5</span>, <span class="comment">// Set the opacity of the overlay</span></span><br><span class="line">        &#125;</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">GroundOverlayExample</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Custom-Overlays"><a href="#Custom-Overlays" class="headerlink" title="Custom Overlays"></a>Custom Overlays</h2><p>Custom Overlays allow you to create fully custom overlays using HTML, CSS, and JavaScript. This is useful for adding complex UI elements to the map.</p>
+<h3 id="Creating-a-Custom-Overlay"><a href="#Creating-a-Custom-Overlay" class="headerlink" title="Creating a Custom Overlay"></a>Creating a Custom Overlay</h3><p>Here’s how to create a custom overlay:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CustomOverlay</span> <span class="keyword">extends</span> <span class="title class_ inherited__">google.maps.OverlayView</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">div</span>: <span class="title class_">HTMLElement</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> <span class="attr">position</span>: google.maps.<span class="title class_">LatLng</span>,</span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> <span class="attr">content</span>: <span class="built_in">string</span></span></span><br><span class="line"><span class="params">  </span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">onAdd</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">position</span> = <span class="string">&quot;absolute&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">backgroundColor</span> = <span class="string">&quot;white&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">border</span> = <span class="string">&quot;1px solid black&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">padding</span> = <span class="string">&quot;10px&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">innerHTML</span> = <span class="variable language_">this</span>.<span class="property">content</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> panes = <span class="variable language_">this</span>.<span class="title function_">getPanes</span>();</span><br><span class="line">    <span class="keyword">if</span> (panes) &#123;</span><br><span class="line">      panes.<span class="property">overlayLayer</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">div</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">draw</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">div</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> projection = <span class="variable language_">this</span>.<span class="title function_">getProjection</span>();</span><br><span class="line">      <span class="keyword">const</span> point = projection.<span class="title function_">fromLatLngToDivPixel</span>(<span class="variable language_">this</span>.<span class="property">position</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (point) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">left</span> = <span class="string">`<span class="subst">$&#123;point.x&#125;</span>px`</span>;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">style</span>.<span class="property">top</span> = <span class="string">`<span class="subst">$&#123;point.y&#125;</span>px`</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">onRemove</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">div</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">div</span>.<span class="property">parentNode</span>?.<span class="title function_">removeChild</span>(<span class="variable language_">this</span>.<span class="property">div</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">div</span> = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">CustomOverlayExample</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mapRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mapRef.<span class="property">current</span>) &#123;</span><br><span class="line">      mapRef.<span class="property">current</span> = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Map</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;map&quot;</span>) <span class="keyword">as</span> <span class="title class_">HTMLElement</span>, &#123;</span><br><span class="line">        <span class="attr">center</span>: &#123; <span class="attr">lat</span>: <span class="number">37.7749</span>, <span class="attr">lng</span>: -<span class="number">122.4194</span> &#125;,</span><br><span class="line">        <span class="attr">zoom</span>: <span class="number">12</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Create a custom overlay</span></span><br><span class="line">      <span class="keyword">const</span> overlay = <span class="keyword">new</span> <span class="title class_">CustomOverlay</span>(</span><br><span class="line">        <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">LatLng</span>(<span class="number">37.7749</span>, -<span class="number">122.4194</span>),</span><br><span class="line">        <span class="string">&quot;&lt;h3&gt;Custom Overlay&lt;/h3&gt;&lt;p&gt;This is a custom overlay!&lt;/p&gt;&quot;</span></span><br><span class="line">      );</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Add the overlay to the map</span></span><br><span class="line">      overlay.<span class="title function_">setMap</span>(mapRef.<span class="property">current</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;map&quot;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">height:</span> &quot;<span class="attr">100vh</span>&quot;, <span class="attr">width:</span> &quot;<span class="attr">100</span>%&quot; &#125;&#125; /&gt;</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">CustomOverlayExample</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><h3 id="Setting-Up-Google-Maps-in-React"><a href="#Setting-Up-Google-Maps-in-React" class="headerlink" title="Setting Up Google Maps in React"></a>Setting Up Google Maps in React</h3><p>Before diving into overlays, ensure you have set up the Google Maps JavaScript API in your React application. Follow the steps in the <a target="_blank" rel="noopener" href="https://developers.google.com/maps/documentation/javascript/tutorial">Google Maps Documentation</a> to obtain your API key and include it in your project.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"><i class="fa fa-tag"></i> TypeScript</a>
+              <a href="/tags/ReactJS/" rel="tag"><i class="fa fa-tag"></i> ReactJS</a>
+              <a href="/tags/GIS/" rel="tag"><i class="fa fa-tag"></i> GIS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/21/Component-Communication-in-React-A-Comprehensive-Guide/" rel="prev" title="Component Communication in React: A Comprehensive Guide">
+                  <i class="fa fa-angle-left"></i> Component Communication in React: A Comprehensive Guide
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/24/Deep-Dive-into-the-Hook-in-React/" rel="next" title="Deep Dive into the  Hook in React">
+                  Deep Dive into the  Hook in React <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

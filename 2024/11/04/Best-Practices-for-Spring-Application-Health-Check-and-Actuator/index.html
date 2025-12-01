@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Spring Actuator Basics 2.1 What is Spring Actuator? 2.2 Key Features 2.3. Architecture Overview   Best Practices 3.1 Configuring Actuator Endpoints 3.2 Securing Actuator Endpoints 3.3 Cu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices for Spring Application Health Check and Actuator">
+<meta property="og:url" content="https://www.whereq.com/2024/11/04/Best-Practices-for-Spring-Application-Health-Check-and-Actuator/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Spring Actuator Basics 2.1 What is Spring Actuator? 2.2 Key Features 2.3. Architecture Overview   Best Practices 3.1 Configuring Actuator Endpoints 3.2 Securing Actuator Endpoints 3.3 Cu">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-05T00:32:23.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Actuator">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/04/Best-Practices-for-Spring-Application-Health-Check-and-Actuator/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/04/Best-Practices-for-Spring-Application-Health-Check-and-Actuator/","path":"2024/11/04/Best-Practices-for-Spring-Application-Health-Check-and-Actuator/","title":"Best Practices for Spring Application Health Check and Actuator"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices for Spring Application Health Check and Actuator | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Actuator-Basics"><span class="nav-number">2.</span> <span class="nav-text">Spring Actuator Basics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-What-is-Spring-Actuator"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 What is Spring Actuator?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Key-Features"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Key Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Architecture-Overview"><span class="nav-number">2.3.</span> <span class="nav-text">2.3. Architecture Overview</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Best-Practices"><span class="nav-number">3.</span> <span class="nav-text">Best Practices</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Configuring-Actuator-Endpoints"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Configuring Actuator Endpoints</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Securing-Actuator-Endpoints"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Securing Actuator Endpoints</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Custom-Health-Indicators"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Custom Health Indicators</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Monitoring-and-Metrics"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 Monitoring and Metrics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-Graceful-Shutdown"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 Graceful Shutdown</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Production-Scenarios"><span class="nav-number">4.</span> <span class="nav-text">Production Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Scenario-1-Database-Health-Check"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Scenario 1: Database Health Check</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Scenario-2-Custom-Health-Indicator"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Scenario 2: Custom Health Indicator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Architecture-Diagrams"><span class="nav-number">5.</span> <span class="nav-text">5. Architecture Diagrams</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Component-Diagram"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Component Diagram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Sequence-Diagram"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 Sequence Diagram</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Sample-Code-and-Configuration"><span class="nav-number">6.</span> <span class="nav-text">6. Sample Code and Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Dependency-Configuration"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 Dependency Configuration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Actuator-Configuration"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 Actuator Configuration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Custom-Health-Indicator-Implementation"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 Custom Health Indicator Implementation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Key-Takeaways"><span class="nav-number">7.</span> <span class="nav-text">7. Key Takeaways</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">8.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/04/Best-Practices-for-Spring-Application-Health-Check-and-Actuator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices for Spring Application Health Check and Actuator | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices for Spring Application Health Check and Actuator
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-04 19:32:23" itemprop="dateCreated datePublished" datetime="2024-11-04T19:32:23-05:00">2024-11-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/Actuator/" itemprop="url" rel="index"><span itemprop="name">Actuator</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#spring-actuator-basics">Spring Actuator Basics</a><ul>
+<li><a href="#21-what-is-spring-actuator">2.1 What is Spring Actuator?</a></li>
+<li><a href="#22-key-features">2.2 Key Features</a></li>
+<li><a href="#23-architecture-overview">2.3. Architecture Overview</a></li>
+</ul>
+</li>
+<li><a href="#best-practices">Best Practices</a><ul>
+<li><a href="#31-configuring-actuator-endpoints">3.1 Configuring Actuator Endpoints</a></li>
+<li><a href="#32-securing-actuator-endpoints">3.2 Securing Actuator Endpoints</a></li>
+<li><a href="#33-custom-health-indicators">3.3 Custom Health Indicators</a></li>
+<li><a href="#34-monitoring-and-metrics">3.4 Monitoring and Metrics</a></li>
+<li><a href="#35-graceful-shutdown">3.5 Graceful Shutdown</a></li>
+</ul>
+</li>
+<li><a href="#production-scenarios">Production Scenarios</a><ul>
+<li><a href="#41-scenario-1-database-health-check">4.1 Scenario 1: Database Health Check</a></li>
+<li><a href="#42-scenario-2-custom-health-indicator">4.2 Scenario 2: Custom Health Indicator</a></li>
+</ul>
+</li>
+<li><a href="#5-architecture-diagrams">5. Architecture Diagrams</a><ul>
+<li><a href="#51-component-diagram">5.1 Component Diagram</a></li>
+<li><a href="#52-sequence-diagram">5.2 Sequence Diagram</a></li>
+</ul>
+</li>
+<li><a href="#6-sample-code-and-configuration">6. Sample Code and Configuration</a><ul>
+<li><a href="#61-dependency-configuration">6.1 Dependency Configuration</a></li>
+<li><a href="#62-actuator-configuration">6.2 Actuator Configuration</a></li>
+<li><a href="#63-custom-health-indicator-implementation">6.3 Custom Health Indicator Implementation</a></li>
+</ul>
+</li>
+<li><a href="#7-key-takeaways">7. Key Takeaways</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Spring Actuator is a powerful tool for monitoring and managing Spring Boot applications. It provides production-ready features such as health checks, metrics, and tracing. Properly configuring and securing Actuator endpoints is crucial for ensuring the reliability and security of your application. </p>
+<p><strong>Key Benefits:</strong></p>
+<ul>
+<li>Helps detect issues before they affect users.</li>
+<li>Provides an easy integration with monitoring systems like Prometheus, Grafana, and ELK stack.</li>
+<li>Customizable to expose only the needed endpoints.</li>
+</ul>
+<p><a name="spring-actuator-basics"></a></p>
+<h2 id="Spring-Actuator-Basics"><a href="#Spring-Actuator-Basics" class="headerlink" title="Spring Actuator Basics"></a>Spring Actuator Basics</h2><p><a name="21-what-is-spring-actuator"></a></p>
+<h3 id="2-1-What-is-Spring-Actuator"><a href="#2-1-What-is-Spring-Actuator" class="headerlink" title="2.1 What is Spring Actuator?"></a>2.1 What is Spring Actuator?</h3><p>Spring Actuator is a sub-project of the Spring Boot framework that provides production-ready features for monitoring and managing applications. It exposes various endpoints that can be used to check the health of the application, gather metrics, environment and perform other administrative tasks.</p>
+<p><a name="22-key-features"></a></p>
+<h3 id="2-2-Key-Features"><a href="#2-2-Key-Features" class="headerlink" title="2.2 Key Features"></a>2.2 Key Features</h3><p>Spring Boot Actuator offers various endpoints for different purposes:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Endpoint</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Health Checks</strong></td>
+<td><strong>&#x2F;actuator&#x2F;health</strong></td>
+<td>Provides information about the health status of the application.</td>
+</tr>
+<tr>
+<td><strong>Metrics</strong></td>
+<td><strong>&#x2F;actuator&#x2F;metrics</strong></td>
+<td>Exposes various metrics such as memory usage, active threads, HTTP requests, and more.</td>
+</tr>
+<tr>
+<td><strong>Info Endpoint</strong></td>
+<td><strong>&#x2F;actuator&#x2F;info</strong></td>
+<td>Provides general or arbitrary information about the application.</td>
+</tr>
+<tr>
+<td><strong>Environment Endpoint</strong></td>
+<td><strong>&#x2F;actuator&#x2F;env</strong></td>
+<td>Shows properties from the <code>Environment</code>.</td>
+</tr>
+<tr>
+<td><strong>Shutdown Endpoint</strong></td>
+<td><strong>&#x2F;actuator&#x2F;shutdown</strong></td>
+<td>Allows for graceful shutdown of the application.</td>
+</tr>
+</tbody></table>
+<p><a name="23-architecture-overview"></a></p>
+<h3 id="2-3-Architecture-Overview"><a href="#2-3-Architecture-Overview" class="headerlink" title="2.3. Architecture Overview"></a>2.3. Architecture Overview</h3><p>The architecture of a Spring Boot application with Actuator enabled can be visualized as follows:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+---------------------+</span><br><span class="line">|   Spring Boot App   |</span><br><span class="line">|                     |</span><br><span class="line">|  +---------------+  |</span><br><span class="line">|  |   Actuator    |  |</span><br><span class="line">|  +---------------+  |</span><br><span class="line">|   Health Checks     |</span><br><span class="line">|   Metrics           |</span><br><span class="line">|   Info Endpoint     |</span><br><span class="line">+---------------------+</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-----------------------------+</span><br><span class="line">| Monitoring System (e.g.,    |</span><br><span class="line">| Prometheus, Grafana, ELK)   |</span><br><span class="line">+-----------------------------+</span><br></pre></td></tr></table></figure>
+
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant Client
+    participant Actuator Endpoint
+    participant Health Indicator(s)
+
+    Client-&gt;&gt;Actuator Endpoint: GET /actuator/health
+    Actuator Endpoint-&gt;&gt;Health Indicator(s): Evaluate Health
+    Health Indicator(s)--&gt;&gt;Actuator Endpoint: Return Status
+    Actuator Endpoint--&gt;&gt;Client: Respond with Health Status</code></pre>
+
+<p><a name="3-best-practices"></a></p>
+<h2 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h2><p><a name="31-configuring-actuator-endpoints"></a></p>
+<h3 id="3-1-Configuring-Actuator-Endpoints"><a href="#3-1-Configuring-Actuator-Endpoints" class="headerlink" title="3.1 Configuring Actuator Endpoints"></a>3.1 Configuring Actuator Endpoints</h3><p>Add the following dependency to your <code>pom.xml</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Configure Actuator endpoints to expose only the necessary information. Use the <code>management.endpoints.web.exposure.include</code> property to specify which endpoints should be exposed.</p>
+<p>Configure Actuator in <code>application.properties</code> or <code>application.yml</code>:</p>
+<p><strong>application.properties</strong></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management.endpoints.web.exposure.include</span>=<span class="string">health,info,metrics</span></span><br><span class="line"><span class="attr">management.endpoint.health.show-details</span>=<span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>application.yaml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">endpoints:</span></span><br><span class="line">    <span class="attr">web:</span></span><br><span class="line">      <span class="attr">exposure:</span></span><br><span class="line">        <span class="attr">include:</span> <span class="string">health,</span> <span class="string">metrics,</span> <span class="string">info</span></span><br><span class="line">  <span class="attr">endpoint:</span></span><br><span class="line">    <span class="attr">health:</span></span><br><span class="line">      <span class="attr">show-details:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="32-securing-actuator-endpoints"></a></p>
+<h3 id="3-2-Securing-Actuator-Endpoints"><a href="#3-2-Securing-Actuator-Endpoints" class="headerlink" title="3.2 Securing Actuator Endpoints"></a>3.2 Securing Actuator Endpoints</h3><p>It is essential to secure your Actuator endpoints to prevent unauthorized access. Use Spring Security to restrict access to specific endpoints.</p>
+<p><strong>application.properties</strong></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management.endpoints.web.exposure.include</span>=<span class="string">health,info</span></span><br><span class="line"><span class="attr">management.endpoints.web.base-path</span>=<span class="string">/actuator</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.annotation.web.builders.HttpSecurity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        http.authorizeRequests()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/actuator/health&quot;</span>).permitAll()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/actuator/**&quot;</span>).hasRole(<span class="string">&quot;ADMIN&quot;</span>)</span><br><span class="line">            .and()</span><br><span class="line">            .httpBasic();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="33-custom-health-indicators"></a></p>
+<h3 id="3-3-Custom-Health-Indicators"><a href="#3-3-Custom-Health-Indicators" class="headerlink" title="3.3 Custom Health Indicators"></a>3.3 Custom Health Indicators</h3><p>Spring Boot allows you to create custom health indicators for specific checks, such as database connectivity or third-party service availability.<br>Implement custom health indicators to monitor specific components of your application. Custom health indicators should extend the <code>HealthIndicator</code> interface.</p>
+<blockquote>
+<p>CustomHealthIndicator</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.HealthIndicator;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomHealthIndicator</span> <span class="keyword">implements</span> <span class="title class_">HealthIndicator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Health <span class="title function_">health</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Perform custom health check</span></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isHealthy</span> <span class="operator">=</span> checkCustomComponent();</span><br><span class="line">        <span class="keyword">if</span> (isHealthy) &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.up().withDetail(<span class="string">&quot;Custom Service&quot;</span>, <span class="string">&quot;Available&quot;</span>).build();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.down().withDetail(<span class="string">&quot;Custom Service&quot;</span>, <span class="string">&quot;Custom component is down&quot;</span>).build();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">checkCustomComponent</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Custom health check logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Unit Test for CustomHealthIndicator</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.assertj.core.api.Assertions.assertThat;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomHealthIndicatorTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CustomHealthIndicator customHealthIndicator;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">healthIndicatorStatusShouldBeUp</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Health</span> <span class="variable">health</span> <span class="operator">=</span> customHealthIndicator.health();</span><br><span class="line">        assertThat(health.getStatus().getCode()).isEqualTo(<span class="string">&quot;UP&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="34-monitoring-and-metrics"></a></p>
+<h3 id="3-4-Monitoring-and-Metrics"><a href="#3-4-Monitoring-and-Metrics" class="headerlink" title="3.4 Monitoring and Metrics"></a>3.4 Monitoring and Metrics</h3><p>Enable and configure metrics to monitor the performance and health of your application. Use the <code>micrometer</code> library to expose metrics to various monitoring systems.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">metrics:</span></span><br><span class="line">    <span class="attr">export:</span></span><br><span class="line">      <span class="attr">prometheus:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="35-graceful-shutdown"></a></p>
+<h3 id="3-5-Graceful-Shutdown"><a href="#3-5-Graceful-Shutdown" class="headerlink" title="3.5 Graceful Shutdown"></a>3.5 Graceful Shutdown</h3><p>Configure graceful shutdown to ensure that your application shuts down cleanly without interrupting ongoing requests.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">shutdown:</span> <span class="string">graceful</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="4-production-scenarios"></a></p>
+<h2 id="Production-Scenarios"><a href="#Production-Scenarios" class="headerlink" title="Production Scenarios"></a>Production Scenarios</h2><p><a name="41-scenario-1-database-health-check"></a></p>
+<h3 id="4-1-Scenario-1-Database-Health-Check"><a href="#4-1-Scenario-1-Database-Health-Check" class="headerlink" title="4.1 Scenario 1: Database Health Check"></a>4.1 Scenario 1: Database Health Check</h3><p>Implement a health check for the database to ensure that the application can connect to the database.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.HealthIndicator;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.sql.DataSource;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DatabaseHealthIndicator</span> <span class="keyword">implements</span> <span class="title class_">HealthIndicator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DataSource dataSource;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">DatabaseHealthIndicator</span><span class="params">(DataSource dataSource)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.dataSource = dataSource;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Health <span class="title function_">health</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">connection</span> <span class="operator">=</span> dataSource.getConnection()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (connection.isValid(<span class="number">1000</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> Health.up().build();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> Health.down().withDetail(<span class="string">&quot;Error&quot;</span>, <span class="string">&quot;Database connection is not valid&quot;</span>).build();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.down(e).build();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="42-scenario-2-custom-health-indicator"></a></p>
+<h3 id="4-2-Scenario-2-Custom-Health-Indicator"><a href="#4-2-Scenario-2-Custom-Health-Indicator" class="headerlink" title="4.2 Scenario 2: Custom Health Indicator"></a>4.2 Scenario 2: Custom Health Indicator</h3><p>Implement a custom health indicator to monitor a specific external service.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.HealthIndicator;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.client.RestTemplate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExternalServiceHealthIndicator</span> <span class="keyword">implements</span> <span class="title class_">HealthIndicator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ExternalServiceHealthIndicator</span><span class="params">(RestTemplate restTemplate)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Health <span class="title function_">health</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            restTemplate.getForEntity(<span class="string">&quot;https://external-service.com/health&quot;</span>, String.class);</span><br><span class="line">            <span class="keyword">return</span> Health.up().build();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.down(e).withDetail(<span class="string">&quot;Error&quot;</span>, <span class="string">&quot;External service is down&quot;</span>).build();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="5-architecture-diagrams"></a></p>
+<h2 id="5-Architecture-Diagrams"><a href="#5-Architecture-Diagrams" class="headerlink" title="5. Architecture Diagrams"></a>5. Architecture Diagrams</h2><p><a name="51-component-diagram"></a></p>
+<h3 id="5-1-Component-Diagram"><a href="#5-1-Component-Diagram" class="headerlink" title="5.1 Component Diagram"></a>5.1 Component Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Spring Boot App   |       | Spring Actuator   |       | Monitoring System |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                            |                           |</span><br><span class="line">        | (1) Health Check           |                           |</span><br><span class="line">        |---------------------------&gt;|                           |</span><br><span class="line">        |                            | (2) Metrics               |</span><br><span class="line">        |                            |--------------------------&gt;|</span><br><span class="line">        |                            |                           |</span><br><span class="line">        | (3) Info Endpoint          |                           |</span><br><span class="line">        |&lt;---------------------------|                           |</span><br><span class="line">        |                            |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Spring Boot App   |       | Spring Actuator   |       | Monitoring System |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
+
+<p><a name="52-sequence-diagram"></a></p>
+<h3 id="5-2-Sequence-Diagram"><a href="#5-2-Sequence-Diagram" class="headerlink" title="5.2 Sequence Diagram"></a>5.2 Sequence Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Client            |       | Spring Boot App   |       | Spring Actuator   |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                            |                           |</span><br><span class="line">        | (1) Health Check Request   |                           |</span><br><span class="line">        |---------------------------&gt;|                           |</span><br><span class="line">        |                            | (2) Perform Health Check  |</span><br><span class="line">        |                            |--------------------------&gt;|</span><br><span class="line">        |                            |                           |</span><br><span class="line">        | (3) Health Check Response  |                           |</span><br><span class="line">        |&lt;---------------------------|                           |</span><br><span class="line">        |                            |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Client            |       | Spring Boot App   |       | Spring Actuator   |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
+
+<p><a name="6-sample-code-and-configuration"></a></p>
+<h2 id="6-Sample-Code-and-Configuration"><a href="#6-Sample-Code-and-Configuration" class="headerlink" title="6. Sample Code and Configuration"></a>6. Sample Code and Configuration</h2><p><a name="61-dependency-configuration"></a></p>
+<h3 id="6-1-Dependency-Configuration"><a href="#6-1-Dependency-Configuration" class="headerlink" title="6.1 Dependency Configuration"></a>6.1 Dependency Configuration</h3><p>Add the necessary dependencies to your <code>pom.xml</code> file.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.micrometer<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>micrometer-registry-prometheus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="62-actuator-configuration"></a></p>
+<h3 id="6-2-Actuator-Configuration"><a href="#6-2-Actuator-Configuration" class="headerlink" title="6.2 Actuator Configuration"></a>6.2 Actuator Configuration</h3><p>Configure Actuator endpoints in your <code>application.yml</code> file.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">endpoints:</span></span><br><span class="line">    <span class="attr">web:</span></span><br><span class="line">      <span class="attr">exposure:</span></span><br><span class="line">        <span class="attr">include:</span> <span class="string">health,</span> <span class="string">metrics,</span> <span class="string">info</span></span><br><span class="line">  <span class="attr">metrics:</span></span><br><span class="line">    <span class="attr">export:</span></span><br><span class="line">      <span class="attr">prometheus:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">shutdown:</span> <span class="string">graceful</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="63-custom-health-indicator-implementation"></a></p>
+<h3 id="6-3-Custom-Health-Indicator-Implementation"><a href="#6-3-Custom-Health-Indicator-Implementation" class="headerlink" title="6.3 Custom Health Indicator Implementation"></a>6.3 Custom Health Indicator Implementation</h3><p>Implement a custom health indicator to monitor a specific component.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.HealthIndicator;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomHealthIndicator</span> <span class="keyword">implements</span> <span class="title class_">HealthIndicator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Health <span class="title function_">health</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Perform custom health check</span></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isHealthy</span> <span class="operator">=</span> checkCustomComponent();</span><br><span class="line">        <span class="keyword">if</span> (isHealthy) &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.up().build();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.down().withDetail(<span class="string">&quot;Error&quot;</span>, <span class="string">&quot;Custom component is down&quot;</span>).build();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">checkCustomComponent</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Custom health check logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="7-key-takeaways"></a></p>
+<h2 id="7-Key-Takeaways"><a href="#7-Key-Takeaways" class="headerlink" title="7. Key Takeaways"></a>7. Key Takeaways</h2><ul>
+<li><strong>Granular Health Checks</strong>: Implement separate health indicators for databases, message brokers, and other critical components.</li>
+<li><strong>Monitoring Integration</strong>: Integrate with monitoring tools like Prometheus and Grafana for visualizing metrics and health data.</li>
+<li><strong>Security Measures</strong>: Ensure only trusted sources can access sensitive health information.</li>
+<li><strong>Detailed Health Information</strong>: Enable detailed health information only for internal access to protect sensitive data.</li>
+<li><strong>Cluster-Aware Checks</strong>: In distributed environments, ensure health checks are cluster-aware and provide insights into individual instance health.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Actuator is a powerful tool for monitoring and managing Spring Boot applications. By following best practices such as configuring and securing Actuator endpoints, implementing custom health indicators, and enabling monitoring and metrics, you can ensure the reliability and security of your application. This article provided a comprehensive guide to best practices for Spring application health checks and Actuator, including architecture diagrams, sample code, and configuration details.</p>
+<p><a name="references"></a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html">Spring Boot Actuator Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-security/site/docs/current/reference/html5/">Spring Security Documentation</a></li>
+<li>[Micrometer Documentation](<a target="_blank" rel="noopener" href="https://micrometer.io/docs">https://micrometer.io/docs</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/Actuator/" rel="tag"><i class="fa fa-tag"></i> Actuator</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/04/Best-Practices-for-Local-Storage-Handling-in-ReactJS/" rel="prev" title="Best Practices for Local Storage Handling in ReactJS">
+                  <i class="fa fa-angle-left"></i> Best Practices for Local Storage Handling in ReactJS
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/04/Design-Pattern-Template-Method/" rel="next" title="Design Pattern - Template Method">
+                  Design Pattern - Template Method <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Kafka Transaction Workflow 1. Introduction 2. Idempotence in Kafka 2.1 How Idempotence Works   3. Kafka Transactions 3.1 How to Enable Kafka Transactions Example: Creating a Kafka Producer with Trans">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka Transaction">
+<meta property="og:url" content="https://www.whereq.com/2024/10/23/Kafka-Transaction/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Kafka Transaction Workflow 1. Introduction 2. Idempotence in Kafka 2.1 How Idempotence Works   3. Kafka Transactions 3.1 How to Enable Kafka Transactions Example: Creating a Kafka Producer with Trans">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-23T18:06:39.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Kafka">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/23/Kafka-Transaction/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/23/Kafka-Transaction/","path":"2024/10/23/Kafka-Transaction/","title":"Kafka Transaction"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kafka Transaction | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-Transaction-Workflow"><span class="nav-number">1.</span> <span class="nav-text">Kafka Transaction Workflow</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Idempotence-in-Kafka"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. Idempotence in Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-How-Idempotence-Works"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">2.1 How Idempotence Works</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Kafka-Transactions"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. Kafka Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-How-to-Enable-Kafka-Transactions"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">3.1 How to Enable Kafka Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-Creating-a-Kafka-Producer-with-Transactions"><span class="nav-number">1.0.3.1.1.</span> <span class="nav-text">Example: Creating a Kafka Producer with Transactions</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-How-Kafka-Transactions-Work"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">3.2 How Kafka Transactions Work</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Starting-the-Producer-and-Assigning-a-Transaction-Coordinator"><span class="nav-number">1.0.3.2.1.</span> <span class="nav-text">1) Starting the Producer and Assigning a Transaction Coordinator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Sending-Messages"><span class="nav-number">1.0.3.2.2.</span> <span class="nav-text">2) Sending Messages</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Committing-or-Aborting-the-Transaction"><span class="nav-number">1.0.3.2.3.</span> <span class="nav-text">3) Committing or Aborting the Transaction</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Diagram-Kafka-Transaction-Flow"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. Diagram: Kafka Transaction Flow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Conclusion"><span class="nav-number">1.0.5.</span> <span class="nav-text">5. Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Takeaways"><span class="nav-number">1.0.6.</span> <span class="nav-text">Key Takeaways:</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/23/Kafka-Transaction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kafka Transaction | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka Transaction
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-23 14:06:39" itemprop="dateCreated datePublished" datetime="2024-10-23T14:06:39-04:00">2024-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#kafka-transaction-workflow">Kafka Transaction Workflow</a><ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-idempotence-in-kafka">2. Idempotence in Kafka</a><ul>
+<li><a href="#21-how-idempotence-works">2.1 How Idempotence Works</a></li>
+</ul>
+</li>
+<li><a href="#3-kafka-transactions">3. Kafka Transactions</a><ul>
+<li><a href="#31-how-to-enable-kafka-transactions">3.1 How to Enable Kafka Transactions</a><ul>
+<li><a href="#example-creating-a-kafka-producer-with-transactions">Example: Creating a Kafka Producer with Transactions</a></li>
+</ul>
+</li>
+<li><a href="#32-how-kafka-transactions-work">3.2 How Kafka Transactions Work</a><ul>
+<li><a href="#1-starting-the-producer-and-assigning-a-transaction-coordinator">1) Starting the Producer and Assigning a Transaction Coordinator</a></li>
+<li><a href="#2-sending-messages">2) Sending Messages</a></li>
+<li><a href="#3-committing-or-aborting-the-transaction">3) Committing or Aborting the Transaction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-diagram-kafka-transaction-flow">4. Diagram: Kafka Transaction Flow</a></li>
+<li><a href="#5-conclusion">5. Conclusion</a></li>
+<li><a href="#key-takeaways">Key Takeaways:</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Kafka-Transaction-Workflow"><a href="#Kafka-Transaction-Workflow" class="headerlink" title="Kafka Transaction Workflow"></a>Kafka Transaction Workflow</h1><hr>
+<h3 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h3><p><a name="1-introduction"></a></p>
+<p>Let’s first recall the concept of a transaction: either all operations succeed, or all of them fail. Kafka transactions follow the same rule.</p>
+<p>Starting from Kafka 0.11.0.0, two major features were introduced: <strong>idempotence</strong> and <strong>transactions</strong>. Understanding transactions requires understanding idempotence because transactions are built on top of idempotence. This article explains how Kafka transactions work in simple terms, without diving too deep into technical details.</p>
+<p>The key points we will cover:</p>
+<ul>
+<li>What is idempotence? How to enable it?</li>
+<li>How does idempotence work?</li>
+<li>What are Kafka transactions? How to enable transactions?</li>
+<li>How do Kafka transactions work?</li>
+</ul>
+<hr>
+<h3 id="2-Idempotence-in-Kafka"><a href="#2-Idempotence-in-Kafka" class="headerlink" title="2. Idempotence in Kafka"></a>2. Idempotence in Kafka</h3><p><a name="2-idempotence-in-kafka"></a></p>
+<p>Idempotence ensures that no matter how many times the producer sends the same message, the Kafka broker will only persist it once, ensuring no data duplication. Idempotence is enabled by default and can be configured using the <code>enable.idempotence</code> setting.</p>
+<h4 id="2-1-How-Idempotence-Works"><a href="#2-1-How-Idempotence-Works" class="headerlink" title="2.1 How Idempotence Works"></a>2.1 How Idempotence Works</h4><p><a name="21-how-idempotence-works"></a></p>
+<p>The idempotence mechanism in Kafka is simple. Each message has a unique key composed of <code>&lt;PID, Partition, SeqNumber&gt;</code>:</p>
+<ul>
+<li><strong>PID (Producer ID):</strong> A unique identifier assigned to each producer when it starts.</li>
+<li><strong>Partition:</strong> The target partition for the message.</li>
+<li><strong>SeqNumber:</strong> An incrementing ID assigned to each message by the producer, ensuring that each message has a unique sequence number.</li>
+</ul>
+<p>Kafka prevents duplicate message persistence for messages with the same key. However, idempotence is limited to single partition and single session guarantees. If Kafka restarts and a new PID is assigned, duplicates could occur. This is where <strong>Kafka transactions</strong> come into play.</p>
+<hr>
+<h3 id="3-Kafka-Transactions"><a href="#3-Kafka-Transactions" class="headerlink" title="3. Kafka Transactions"></a>3. Kafka Transactions</h3><p><a name="3-kafka-transactions"></a></p>
+<p>Kafka transactions allow for atomic writes across multiple topics and partitions. All messages in the same transaction are either fully committed or fully aborted. </p>
+<p>Kafka transactions are primarily concerned with <strong>producer transactions</strong>, though <strong>consumer transactions</strong> are also possible. However, consumers rely on the producer’s transaction mechanism, so we will focus on producer transactions here.</p>
+<h4 id="3-1-How-to-Enable-Kafka-Transactions"><a href="#3-1-How-to-Enable-Kafka-Transactions" class="headerlink" title="3.1 How to Enable Kafka Transactions"></a>3.1 How to Enable Kafka Transactions</h4><p><a name="31-how-to-enable-kafka-transactions"></a></p>
+<p>Before delving into the internals of Kafka transactions, let’s start with a simple example.</p>
+<h5 id="Example-Creating-a-Kafka-Producer-with-Transactions"><a href="#Example-Creating-a-Kafka-Producer-with-Transactions" class="headerlink" title="Example: Creating a Kafka Producer with Transactions"></a>Example: Creating a Kafka Producer with Transactions</h5><p><a name="example-creating-a-kafka-producer-with-transactions"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Properties</span> <span class="variable">properties</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">&quot;localhost:9092&quot;</span>);</span><br><span class="line">properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());</span><br><span class="line">properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());</span><br><span class="line"></span><br><span class="line"><span class="comment">// Set the transactional ID, this is required</span></span><br><span class="line">properties.setProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG, <span class="string">&quot;transactional_id_1&quot;</span>);</span><br><span class="line"></span><br><span class="line">KafkaProducer&lt;String, String&gt; producer = <span class="keyword">new</span> <span class="title class_">KafkaProducer</span>&lt;&gt;(properties);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Initialize transaction</span></span><br><span class="line">producer.initTransactions();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start transaction</span></span><br><span class="line">producer.beginTransaction();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// Send 10 messages to Kafka, if an error occurs, all messages will be aborted</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        producer.send(<span class="keyword">new</span> <span class="title class_">ProducerRecord</span>&lt;&gt;(<span class="string">&quot;topic-test&quot;</span>, <span class="string">&quot;a message &quot;</span> + i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Commit the transaction</span></span><br><span class="line">    producer.commitTransaction();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    <span class="comment">// Abort the transaction if any exception occurs</span></span><br><span class="line">    producer.abortTransaction();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    producer.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this code:</p>
+<ul>
+<li>The producer is configured with a <strong>transactional ID</strong>, which is essential for Kafka transactions.</li>
+<li>The producer starts a transaction with <code>beginTransaction()</code>.</li>
+<li>After sending messages, it commits the transaction using <code>commitTransaction()</code>. If any error occurs, the transaction is aborted with <code>abortTransaction()</code>.</li>
+</ul>
+<h4 id="3-2-How-Kafka-Transactions-Work"><a href="#3-2-How-Kafka-Transactions-Work" class="headerlink" title="3.2 How Kafka Transactions Work"></a>3.2 How Kafka Transactions Work</h4><p><a name="32-how-kafka-transactions-work"></a></p>
+<h5 id="1-Starting-the-Producer-and-Assigning-a-Transaction-Coordinator"><a href="#1-Starting-the-Producer-and-Assigning-a-Transaction-Coordinator" class="headerlink" title="1) Starting the Producer and Assigning a Transaction Coordinator"></a>1) Starting the Producer and Assigning a Transaction Coordinator</h5><p><a name="1-starting-the-producer-and-assigning-a-transaction-coordinator"></a></p>
+<p>When using transactions, the producer must be assigned a <strong>transactional ID</strong>. Upon startup, Kafka assigns a <strong>Transaction Coordinator</strong> based on this ID. Each Kafka broker has a transaction coordinator responsible for assigning <strong>Producer IDs (PIDs)</strong> and managing transactions.</p>
+<p>The allocation of a transaction coordinator involves a special Kafka topic <code>__transaction_state</code>, which by default has 50 partitions. Each partition is responsible for a portion of the transactions. Kafka calculates the hash of the transactional ID and assigns the producer to a specific partition, whose leader broker will become the transaction coordinator.</p>
+<p>After assigning a coordinator, the coordinator assigns a <strong>PID</strong> to the producer, allowing it to start sending messages.</p>
+<h5 id="2-Sending-Messages"><a href="#2-Sending-Messages" class="headerlink" title="2) Sending Messages"></a>2) Sending Messages</h5><p><a name="2-sending-messages"></a></p>
+<p>After receiving its PID, the producer informs the coordinator which partitions the transaction will target. Then, it starts sending messages. These messages are flagged as part of a transaction.</p>
+<p>Once the producer has sent all its transactional messages, it sends either a <strong>Commit</strong> or <strong>Abort</strong> request to the transaction coordinator, signaling the end of its task.</p>
+<h5 id="3-Committing-or-Aborting-the-Transaction"><a href="#3-Committing-or-Aborting-the-Transaction" class="headerlink" title="3) Committing or Aborting the Transaction"></a>3) Committing or Aborting the Transaction</h5><p><a name="3-committing-or-aborting-the-transaction"></a></p>
+<p>When the producer starts sending messages, the coordinator marks the beginning of the transaction and records it in the <code>__transaction_state</code> topic.</p>
+<p>Once all messages are sent, or in case of failure, the coordinator will receive a <strong>Commit</strong> or <strong>Abort</strong> request. The coordinator then communicates with all the topics involved in the transaction. If the transaction is successful, the topics confirm receipt of the messages, and the coordinator records the successful transaction.</p>
+<p>If the transaction fails, all messages related to the transaction are discarded, and the coordinator records the failure in <code>__transaction_state</code>.</p>
+<hr>
+<h3 id="4-Diagram-Kafka-Transaction-Flow"><a href="#4-Diagram-Kafka-Transaction-Flow" class="headerlink" title="4. Diagram: Kafka Transaction Flow"></a>4. Diagram: Kafka Transaction Flow</h3><p><a name="4-diagram-kafka-transaction-flow"></a></p>
+<p>Below is a diagram representing the Kafka transaction process:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------+        +----------------------+        +---------------------+</span><br><span class="line">|   Producer Starts         | -----&gt; | Assign Transaction   | -----&gt; | Send Messages to    |</span><br><span class="line">|   (with transactional ID) |        | Coordinator &amp; Assign |        | Partitions          |</span><br><span class="line">+---------------------------+        | PID                  |        +---------------------+</span><br><span class="line">                                     +----------------------+</span><br><span class="line"></span><br><span class="line">                                           |</span><br><span class="line">                                           |</span><br><span class="line">                                           v</span><br><span class="line">+------------------------+        +------------------------+        +----------------------+</span><br><span class="line">|   Transaction Begins   | -----&gt; | Send Commit/Abort      | -----&gt; | Coordinator Confirms |</span><br><span class="line">+------------------------+        | Request to Coordinator |        | Success or Failure   |</span><br><span class="line">                                  +------------------------+        +----------------------+</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>Producer Starts</strong>: The producer is assigned a transactional ID and a transaction coordinator.</li>
+<li><strong>Sending Messages</strong>: Messages are sent as part of the transaction.</li>
+<li><strong>Commit&#x2F;Abort</strong>: The producer sends a Commit or Abort request to the coordinator.</li>
+<li><strong>Confirmation</strong>: The coordinator confirms the success or failure of the transaction.</li>
+</ol>
+<hr>
+<h3 id="5-Conclusion"><a href="#5-Conclusion" class="headerlink" title="5. Conclusion"></a>5. Conclusion</h3><p><a name="5-conclusion"></a></p>
+<p>Kafka transactions are a powerful feature that enables atomic writes across multiple topics and partitions, ensuring either all messages succeed or all fail. Built on top of Kafka’s idempotence mechanism, Kafka transactions provide robust guarantees for message processing, making it a reliable tool for distributed systems.</p>
+<h3 id="Key-Takeaways"><a href="#Key-Takeaways" class="headerlink" title="Key Takeaways:"></a>Key Takeaways:</h3><ul>
+<li><strong>Idempotence</strong>: Ensures that messages are not duplicated, even with retries.</li>
+<li><strong>Transactions</strong>: Allow atomic writes across multiple topics and partitions.</li>
+<li><strong>Transaction Coordinator</strong>: Manages the lifecycle of transactions, including assigning PIDs and handling commit&#x2F;abort requests.</li>
+<li><strong>__transaction_state</strong>: Special Kafka topic that stores transaction metadata.</li>
+</ul>
+<p>By mastering these concepts, you can build robust and reliable Kafka-based applications that handle complex message processing scenarios with ease.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"><i class="fa fa-tag"></i> Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/23/Differences-Between-pem-csr-key-crt-and-Other-File-Extensions/" rel="prev" title="Differences Between pem csr key crt and Other File Extensions">
+                  <i class="fa fa-angle-left"></i> Differences Between pem csr key crt and Other File Extensions
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/23/Kafka-Producer-Tuning-Guide/" rel="next" title="Kafka Producer Tuning Guide">
+                  Kafka Producer Tuning Guide <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

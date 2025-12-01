@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Basic Dockerfile Structure Best Practices  Use Official Base Images  Minimize the Number of Layers  Leverage Multi-Stage Builds  Use .dockerignore  Avoid Installing Unnecessary Packages">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices for Writing Dockerfiles">
+<meta property="og:url" content="https://www.whereq.com/2024/11/03/Best-Practices-for-Writing-Dockerfiles/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Basic Dockerfile Structure Best Practices  Use Official Base Images  Minimize the Number of Layers  Leverage Multi-Stage Builds  Use .dockerignore  Avoid Installing Unnecessary Packages">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-03T18:44:24.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Best Practices">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/03/Best-Practices-for-Writing-Dockerfiles/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/03/Best-Practices-for-Writing-Dockerfiles/","path":"2024/11/03/Best-Practices-for-Writing-Dockerfiles/","title":"Best Practices for Writing Dockerfiles"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices for Writing Dockerfiles | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-Dockerfile-Structure"><span class="nav-number">2.</span> <span class="nav-text">Basic Dockerfile Structure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Best-Practices"><span class="nav-number">3.</span> <span class="nav-text">Best Practices</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Official-Base-Images"><span class="nav-number">3.1.</span> <span class="nav-text"> Use Official Base Images</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Minimize-the-Number-of-Layers"><span class="nav-number">3.2.</span> <span class="nav-text"> Minimize the Number of Layers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Leverage-Multi-Stage-Builds"><span class="nav-number">3.3.</span> <span class="nav-text"> Leverage Multi-Stage Builds</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-dockerignore"><span class="nav-number">3.4.</span> <span class="nav-text"> Use .dockerignore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Avoid-Installing-Unnecessary-Packages"><span class="nav-number">3.5.</span> <span class="nav-text"> Avoid Installing Unnecessary Packages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set-the-Working-Directory"><span class="nav-number">3.6.</span> <span class="nav-text"> Set the Working Directory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Environment-Variables"><span class="nav-number">3.7.</span> <span class="nav-text"> Use Environment Variables</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handle-Permissions"><span class="nav-number">3.8.</span> <span class="nav-text"> Handle Permissions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Control-Image-Size"><span class="nav-number">3.9.</span> <span class="nav-text"> Control Image Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Security-Best-Practices"><span class="nav-number">3.10.</span> <span class="nav-text"> Security Best Practices</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Proxy"><span class="nav-number">3.11.</span> <span class="nav-text"> Use Proxy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Scenarios"><span class="nav-number">4.</span> <span class="nav-text">Advanced Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><span class="nav-number">4.1.</span> <span class="nav-text"> Complex Scenario 1: Flow Control and Backpressure Handling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Complex-Scenario-2-Multi-Stage-Builds-for-Complex-Applications"><span class="nav-number">4.2.</span> <span class="nav-text"> Complex Scenario 2: Multi-Stage Builds for Complex Applications</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/Best-Practices-for-Writing-Dockerfiles/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices for Writing Dockerfiles | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices for Writing Dockerfiles
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-03 13:44:24" itemprop="dateCreated datePublished" datetime="2024-11-03T13:44:24-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#basic-dockerfile-structure">Basic Dockerfile Structure</a></li>
+<li><a href="#best-practices">Best Practices</a><ul>
+<li><a href="#-use-official-base-images"> Use Official Base Images</a></li>
+<li><a href="#-minimize-the-number-of-layers"> Minimize the Number of Layers</a></li>
+<li><a href="#-leverage-multi-stage-builds"> Leverage Multi-Stage Builds</a></li>
+<li><a href="#-use-dockerignore"> Use .dockerignore</a></li>
+<li><a href="#-avoid-installing-unnecessary-packages"> Avoid Installing Unnecessary Packages</a></li>
+<li><a href="#-set-the-working-directory"> Set the Working Directory</a></li>
+<li><a href="#-use-environment-variables"> Use Environment Variables</a></li>
+<li><a href="#-handle-permissions"> Handle Permissions</a></li>
+<li><a href="#-control-image-size"> Control Image Size</a></li>
+<li><a href="#-security-best-practices"> Security Best Practices</a></li>
+<li><a href="#-use-proxy"> Use Proxy</a></li>
+</ul>
+</li>
+<li><a href="#advanced-scenarios">Advanced Scenarios</a><ul>
+<li><a href="#-complex-scenario-1-flow-control-and-backpressure-handling"> Complex Scenario 1: Flow Control and Backpressure Handling</a></li>
+<li><a href="#-complex-scenario-2-multi-stage-builds-for-complex-applications"> Complex Scenario 2: Multi-Stage Builds for Complex Applications</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Dockerfiles are the blueprints for building Docker images. Writing efficient and secure Dockerfiles is crucial for creating lightweight, maintainable, and secure container images. This article provides a comprehensive guide to best practices for writing Dockerfiles, covering various scenarios such as minimizing image size, handling permissions, ensuring security, and using proxies.</p>
+<hr>
+<p><a name="basic-dockerfile-structure"></a></p>
+<h2 id="Basic-Dockerfile-Structure"><a href="#Basic-Dockerfile-Structure" class="headerlink" title="Basic Dockerfile Structure"></a>Basic Dockerfile Structure</h2><p>A typical Dockerfile consists of the following structure:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use an official base image</span></span><br><span class="line"><span class="keyword">FROM</span> &lt;base-image&gt;:&lt;tag&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the working directory</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copy application files</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Install dependencies</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> &lt;<span class="built_in">command</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Expose ports</span></span><br><span class="line"><span class="keyword">EXPOSE</span> &lt;port&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set environment variables</span></span><br><span class="line"><span class="keyword">ENV</span> &lt;key&gt;=&lt;value&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Define the command to run the application</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;&lt;command&gt;&quot;</span>, <span class="string">&quot;&lt;arg1&gt;&quot;</span>, <span class="string">&quot;&lt;arg2&gt;&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="best-practices"></a></p>
+<h2 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h2><h3 id="Use-Official-Base-Images"><a href="#Use-Official-Base-Images" class="headerlink" title=" Use Official Base Images"></a><a name="use-official-base-images"></a> Use Official Base Images</h3><p>Always use official base images from trusted sources. Official images are maintained by the Docker community and are regularly updated with security patches.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> python:<span class="number">3.9</span>-slim</span><br></pre></td></tr></table></figure>
+
+<h3 id="Minimize-the-Number-of-Layers"><a href="#Minimize-the-Number-of-Layers" class="headerlink" title=" Minimize the Number of Layers"></a><a name="minimize-the-number-of-layers"></a> Minimize the Number of Layers</h3><p>Each instruction in a Dockerfile creates a new layer. Minimize the number of layers by combining related commands into a single <code>RUN</code> instruction.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt-get install -y \</span></span><br><span class="line"><span class="language-bash">    package1 \</span></span><br><span class="line"><span class="language-bash">    package2 \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">rm</span> -rf /var/lib/apt/lists/*</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Leverage-Multi-Stage-Builds"><a href="#Leverage-Multi-Stage-Builds" class="headerlink" title=" Leverage Multi-Stage Builds"></a><a name="leverage-multi-stage-builds"></a> Leverage Multi-Stage Builds</h3><p>Use multi-stage builds to create smaller and more efficient images. This allows you to use a separate build environment for compiling and packaging your application.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Stage 1: Build environment</span></span><br><span class="line"><span class="keyword">FROM</span> golang:<span class="number">1.16</span> AS build</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> go build -o myapp .</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Stage 2: Production environment</span></span><br><span class="line"><span class="keyword">FROM</span> alpine:<span class="number">3.14</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=build /app/myapp .</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;./myapp&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Use-dockerignore"><a href="#Use-dockerignore" class="headerlink" title=" Use .dockerignore"></a><a name="use-dockerignore"></a> Use .dockerignore</h3><p>Use a <code>.dockerignore</code> file to exclude unnecessary files and directories from being copied into the Docker image. This reduces the image size and improves build performance.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.git</span><br><span class="line">node_modules</span><br><span class="line">*.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="Avoid-Installing-Unnecessary-Packages"><a href="#Avoid-Installing-Unnecessary-Packages" class="headerlink" title=" Avoid Installing Unnecessary Packages"></a><a name="avoid-installing-unnecessary-packages"></a> Avoid Installing Unnecessary Packages</h3><p>Only install the necessary packages required to run your application. Avoid installing development tools and dependencies that are not needed in the final image.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt-get install -y \</span></span><br><span class="line"><span class="language-bash">    curl \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">rm</span> -rf /var/lib/apt/lists/*</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Set-the-Working-Directory"><a href="#Set-the-Working-Directory" class="headerlink" title=" Set the Working Directory"></a><a name="set-the-working-directory"></a> Set the Working Directory</h3><p>Set the working directory using the <code>WORKDIR</code> instruction to avoid ambiguity and improve readability.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Use-Environment-Variables"><a href="#Use-Environment-Variables" class="headerlink" title=" Use Environment Variables"></a><a name="use-environment-variables"></a> Use Environment Variables</h3><p>Use environment variables to configure your application at runtime. This allows for easier configuration and flexibility.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENV</span> PORT=<span class="number">8080</span></span><br><span class="line"><span class="keyword">EXPOSE</span> $PORT</span><br></pre></td></tr></table></figure>
+
+<h3 id="Handle-Permissions"><a href="#Handle-Permissions" class="headerlink" title=" Handle Permissions"></a><a name="handle-permissions"></a> Handle Permissions</h3><p>Ensure that the application runs with the appropriate permissions. Avoid running the application as the root user.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> useradd -ms /bin/bash appuser</span></span><br><span class="line"><span class="keyword">USER</span> appuser</span><br></pre></td></tr></table></figure>
+
+<h3 id="Control-Image-Size"><a href="#Control-Image-Size" class="headerlink" title=" Control Image Size"></a><a name="control-image-size"></a> Control Image Size</h3><p>Minimize the image size by removing unnecessary files and using lightweight base images.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine:<span class="number">3.14</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apk add --no-cache &lt;package&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Security-Best-Practices"><a href="#Security-Best-Practices" class="headerlink" title=" Security Best Practices"></a><a name="security-best-practices"></a> Security Best Practices</h3><ul>
+<li><strong>Use Minimal Base Images</strong>: Use minimal base images that contain only the necessary components.</li>
+<li><strong>Regularly Update Dependencies</strong>: Regularly update dependencies to ensure security patches are applied.</li>
+<li><strong>Scan for Vulnerabilities</strong>: Use tools like <code>docker scan</code> to scan images for vulnerabilities.</li>
+<li><strong>Avoid Storing Secrets</strong>: Avoid storing secrets in Dockerfiles. Use environment variables or secret management tools.</li>
+</ul>
+<h3 id="Use-Proxy"><a href="#Use-Proxy" class="headerlink" title=" Use Proxy"></a><a name="use-proxy"></a> Use Proxy</h3><p>If your build environment requires a proxy, set the proxy settings in the Dockerfile.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENV</span> http_proxy=http://proxy.example.com:<span class="number">8080</span></span><br><span class="line"><span class="keyword">ENV</span> https_proxy=http://proxy.example.com:<span class="number">8080</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="advanced-scenarios"></a></p>
+<h2 id="Advanced-Scenarios"><a href="#Advanced-Scenarios" class="headerlink" title="Advanced Scenarios"></a>Advanced Scenarios</h2><h3 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title=" Complex Scenario 1: Flow Control and Backpressure Handling"></a><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a> Complex Scenario 1: Flow Control and Backpressure Handling</h3><p>In scenarios where your application needs to handle flow control and backpressure, you can use environment variables to configure the behavior.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENV</span> MAX_CONNECTIONS=<span class="number">100</span></span><br><span class="line"><span class="keyword">ENV</span> BACKPRESSURE_THRESHOLD=<span class="number">50</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Complex-Scenario-2-Multi-Stage-Builds-for-Complex-Applications"><a href="#Complex-Scenario-2-Multi-Stage-Builds-for-Complex-Applications" class="headerlink" title=" Complex Scenario 2: Multi-Stage Builds for Complex Applications"></a><a name="complex-scenario-2-multi-stage-builds-for-complex-applications"></a> Complex Scenario 2: Multi-Stage Builds for Complex Applications</h3><p>For complex applications, use multi-stage builds to separate build dependencies from runtime dependencies.</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Stage 1: Build environment</span></span><br><span class="line"><span class="keyword">FROM</span> maven:<span class="number">3.8</span>.<span class="number">3</span>-openjdk-<span class="number">17</span> AS build</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> pom.xml .</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> src ./src</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> mvn clean package</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Stage 2: Production environment</span></span><br><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">17</span>-slim</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=build /app/target/myapp.jar .</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;myapp.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Writing efficient and secure Dockerfiles is essential for creating lightweight, maintainable, and secure container images. By following the best practices outlined in this article, you can minimize image size, handle permissions, ensure security, and use proxies effectively.</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">Dockerfile Best Practices</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/develop/develop-images/multistage-build/">Multi-Stage Builds</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/security/">Docker Security Best Practices</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/">Dockerfile Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/#dockerignore-file">Docker .dockerignore File</a></li>
+</ol>
+<p>By following these best practices, you can create Docker images that are efficient, secure, and maintainable.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Best-Practices/" rel="tag"><i class="fa fa-tag"></i> Best Practices</a>
+              <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Deep-Dive-into-Kubectl-port-forward/" rel="prev" title="Deep Dive into Kubectl port-forward">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Kubectl port-forward
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Using-Docker-in-Application-Development/" rel="next" title="Best Practices of Using Docker in Application Development">
+                  Best Practices of Using Docker in Application Development <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

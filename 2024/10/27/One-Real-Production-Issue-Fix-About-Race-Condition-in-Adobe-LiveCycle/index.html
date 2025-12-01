@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Introduction 2. Real-Life Production Issue 3. What is a Race Condition? Example:   4. How Race Conditions Occur in Apache Velocity Key Factors:   5. Example Scenario Code Example:   6. Solutions t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One Real Production Issue Fix About Race Condition in Adobe LiveCycle">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. Introduction 2. Real-Life Production Issue 3. What is a Race Condition? Example:   4. How Race Conditions Occur in Apache Velocity Key Factors:   5. Example Scenario Code Example:   6. Solutions t">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-27T22:48:58.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Weird Issue">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/","path":"2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/","title":"One Real Production Issue Fix About Race Condition in Adobe LiveCycle"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>One Real Production Issue Fix About Race Condition in Adobe LiveCycle | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Real-Life-Production-Issue"><span class="nav-number">2.</span> <span class="nav-text">2. Real-Life Production Issue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-What-is-a-Race-Condition"><span class="nav-number">3.</span> <span class="nav-text">3. What is a Race Condition?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">3.1.</span> <span class="nav-text">Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-How-Race-Conditions-Occur-in-Apache-Velocity"><span class="nav-number">4.</span> <span class="nav-text">4. How Race Conditions Occur in Apache Velocity</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Factors"><span class="nav-number">4.1.</span> <span class="nav-text">Key Factors:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Example-Scenario"><span class="nav-number">5.</span> <span class="nav-text">5. Example Scenario</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-Example"><span class="nav-number">5.1.</span> <span class="nav-text">Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Solutions-to-Race-Conditions"><span class="nav-number">6.</span> <span class="nav-text">6. Solutions to Race Conditions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Use-a-Thread-Safe-Velocity-Engine"><span class="nav-number">6.1.</span> <span class="nav-text">1. Use a Thread-Safe Velocity Engine</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Synchronization"><span class="nav-number">6.2.</span> <span class="nav-text">2. Synchronization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Connection-Pooling"><span class="nav-number">6.3.</span> <span class="nav-text">3. Connection Pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Lightweight-Objects"><span class="nav-number">6.4.</span> <span class="nav-text">4. Lightweight Objects</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Sample-Code-and-Configuration"><span class="nav-number">7.</span> <span class="nav-text">7. Sample Code and Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuration-Example"><span class="nav-number">7.1.</span> <span class="nav-text">Configuration Example:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Verifying-the-Configuration"><span class="nav-number">7.2.</span> <span class="nav-text">Verifying the Configuration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Conclusion"><span class="nav-number">8.</span> <span class="nav-text">8. Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="One Real Production Issue Fix About Race Condition in Adobe LiveCycle | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          One Real Production Issue Fix About Race Condition in Adobe LiveCycle
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 18:48:58" itemprop="dateCreated datePublished" datetime="2024-10-27T18:48:58-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Weird-Issue/" itemprop="url" rel="index"><span itemprop="name">Weird Issue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-real-life-production-issue">2. Real-Life Production Issue</a></li>
+<li><a href="#3-what-is-a-race-condition">3. What is a Race Condition?</a><ul>
+<li><a href="#example">Example:</a></li>
+</ul>
+</li>
+<li><a href="#4-how-race-conditions-occur-in-apache-velocity">4. How Race Conditions Occur in Apache Velocity</a><ul>
+<li><a href="#key-factors">Key Factors:</a></li>
+</ul>
+</li>
+<li><a href="#5-example-scenario">5. Example Scenario</a><ul>
+<li><a href="#code-example">Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#6-solutions-to-race-conditions">6. Solutions to Race Conditions</a><ul>
+<li><a href="#1-use-a-thread-safe-velocity-engine">1. Use a Thread-Safe Velocity Engine</a></li>
+<li><a href="#2-synchronization">2. Synchronization</a></li>
+<li><a href="#3-connection-pooling">3. Connection Pooling</a></li>
+<li><a href="#4-lightweight-objects">4. Lightweight Objects</a></li>
+</ul>
+</li>
+<li><a href="#7-sample-code-and-configuration">7. Sample Code and Configuration</a><ul>
+<li><a href="#configuration-example">Configuration Example:</a></li>
+<li><a href="#verifying-the-configuration">Verifying the Configuration</a></li>
+</ul>
+</li>
+<li><a href="#8-conclusion">8. Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>In software development, race conditions can lead to unpredictable behavior, particularly in multi-threaded environments. This article explores race conditions, particularly in the context of using the Apache Velocity templating engine, and provides insights into avoiding such issues in production systems.</p>
+<p><a name="real-life-production-issue"></a></p>
+<h2 id="2-Real-Life-Production-Issue"><a href="#2-Real-Life-Production-Issue" class="headerlink" title="2. Real-Life Production Issue"></a>2. Real-Life Production Issue</h2><p>During my time at a major telecommunications company, I was involved in a project that utilized Apache Velocity within Adobe LiveCycle to generate PDFs from templates. Although PDF generation had been functioning smoothly, we encountered a serious issue in the production environment where, on certain days each month, PDF generation would intermittently result in <code>NullPointerExceptions</code> (NPEs). </p>
+<p>The production environment was more robust than development and UAT, resulting in higher concurrency levels. The frequent NPEs led to the application needing to be rebooted to restore functionality. Initial investigations did not yield immediate clues, as the errors stemmed deep within the Adobe LiveCycle source code, obscuring the connection to Apache Velocity. </p>
+<p>Despite increasing system resources and tuning the template generator’s maximum thread limit, the issue persisted and even worsened. After extensive debugging, including analyzing process dumps during PDF rendering and testing various concurrency scenarios, I identified that the root cause was tied to the <code>VelocityEngine</code>. This engine was being instantiated for every template rendering request, leading to <code>Race Conditions</code> due to concurrent access.</p>
+<p><a name="what-is-a-race-condition"></a></p>
+<h2 id="3-What-is-a-Race-Condition"><a href="#3-What-is-a-Race-Condition" class="headerlink" title="3. What is a Race Condition?"></a>3. What is a Race Condition?</h2><p>A race condition occurs when multiple threads or processes attempt to change shared data at the same time. This can lead to inconsistent results, unexpected behavior, or application crashes, particularly when the sequence of thread execution is not managed correctly.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h3><p>Imagine two threads updating the same bank account balance simultaneously. If both threads read the current balance before either has written back the new balance, one thread’s update could overwrite the other, leading to a final balance that doesn’t reflect both transactions.</p>
+<p><a name="how-race-conditions-occur-in-apache-velocity"></a></p>
+<h2 id="4-How-Race-Conditions-Occur-in-Apache-Velocity"><a href="#4-How-Race-Conditions-Occur-in-Apache-Velocity" class="headerlink" title="4. How Race Conditions Occur in Apache Velocity"></a>4. How Race Conditions Occur in Apache Velocity</h2><p>In the case of Apache Velocity, the <code>VelocityEngine</code> is not thread-safe by default. If multiple threads instantiate and manipulate the same <code>VelocityEngine</code> instance concurrently, it can lead to race conditions and unpredictable behaviors, such as <code>NullPointerExceptions</code>. This is particularly critical in a high-throughput environment, such as the one experienced in the production instance at Rogers.</p>
+<h3 id="Key-Factors"><a href="#Key-Factors" class="headerlink" title="Key Factors:"></a>Key Factors:</h3><ul>
+<li><strong>Multiple Concurrent Requests</strong>: In high-concurrency scenarios, simultaneous requests can create contention for resources managed by shared instances.</li>
+<li><strong>Stateful Objects</strong>: Objects like <code>VelocityEngine</code> that maintain state can exhibit unexpected behaviors when accessed by multiple threads.</li>
+</ul>
+<p><a name="example-scenario"></a></p>
+<h2 id="5-Example-Scenario"><a href="#5-Example-Scenario" class="headerlink" title="5. Example Scenario"></a>5. Example Scenario</h2><p>In our case, PDF generation would involve creating a <code>VelocityEngine</code> instance for each template rendering request. The absence of synchronization or proper handling of concurrent requests led to conditions where one thread’s updates conflicted with another’s, causing NPEs during PDF rendering.</p>
+<h3 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example:"></a>Code Example:</h3><p>Here’s a simplified representation of how <code>VelocityEngine</code> was used improperly:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line">        engine.init();</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, every call to <code>generatePdf</code> creates a new instance of <code>VelocityEngine</code>, leading to potential race conditions.</p>
+<p><a name="solutions-to-race-conditions"></a></p>
+<h2 id="6-Solutions-to-Race-Conditions"><a href="#6-Solutions-to-Race-Conditions" class="headerlink" title="6. Solutions to Race Conditions"></a>6. Solutions to Race Conditions</h2><p>To mitigate race conditions in Apache Velocity, several approaches can be employed:</p>
+<h3 id="1-Use-a-Thread-Safe-Velocity-Engine"><a href="#1-Use-a-Thread-Safe-Velocity-Engine" class="headerlink" title="1. Use a Thread-Safe Velocity Engine"></a>1. Use a Thread-Safe Velocity Engine</h3><p>Utilize a single shared instance of <code>VelocityEngine</code>, initialized once and reused across multiple requests.</p>
+<h3 id="2-Synchronization"><a href="#2-Synchronization" class="headerlink" title="2. Synchronization"></a>2. Synchronization</h3><p>Wrap access to the <code>VelocityEngine</code> in synchronized blocks to ensure that only one thread can access it at a time.</p>
+<h3 id="3-Connection-Pooling"><a href="#3-Connection-Pooling" class="headerlink" title="3. Connection Pooling"></a>3. Connection Pooling</h3><p>Implement connection pooling for managing <code>VelocityEngine</code> instances, allowing for better resource management and concurrency handling.</p>
+<h3 id="4-Lightweight-Objects"><a href="#4-Lightweight-Objects" class="headerlink" title="4. Lightweight Objects"></a>4. Lightweight Objects</h3><p>If possible, use lighter objects that do not maintain state or can be safely reused.</p>
+<p><a name="sample-code-and-configuration"></a></p>
+<h2 id="7-Sample-Code-and-Configuration"><a href="#7-Sample-Code-and-Configuration" class="headerlink" title="7. Sample Code and Configuration"></a>7. Sample Code and Configuration</h2><p>Here’s an improved approach using a singleton <code>VelocityEngine</code> instance:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.velocity.app.VelocityEngine;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.ResourceManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.velocity.runtime.resource.Resource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PdfGenerator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">VelocityEngine</span> <span class="variable">engine</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VelocityEngine</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        engine.init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generatePdf</span><span class="params">(String template, Map&lt;String, Object&gt; context)</span> &#123;</span><br><span class="line">        <span class="type">Template</span> <span class="variable">tpl</span> <span class="operator">=</span> engine.getTemplate(template);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Merging context with template</span></span><br><span class="line">        <span class="type">StringWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringWriter</span>();</span><br><span class="line">        tpl.merge(<span class="keyword">new</span> <span class="title class_">VelocityContext</span>(context), writer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Further PDF generation logic...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuration-Example"><a href="#Configuration-Example" class="headerlink" title="Configuration Example:"></a>Configuration Example:</h3><p>To ensure that the <code>VelocityEngine</code> is properly configured, the following configuration might be included:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># velocity.properties</span></span><br><span class="line"><span class="attr">resource.loader</span> = <span class="string">file</span></span><br><span class="line"><span class="attr">file.resource.loader.path</span> = <span class="string">/path/to/templates</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Verifying-the-Configuration"><a href="#Verifying-the-Configuration" class="headerlink" title="Verifying the Configuration"></a>Verifying the Configuration</h3><p>To check if the <code>VelocityEngine</code> is initialized properly and functioning as expected:</p>
+<ul>
+<li><strong>Logging</strong>: Enable logging within the Velocity framework to capture initialization events and errors.</li>
+<li><strong>Unit Tests</strong>: Implement unit tests that trigger concurrent PDF generation requests and verify output consistency.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="8-Conclusion"><a href="#8-Conclusion" class="headerlink" title="8. Conclusion"></a>8. Conclusion</h2><p>Race conditions in multi-threaded environments, especially when using libraries like Apache Velocity, can lead to severe application issues. Understanding how these conditions arise and employing strategies to mitigate them is crucial for building robust systems. By adopting best practices, such as using a singleton <code>VelocityEngine</code>, synchronizing access, and implementing pooling strategies, developers can significantly reduce the likelihood of encountering race conditions, ensuring smooth operation even under high-load scenarios.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Weird-Issue/" rel="tag"><i class="fa fa-tag"></i> Weird Issue</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Race-Conditions-in-Apache-Velocity/" rel="prev" title="Race Conditions in Apache Velocity">
+                  <i class="fa fa-angle-left"></i> Race Conditions in Apache Velocity
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/" rel="next" title="Deep Dive into Finding Numbers in Strings with Python">
+                  Deep Dive into Finding Numbers in Strings with Python <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

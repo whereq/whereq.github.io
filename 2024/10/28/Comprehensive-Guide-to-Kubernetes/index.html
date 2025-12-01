@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Cluster Node Pod Deployment Service Ingress ConfigMap Secret Persistent Volume (PV) and Persistent Volume Claim (PVC) Namespace DaemonSet Job and CronJob Horizontal Pod Autoscaler (HPA) StatefulSet V">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Comprehensive Guide to Kubernetes">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Comprehensive-Guide-to-Kubernetes/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Cluster Node Pod Deployment Service Ingress ConfigMap Secret Persistent Volume (PV) and Persistent Volume Claim (PVC) Namespace DaemonSet Job and CronJob Horizontal Pod Autoscaler (HPA) StatefulSet V">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T15:51:24.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Comprehensive-Guide-to-Kubernetes/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Comprehensive-Guide-to-Kubernetes/","path":"2024/10/28/Comprehensive-Guide-to-Kubernetes/","title":"Comprehensive Guide to Kubernetes"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Comprehensive Guide to Kubernetes | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cluster"><span class="nav-number">1.</span> <span class="nav-text">Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">1.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case"><span class="nav-number">1.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Cluster-Creation"><span class="nav-number">1.2.1.</span> <span class="nav-text">YAML Structure for Cluster Creation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Node"><span class="nav-number">2.</span> <span class="nav-text">Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-1"><span class="nav-number">2.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-1"><span class="nav-number">2.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Snippet"><span class="nav-number">2.2.1.</span> <span class="nav-text">YAML Snippet</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pod"><span class="nav-number">3.</span> <span class="nav-text">Pod</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-2"><span class="nav-number">3.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-2"><span class="nav-number">3.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Pod"><span class="nav-number">3.2.1.</span> <span class="nav-text">YAML Structure for Pod</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deployment"><span class="nav-number">4.</span> <span class="nav-text">Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-3"><span class="nav-number">4.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-3"><span class="nav-number">4.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Deployment"><span class="nav-number">4.2.1.</span> <span class="nav-text">YAML Structure for Deployment</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service"><span class="nav-number">5.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-4"><span class="nav-number">5.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-4"><span class="nav-number">5.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Service"><span class="nav-number">5.2.1.</span> <span class="nav-text">YAML Structure for Service</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ingress"><span class="nav-number">6.</span> <span class="nav-text">Ingress</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-5"><span class="nav-number">6.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-5"><span class="nav-number">6.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Ingress"><span class="nav-number">6.2.1.</span> <span class="nav-text">YAML Structure for Ingress</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConfigMap"><span class="nav-number">7.</span> <span class="nav-text">ConfigMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-6"><span class="nav-number">7.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-6"><span class="nav-number">7.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-ConfigMap"><span class="nav-number">7.2.1.</span> <span class="nav-text">YAML Structure for ConfigMap</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Secret"><span class="nav-number">8.</span> <span class="nav-text">Secret</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-7"><span class="nav-number">8.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-7"><span class="nav-number">8.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Secret"><span class="nav-number">8.2.1.</span> <span class="nav-text">YAML Structure for Secret</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Persistent-Volume-PV-and-Persistent-Volume-Claim-PVC"><span class="nav-number">9.</span> <span class="nav-text">Persistent Volume (PV) and Persistent Volume Claim (PVC)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-8"><span class="nav-number">9.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-8"><span class="nav-number">9.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-PV-and-PVC"><span class="nav-number">9.2.1.</span> <span class="nav-text">YAML Structure for PV and PVC</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Namespace"><span class="nav-number">10.</span> <span class="nav-text">Namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-9"><span class="nav-number">10.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-9"><span class="nav-number">10.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Namespace"><span class="nav-number">10.2.1.</span> <span class="nav-text">YAML Structure for Namespace</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DaemonSet"><span class="nav-number">11.</span> <span class="nav-text">DaemonSet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-10"><span class="nav-number">11.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-10"><span class="nav-number">11.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-DaemonSet"><span class="nav-number">11.2.1.</span> <span class="nav-text">YAML Structure for DaemonSet</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Job-and-CronJob"><span class="nav-number">12.</span> <span class="nav-text">Job and CronJob</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-11"><span class="nav-number">12.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-11"><span class="nav-number">12.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-Job-and-CronJob"><span class="nav-number">12.2.1.</span> <span class="nav-text">YAML Structure for Job and CronJob</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Horizontal-Pod-Autoscaler-HPA"><span class="nav-number">13.</span> <span class="nav-text">Horizontal Pod Autoscaler (HPA)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-12"><span class="nav-number">13.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-12"><span class="nav-number">13.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-HPA"><span class="nav-number">13.2.1.</span> <span class="nav-text">YAML Structure for HPA</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StatefulSet"><span class="nav-number">14.</span> <span class="nav-text">StatefulSet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-13"><span class="nav-number">14.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-13"><span class="nav-number">14.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-StatefulSet"><span class="nav-number">14.2.1.</span> <span class="nav-text">YAML Structure for StatefulSet</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Volume-and-StorageClass"><span class="nav-number">15.</span> <span class="nav-text">Volume and StorageClass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-14"><span class="nav-number">15.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-14"><span class="nav-number">15.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-StorageClass-and-Volume"><span class="nav-number">15.2.1.</span> <span class="nav-text">YAML Structure for StorageClass and Volume</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NetworkPolicy"><span class="nav-number">16.</span> <span class="nav-text">NetworkPolicy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-15"><span class="nav-number">16.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-15"><span class="nav-number">16.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-NetworkPolicy"><span class="nav-number">16.2.1.</span> <span class="nav-text">YAML Structure for NetworkPolicy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Custom-Resource-Definitions-CRDs"><span class="nav-number">17.</span> <span class="nav-text">Custom Resource Definitions (CRDs)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-16"><span class="nav-number">17.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-16"><span class="nav-number">17.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#YAML-Structure-for-CRD"><span class="nav-number">17.2.1.</span> <span class="nav-text">YAML Structure for CRD</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Helm-Charts"><span class="nav-number">18.</span> <span class="nav-text">Helm Charts</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-17"><span class="nav-number">18.1.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-17"><span class="nav-number">18.2.</span> <span class="nav-text">Use Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Helm-Command"><span class="nav-number">18.2.1.</span> <span class="nav-text">Example Helm Command</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Comprehensive-Guide-to-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Comprehensive Guide to Kubernetes | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Comprehensive Guide to Kubernetes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 11:51:24" itemprop="dateCreated datePublished" datetime="2024-10-28T11:51:24-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#cluster">Cluster</a></li>
+<li><a href="#node">Node</a></li>
+<li><a href="#pod">Pod</a></li>
+<li><a href="#deployment">Deployment</a></li>
+<li><a href="#service">Service</a></li>
+<li><a href="#ingress">Ingress</a></li>
+<li><a href="#configmap">ConfigMap</a></li>
+<li><a href="#secret">Secret</a></li>
+<li><a href="#persistent-volume-pv-and-persistent-volume-claim-pvc">Persistent Volume (PV) and Persistent Volume Claim (PVC)</a></li>
+<li><a href="#namespace">Namespace</a></li>
+<li><a href="#daemonset">DaemonSet</a></li>
+<li><a href="#job-and-cronjob">Job and CronJob</a></li>
+<li><a href="#horizontal-pod-autoscaler-hpa">Horizontal Pod Autoscaler (HPA)</a></li>
+<li><a href="#statefulset">StatefulSet</a></li>
+<li><a href="#volume-and-storageclass">Volume and StorageClass</a></li>
+<li><a href="#networkpolicy">NetworkPolicy</a></li>
+<li><a href="#custom-resource-definitions-crds">Custom Resource Definitions (CRDs)</a></li>
+<li><a href="#helm-charts">Helm Charts</a></li>
+</ul>
+<hr>
+<p>This guide provides a detailed overview of Kubernetes concepts, examples, use cases, installation YAML examples, and visual representations of the architecture. </p>
+<p><a name="cluster"></a></p>
+<h2 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h2><p>A <strong>Kubernetes Cluster</strong> is a group of nodes (machines) that host and manage containerized applications. Each cluster has at least one master node, which controls the state of the cluster, and multiple worker nodes.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><p>A cloud-based cluster with one master node and multiple worker nodes in Google Kubernetes Engine (GKE).</p>
+<h3 id="Use-Case"><a href="#Use-Case" class="headerlink" title="Use Case"></a>Use Case</h3><p>An ideal setup for running a production microservices application with high availability.</p>
+<h4 id="YAML-Structure-for-Cluster-Creation"><a href="#YAML-Structure-for-Cluster-Creation" class="headerlink" title="YAML Structure for Cluster Creation"></a>YAML Structure for Cluster Creation</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kind.x-k8s.io/v1alpha4</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Cluster</span></span><br><span class="line"><span class="attr">nodes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">control-plane</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">worker</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">worker</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">worker</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="node"></a></p>
+<h2 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h2><p>A <strong>Node</strong> is a single machine within a Kubernetes cluster, capable of running one or more pods.</p>
+<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example"></a>Example</h3><p>In a cloud environment, each node could be a virtual machine instance.</p>
+<h3 id="Use-Case-1"><a href="#Use-Case-1" class="headerlink" title="Use Case"></a>Use Case</h3><p>Nodes distribute workloads across the infrastructure.</p>
+<h4 id="YAML-Snippet"><a href="#YAML-Snippet" class="headerlink" title="YAML Snippet"></a>YAML Snippet</h4><p>The node configuration is usually specified by the cluster management tool (e.g., GKE or EKS) rather than in YAML, as it pertains to the infrastructure layer.</p>
+<hr>
+<p><a name="pod"></a></p>
+<h2 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h2><p>A <strong>Pod</strong> is the smallest deployable unit in Kubernetes, which can contain one or more containers.</p>
+<h3 id="Example-2"><a href="#Example-2" class="headerlink" title="Example"></a>Example</h3><p>A pod running a web server container and a logging container.</p>
+<h3 id="Use-Case-2"><a href="#Use-Case-2" class="headerlink" title="Use Case"></a>Use Case</h3><p>Running tightly coupled applications together within the same lifecycle.</p>
+<h4 id="YAML-Structure-for-Pod"><a href="#YAML-Structure-for-Pod" class="headerlink" title="YAML Structure for Pod"></a>YAML Structure for Pod</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-server-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web-server</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">logger</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">fluentd</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="deployment"></a></p>
+<h2 id="Deployment"><a href="#Deployment" class="headerlink" title="Deployment"></a>Deployment</h2><p>A <strong>Deployment</strong> is a Kubernetes object for managing a group of identical pods. It provides capabilities like rolling updates and rollback.</p>
+<h3 id="Example-3"><a href="#Example-3" class="headerlink" title="Example"></a>Example</h3><p>A deployment with three replicas of a web server pod.</p>
+<h3 id="Use-Case-3"><a href="#Use-Case-3" class="headerlink" title="Use Case"></a>Use Case</h3><p>Maintaining a stable version of an application by managing pod replicas.</p>
+<h4 id="YAML-Structure-for-Deployment"><a href="#YAML-Structure-for-Deployment" class="headerlink" title="YAML Structure for Deployment"></a>YAML Structure for Deployment</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.17.4</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="service"></a></p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>A <strong>Service</strong> provides a stable endpoint for accessing a set of pods.</p>
+<h3 id="Example-4"><a href="#Example-4" class="headerlink" title="Example"></a>Example</h3><p>A service that exposes an application to the public internet.</p>
+<h3 id="Use-Case-4"><a href="#Use-Case-4" class="headerlink" title="Use Case"></a>Use Case</h3><p>Load balancing traffic to an application across multiple pods.</p>
+<h4 id="YAML-Structure-for-Service"><a href="#YAML-Structure-for-Service" class="headerlink" title="YAML Structure for Service"></a>YAML Structure for Service</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="ingress"></a></p>
+<h2 id="Ingress"><a href="#Ingress" class="headerlink" title="Ingress"></a>Ingress</h2><p><strong>Ingress</strong> manages external access to services, typically using HTTP.</p>
+<h3 id="Example-5"><a href="#Example-5" class="headerlink" title="Example"></a>Example</h3><p>An ingress with rules to route traffic to different services based on URL paths.</p>
+<h3 id="Use-Case-5"><a href="#Use-Case-5" class="headerlink" title="Use Case"></a>Use Case</h3><p>Routing <code>/api</code> to backend services and <code>/static</code> to frontend services on the same domain.</p>
+<h4 id="YAML-Structure-for-Ingress"><a href="#YAML-Structure-for-Ingress" class="headerlink" title="YAML Structure for Ingress"></a>YAML Structure for Ingress</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">example-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/api</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">api-service</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/static</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">static-service</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="configmap"></a></p>
+<h2 id="ConfigMap"><a href="#ConfigMap" class="headerlink" title="ConfigMap"></a>ConfigMap</h2><p>A <strong>ConfigMap</strong> stores non-sensitive configuration data.</p>
+<h3 id="Example-6"><a href="#Example-6" class="headerlink" title="Example"></a>Example</h3><p>A ConfigMap for environment-specific variables.</p>
+<h3 id="Use-Case-6"><a href="#Use-Case-6" class="headerlink" title="Use Case"></a>Use Case</h3><p>Keeping configuration separate from the application code.</p>
+<h4 id="YAML-Structure-for-ConfigMap"><a href="#YAML-Structure-for-ConfigMap" class="headerlink" title="YAML Structure for ConfigMap"></a>YAML Structure for ConfigMap</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">config-demo</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">DATABASE_URL:</span> <span class="string">&quot;jdbc:mysql://dbhost:3306/mydatabase&quot;</span></span><br><span class="line">  <span class="attr">DEBUG_LEVEL:</span> <span class="string">&quot;3&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="secret"></a></p>
+<h2 id="Secret"><a href="#Secret" class="headerlink" title="Secret"></a>Secret</h2><p>A <strong>Secret</strong> stores sensitive information, like passwords and tokens.</p>
+<h3 id="Example-7"><a href="#Example-7" class="headerlink" title="Example"></a>Example</h3><p>A secret containing API keys for external services.</p>
+<h3 id="Use-Case-7"><a href="#Use-Case-7" class="headerlink" title="Use Case"></a>Use Case</h3><p>Securing sensitive data without exposing it in the code.</p>
+<h4 id="YAML-Structure-for-Secret"><a href="#YAML-Structure-for-Secret" class="headerlink" title="YAML Structure for Secret"></a>YAML Structure for Secret</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Secret</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">api-key-secret</span></span><br><span class="line"><span class="attr">type:</span> <span class="string">Opaque</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">api-key:</span> <span class="string">c29tZS1yYW5kb20ta2V5Cg==</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="persistent-volume-pv-and-persistent-volume-claim-pvc"></a></p>
+<h2 id="Persistent-Volume-PV-and-Persistent-Volume-Claim-PVC"><a href="#Persistent-Volume-PV-and-Persistent-Volume-Claim-PVC" class="headerlink" title="Persistent Volume (PV) and Persistent Volume Claim (PVC)"></a>Persistent Volume (PV) and Persistent Volume Claim (PVC)</h2><p>A <strong>Persistent Volume</strong> provides storage, while a <strong>Persistent Volume Claim</strong> is a request for that storage.</p>
+<h3 id="Example-8"><a href="#Example-8" class="headerlink" title="Example"></a>Example</h3><p>A PV representing cloud disk storage and a PVC used by a database pod.</p>
+<h3 id="Use-Case-8"><a href="#Use-Case-8" class="headerlink" title="Use Case"></a>Use Case</h3><p>Ensuring data persistence for applications that require durable storage.</p>
+<h4 id="YAML-Structure-for-PV-and-PVC"><a href="#YAML-Structure-for-PV-and-PVC" class="headerlink" title="YAML Structure for PV and PVC"></a>YAML Structure for PV and PVC</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pv-storage</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">hostPath:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">&quot;/mnt/data&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pvc-storage</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">8Gi</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="namespace"></a></p>
+<h2 id="Namespace"><a href="#Namespace" class="headerlink" title="Namespace"></a>Namespace</h2><p>A <strong>Namespace</strong> is a way to divide cluster resources among multiple users.</p>
+<h3 id="Example-9"><a href="#Example-9" class="headerlink" title="Example"></a>Example</h3><p>Separate namespaces for development, staging, and production environments.</p>
+<h3 id="Use-Case-9"><a href="#Use-Case-9" class="headerlink" title="Use Case"></a>Use Case</h3><p>Organizing resources for different environments or teams.</p>
+<h4 id="YAML-Structure-for-Namespace"><a href="#YAML-Structure-for-Namespace" class="headerlink" title="YAML Structure for Namespace"></a>YAML Structure for Namespace</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dev-environment</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="daemonset"></a></p>
+<h2 id="DaemonSet"><a href="#DaemonSet" class="headerlink" title="DaemonSet"></a>DaemonSet</h2><p>A <strong>DaemonSet</strong> ensures that specific pods run on each node.</p>
+<h3 id="Example-10"><a href="#Example-10" class="headerlink" title="Example"></a>Example</h3><p>Running a logging agent on every node in the cluster.</p>
+<h3 id="Use-Case-10"><a href="#Use-Case-10" class="headerlink" title="Use Case"></a>Use Case</h3><p>Managing node-wide services like logging or monitoring.</p>
+<h4 id="YAML-Structure-for-DaemonSet"><a href="#YAML-Structure-for-DaemonSet" class="headerlink" title="YAML Structure for DaemonSet"></a>YAML Structure for DaemonSet</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">logger</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">logger</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">logger</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">fluentd</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">fluent/fluentd</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="job-and-cronjob"></a></p>
+<h2 id="Job-and-CronJob"><a href="#Job-and-CronJob" class="headerlink" title="Job and CronJob"></a>Job and CronJob</h2><p><strong>Job</strong> runs a one-time task, while <strong>CronJob</strong> schedules a recurring task.</p>
+<h3 id="Example-11"><a href="#Example-11" class="headerlink" title="Example"></a>Example</h3><p>A Job to back up a database once and a CronJob to clean up logs daily.</p>
+<h3 id="Use-Case-11"><a href="#Use-Case-11" class="headerlink" title="Use Case"></a>Use Case</h3><p>Automating scheduled tasks or batch processing.</p>
+<h4 id="YAML-Structure-for-Job-and-CronJob"><a href="#YAML-Structure-for-Job-and-CronJob" class="headerlink" title="YAML Structure for Job and CronJob"></a>YAML Structure for Job and CronJob</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Job</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">backup-job</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">backup</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">backup-tool</span></span><br><span class="line">      <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">daily-cleanup</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">schedule:</span> <span class="string">&quot;0 0 * * *&quot;</span></span><br><span class="line">  <span class="attr">jobTemplate:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cleanup</span></span><br><span class="line">            <span class="attr">image:</span> <span class="string">cleanup-tool</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="horizontal-pod-autoscaler-hpa"></a></p>
+<h2 id="Horizontal-Pod-Autoscaler-HPA"><a href="#Horizontal-Pod-Autoscaler-HPA" class="headerlink" title="Horizontal Pod Autoscaler (HPA)"></a>Horizontal Pod Autoscaler (HPA)</h2><p>The <strong>HPA</strong> scales pod replicas automatically based on resource utilization.</p>
+<h3 id="Example-12"><a href="#Example-12" class="headerlink" title="Example"></a>Example</h3><p>Scaling web server pods based on CPU usage.</p>
+<h3 id="Use-Case-12"><a href="#Use-Case-12" class="headerlink" title="Use Case"></a>Use Case</h3><p>Scaling applications to handle variable workloads.</p>
+<h4 id="YAML-Structure-for-HPA"><a href="#YAML-Structure-for-HPA" class="headerlink" title="YAML Structure for HPA"></a>YAML Structure for HPA</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">autoscaling/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-hpa</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="string">scaleTarget</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Ref:</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">web-deployment</span></span><br><span class="line">  <span class="attr">minReplicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">maxReplicas:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">targetCPUUtilizationPercentage:</span> <span class="number">70</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="statefulset"></a></p>
+<h2 id="StatefulSet"><a href="#StatefulSet" class="headerlink" title="StatefulSet"></a>StatefulSet</h2><p>A <strong>StatefulSet</strong> manages stateful applications with unique and persistent storage.</p>
+<h3 id="Example-13"><a href="#Example-13" class="headerlink" title="Example"></a>Example</h3><p>A StatefulSet for a MongoDB replica set.</p>
+<h3 id="Use-Case-13"><a href="#Use-Case-13" class="headerlink" title="Use Case"></a>Use Case</h3><p>Managing stateful applications where each instance requires its own storage.</p>
+<h4 id="YAML-Structure-for-StatefulSet"><a href="#YAML-Structure-for-StatefulSet" class="headerlink" title="YAML Structure for StatefulSet"></a>YAML Structure for StatefulSet</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mongo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceName:</span> <span class="string">&quot;mongo&quot;</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">mongo</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mongo</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">mongo</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">27017</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">mongo</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="volume-and-storageclass"></a></p>
+<h2 id="Volume-and-StorageClass"><a href="#Volume-and-StorageClass" class="headerlink" title="Volume and StorageClass"></a>Volume and StorageClass</h2><p><strong>Volumes</strong> provide storage to pods, while <strong>StorageClass</strong> defines types of storage.</p>
+<h3 id="Example-14"><a href="#Example-14" class="headerlink" title="Example"></a>Example</h3><p>SSD-based storage for a database application.</p>
+<h3 id="Use-Case-14"><a href="#Use-Case-14" class="headerlink" title="Use Case"></a>Use Case</h3><p>Choosing storage for applications based on performance requirements.</p>
+<h4 id="YAML-Structure-for-StorageClass-and-Volume"><a href="#YAML-Structure-for-StorageClass-and-Volume" class="headerlink" title="YAML Structure for StorageClass and Volume"></a>YAML Structure for StorageClass and Volume</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fast</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">kubernetes.io/aws-ebs</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">gp2</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fast-pv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fast</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">50Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="networkpolicy"></a></p>
+<h2 id="NetworkPolicy"><a href="#NetworkPolicy" class="headerlink" title="NetworkPolicy"></a>NetworkPolicy</h2><p><strong>NetworkPolicy</strong> defines network access rules between pods.</p>
+<h3 id="Example-15"><a href="#Example-15" class="headerlink" title="Example"></a>Example</h3><p>Restricting access to specific pods.</p>
+<h3 id="Use-Case-15"><a href="#Use-Case-15" class="headerlink" title="Use Case"></a>Use Case</h3><p>Securing inter-service communication.</p>
+<h4 id="YAML-Structure-for-NetworkPolicy"><a href="#YAML-Structure-for-NetworkPolicy" class="headerlink" title="YAML Structure for NetworkPolicy"></a>YAML Structure for NetworkPolicy</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-all</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span> []</span><br><span class="line">  <span class="attr">egress:</span> []</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="custom-resource-definitions-crds"></a></p>
+<h2 id="Custom-Resource-Definitions-CRDs"><a href="#Custom-Resource-Definitions-CRDs" class="headerlink" title="Custom Resource Definitions (CRDs)"></a>Custom Resource Definitions (CRDs)</h2><p><strong>CRDs</strong> extend Kubernetes by allowing users to create custom resources.</p>
+<h3 id="Example-16"><a href="#Example-16" class="headerlink" title="Example"></a>Example</h3><p>A custom resource to manage database schema migrations.</p>
+<h3 id="Use-Case-16"><a href="#Use-Case-16" class="headerlink" title="Use Case"></a>Use Case</h3><p>Adding domain-specific resources for applications.</p>
+<h4 id="YAML-Structure-for-CRD"><a href="#YAML-Structure-for-CRD" class="headerlink" title="YAML Structure for CRD"></a>YAML Structure for CRD</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apiextensions.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CustomResourceDefinition</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">migrations.mycompany.com</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">group:</span> <span class="string">mycompany.com</span></span><br><span class="line">  <span class="attr">versions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">v1</span></span><br><span class="line">    <span class="attr">served:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">scope:</span> <span class="string">Namespaced</span></span><br><span class="line">  <span class="attr">names:</span></span><br><span class="line">    <span class="attr">plural:</span> <span class="string">migrations</span></span><br><span class="line">    <span class="attr">singular:</span> <span class="string">migration</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">Migration</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="helm-charts"></a></p>
+<h2 id="Helm-Charts"><a href="#Helm-Charts" class="headerlink" title="Helm Charts"></a>Helm Charts</h2><p><strong>Helm</strong> is a package manager for Kubernetes, and <strong>Helm Charts</strong> are pre-configured packages.</p>
+<h3 id="Example-17"><a href="#Example-17" class="headerlink" title="Example"></a>Example</h3><p>A Helm chart for deploying a WordPress site.</p>
+<h3 id="Use-Case-17"><a href="#Use-Case-17" class="headerlink" title="Use Case"></a>Use Case</h3><p>Simplifying application deployment and management.</p>
+<h4 id="Example-Helm-Command"><a href="#Example-Helm-Command" class="headerlink" title="Example Helm Command"></a>Example Helm Command</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install my-wordpress bitnami/wordpress</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>These concepts are essential for understanding and operating Kubernetes in production, allowing you to deploy, manage, and scale applications effectively. Each example and YAML configuration highlights the power and flexibility Kubernetes offers in a variety of scenarios.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/" rel="prev" title="Deep Dive into Spring Boot and Quarkus">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Spring Boot and Quarkus
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Spark-in-Kubernetes/" rel="next" title="Spark in Kubernetes">
+                  Spark in Kubernetes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

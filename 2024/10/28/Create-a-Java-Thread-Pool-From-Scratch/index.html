@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Custom Java Thread Pool: Proof of Concept Implementation of SimpleThreadPool Explanation of Key Concepts Sample Code to Use the SimpleThreadPool Explanation of Sample Usage Code Expected Output   Con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Create a Java Thread Pool From Scratch">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Custom Java Thread Pool: Proof of Concept Implementation of SimpleThreadPool Explanation of Key Concepts Sample Code to Use the SimpleThreadPool Explanation of Sample Usage Code Expected Output   Con">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-29T03:32:51.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Java Core">
+<meta property="article:tag" content="Multi-Threading">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/","path":"2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/","title":"Create a Java Thread Pool From Scratch"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Create a Java Thread Pool From Scratch | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Custom-Java-Thread-Pool-Proof-of-Concept"><span class="nav-number">1.</span> <span class="nav-text">Custom Java Thread Pool: Proof of Concept</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation-of-SimpleThreadPool"><span class="nav-number">1.1.</span> <span class="nav-text">Implementation of SimpleThreadPool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Explanation-of-Key-Concepts"><span class="nav-number">1.2.</span> <span class="nav-text">Explanation of Key Concepts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code-to-Use-the-SimpleThreadPool"><span class="nav-number">1.3.</span> <span class="nav-text">Sample Code to Use the SimpleThreadPool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation-of-Sample-Usage-Code"><span class="nav-number">1.3.1.</span> <span class="nav-text">Explanation of Sample Usage Code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Expected-Output"><span class="nav-number">1.3.2.</span> <span class="nav-text">Expected Output</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.4.</span> <span class="nav-text">Conclusion</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Custom-Java-Thread-Pool-with-Separate-Task-Class"><span class="nav-number">2.</span> <span class="nav-text">Custom Java Thread Pool with Separate Task Class</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Task-Class-Implementation"><span class="nav-number">2.1.</span> <span class="nav-text">Task Class Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimpleThreadPool-Implementation"><span class="nav-number">2.2.</span> <span class="nav-text">SimpleThreadPool Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code-to-Use-the-Custom-Thread-Pool-with-Task"><span class="nav-number">2.3.</span> <span class="nav-text">Sample Code to Use the Custom Thread Pool with Task</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation-of-Sample-Usage"><span class="nav-number">2.3.1.</span> <span class="nav-text">Explanation of Sample Usage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Expected-Output-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">Expected Output</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Wait-but-what-happened-to-the-terminated-thread"><span class="nav-number">3.</span> <span class="nav-text">Wait but what happened to the terminated thread?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Enhanced-SimpleThreadPool-Implementation"><span class="nav-number">3.0.1.</span> <span class="nav-text">Enhanced SimpleThreadPool Implementation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enhanced-Task-Class-Implementation"><span class="nav-number">3.0.2.</span> <span class="nav-text">Enhanced Task Class Implementation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Usage-and-State-Transition-Simulation"><span class="nav-number">3.0.3.</span> <span class="nav-text">Usage and State Transition Simulation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation-of-the-Workflow-and-State-Transitions"><span class="nav-number">3.0.4.</span> <span class="nav-text">Explanation of the Workflow and State Transitions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Expected-Output-Sample"><span class="nav-number">3.0.5.</span> <span class="nav-text">Expected Output (Sample)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#How-thread-being-actually-reused"><span class="nav-number">4.</span> <span class="nav-text">How thread being actually reused?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread-States-in-a-Thread-Pool"><span class="nav-number">4.0.1.</span> <span class="nav-text">Thread States in a Thread Pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#How-Threads-Are-Reused"><span class="nav-number">4.0.2.</span> <span class="nav-text">How Threads Are Reused</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-of-Thread-Reuse-in-SimpleThreadPool"><span class="nav-number">4.0.3.</span> <span class="nav-text">Example of Thread Reuse in SimpleThreadPool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-Example"><span class="nav-number">4.0.4.</span> <span class="nav-text">Code Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Points"><span class="nav-number">4.0.5.</span> <span class="nav-text">Key Points</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary"><span class="nav-number">4.0.6.</span> <span class="nav-text">Summary</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Create-a-Java-Thread-Pool-From-Scratch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Create a Java Thread Pool From Scratch | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Create a Java Thread Pool From Scratch
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 23:32:51" itemprop="dateCreated datePublished" datetime="2024-10-28T23:32:51-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#custom-java-thread-pool-proof-of-concept">Custom Java Thread Pool: Proof of Concept</a><ul>
+<li><a href="#implementation-of-simplethreadpool">Implementation of <code>SimpleThreadPool</code></a></li>
+<li><a href="#explanation-of-key-concepts">Explanation of Key Concepts</a></li>
+<li><a href="#sample-code-to-use-the-simplethreadpool">Sample Code to Use the <code>SimpleThreadPool</code></a><ul>
+<li><a href="#explanation-of-sample-usage-code">Explanation of Sample Usage Code</a></li>
+<li><a href="#expected-output">Expected Output</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li><a href="#custom-java-thread-pool-with-separate-task-class">Custom Java Thread Pool with Separate Task Class</a><ul>
+<li><a href="#task-class-implementation"><code>Task</code> Class Implementation</a></li>
+<li><a href="#simplethreadpool-implementation"><code>SimpleThreadPool</code> Implementation</a></li>
+<li><a href="#sample-code-to-use-the-custom-thread-pool-with-task">Sample Code to Use the Custom Thread Pool with <code>Task</code></a><ul>
+<li><a href="#explanation-of-sample-usage">Explanation of Sample Usage</a></li>
+<li><a href="#expected-output-1">Expected Output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wait-but-what-happened-to-the-terminated-thread">Wait but what happened to the terminated thread?</a><ul>
+<li><a href="#enhanced-simplethreadpool-implementation">Enhanced <code>SimpleThreadPool</code> Implementation</a></li>
+<li><a href="#enhanced-task-class-implementation">Enhanced <code>Task</code> Class Implementation</a></li>
+<li><a href="#usage-and-state-transition-simulation">Usage and State Transition Simulation</a></li>
+<li><a href="#explanation-of-the-workflow-and-state-transitions">Explanation of the Workflow and State Transitions</a></li>
+<li><a href="#expected-output-sample">Expected Output (Sample)</a></li>
+</ul>
+</li>
+<li><a href="#how-thread-being-actually-reused">How thread being actually reused?</a><ul>
+<li><a href="#thread-states-in-a-thread-pool">Thread States in a Thread Pool</a></li>
+<li><a href="#how-threads-are-reused">How Threads Are Reused</a></li>
+<li><a href="#example-of-thread-reuse-in-simplethreadpool">Example of Thread Reuse in <code>SimpleThreadPool</code></a></li>
+<li><a href="#code-example">Code Example</a></li>
+<li><a href="#key-points">Key Points</a></li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a name="custom-java-thread-pool-proof-of-concept"></a></p>
+<h1 id="Custom-Java-Thread-Pool-Proof-of-Concept"><a href="#Custom-Java-Thread-Pool-Proof-of-Concept" class="headerlink" title="Custom Java Thread Pool: Proof of Concept"></a>Custom Java Thread Pool: Proof of Concept</h1><p>In this article, we will create a simple but complete custom thread pool. We’ll build a <code>SimpleThreadPool</code> class that includes key features such as managing worker threads, a task queue, and shutdown capabilities. We’ll break down the code into logical components, explain the design concepts, and provide sample usage.</p>
+<hr>
+<p><a name="implementation-of-simplethreadpool"></a></p>
+<h2 id="Implementation-of-SimpleThreadPool"><a href="#Implementation-of-SimpleThreadPool" class="headerlink" title="Implementation of SimpleThreadPool"></a>Implementation of <code>SimpleThreadPool</code></h2><p>The core classes in our implementation are:</p>
+<ul>
+<li><code>SimpleThreadPool</code>: Manages the thread pool and task queue.</li>
+<li><code>Worker</code>: Represents the worker threads that execute tasks.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.Queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPool</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> poolSize;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PoolWorker[] workers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Queue&lt;Runnable&gt; taskQueue;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isShutdown</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SimpleThreadPool</span><span class="params">(<span class="type">int</span> poolSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.poolSize = poolSize;</span><br><span class="line">        taskQueue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        workers = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>[poolSize];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Start worker threads</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; poolSize; i++) &#123;</span><br><span class="line">            workers[i] = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>();</span><br><span class="line">            workers[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Submit a task to the thread pool</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">submit</span><span class="params">(Runnable task)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isShutdown) &#123;</span><br><span class="line">            taskQueue.add(task);</span><br><span class="line">            notify(); <span class="comment">// Notify workers that a task is available</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;ThreadPool is shut down&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initiates an orderly shutdown</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        isShutdown = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (PoolWorker worker : workers) &#123;</span><br><span class="line">            worker.interrupt(); <span class="comment">// Interrupt each worker to stop waiting</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Worker class represents threads in the pool</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">PoolWorker</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            Runnable task;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (SimpleThreadPool.<span class="built_in">this</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (taskQueue.isEmpty() &amp;&amp; !isShutdown) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            SimpleThreadPool.<span class="built_in">this</span>.wait(); <span class="comment">// Wait for a task</span></span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">                            <span class="keyword">return</span>; <span class="comment">// Exit if interrupted during shutdown</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// If shutdown and no tasks, end thread</span></span><br><span class="line">                    <span class="keyword">if</span> (isShutdown &amp;&amp; taskQueue.isEmpty()) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    task = taskQueue.poll(); <span class="comment">// Take task from queue</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    task.run(); <span class="comment">// Execute task outside synchronized block</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">                    System.err.println(<span class="string">&quot;Task execution failed: &quot;</span> + e.getMessage());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="explanation-of-key-concepts"></a></p>
+<h2 id="Explanation-of-Key-Concepts"><a href="#Explanation-of-Key-Concepts" class="headerlink" title="Explanation of Key Concepts"></a>Explanation of Key Concepts</h2><ol>
+<li><strong>Task Queue</strong>: A <code>LinkedList</code> serves as the task queue, holding <code>Runnable</code> tasks for worker threads.</li>
+<li><strong>Worker Threads</strong>: <code>PoolWorker</code> threads execute tasks. Each worker loops to fetch a task from the queue and processes it if available.</li>
+<li><strong>Synchronization with <code>wait</code> and <code>notify</code></strong>:<ul>
+<li><code>wait()</code>: Called when no tasks are available, putting the thread in a waiting state to save CPU resources.</li>
+<li><code>notify()</code>: Called when a new task is added, waking up a worker thread to execute the task.</li>
+</ul>
+</li>
+<li><strong>Graceful Shutdown</strong>:<ul>
+<li><code>shutdown()</code>: Sets the <code>isShutdown</code> flag to stop accepting tasks and interrupts all worker threads, allowing them to exit if they’re waiting for a task.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p><a name="sample-code-to-use-the-simplethreadpool"></a></p>
+<h2 id="Sample-Code-to-Use-the-SimpleThreadPool"><a href="#Sample-Code-to-Use-the-SimpleThreadPool" class="headerlink" title="Sample Code to Use the SimpleThreadPool"></a>Sample Code to Use the <code>SimpleThreadPool</code></h2><p>This example demonstrates how to use the custom <code>SimpleThreadPool</code> to run tasks, including graceful shutdown.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Create a thread pool with 3 threads</span></span><br><span class="line">        <span class="type">SimpleThreadPool</span> <span class="variable">threadPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleThreadPool</span>(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submit tasks to the thread pool</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            threadPool.submit(() -&gt; &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; is starting on thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>); <span class="comment">// Simulate task execution time</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; completed.&quot;</span>);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown the thread pool after tasks complete</span></span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation-of-Sample-Usage-Code"><a href="#Explanation-of-Sample-Usage-Code" class="headerlink" title="Explanation of Sample Usage Code"></a>Explanation of Sample Usage Code</h3><ol>
+<li><strong>Creating a Thread Pool</strong>: A <code>SimpleThreadPool</code> instance with 3 threads is created.</li>
+<li><strong>Submitting Tasks</strong>: Five tasks are submitted to the pool, each of which simulates a brief work period.</li>
+<li><strong>Shutting Down the Pool</strong>: After submitting the tasks, the pool is gracefully shut down using <code>shutdown()</code>.</li>
+</ol>
+<h3 id="Expected-Output"><a href="#Expected-Output" class="headerlink" title="Expected Output"></a>Expected Output</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Task 1 is starting on thread Thread-0</span><br><span class="line">Task 2 is starting on thread Thread-1</span><br><span class="line">Task 3 is starting on thread Thread-2</span><br><span class="line">Task 1 completed.</span><br><span class="line">Task 2 completed.</span><br><span class="line">Task 3 completed.</span><br><span class="line">Task 4 is starting on thread Thread-0</span><br><span class="line">Task 5 is starting on thread Thread-1</span><br><span class="line">Task 4 completed.</span><br><span class="line">Task 5 completed.</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This <code>SimpleThreadPool</code> is a demonstration of how a basic thread pool is structured and works:</p>
+<ul>
+<li><strong>Worker Threads</strong> repeatedly pick up and execute tasks from a shared queue.</li>
+<li><strong>Synchronization</strong> between task producers and worker threads prevents busy-waiting.</li>
+<li><strong>Graceful Shutdown</strong> lets worker threads exit safely after processing all queued tasks.</li>
+</ul>
+<p>This POC lays the foundation for understanding and extending Java thread pool management by illustrating how resources are managed and synchronized in a concurrent environment.</p>
+<hr>
+<p><a name="custom-java-thread-pool-with-separate-task-class"></a></p>
+<h1 id="Custom-Java-Thread-Pool-with-Separate-Task-Class"><a href="#Custom-Java-Thread-Pool-with-Separate-Task-Class" class="headerlink" title="Custom Java Thread Pool with Separate Task Class"></a>Custom Java Thread Pool with Separate Task Class</h1><p>Separating the <code>Task</code> as an individual class will enhance the code’s modularity and flexibility, making it easier to reuse or extend for specific task-related features. Let’s modify the <code>SimpleThreadPool</code> implementation to include an external <code>Task</code> class.</p>
+<p>Here’s the updated implementation:</p>
+<ol>
+<li><strong><code>SimpleThreadPool</code></strong>: Manages worker threads and the task queue.</li>
+<li><strong><code>Task</code></strong>: Represents individual tasks, implementing <code>Runnable</code>.</li>
+<li><strong><code>PoolWorker</code></strong>: Represents the worker threads that pick up tasks from the queue and execute them.</li>
+</ol>
+<hr>
+<h2 id="Task-Class-Implementation"><a href="#Task-Class-Implementation" class="headerlink" title="Task Class Implementation"></a><code>Task</code> Class Implementation</h2><p>We’ll define <code>Task</code> as a standalone class that implements <code>Runnable</code>. Each task can have custom logic.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> taskId;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Task</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.taskId = taskId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; is starting on thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>); <span class="comment">// Simulate task execution time</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt(); <span class="comment">// Handle interruption</span></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>taskId</code></strong>: Each task is given an ID to identify it during execution.</li>
+<li><strong><code>run()</code> Method</strong>: Defines the task’s actions, including a simulated delay.</li>
+</ul>
+<hr>
+<h2 id="SimpleThreadPool-Implementation"><a href="#SimpleThreadPool-Implementation" class="headerlink" title="SimpleThreadPool Implementation"></a><code>SimpleThreadPool</code> Implementation</h2><p>The <code>SimpleThreadPool</code> class manages the task queue and distributes tasks among worker threads.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.Queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPool</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> poolSize;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PoolWorker[] workers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Queue&lt;Runnable&gt; taskQueue;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isShutdown</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SimpleThreadPool</span><span class="params">(<span class="type">int</span> poolSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.poolSize = poolSize;</span><br><span class="line">        taskQueue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        workers = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>[poolSize];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize and start each worker thread</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; poolSize; i++) &#123;</span><br><span class="line">            workers[i] = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>();</span><br><span class="line">            workers[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Method to submit a task to the thread pool</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">submit</span><span class="params">(Runnable task)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isShutdown) &#123;</span><br><span class="line">            taskQueue.add(task);</span><br><span class="line">            notify(); <span class="comment">// Notify a waiting worker thread about the new task</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;ThreadPool is shut down and cannot accept tasks&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initiates shutdown and interrupts all waiting worker threads</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        isShutdown = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (PoolWorker worker : workers) &#123;</span><br><span class="line">            worker.interrupt(); <span class="comment">// Interrupts workers waiting for tasks</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Worker class that executes tasks from the queue</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">PoolWorker</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                Runnable task;</span><br><span class="line">                <span class="keyword">synchronized</span> (SimpleThreadPool.<span class="built_in">this</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (taskQueue.isEmpty() &amp;&amp; !isShutdown) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            SimpleThreadPool.<span class="built_in">this</span>.wait(); <span class="comment">// Wait for a new task</span></span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                            <span class="keyword">return</span>; <span class="comment">// Exit if interrupted during shutdown</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (isShutdown &amp;&amp; taskQueue.isEmpty()) &#123;</span><br><span class="line">                        <span class="keyword">return</span>; <span class="comment">// Exit if shutdown and no tasks are left</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    task = taskQueue.poll(); <span class="comment">// Fetch a task</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    task.run(); <span class="comment">// Execute the task outside the synchronized block</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">                    System.err.println(<span class="string">&quot;Task execution failed: &quot;</span> + e.getMessage());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Sample-Code-to-Use-the-Custom-Thread-Pool-with-Task"><a href="#Sample-Code-to-Use-the-Custom-Thread-Pool-with-Task" class="headerlink" title="Sample Code to Use the Custom Thread Pool with Task"></a>Sample Code to Use the Custom Thread Pool with <code>Task</code></h2><p>This example demonstrates submitting <code>Task</code> instances to the <code>SimpleThreadPool</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Create a thread pool with 3 threads</span></span><br><span class="line">        <span class="type">SimpleThreadPool</span> <span class="variable">threadPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleThreadPool</span>(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submit tasks to the thread pool</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Task</span>(i); <span class="comment">// Create a new Task with a unique ID</span></span><br><span class="line">            threadPool.submit(task);  <span class="comment">// Submit the Task to the thread pool</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown the thread pool after tasks are complete</span></span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation-of-Sample-Usage"><a href="#Explanation-of-Sample-Usage" class="headerlink" title="Explanation of Sample Usage"></a>Explanation of Sample Usage</h3><ol>
+<li><strong>Task Creation</strong>: Each <code>Task</code> object has a unique ID, making it easy to track execution progress.</li>
+<li><strong>Task Submission</strong>: Tasks are added to the <code>SimpleThreadPool</code>’s task queue.</li>
+<li><strong>Shutdown</strong>: Once all tasks are submitted, <code>shutdown()</code> stops the pool after finishing queued tasks.</li>
+</ol>
+<h3 id="Expected-Output-1"><a href="#Expected-Output-1" class="headerlink" title="Expected Output"></a>Expected Output</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Task 1 is starting on thread Thread-0</span><br><span class="line">Task 2 is starting on thread Thread-1</span><br><span class="line">Task 3 is starting on thread Thread-2</span><br><span class="line">Task 1 completed.</span><br><span class="line">Task 2 completed.</span><br><span class="line">Task 3 completed.</span><br><span class="line">Task 4 is starting on thread Thread-0</span><br><span class="line">Task 5 is starting on thread Thread-1</span><br><span class="line">Task 4 completed.</span><br><span class="line">Task 5 completed.</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>This implementation improves modularity by allowing different <code>Task</code> implementations and extends the reusability of <code>SimpleThreadPool</code>. Each component (<code>Task</code>, <code>PoolWorker</code>, and <code>SimpleThreadPool</code>) is designed for flexible use in varied production scenarios.</p>
+<hr>
+<p><a name="wait-but-what-happened-to-the-terminated-thread"></a></p>
+<h1 id="Wait-but-what-happened-to-the-terminated-thread"><a href="#Wait-but-what-happened-to-the-terminated-thread" class="headerlink" title="Wait but what happened to the terminated thread?"></a>Wait but what happened to the terminated thread?</h1><p>To demonstrate the behavior where a terminated thread in a thread pool is repurposed and moves back to the runnable state when a new task is added, we need to tweak the <code>SimpleThreadPool</code> to simulate this behavior. </p>
+<p>Typically, when threads in a pool complete their tasks, they wait for new tasks rather than fully terminating (they don’t reach the “TERMINATED” state in Java’s built-in <code>ThreadPoolExecutor</code>). However, for demonstration, I’ll create logic that represents threads reaching a “stopped” state and being reactivated for new tasks.</p>
+<p>Let’s add a mechanism to track the states and illustrate the thread reusability behavior.</p>
+<hr>
+<h3 id="Enhanced-SimpleThreadPool-Implementation"><a href="#Enhanced-SimpleThreadPool-Implementation" class="headerlink" title="Enhanced SimpleThreadPool Implementation"></a>Enhanced <code>SimpleThreadPool</code> Implementation</h3><p>Below is an enhanced version of <code>SimpleThreadPool</code> with thread state tracking. We’ll add logging and state simulation to show when threads are “terminated” and later reactivated when new tasks arrive.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.Queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPool</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> poolSize;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PoolWorker[] workers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Queue&lt;Runnable&gt; taskQueue;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isShutdown</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SimpleThreadPool</span><span class="params">(<span class="type">int</span> poolSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.poolSize = poolSize;</span><br><span class="line">        taskQueue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        workers = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>[poolSize];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize and start each worker thread</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; poolSize; i++) &#123;</span><br><span class="line">            workers[i] = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>(i + <span class="number">1</span>); <span class="comment">// Assign a unique ID to each worker</span></span><br><span class="line">            workers[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Method to submit a task to the thread pool</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">submit</span><span class="params">(Runnable task)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isShutdown) &#123;</span><br><span class="line">            taskQueue.add(task);</span><br><span class="line">            notify(); <span class="comment">// Notify a waiting worker thread about the new task</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;ThreadPool is shut down and cannot accept tasks&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initiates shutdown and interrupts all waiting worker threads</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        isShutdown = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (PoolWorker worker : workers) &#123;</span><br><span class="line">            worker.interrupt(); <span class="comment">// Interrupts workers waiting for tasks</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Worker class that executes tasks from the queue</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">PoolWorker</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> workerId;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isTerminated</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">PoolWorker</span><span class="params">(<span class="type">int</span> id)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.workerId = id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                Runnable task;</span><br><span class="line">                <span class="keyword">synchronized</span> (SimpleThreadPool.<span class="built_in">this</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (taskQueue.isEmpty() &amp;&amp; !isShutdown) &#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;Worker-&quot;</span> + workerId + <span class="string">&quot; is waiting for a task...&quot;</span>);</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            SimpleThreadPool.<span class="built_in">this</span>.wait(); <span class="comment">// Wait for a new task</span></span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                            System.out.println(<span class="string">&quot;Worker-&quot;</span> + workerId + <span class="string">&quot; is terminated.&quot;</span>);</span><br><span class="line">                            isTerminated = <span class="literal">true</span>;</span><br><span class="line">                            <span class="keyword">return</span>; <span class="comment">// Exit if interrupted during shutdown</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (isShutdown &amp;&amp; taskQueue.isEmpty()) &#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;Worker-&quot;</span> + workerId + <span class="string">&quot; is terminated as pool shuts down.&quot;</span>);</span><br><span class="line">                        isTerminated = <span class="literal">true</span>;</span><br><span class="line">                        <span class="keyword">return</span>; <span class="comment">// Exit if shutdown and no tasks are left</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    task = taskQueue.poll(); <span class="comment">// Fetch a task</span></span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    isTerminated = <span class="literal">false</span>; <span class="comment">// Worker is active</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Worker-&quot;</span> + workerId + <span class="string">&quot; is executing task.&quot;</span>);</span><br><span class="line">                    task.run(); <span class="comment">// Execute the task</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Worker-&quot;</span> + workerId + <span class="string">&quot; completed task and goes back to waiting.&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">                    System.err.println(<span class="string">&quot;Task execution failed in Worker-&quot;</span> + workerId + <span class="string">&quot;: &quot;</span> + e.getMessage());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Enhanced-Task-Class-Implementation"><a href="#Enhanced-Task-Class-Implementation" class="headerlink" title="Enhanced Task Class Implementation"></a>Enhanced <code>Task</code> Class Implementation</h3><p>The <code>Task</code> class remains mostly the same, but we can add unique identifiers to differentiate tasks.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> taskId;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Task</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.taskId = taskId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; is starting on thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>); <span class="comment">// Simulate task execution time</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt(); <span class="comment">// Handle interruption</span></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Usage-and-State-Transition-Simulation"><a href="#Usage-and-State-Transition-Simulation" class="headerlink" title="Usage and State Transition Simulation"></a>Usage and State Transition Simulation</h3><p>Let’s add a usage example showing how to submit tasks, observe workers entering a “terminated” state, and then reactivating to process new tasks.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="comment">// Create a thread pool with 2 workers</span></span><br><span class="line">        <span class="type">SimpleThreadPool</span> <span class="variable">threadPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleThreadPool</span>(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submit initial tasks to the thread pool</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">3</span>; i++) &#123;</span><br><span class="line">            threadPool.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Wait to let initial tasks complete</span></span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submit additional tasks to show reactivation</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Adding more tasks to test thread reactivation...&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">4</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            threadPool.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Give some time for tasks to be picked up</span></span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown the thread pool</span></span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation-of-the-Workflow-and-State-Transitions"><a href="#Explanation-of-the-Workflow-and-State-Transitions" class="headerlink" title="Explanation of the Workflow and State Transitions"></a>Explanation of the Workflow and State Transitions</h3><ol>
+<li><strong>Initial Task Submission</strong>: Three tasks are submitted, and two workers pick them up immediately since the pool size is 2.</li>
+<li><strong>Worker Reactivation</strong>: After the initial tasks complete, we add two more tasks, which are picked up by waiting workers.</li>
+<li><strong>Shutdown Process</strong>: Finally, we shut down the thread pool, and the workers gracefully terminate after completing their tasks.</li>
+</ol>
+<h3 id="Expected-Output-Sample"><a href="#Expected-Output-Sample" class="headerlink" title="Expected Output (Sample)"></a>Expected Output (Sample)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Worker-1 is waiting for a task...</span><br><span class="line">Worker-2 is waiting for a task...</span><br><span class="line">Worker-1 is executing task.</span><br><span class="line">Task 1 is starting on thread Worker-1</span><br><span class="line">Worker-2 is executing task.</span><br><span class="line">Task 2 is starting on thread Worker-2</span><br><span class="line">Task 1 completed.</span><br><span class="line">Worker-1 completed task and goes back to waiting.</span><br><span class="line">Task 2 completed.</span><br><span class="line">Worker-2 completed task and goes back to waiting.</span><br><span class="line">Worker-1 is executing task.</span><br><span class="line">Task 3 is starting on thread Worker-1</span><br><span class="line">Task 3 completed.</span><br><span class="line">Worker-1 completed task and goes back to waiting.</span><br><span class="line">Worker-1 is waiting for a task...</span><br><span class="line">Worker-2 is waiting for a task...</span><br><span class="line"></span><br><span class="line">Adding more tasks to test thread reactivation...</span><br><span class="line">Worker-1 is executing task.</span><br><span class="line">Task 4 is starting on thread Worker-1</span><br><span class="line">Worker-2 is executing task.</span><br><span class="line">Task 5 is starting on thread Worker-2</span><br><span class="line">Task 4 completed.</span><br><span class="line">Worker-1 completed task and goes back to waiting.</span><br><span class="line">Task 5 completed.</span><br><span class="line">Worker-2 completed task and goes back to waiting.</span><br><span class="line">Worker-1 is terminated as pool shuts down.</span><br><span class="line">Worker-2 is terminated as pool shuts down.</span><br></pre></td></tr></table></figure>
+
+<p>This output demonstrates that the workers remain active, go back to a waiting state after completing tasks, and terminate only after <code>shutdown()</code> is called.</p>
+<p><a name="how-thread-being-acutally-reused"></a></p>
+<h1 id="How-thread-being-actually-reused"><a href="#How-thread-being-actually-reused" class="headerlink" title="How thread being actually reused?"></a>How thread being actually reused?</h1><p>In a typical thread pool implementation, once a thread completes its task, it does not transition to the “TERMINATED” state and then back to the “RUNNABLE” state. Instead, the thread remains in a waiting state (often referred to as “idle” or “waiting for work”) until a new task is available. This waiting state is different from the “TERMINATED” state, which indicates that the thread has finished execution and cannot be reused.</p>
+<p>Here’s a more detailed explanation:</p>
+<h3 id="Thread-States-in-a-Thread-Pool"><a href="#Thread-States-in-a-Thread-Pool" class="headerlink" title="Thread States in a Thread Pool"></a>Thread States in a Thread Pool</h3><ol>
+<li><strong>NEW</strong>: The thread has been created but not yet started.</li>
+<li><strong>RUNNABLE</strong>: The thread is executing in the JVM.</li>
+<li><strong>BLOCKED</strong>: The thread is blocked waiting for a monitor lock.</li>
+<li><strong>WAITING</strong>: The thread is waiting indefinitely for another thread to perform a particular action.</li>
+<li><strong>TIMED_WAITING</strong>: The thread is waiting for another thread to perform an action for up to a specified waiting time.</li>
+<li><strong>TERMINATED</strong>: The thread has completed execution.</li>
+</ol>
+<p>In a thread pool, threads typically cycle between the <strong>RUNNABLE</strong> and <strong>WAITING</strong> states:</p>
+<ul>
+<li><strong>RUNNABLE</strong>: When a thread is actively executing a task.</li>
+<li><strong>WAITING</strong>: When a thread is idle, waiting for a new task to be added to the queue.</li>
+</ul>
+<h3 id="How-Threads-Are-Reused"><a href="#How-Threads-Are-Reused" class="headerlink" title="How Threads Are Reused"></a>How Threads Are Reused</h3><p>When a thread completes its task, it checks the task queue for new tasks. If no tasks are available, the thread waits (using <code>wait()</code> or a similar mechanism) until a new task is submitted. This waiting state is not the same as the “TERMINATED” state. A thread in the “TERMINATED” state cannot be reused; it must be recreated, which is inefficient.</p>
+<h3 id="Example-of-Thread-Reuse-in-SimpleThreadPool"><a href="#Example-of-Thread-Reuse-in-SimpleThreadPool" class="headerlink" title="Example of Thread Reuse in SimpleThreadPool"></a>Example of Thread Reuse in <code>SimpleThreadPool</code></h3><p>In the <code>SimpleThreadPool</code> example, threads are reused as follows:</p>
+<ol>
+<li><strong>Thread Creation</strong>: When the thread pool is created, a fixed number of worker threads are started.</li>
+<li><strong>Task Execution</strong>: Each worker thread fetches a task from the queue and executes it.</li>
+<li><strong>Waiting for New Tasks</strong>: After completing a task, the worker thread checks the queue for new tasks. If no tasks are available, it waits (<code>wait()</code>) until a new task is submitted.</li>
+<li><strong>Reactivation</strong>: When a new task is submitted, the waiting threads are notified (<code>notify()</code>), and one of them wakes up to execute the new task.</li>
+</ol>
+<h3 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example"></a>Code Example</h3><p>Here’s a simplified version of the <code>SimpleThreadPool</code> to illustrate this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.Queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleThreadPool</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> poolSize;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PoolWorker[] workers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Queue&lt;Runnable&gt; taskQueue;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isShutdown</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SimpleThreadPool</span><span class="params">(<span class="type">int</span> poolSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.poolSize = poolSize;</span><br><span class="line">        taskQueue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">        workers = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>[poolSize];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Start worker threads</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; poolSize; i++) &#123;</span><br><span class="line">            workers[i] = <span class="keyword">new</span> <span class="title class_">PoolWorker</span>();</span><br><span class="line">            workers[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">submit</span><span class="params">(Runnable task)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isShutdown) &#123;</span><br><span class="line">            taskQueue.add(task);</span><br><span class="line">            notify(); <span class="comment">// Notify a waiting worker thread</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;ThreadPool is shut down&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        isShutdown = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (PoolWorker worker : workers) &#123;</span><br><span class="line">            worker.interrupt(); <span class="comment">// Interrupt each worker to stop waiting</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">PoolWorker</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                Runnable task;</span><br><span class="line">                <span class="keyword">synchronized</span> (SimpleThreadPool.<span class="built_in">this</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (taskQueue.isEmpty() &amp;&amp; !isShutdown) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            SimpleThreadPool.<span class="built_in">this</span>.wait(); <span class="comment">// Wait for a task</span></span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">                            <span class="keyword">return</span>; <span class="comment">// Exit if interrupted during shutdown</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (isShutdown &amp;&amp; taskQueue.isEmpty()) &#123;</span><br><span class="line">                        <span class="keyword">return</span>; <span class="comment">// Exit if shutdown and no tasks are left</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    task = taskQueue.poll(); <span class="comment">// Take task from queue</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    task.run(); <span class="comment">// Execute task</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">                    System.err.println(<span class="string">&quot;Task execution failed: &quot;</span> + e.getMessage());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Key-Points"><a href="#Key-Points" class="headerlink" title="Key Points"></a>Key Points</h3><ul>
+<li><strong>Thread Reuse</strong>: Threads do not transition to the “TERMINATED” state after completing a task. Instead, they wait for new tasks.</li>
+<li><strong>Task Queue</strong>: The task queue holds tasks that are waiting to be executed. When a new task is submitted, a waiting thread is notified and picks up the task.</li>
+<li><strong>Graceful Shutdown</strong>: The <code>shutdown()</code> method sets the <code>isShutdown</code> flag to stop accepting new tasks and interrupts all worker threads to ensure they exit if they are waiting.</li>
+</ul>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>In Java’s <code>ThreadPoolExecutor</code> (or our custom pool example), the worker threads do <strong>not</strong> actually terminate after completing a task. Instead, they enter a <strong>waiting</strong> or <strong>idle state</strong> and wait to pick up the next task. The main goal of a thread pool is to reuse threads efficiently, keeping them alive for as long as the pool is running and ready to transition back to the <strong>runnable</strong> state whenever a new task becomes available. </p>
+<p>Here’s how it works:</p>
+<ol>
+<li><strong>Runnable → Running</strong>: A thread in the pool becomes <strong>running</strong> when it starts executing a task.</li>
+<li><strong>Running → Waiting&#x2F;Idle</strong>: Once it finishes the task, it doesn’t terminate. Instead, it returns to an <strong>idle state</strong> within the pool, waiting for more tasks to be added to the queue.</li>
+<li><strong>Waiting → Runnable</strong>: When a new task is submitted, an idle worker transitions to <strong>runnable</strong> and executes the task.</li>
+</ol>
+<p>The threads only reach a <strong>terminated state</strong> when the pool itself is <strong>shut down</strong> (e.g., calling <code>shutdown()</code> in <code>ThreadPoolExecutor</code>). Only then will the threads stop, exit the idle&#x2F;waiting state, and go to terminated. This approach keeps the pool flexible and efficient, reducing the overhead of creating and destroying threads for every task. </p>
+<p>So in short: threads in a thread pool <strong>do not reach terminated after completing tasks</strong>. They go back to idle&#x2F;waiting and can accept new tasks. And threads in a thread pool do not go back to the “RUNNABLE” state from the “TERMINATED” state neither. Instead, they remain in a waiting state until new tasks are available, ensuring efficient reuse of thread resources.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Java-Core/" rel="tag"><i class="fa fa-tag"></i> Java Core</a>
+              <a href="/tags/Multi-Threading/" rel="tag"><i class="fa fa-tag"></i> Multi-Threading</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading/" rel="prev" title="Deep Dive into Java Core Multi-Threading">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Java Core Multi-Threading
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/29/Deep-Dive-into-Spring-Boot-Multi-Threading/" rel="next" title="Deep Dive into Spring Boot Multi-Threading">
+                  Deep Dive into Spring Boot Multi-Threading <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

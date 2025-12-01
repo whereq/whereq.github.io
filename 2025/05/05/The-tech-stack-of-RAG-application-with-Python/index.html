@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、RAG核心架构graph TD     A[用户提问] --&gt; B[查询向量化]     B --&gt; C[向量数据库检索]     C --&gt; D[上下文增强]     D --&gt; E[生成回答]     E --&gt; F[结果后处理]   二、技术栈选型1. 核心组件   组件 推荐方案 替代方案    Embedding模型 OpenAI text-embedd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The tech stack of RAG application with Python">
+<meta property="og:url" content="https://www.whereq.com/2025/05/05/The-tech-stack-of-RAG-application-with-Python/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="一、RAG核心架构graph TD     A[用户提问] --&gt; B[查询向量化]     B --&gt; C[向量数据库检索]     C --&gt; D[上下文增强]     D --&gt; E[生成回答]     E --&gt; F[结果后处理]   二、技术栈选型1. 核心组件   组件 推荐方案 替代方案    Embedding模型 OpenAI text-embedd">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-06T02:06:52.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="OpenAI">
+<meta property="article:tag" content="RAG">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/05/05/The-tech-stack-of-RAG-application-with-Python/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/05/05/The-tech-stack-of-RAG-application-with-Python/","path":"2025/05/05/The-tech-stack-of-RAG-application-with-Python/","title":"The tech stack of RAG application with Python"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>The tech stack of RAG application with Python | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81RAG%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">一、RAG核心架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%8A%80%E6%9C%AF%E6%A0%88%E9%80%89%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">二、技术栈选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">1. 核心组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%BE%85%E5%8A%A9%E5%B7%A5%E5%85%B7"><span class="nav-number">2.2.</span> <span class="nav-text">2. 辅助工具</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">三、完整实现代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">3.1.</span> <span class="nav-text">1. 环境准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86%E4%B8%8E%E5%90%91%E9%87%8F%E5%8C%96"><span class="nav-number">3.2.</span> <span class="nav-text">2. 文档处理与向量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-FAISS%E7%B4%A2%E5%BC%95%E6%9E%84%E5%BB%BA"><span class="nav-number">3.3.</span> <span class="nav-text">3. FAISS索引构建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91"><span class="nav-number">3.4.</span> <span class="nav-text">4. 检索增强生成核心逻辑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5"><span class="nav-number">4.</span> <span class="nav-text">四、性能优化实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A3%80%E7%B4%A2%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">1. 检索阶段优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96"><span class="nav-number">4.2.</span> <span class="nav-text">2. 生成阶段优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%94%9F%E4%BA%A7%E7%BA%A7%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88"><span class="nav-number">5.</span> <span class="nav-text">五、生产级部署方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">5.1.</span> <span class="nav-text">1. 架构设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">2. 关键配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87"><span class="nav-number">5.3.</span> <span class="nav-text">3. 监控指标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AE%89%E5%85%A8%E4%B8%8E%E5%90%88%E8%A7%84%E5%AE%9E%E8%B7%B5"><span class="nav-number">6.</span> <span class="nav-text">六、安全与合规实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8"><span class="nav-number">6.1.</span> <span class="nav-text">1. 数据安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-API%E9%98%B2%E6%8A%A4"><span class="nav-number">6.2.</span> <span class="nav-text">2. API防护</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">7.</span> <span class="nav-text">七、成本优化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-OpenAI-API%E6%88%90%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">7.1.</span> <span class="nav-text">1. OpenAI API成本控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E4%BC%98%E5%8C%96"><span class="nav-number">7.2.</span> <span class="nav-text">2. 计算资源优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%85%B8%E5%9E%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">8.</span> <span class="nav-text">八、典型问题解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%A2%E5%A4%B1%E9%87%8D%E7%82%B9"><span class="nav-number">8.1.</span> <span class="nav-text">1. 长上下文丢失重点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%A4%9A%E6%96%87%E6%A1%A3%E5%86%B2%E7%AA%81"><span class="nav-number">8.2.</span> <span class="nav-text">2. 多文档冲突</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E6%BC%94%E8%BF%9B%E8%B7%AF%E7%BA%BF%E5%BB%BA%E8%AE%AE"><span class="nav-number">9.</span> <span class="nav-text">九、演进路线建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/05/05/The-tech-stack-of-RAG-application-with-Python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="The tech stack of RAG application with Python | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          The tech stack of RAG application with Python
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-05-05 22:06:52" itemprop="dateCreated datePublished" datetime="2025-05-05T22:06:52-04:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OpenAI/" itemprop="url" rel="index"><span itemprop="name">OpenAI</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OpenAI/RAG/" itemprop="url" rel="index"><span itemprop="name">RAG</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="一、RAG核心架构"><a href="#一、RAG核心架构" class="headerlink" title="一、RAG核心架构"></a><strong>一、RAG核心架构</strong></h3><pre><code class="highlight mermaid">graph TD
+    A[用户提问] --&gt; B[查询向量化]
+    B --&gt; C[向量数据库检索]
+    C --&gt; D[上下文增强]
+    D --&gt; E[生成回答]
+    E --&gt; F[结果后处理]</code></pre>
+
+<hr>
+<h3 id="二、技术栈选型"><a href="#二、技术栈选型" class="headerlink" title="二、技术栈选型"></a><strong>二、技术栈选型</strong></h3><h4 id="1-核心组件"><a href="#1-核心组件" class="headerlink" title="1. 核心组件"></a>1. <strong>核心组件</strong></h4><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>推荐方案</th>
+<th>替代方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Embedding模型</strong></td>
+<td>OpenAI text-embedding-3-large</td>
+<td>Cohere Embed &#x2F; BGE-M3</td>
+</tr>
+<tr>
+<td><strong>LLM生成器</strong></td>
+<td>OpenAI GPT-4-turbo</td>
+<td>Anthropic Claude &#x2F; Llama3</td>
+</tr>
+<tr>
+<td><strong>向量数据库</strong></td>
+<td>FAISS (本地) &#x2F; Pinecone (云)</td>
+<td>Weaviate &#x2F; Milvus</td>
+</tr>
+<tr>
+<td><strong>文档处理</strong></td>
+<td>Unstructured.io</td>
+<td>Haystack &#x2F; LlamaIndex</td>
+</tr>
+</tbody></table>
+<h4 id="2-辅助工具"><a href="#2-辅助工具" class="headerlink" title="2. 辅助工具"></a>2. <strong>辅助工具</strong></h4><ul>
+<li><strong>缓存</strong>：Redis (存储频繁访问的查询结果)</li>
+<li><strong>监控</strong>：LangSmith (追踪LLM调用链)</li>
+<li><strong>部署</strong>：FastAPI + Docker + AWS Lambda</li>
+</ul>
+<hr>
+<h3 id="三、完整实现代码"><a href="#三、完整实现代码" class="headerlink" title="三、完整实现代码"></a><strong>三、完整实现代码</strong></h3><h4 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. <strong>环境准备</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install openai faiss-cpu python-dotx unstructured redis fastapi</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-文档处理与向量化"><a href="#2-文档处理与向量化" class="headerlink" title="2. 文档处理与向量化"></a>2. <strong>文档处理与向量化</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> unstructured.partition.auto <span class="keyword">import</span> partition</span><br><span class="line"><span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">client = OpenAI(api_key=<span class="string">&quot;your_key&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_documents</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="comment"># 文档解析</span></span><br><span class="line">    elements = partition(filename=file_path)</span><br><span class="line">    chunks = [<span class="built_in">str</span>(el) <span class="keyword">for</span> el <span class="keyword">in</span> elements <span class="keyword">if</span> <span class="built_in">len</span>(<span class="built_in">str</span>(el)) &gt; <span class="number">50</span>]  <span class="comment"># 过滤过短文本</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 生成嵌入向量</span></span><br><span class="line">    embeddings = client.embeddings.create(</span><br><span class="line">        <span class="built_in">input</span>=chunks,</span><br><span class="line">        model=<span class="string">&quot;text-embedding-3-large&quot;</span>,</span><br><span class="line">        dimensions=<span class="number">256</span>  <span class="comment"># 可选降维</span></span><br><span class="line">    ).data</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 转换为numpy数组</span></span><br><span class="line">    vectors = np.array([emb.embedding <span class="keyword">for</span> emb <span class="keyword">in</span> embeddings])</span><br><span class="line">    <span class="keyword">return</span> chunks, vectors</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-FAISS索引构建"><a href="#3-FAISS索引构建" class="headerlink" title="3. FAISS索引构建"></a>3. <strong>FAISS索引构建</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">build_faiss_index</span>(<span class="params">vectors</span>):</span><br><span class="line">    d = vectors.shape[<span class="number">1</span>]  <span class="comment"># 向量维度</span></span><br><span class="line">    index = faiss.IndexHNSWFlat(d, <span class="number">32</span>)  <span class="comment"># 32为HNSW参数</span></span><br><span class="line">    index.add(vectors)</span><br><span class="line">    <span class="keyword">return</span> index</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存/加载索引</span></span><br><span class="line">faiss.write_index(index, <span class="string">&quot;rag_index.faiss&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-检索增强生成核心逻辑"><a href="#4-检索增强生成核心逻辑" class="headerlink" title="4. 检索增强生成核心逻辑"></a>4. <strong>检索增强生成核心逻辑</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RAGSystem</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, index_path, chunks</span>):</span><br><span class="line">        <span class="variable language_">self</span>.index = faiss.read_index(index_path)</span><br><span class="line">        <span class="variable language_">self</span>.chunks = chunks</span><br><span class="line">        <span class="variable language_">self</span>.llm_model = <span class="string">&quot;gpt-4-turbo&quot;</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">retrieve</span>(<span class="params">self, query: <span class="built_in">str</span>, k: <span class="built_in">int</span> = <span class="number">3</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">str</span>]:</span><br><span class="line">        <span class="comment"># 查询向量化</span></span><br><span class="line">        query_embed = client.embeddings.create(</span><br><span class="line">            <span class="built_in">input</span>=[query],</span><br><span class="line">            model=<span class="string">&quot;text-embedding-3-large&quot;</span></span><br><span class="line">        ).data[<span class="number">0</span>].embedding</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 相似度搜索</span></span><br><span class="line">        _, indices = <span class="variable language_">self</span>.index.search(np.array([query_embed]), k)</span><br><span class="line">        <span class="keyword">return</span> [<span class="variable language_">self</span>.chunks[i] <span class="keyword">for</span> i <span class="keyword">in</span> indices[<span class="number">0</span>] <span class="keyword">if</span> i != -<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate</span>(<span class="params">self, query: <span class="built_in">str</span>, context: <span class="type">List</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        基于以下上下文回答问题：</span></span><br><span class="line"><span class="string">        <span class="subst">&#123;<span class="string">&#x27;&#x27;</span>.join(context)&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        问题：<span class="subst">&#123;query&#125;</span></span></span><br><span class="line"><span class="string">        回答：</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        response = client.chat.completions.create(</span><br><span class="line">            model=<span class="variable language_">self</span>.llm_model,</span><br><span class="line">            messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;],</span><br><span class="line">            temperature=<span class="number">0.3</span></span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> response.choices[<span class="number">0</span>].message.content</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">rag = RAGSystem(<span class="string">&quot;rag_index.faiss&quot;</span>, chunks)</span><br><span class="line">context = rag.retrieve(<span class="string">&quot;商品房预售条款有哪些规定?&quot;</span>)</span><br><span class="line">answer = rag.generate(<span class="string">&quot;商品房预售条款有哪些规定?&quot;</span>, context)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="四、性能优化实践"><a href="#四、性能优化实践" class="headerlink" title="四、性能优化实践"></a><strong>四、性能优化实践</strong></h3><h4 id="1-检索阶段优化"><a href="#1-检索阶段优化" class="headerlink" title="1. 检索阶段优化"></a>1. <strong>检索阶段优化</strong></h4><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>分级检索</strong></td>
+<td>先使用IVFFlat快速筛选，再用FlatL2精确重排</td>
+</tr>
+<tr>
+<td><strong>查询扩展</strong></td>
+<td>使用SPLADE生成扩展查询词</td>
+</tr>
+<tr>
+<td><strong>缓存机制</strong></td>
+<td>Redis缓存高频查询的embedding和结果</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询扩展示例</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">expand_query</span>(<span class="params">query</span>):</span><br><span class="line">    expansion_prompt = <span class="string">f&quot;生成以下查询的同义词和扩展表达：<span class="subst">&#123;query&#125;</span>&quot;</span></span><br><span class="line">    expansions = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&quot;gpt-3.5-turbo&quot;</span>,</span><br><span class="line">        messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: expansion_prompt&#125;],</span><br><span class="line">        temperature=<span class="number">0.7</span>,</span><br><span class="line">        max_tokens=<span class="number">50</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> query + <span class="string">&quot; &quot;</span> + expansions.choices[<span class="number">0</span>].message.content</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-生成阶段优化"><a href="#2-生成阶段优化" class="headerlink" title="2. 生成阶段优化"></a>2. <strong>生成阶段优化</strong></h4><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>提示工程</strong></td>
+<td>使用CoT (Chain-of-Thought) 模板</td>
+</tr>
+<tr>
+<td><strong>结果校验</strong></td>
+<td>添加FactScore验证</td>
+</tr>
+<tr>
+<td><strong>流式输出</strong></td>
+<td>使用OpenAI的stream&#x3D;True参数</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 带验证的生成</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">verified_generate</span>(<span class="params">query, context</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    请严格基于以下上下文回答，若信息不足请说明：</span></span><br><span class="line"><span class="string">    上下文：<span class="subst">&#123;<span class="string">&quot;&quot;</span>.join(context)&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    分步骤思考：</span></span><br><span class="line"><span class="string">    1. 问题核心是什么？</span></span><br><span class="line"><span class="string">    2. 上下文哪些部分相关？</span></span><br><span class="line"><span class="string">    3. 回答应包含哪些要素？</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    最终回答：</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># ...生成逻辑...</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 事实性验证</span></span><br><span class="line">    verification = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">        messages=[</span><br><span class="line">            &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;验证以下陈述是否与给定上下文一致&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">f&quot;陈述：<span class="subst">&#123;answer&#125;</span>\n上下文：<span class="subst">&#123;context&#125;</span>&quot;</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;不一致&quot;</span> <span class="keyword">in</span> verification.choices[<span class="number">0</span>].message.content:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;抱歉，无法从资料中找到确切答案&quot;</span></span><br><span class="line">    <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="五、生产级部署方案"><a href="#五、生产级部署方案" class="headerlink" title="五、生产级部署方案"></a><strong>五、生产级部署方案</strong></h3><h4 id="1-架构设计"><a href="#1-架构设计" class="headerlink" title="1. 架构设计"></a>1. <strong>架构设计</strong></h4><pre><code class="highlight mermaid">graph LR
+    A[客户端] --&gt; B[API Gateway]
+    B --&gt; C[负载均衡]
+    C --&gt; D[FastAPI实例1]
+    C --&gt; E[FastAPI实例2]
+    D --&gt; F[Redis缓存]
+    E --&gt; F
+    F --&gt; G[FAISS集群]
+    G --&gt; H[OpenAI API]</code></pre>
+
+<h4 id="2-关键配置"><a href="#2-关键配置" class="headerlink" title="2. 关键配置"></a>2. <strong>关键配置</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># FastAPI应用示例</span></span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Query</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    text: <span class="built_in">str</span></span><br><span class="line">    top_k: <span class="built_in">int</span> = <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/query&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">handle_query</span>(<span class="params">query: Query</span>):</span><br><span class="line">    context = rag.retrieve(query.text, query.top_k)</span><br><span class="line">    answer = rag.generate(query.text, context)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;answer&quot;</span>: answer, <span class="string">&quot;sources&quot;</span>: context&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动命令</span></span><br><span class="line"><span class="comment"># uvicorn main:app --workers 4 --host 0.0.0.0 --port 8000</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-监控指标"><a href="#3-监控指标" class="headerlink" title="3. 监控指标"></a>3. <strong>监控指标</strong></h4><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>监控方式</th>
+<th>预警阈值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>检索延迟</td>
+<td>Prometheus + Grafana</td>
+<td>&gt;500ms</td>
+</tr>
+<tr>
+<td>LLM调用错误率</td>
+<td>LangSmith webhook</td>
+<td>&gt;5%&#x2F;小时</td>
+</tr>
+<tr>
+<td>缓存命中率</td>
+<td>Redis INFO命令</td>
+<td>&lt;70%</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="六、安全与合规实践"><a href="#六、安全与合规实践" class="headerlink" title="六、安全与合规实践"></a><strong>六、安全与合规实践</strong></h3><h4 id="1-数据安全"><a href="#1-数据安全" class="headerlink" title="1. 数据安全"></a>1. <strong>数据安全</strong></h4><ul>
+<li><strong>加密</strong>：使用AWS KMS加密FAISS索引文件</li>
+<li><strong>脱敏</strong>：在文档处理阶段自动识别并遮盖PII信息<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> presidio_analyzer <span class="keyword">import</span> AnalyzerEngine</span><br><span class="line"></span><br><span class="line">analyzer = AnalyzerEngine()</span><br><span class="line">results = analyzer.analyze(text=chunk, language=<span class="string">&quot;zh&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">    chunk = chunk.replace(chunk[result.start:result.end], <span class="string">&quot;[REDACTED]&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-API防护"><a href="#2-API防护" class="headerlink" title="2. API防护"></a>2. <strong>API防护</strong></h4><ul>
+<li><strong>限流</strong>：FastAPI的<code>slowapi</code>中间件</li>
+<li><strong>鉴权</strong>：JWT令牌验证<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi.security <span class="keyword">import</span> OAuth2PasswordBearer</span><br><span class="line"></span><br><span class="line">oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="string">&quot;token&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/secure_query&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">secure_query</span>(<span class="params">query: Query, token: <span class="built_in">str</span> = Depends(<span class="params">oauth2_scheme</span>)</span>):</span><br><span class="line">    <span class="comment"># 验证逻辑...</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="七、成本优化策略"><a href="#七、成本优化策略" class="headerlink" title="七、成本优化策略"></a><strong>七、成本优化策略</strong></h3><h4 id="1-OpenAI-API成本控制"><a href="#1-OpenAI-API成本控制" class="headerlink" title="1. OpenAI API成本控制"></a>1. <strong>OpenAI API成本控制</strong></h4><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>节省效果</th>
+<th>实现方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>小模型优先</strong></td>
+<td>减少50%成本</td>
+<td>先用GPT-3.5生成草稿，GPT-4仅做润色</td>
+</tr>
+<tr>
+<td><strong>缓存结果</strong></td>
+<td>减少30%重复调用</td>
+<td>Redis存储&lt;query,answer&gt;对，设置TTL&#x3D;24小时</td>
+</tr>
+<tr>
+<td><strong>批量处理</strong></td>
+<td>降低单位成本</td>
+<td>累计多个查询后统一发送（适合异步场景）</td>
+</tr>
+</tbody></table>
+<h4 id="2-计算资源优化"><a href="#2-计算资源优化" class="headerlink" title="2. 计算资源优化"></a>2. <strong>计算资源优化</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># FAISS内存优化配置</span></span><br><span class="line">index = faiss.IndexIVFPQ(</span><br><span class="line">    faiss.IndexFlatL2(d),</span><br><span class="line">    d,</span><br><span class="line">    nlist=<span class="number">100</span>,</span><br><span class="line">    m=<span class="number">8</span>,</span><br><span class="line">    bits=<span class="number">8</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="八、典型问题解决方案"><a href="#八、典型问题解决方案" class="headerlink" title="八、典型问题解决方案"></a><strong>八、典型问题解决方案</strong></h3><h4 id="1-长上下文丢失重点"><a href="#1-长上下文丢失重点" class="headerlink" title="1. 长上下文丢失重点"></a>1. <strong>长上下文丢失重点</strong></h4><ul>
+<li><strong>解决方案</strong>：添加重要性标注<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mark_important</span>(<span class="params">chunk</span>):</span><br><span class="line">    importance = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&quot;gpt-3.5-turbo&quot;</span>,</span><br><span class="line">        messages=[&#123;</span><br><span class="line">            <span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, </span><br><span class="line">            <span class="string">&quot;content&quot;</span>: <span class="string">&quot;给文本重要性打分(1-5):\n&quot;</span> + chunk</span><br><span class="line">        &#125;]</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;[重要性:<span class="subst">&#123;importance&#125;</span>] <span class="subst">&#123;chunk&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-多文档冲突"><a href="#2-多文档冲突" class="headerlink" title="2. 多文档冲突"></a>2. <strong>多文档冲突</strong></h4><ul>
+<li><strong>解决方案</strong>：基于时间加权<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在检索结果中给较新文档更高权重</span></span><br><span class="line">newest_date = <span class="built_in">max</span>(doc.dates <span class="keyword">for</span> doc <span class="keyword">in</span> docs)</span><br><span class="line"><span class="keyword">for</span> doc <span class="keyword">in</span> retrieved_docs:</span><br><span class="line">    doc.score *= (<span class="number">0.5</span> + <span class="number">0.5</span>*(doc.date - oldest_date)/(newest_date - oldest_date))</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="九、演进路线建议"><a href="#九、演进路线建议" class="headerlink" title="九、演进路线建议"></a><strong>九、演进路线建议</strong></h3><ol>
+<li><strong>短期（1个月）</strong>：<ul>
+<li>实现基础RAG流程</li>
+<li>建立监控看板</li>
+</ul>
+</li>
+<li><strong>中期（3个月）</strong>：<ul>
+<li>加入重排序模型（如BAAI&#x2F;bge-reranker）</li>
+<li>实现混合检索（关键词+向量）</li>
+</ul>
+</li>
+<li><strong>长期（6个月+）</strong>：<ul>
+<li>微调领域专用embedding模型</li>
+<li>构建端到端评估体系（RAGAS框架）</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/OpenAI/" rel="tag"><i class="fa fa-tag"></i> OpenAI</a>
+              <a href="/tags/RAG/" rel="tag"><i class="fa fa-tag"></i> RAG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/28/A-sample-ABI-of-CCBusERC20-contract/" rel="prev" title="A sample ABI of CCBusERC20 contract">
+                  <i class="fa fa-angle-left"></i> A sample ABI of CCBusERC20 contract
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/05/Core-Technology-Stack-for-Document-Processing-and-Vectorization/" rel="next" title="Core Technology Stack for Document Processing and Vectorization">
+                  Core Technology Stack for Document Processing and Vectorization <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

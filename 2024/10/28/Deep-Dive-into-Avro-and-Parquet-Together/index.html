@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Architecture Overview Data Pipeline Design Ingesting Data from Messaging System Processing and Converting Avro to Parquet Saving to Big Data Storage (S3)   Understanding the Structural D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Avro and Parquet Together">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Architecture Overview Data Pipeline Design Ingesting Data from Messaging System Processing and Converting Avro to Parquet Saving to Big Data Storage (S3)   Understanding the Structural D">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T21:33:14.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Avro">
+<meta property="article:tag" content="Parquet">
+<meta property="article:tag" content="Deep Dive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/","path":"2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/","title":"Deep Dive into Avro and Parquet Together"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Avro and Parquet Together | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture-Overview"><span class="nav-number">2.</span> <span class="nav-text">Architecture Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Pipeline-Design"><span class="nav-number">3.</span> <span class="nav-text">Data Pipeline Design</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ingesting-Data-from-Messaging-System"><span class="nav-number">3.1.</span> <span class="nav-text">Ingesting Data from Messaging System</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Processing-and-Converting-Avro-to-Parquet"><span class="nav-number">3.2.</span> <span class="nav-text">Processing and Converting Avro to Parquet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Saving-to-Big-Data-Storage-S3"><span class="nav-number">3.3.</span> <span class="nav-text">Saving to Big Data Storage (S3)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Understanding-the-Structural-Differences"><span class="nav-number">4.</span> <span class="nav-text">Understanding the Structural Differences</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Avro-to-Parquet-Conversion"><span class="nav-number">4.1.</span> <span class="nav-text">Avro to Parquet Conversion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reading-from-Parquet-and-Converting-Back-to-Avro"><span class="nav-number">4.2.</span> <span class="nav-text">Reading from Parquet and Converting Back to Avro</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Parquet%E2%80%99s-Row-Groups-and-Column-Chunks"><span class="nav-number">5.</span> <span class="nav-text">Parquet’s Row Groups and Column Chunks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ensuring-Data-Belongs-to-the-Same-Record"><span class="nav-number">5.1.</span> <span class="nav-text"> Ensuring Data Belongs to the Same Record</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reading-from-Parquet-and-Converting-Back-to-Avro-1"><span class="nav-number">5.2.</span> <span class="nav-text">Reading from Parquet and Converting Back to Avro</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-if-Null-Values-in-Parquet"><span class="nav-number">6.</span> <span class="nav-text">What if Null Values in Parquet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Null-Values-in-Columns"><span class="nav-number">6.1.</span> <span class="nav-text">1. Null Values in Columns</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Encodings-for-Efficient-Storage"><span class="nav-number">6.2.</span> <span class="nav-text">2. Encodings for Efficient Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Metadata-Tracking-and-Optional-Fields"><span class="nav-number">6.3.</span> <span class="nav-text">3. Metadata Tracking and Optional Fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Scenario"><span class="nav-number">6.4.</span> <span class="nav-text">Example Scenario</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-in-Spark"><span class="nav-number">6.5.</span> <span class="nav-text">Example in Spark</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Real-Life-Production-Sample-Code-in-Spark"><span class="nav-number">7.</span> <span class="nav-text">Real-Life Production Sample Code in Spark</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Reading-from-Kafka"><span class="nav-number">7.1.</span> <span class="nav-text"> Reading from Kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Converting-Avro-to-Parquet"><span class="nav-number">7.2.</span> <span class="nav-text"> Converting Avro to Parquet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Writing-to-S3"><span class="nav-number">7.3.</span> <span class="nav-text"> Writing to S3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">8.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Together/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Avro and Parquet Together | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Avro and Parquet Together
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 17:33:14" itemprop="dateCreated datePublished" datetime="2024-10-28T17:33:14-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/" itemprop="url" rel="index"><span itemprop="name">Avro</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/Parquet/" itemprop="url" rel="index"><span itemprop="name">Parquet</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#data-pipeline-design">Data Pipeline Design</a><ul>
+<li><a href="#ingesting-data-from-messaging-system">Ingesting Data from Messaging System</a></li>
+<li><a href="#processing-and-converting-avro-to-parquet">Processing and Converting Avro to Parquet</a></li>
+<li><a href="#saving-to-big-data-storage-s3">Saving to Big Data Storage (S3)</a></li>
+</ul>
+</li>
+<li><a href="#understanding-the-structural-differences">Understanding the Structural Differences</a><ul>
+<li><a href="#avro-to-parquet-conversion">Avro to Parquet Conversion</a></li>
+<li><a href="#reading-from-parquet-and-converting-back-to-avro">Reading from Parquet and Converting Back to Avro</a></li>
+</ul>
+</li>
+<li><a href="#parquets-row-groups-and-column-chunks">Parquet’s Row Groups and Column Chunks</a><ul>
+<li><a href="#-ensuring-data-belongs-to-the-same-record"> Ensuring Data Belongs to the Same Record</a></li>
+<li><a href="#reading-from-parquet-and-converting-back-to-avro-1">Reading from Parquet and Converting Back to Avro</a></li>
+</ul>
+</li>
+<li><a href="#what-if-null-values-in-parquet">What if Null Values in Parquet</a><ul>
+<li><a href="#1-null-values-in-columns">1. <strong>Null Values in Columns</strong></a></li>
+<li><a href="#2-encodings-for-efficient-storage">2. <strong>Encodings for Efficient Storage</strong></a></li>
+<li><a href="#3-metadata-tracking-and-optional-fields">3. <strong>Metadata Tracking and Optional Fields</strong></a></li>
+<li><a href="#example-scenario">Example Scenario</a></li>
+<li><a href="#example-in-spark">Example in Spark</a></li>
+</ul>
+</li>
+<li><a href="#real-life-production-sample-code-in-spark">Real-Life Production Sample Code in Spark</a><ul>
+<li><a href="#-reading-from-kafka"> Reading from Kafka</a></li>
+<li><a href="#-converting-avro-to-parquet"> Converting Avro to Parquet</a></li>
+<li><a href="#-writing-to-s3"> Writing to S3</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In modern data architectures, Avro data is often used in messaging systems like Apache Kafka due to its compact binary format and schema evolution support. However, in data lakes or data warehouses, Parquet is preferred for storage due to its columnar format and efficient read performance. This article covers the architecture, pipeline design, and real-life sample code for implementing a pipeline that ingests Avro data from a messaging system and saves it in Parquet format in a big data storage solution like Amazon S3.</p>
+<hr>
+<p><a name="architecture-overview"></a></p>
+<h2 id="Architecture-Overview"><a href="#Architecture-Overview" class="headerlink" title="Architecture Overview"></a>Architecture Overview</h2><p>This section provides an overview of the components in a typical architecture that ingests Avro from a messaging system and saves it as Parquet in big data storage.</p>
+<p><strong>Diagram: Avro to Parquet Pipeline Architecture</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Messaging System (Kafka)  ----&gt;  Stream Processing (Spark)  ----&gt;  S3 Storage (Parquet Format)</span><br></pre></td></tr></table></figure>
+
+<p><a name="avro-and-parquet-formats"></a>###  Avro and Parquet Formats</p>
+<ul>
+<li><strong>Avro</strong>: A row-based binary format, commonly used for serializing data in messaging systems due to its compact size and schema evolution capabilities.</li>
+<li><strong>Parquet</strong>: A columnar storage format optimized for reading specific columns, making it highly efficient for analytics and big data storage solutions.</li>
+</ul>
+<p><a name="role-of-messaging-systems"></a>###  Role of Messaging Systems</p>
+<p>Messaging systems like <strong>Apache Kafka</strong> are widely used to transport streaming data across systems in real time. Kafka provides fault-tolerance and durability, ensuring data is safely delivered to downstream applications for processing.</p>
+<p><a name="storage-in-big-data-storage-solutions"></a>###  Storage in Big Data Storage Solutions</p>
+<p>Big data storage solutions, such as <strong>Amazon S3</strong>, offer durable and cost-effective storage for large-scale data. Storing data in Parquet format on S3 enables easy integration with data analytics frameworks like Spark, Presto, and Hive.</p>
+<hr>
+<p><a name="data-pipeline-design"></a></p>
+<h2 id="Data-Pipeline-Design"><a href="#Data-Pipeline-Design" class="headerlink" title="Data Pipeline Design"></a>Data Pipeline Design</h2><p>The pipeline includes the following key stages:</p>
+<ol>
+<li><strong>Data Ingestion</strong>: Consuming Avro-encoded messages from Kafka.</li>
+<li><strong>Processing and Transformation</strong>: Converting Avro data to Parquet format.</li>
+<li><strong>Storage</strong>: Saving the transformed Parquet files to Amazon S3.</li>
+</ol>
+<p><a name="ingesting-data-from-messaging-system"></a></p>
+<h3 id="Ingesting-Data-from-Messaging-System"><a href="#Ingesting-Data-from-Messaging-System" class="headerlink" title="Ingesting Data from Messaging System"></a>Ingesting Data from Messaging System</h3><p>The first step in the pipeline is ingesting data from a messaging system like Kafka. Spark Structured Streaming can be used to consume Avro-encoded messages from Kafka topics in real-time.</p>
+<p><strong>Diagram: Ingesting Avro Data from Kafka</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kafka Topic (Avro Messages)  ---&gt;  Spark Structured Streaming  ---&gt;  Data Transformation</span><br></pre></td></tr></table></figure>
+
+<p><a name="processing-and-converting-avro-to-parquet"></a></p>
+<h3 id="Processing-and-Converting-Avro-to-Parquet"><a href="#Processing-and-Converting-Avro-to-Parquet" class="headerlink" title="Processing and Converting Avro to Parquet"></a>Processing and Converting Avro to Parquet</h3><p>Spark Structured Streaming allows us to process and transform the incoming Avro data. To convert Avro to Parquet, the schema needs to be mapped, and the data is then serialized to the Parquet format.</p>
+<p><strong>Diagram: Converting Avro to Parquet in Spark</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Avro Data (Spark DataFrame)  ---&gt;  Schema Mapping  ---&gt;  Parquet Data</span><br></pre></td></tr></table></figure>
+
+<p><a name="saving-to-big-data-storage-s3"></a></p>
+<h3 id="Saving-to-Big-Data-Storage-S3"><a href="#Saving-to-Big-Data-Storage-S3" class="headerlink" title="Saving to Big Data Storage (S3)"></a>Saving to Big Data Storage (S3)</h3><p>Once converted to Parquet, the data can be written to Amazon S3 in a structured format. Parquet files in S3 are organized by partitions (e.g., by date or another logical grouping) to optimize retrieval and querying performance.</p>
+<p><strong>Diagram: Saving to S3</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Parquet Data (Partitioned by Date)  ---&gt;  Amazon S3 Bucket  ---&gt;  Analytics-ready Storage</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="understanding-the-structural-differences"></a></p>
+<h2 id="Understanding-the-Structural-Differences"><a href="#Understanding-the-Structural-Differences" class="headerlink" title="Understanding the Structural Differences"></a>Understanding the Structural Differences</h2><p>In Avro and Parquet formats, the <strong>data organization</strong> is fundamentally different:</p>
+<ul>
+<li><strong>Avro</strong>: A row-based format where each record is serialized as a single entity, storing all fields of each row together.</li>
+<li><strong>Parquet</strong>: A columnar storage format where data is grouped by columns rather than rows, optimizing for efficient reads on specific columns (ideal for analytical workloads).</li>
+</ul>
+<p>To illustrate, let’s consider an Avro record with two attributes:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John Doe&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>In Avro, the above record would be stored as a single contiguous block of binary data, with fields appearing in the order defined by the schema.</p>
+<p>When converting this record to <strong>Parquet</strong>, the storage layout changes to a <strong>column-oriented format</strong>. Parquet organizes data by columns:</p>
+<ul>
+<li>Each column (e.g., “name” and “age”) is stored separately in <strong>column chunks</strong>.</li>
+<li>Parquet organizes records into <strong>row groups</strong>, where each row group has column chunks for each column defined in the schema.</li>
+</ul>
+<p><strong>Diagram: Avro to Parquet Conversion for Record <code>&#123; &quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30 &#125;</code></strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>Parquet Column Chunk</strong></th>
+<th><strong>Data Stored</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Name Column Chunk</td>
+<td>John Doe</td>
+</tr>
+<tr>
+<td>Age Column Chunk</td>
+<td>30</td>
+</tr>
+</tbody></table>
+<p>In a more extensive dataset with thousands of records, Parquet’s layout significantly optimizes read performance because each column chunk can be accessed independently. For instance, if only the “age” column is required for analysis, Parquet reads only the relevant chunk, skipping over unrelated columns like “name.”</p>
+<hr>
+<p><a name="avro-to-parquet-conversion"></a></p>
+<h3 id="Avro-to-Parquet-Conversion"><a href="#Avro-to-Parquet-Conversion" class="headerlink" title="Avro to Parquet Conversion"></a>Avro to Parquet Conversion</h3><p>The steps for converting Avro to Parquet in a system like Apache Spark generally follow this sequence:</p>
+<ol>
+<li><p><strong>Avro Data Loading</strong>:</p>
+<ul>
+<li>Avro-encoded data is parsed and loaded into an intermediate in-memory structure, such as a DataFrame in Spark.</li>
+<li>Avro schema is either read from the Avro file (or topic in case of Kafka) or supplied separately.</li>
+</ul>
+</li>
+<li><p><strong>Schema Mapping</strong>:</p>
+<ul>
+<li>Spark maps the Avro schema to an equivalent internal schema (e.g., Spark schema), which is essential to support Parquet’s columnar structure.</li>
+<li>Fields in the Avro schema (like “name” and “age”) are mapped to equivalent columns.</li>
+</ul>
+</li>
+<li><p><strong>Data Conversion</strong>:</p>
+<ul>
+<li>Each Avro record is then serialized into a format compatible with Parquet’s column-oriented layout.</li>
+<li>Each attribute is transformed to be written in column chunks rather than row-by-row.</li>
+</ul>
+</li>
+<li><p><strong>Data Writing (Parquet)</strong>:</p>
+<ul>
+<li>Parquet organizes data into <strong>row groups</strong>, and within each row group, column data is stored in contiguous chunks.</li>
+<li>Additional metadata (e.g., min, max, dictionary encoding) is recorded for each column chunk, which is useful for optimizations in querying.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example</strong>:<br>In Spark, a sample code to convert Avro to Parquet may look like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Load Avro data into a DataFrame</span></span><br><span class="line">Dataset&lt;Row&gt; avroDF = spark.read().format(<span class="string">&quot;avro&quot;</span>).load(<span class="string">&quot;path/to/avro/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write data to Parquet format</span></span><br><span class="line">avroDF.write().parquet(<span class="string">&quot;path/to/output/parquet&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>This process reorganizes the data from a row-based layout (Avro) to a columnar layout (Parquet).</p>
+<hr>
+<p><a name="reading-from-parquet-and-converting-back-to-avro"></a></p>
+<h3 id="Reading-from-Parquet-and-Converting-Back-to-Avro"><a href="#Reading-from-Parquet-and-Converting-Back-to-Avro" class="headerlink" title="Reading from Parquet and Converting Back to Avro"></a>Reading from Parquet and Converting Back to Avro</h3><p>When reading Parquet data and converting it back to Avro, the system reverses the process, transforming columnar data back into row-based data.</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li><p><strong>Load Parquet Data</strong>:</p>
+<ul>
+<li>Parquet files are read into memory. In a Spark-based setup, this would involve loading Parquet files into a DataFrame.</li>
+</ul>
+</li>
+<li><p><strong>Column Extraction</strong>:</p>
+<ul>
+<li>Parquet retrieves data by accessing each relevant column chunk. Parquet’s metadata allows efficient navigation to the specific data of interest.</li>
+</ul>
+</li>
+<li><p><strong>Row Assembly</strong>:</p>
+<ul>
+<li>As each column’s data is accessed, the system assembles rows by gathering data from each column chunk.</li>
+<li>The row-based structure compatible with Avro is recreated by combining values from each column for every row.</li>
+</ul>
+</li>
+<li><p><strong>Schema Mapping</strong>:</p>
+<ul>
+<li>Parquet columns are mapped to Avro fields based on a schema. This schema alignment ensures that columns match Avro’s row-oriented requirements.</li>
+<li>The DataFrame (or equivalent data structure) is serialized back into the Avro format.</li>
+</ul>
+</li>
+<li><p><strong>Write to Avro</strong>:</p>
+<ul>
+<li>The row-based structure is serialized in Avro’s binary format, and the schema is either embedded or referenced as needed.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example Code: Converting Parquet to Avro in Spark</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Load Parquet data into a DataFrame</span></span><br><span class="line">Dataset&lt;Row&gt; parquetDF = spark.read().parquet(<span class="string">&quot;path/to/parquet/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write data back to Avro format</span></span><br><span class="line">parquetDF.write().format(<span class="string">&quot;avro&quot;</span>).save(<span class="string">&quot;path/to/output/avro&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>This code converts the columnar Parquet format back into Avro’s row-based format.</p>
+<hr>
+<p><a name="parquets-row-groups-and-column-chunks"></a></p>
+<h2 id="Parquet’s-Row-Groups-and-Column-Chunks"><a href="#Parquet’s-Row-Groups-and-Column-Chunks" class="headerlink" title="Parquet’s Row Groups and Column Chunks"></a>Parquet’s Row Groups and Column Chunks</h2><p>In Parquet, data is stored in <strong>row groups</strong>. Each row group contains data for a set number of rows, and within each row group, data is stored in <strong>column chunks</strong> (one for each column). The row group is Parquet’s key structural element that ensures the association between column data across multiple rows:</p>
+<ul>
+<li><strong>Row Group</strong>: A set of rows is organized as a contiguous data block. Each row group in Parquet represents a batch of rows from the original dataset.</li>
+<li><strong>Column Chunk</strong>: Within each row group, each column’s data is stored in a separate column chunk.</li>
+</ul>
+<p>For example, if we have a dataset with 10,000 records, it might be divided into several row groups (say 5,000 rows per row group). Each row group then contains the data for the columns <code>name</code> and <code>age</code> in its respective column chunks.</p>
+<h3 id="Ensuring-Data-Belongs-to-the-Same-Record"><a href="#Ensuring-Data-Belongs-to-the-Same-Record" class="headerlink" title=" Ensuring Data Belongs to the Same Record"></a><a name="ensuring-data-belongs-to-the-same-record"></a> Ensuring Data Belongs to the Same Record</h3><p>To ensure data from each column belongs to the same record, Parquet relies on <strong>row ordering</strong> within each row group. The ordering within each column chunk of a row group matches across all columns:</p>
+<ul>
+<li><strong>Ordering</strong>: Each row in a row group corresponds to the same index across all column chunks within that row group. For instance, the first value in the <code>name</code> column chunk of a row group corresponds to the first value in the <code>age</code> column chunk for the same row group.</li>
+<li><strong>Offset Metadata</strong>: Parquet uses metadata about the offsets within each column chunk to ensure each row can be reconstructed correctly when reading.</li>
+</ul>
+<p>So, in your example, the row group might look like this:</p>
+<table>
+<thead>
+<tr>
+<th>Row Index</th>
+<th>Name Column Chunk</th>
+<th>Age Column Chunk</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Row 1</td>
+<td>“John Doe”</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Row 2</td>
+<td>“Jane Smith”</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Row 3</td>
+<td>“Alice Brown”</td>
+<td>28</td>
+</tr>
+</tbody></table>
+<p>Each entry in the <code>name</code> and <code>age</code> column chunks corresponds by index. Parquet uses metadata within the row group and column chunks to indicate where each row begins and ends, making sure that during reads, each row’s data across columns is aligned.</p>
+<p><a name="reading-from-parquet-and-converting-back-to-avro"></a></p>
+<h3 id="Reading-from-Parquet-and-Converting-Back-to-Avro-1"><a href="#Reading-from-Parquet-and-Converting-Back-to-Avro-1" class="headerlink" title="Reading from Parquet and Converting Back to Avro"></a>Reading from Parquet and Converting Back to Avro</h3><p>When reading Parquet data back into a row-based format (like Avro), the system iterates over each row group:</p>
+<ul>
+<li><strong>Row Assembly</strong>: For each row in a row group, Parquet retrieves the respective values from each column chunk based on their row index. This reassembles each row’s fields together to form the original record.</li>
+<li><strong>Schema Mapping</strong>: The column metadata stored in Parquet includes the schema, allowing the correct assignment of values back to each field in the record.</li>
+</ul>
+<p><a name="what-if-null-values-in-parquet"></a></p>
+<h2 id="What-if-Null-Values-in-Parquet"><a href="#What-if-Null-Values-in-Parquet" class="headerlink" title="What if Null Values in Parquet"></a>What if Null Values in Parquet</h2><p>In Parquet, each <strong>column chunk</strong> within a <strong>row group</strong> holds data in columnar format, and Parquet efficiently handles cases where some rows may lack a value for a given column by using specific encoding and metadata, rather than empty placeholders. Here’s how it manages the scenario:</p>
+<h3 id="1-Null-Values-in-Columns"><a href="#1-Null-Values-in-Columns" class="headerlink" title="1. Null Values in Columns"></a>1. <strong>Null Values in Columns</strong></h3><p>   If a column lacks a value for a particular row, Parquet does not insert an empty placeholder. Instead:</p>
+<ul>
+<li><strong>Definition Levels</strong> are used to indicate whether a value is present or null. Each level specifies if a field has a value or is missing at that row.</li>
+<li><strong>Repetition Levels</strong> track nested structures within rows, so nested nulls and repeated fields can be handled in one scan.</li>
+</ul>
+<h3 id="2-Encodings-for-Efficient-Storage"><a href="#2-Encodings-for-Efficient-Storage" class="headerlink" title="2. Encodings for Efficient Storage"></a>2. <strong>Encodings for Efficient Storage</strong></h3><p>   Parquet uses encodings like <strong>Run-Length Encoding (RLE)</strong> and <strong>Dictionary Encoding</strong> to represent repeated or missing values compactly:</p>
+<ul>
+<li><strong>Run-Length Encoding</strong> groups consecutive null values (or any repeating values) into a single representation, saving space when large chunks are missing in a column.</li>
+<li><strong>Dictionary Encoding</strong> can efficiently map common values (like repeated nulls or default values) using dictionary lookup tables.</li>
+</ul>
+<h3 id="3-Metadata-Tracking-and-Optional-Fields"><a href="#3-Metadata-Tracking-and-Optional-Fields" class="headerlink" title="3. Metadata Tracking and Optional Fields"></a>3. <strong>Metadata Tracking and Optional Fields</strong></h3><ul>
+<li>If a field is defined as <code>optional</code> in the schema, it allows a row to be saved without a value for that field. Parquet only includes these rows in the row group metadata, which helps query engines like Spark identify missing values.</li>
+</ul>
+<h3 id="Example-Scenario"><a href="#Example-Scenario" class="headerlink" title="Example Scenario"></a>Example Scenario</h3><p>Let’s say we have a Parquet file with three rows and three columns, where one column lacks values for some rows.</p>
+<table>
+<thead>
+<tr>
+<th>Row Group</th>
+<th>Column A</th>
+<th>Column B</th>
+<th>Column C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Row 1</td>
+<td>Value 1</td>
+<td>Null</td>
+<td>Value 3</td>
+</tr>
+<tr>
+<td>Row 2</td>
+<td>Value 4</td>
+<td>Value 5</td>
+<td>Null</td>
+</tr>
+<tr>
+<td>Row 3</td>
+<td>Null</td>
+<td>Value 6</td>
+<td>Value 7</td>
+</tr>
+</tbody></table>
+<p>In this case:</p>
+<ul>
+<li><strong>Definition Levels</strong> for <code>Column B</code> and <code>Column C</code> would show which rows contain nulls.</li>
+<li>The data structure itself would store only the non-null values, reducing storage without explicit placeholders.</li>
+</ul>
+<p>This approach is particularly useful when handling sparse data, as it minimizes the storage footprint and increases reading efficiency.</p>
+<h3 id="Example-in-Spark"><a href="#Example-in-Spark" class="headerlink" title="Example in Spark"></a>Example in Spark</h3><p>Here’s how Spark handles this under the hood when reading Parquet data and converting it back to Avro:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Reading from Parquet</span></span><br><span class="line">Dataset&lt;Row&gt; parquetDF = spark.read().parquet(<span class="string">&quot;path/to/parquet/file&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Writing back to Avro, reassembling rows</span></span><br><span class="line">parquetDF.write().format(<span class="string">&quot;avro&quot;</span>).save(<span class="string">&quot;path/to/output/avro&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>During this process, Spark ensures that each row’s values across columns are correctly aligned by leveraging Parquet’s row group and column chunk metadata. This alignment allows it to convert back to Avro’s row-based format without losing the association between <code>name</code> and <code>age</code> in each record.</p>
+<hr>
+<p><a name="real-life-production-sample-code-in-spark"></a></p>
+<h2 id="Real-Life-Production-Sample-Code-in-Spark"><a href="#Real-Life-Production-Sample-Code-in-Spark" class="headerlink" title="Real-Life Production Sample Code in Spark"></a>Real-Life Production Sample Code in Spark</h2><p>The following sample code demonstrates how to implement this pipeline in <strong>Apache Spark</strong> with <strong>Structured Streaming</strong>.</p>
+<h3 id="Reading-from-Kafka"><a href="#Reading-from-Kafka" class="headerlink" title=" Reading from Kafka"></a><a name="reading-from-kafka"></a> Reading from Kafka</h3><p>Use Spark to read Avro data from a Kafka topic in real-time.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.SparkSession;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Dataset;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.Row;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.avro.functions.from_avro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AvroToParquetPipeline</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SparkSession</span> <span class="variable">spark</span> <span class="operator">=</span> SparkSession.builder()</span><br><span class="line">                .appName(<span class="string">&quot;Avro to Parquet Pipeline&quot;</span>)</span><br><span class="line">                .getOrCreate();</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaBootstrapServers</span> <span class="operator">=</span> <span class="string">&quot;kafka-broker1:9092,kafka-broker2:9092&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">kafkaTopic</span> <span class="operator">=</span> <span class="string">&quot;avro-topic&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; avroDF = spark</span><br><span class="line">                .readStream()</span><br><span class="line">                .format(<span class="string">&quot;kafka&quot;</span>)</span><br><span class="line">                .option(<span class="string">&quot;kafka.bootstrap.servers&quot;</span>, kafkaBootstrapServers)</span><br><span class="line">                .option(<span class="string">&quot;subscribe&quot;</span>, kafkaTopic)</span><br><span class="line">                .load()</span><br><span class="line">                .selectExpr(<span class="string">&quot;CAST(value AS BINARY) as avroData&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Define the Avro schema (can be fetched from Schema Registry if available)</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">avroSchema</span> <span class="operator">=</span> <span class="string">&quot;&#123; \&quot;type\&quot;: \&quot;record\&quot;, \&quot;name\&quot;: \&quot;User\&quot;, \&quot;fields\&quot;: [ &#123;\&quot;name\&quot;: \&quot;id\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;&#125;, &#123;\&quot;name\&quot;: \&quot;age\&quot;, \&quot;type\&quot;: \&quot;int\&quot;&#125; ] &#125;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        Dataset&lt;Row&gt; parsedDF = avroDF</span><br><span class="line">                .select(from_avro(avroDF.col(<span class="string">&quot;avroData&quot;</span>), avroSchema).as(<span class="string">&quot;data&quot;</span>))</span><br><span class="line">                .select(<span class="string">&quot;data.*&quot;</span>);</span><br><span class="line"></span><br><span class="line">        parsedDF.printSchema(); <span class="comment">// Debugging schema after parsing Avro</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Converting-Avro-to-Parquet"><a href="#Converting-Avro-to-Parquet" class="headerlink" title=" Converting Avro to Parquet"></a><a name="converting-avro-to-parquet"></a> Converting Avro to Parquet</h3><p>Once we have parsed the Avro data into a DataFrame, we can convert it into Parquet format.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dataset&lt;Row&gt; parquetDF = parsedDF.repartition(<span class="number">1</span>); <span class="comment">// Optional: Customize partitioning as needed</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Writing-to-S3"><a href="#Writing-to-S3" class="headerlink" title=" Writing to S3"></a><a name="writing-to-s3"></a> Writing to S3</h3><p>Writing the data to Amazon S3 requires specifying the destination path and configuring partitioning if necessary.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.streaming.Trigger;</span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s3Path</span> <span class="operator">=</span> <span class="string">&quot;s3a://your-bucket/path/to/destination/&quot;</span>;</span><br><span class="line"></span><br><span class="line">parquetDF.writeStream()</span><br><span class="line">        .format(<span class="string">&quot;parquet&quot;</span>)</span><br><span class="line">        .option(<span class="string">&quot;path&quot;</span>, s3Path)</span><br><span class="line">        .option(<span class="string">&quot;checkpointLocation&quot;</span>, <span class="string">&quot;s3a://your-bucket/path/to/checkpoint/&quot;</span>)</span><br><span class="line">        .partitionBy(<span class="string">&quot;date&quot;</span>) <span class="comment">// Optional: Partitioning by a specific column (e.g., date)</span></span><br><span class="line">        .trigger(Trigger.ProcessingTime(<span class="string">&quot;5 minutes&quot;</span>)) <span class="comment">// Controls batch frequency</span></span><br><span class="line">        .start()</span><br><span class="line">        .awaitTermination();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article covered an architecture for ingesting Avro data from a messaging system, converting it to Parquet, and saving it in Amazon S3. Using Spark Structured Streaming and Amazon S3 for storage, this pipeline is a robust solution for managing Avro-to-Parquet transformations in big data applications. Understanding the structural differences between Avro and Parquet, as well as the conversion process, enables data engineers to design efficient and scalable data pipelines.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Avro/" rel="tag"><i class="fa fa-tag"></i> Avro</a>
+              <a href="/tags/Parquet/" rel="tag"><i class="fa fa-tag"></i> Parquet</a>
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Avro-to-Parquet-Pipeline-in-Big-Data-Applications/" rel="prev" title="Avro to Parquet Pipeline in Big Data Applications">
+                  <i class="fa fa-angle-left"></i> Avro to Parquet Pipeline in Big Data Applications
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Troubleshooting-Kubernetes-Pod-Stuck-in-Terminating-State-After-Deletion/" rel="next" title="Troubleshooting Kubernetes: Pod Stuck in Terminating State After Deletion">
+                  Troubleshooting Kubernetes: Pod Stuck in Terminating State After Deletion <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

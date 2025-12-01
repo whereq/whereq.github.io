@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="In Kubernetes, Pods and Services are fundamental components, each with distinct responsibilities that work together to provide scalable, resilient applications. Here’s an in-depth look into how these">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding Kubernetes Pods and Services">
+<meta property="og:url" content="https://www.whereq.com/2024/10/30/Understanding-Kubernetes-Pods-and-Services/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="In Kubernetes, Pods and Services are fundamental components, each with distinct responsibilities that work together to provide scalable, resilient applications. Here’s an in-depth look into how these">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-31T03:24:27.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/30/Understanding-Kubernetes-Pods-and-Services/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/30/Understanding-Kubernetes-Pods-and-Services/","path":"2024/10/30/Understanding-Kubernetes-Pods-and-Services/","title":"Understanding Kubernetes Pods and Services"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Understanding Kubernetes Pods and Services | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Kubernetes-Pod-The-Basic-Unit-of-Deployment"><span class="nav-number">1.</span> <span class="nav-text">1. Kubernetes Pod: The Basic Unit of Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod-Architecture"><span class="nav-number">1.1.</span> <span class="nav-text">Pod Architecture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Real-Scenario-Explaination"><span class="nav-number">2.</span> <span class="nav-text">2. Real Scenario Explaination</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Fluent-Bit-Configuration-in-configmap-yaml"><span class="nav-number">2.1.</span> <span class="nav-text">Example Fluent Bit Configuration in configmap.yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Kubernetes-Service-Stable-Networking-for-Dynamic-Pods"><span class="nav-number">3.</span> <span class="nav-text">2. Kubernetes Service: Stable Networking for Dynamic Pods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Service-Types"><span class="nav-number">3.1.</span> <span class="nav-text">Key Service Types</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Service-Architecture"><span class="nav-number">3.2.</span> <span class="nav-text">Example Service Architecture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Communication-Between-Pods-and-Services"><span class="nav-number">4.</span> <span class="nav-text">3. Communication Between Pods and Services</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Pod-Communication-Example"><span class="nav-number">4.1.</span> <span class="nav-text">Dynamic Pod Communication Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Summary"><span class="nav-number">5.</span> <span class="nav-text">4. Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Fluent-Bit-Configuration-in-configmap-yaml-1"><span class="nav-number">5.1.</span> <span class="nav-text">Example Fluent Bit Configuration in configmap.yaml</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/30/Understanding-Kubernetes-Pods-and-Services/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Understanding Kubernetes Pods and Services | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Understanding Kubernetes Pods and Services
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-30 23:24:27" itemprop="dateCreated datePublished" datetime="2024-10-30T23:24:27-04:00">2024-10-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>In Kubernetes, <strong>Pods</strong> and <strong>Services</strong> are fundamental components, each with distinct responsibilities that work together to provide scalable, resilient applications. Here’s an in-depth look into how these units interact, their roles, and how they communicate.</p>
+<h2 id="1-Kubernetes-Pod-The-Basic-Unit-of-Deployment"><a href="#1-Kubernetes-Pod-The-Basic-Unit-of-Deployment" class="headerlink" title="1. Kubernetes Pod: The Basic Unit of Deployment"></a>1. Kubernetes Pod: The Basic Unit of Deployment</h2><p>A <strong>Pod</strong> is the smallest deployable unit in Kubernetes, representing one or more containers. Containers within the same Pod:</p>
+<ul>
+<li><strong>Share resources</strong>: Same IP address, storage volumes, and network namespace.</li>
+<li><strong>Enable inter-container communication</strong>: Containers in a Pod can access each other on <code>localhost</code>.</li>
+<li><strong>Are ephemeral</strong>: When a Pod fails, it is replaced by a new Pod instance, often with a new IP address.</li>
+</ul>
+<h3 id="Pod-Architecture"><a href="#Pod-Architecture" class="headerlink" title="Pod Architecture"></a>Pod Architecture</h3><p>Each Pod contains one or more containers with shared resources. Below is a textual representation of a typical Pod structure:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------+</span><br><span class="line">|        Pod            |</span><br><span class="line">|  IP: 10.244.1.5       |</span><br><span class="line">|                       |</span><br><span class="line">| +------------------+  |</span><br><span class="line">| | Container A      |  |</span><br><span class="line">| | - Application    |  |</span><br><span class="line">| +------------------+  |</span><br><span class="line">|                       |</span><br><span class="line">| +------------------+  |</span><br><span class="line">| | Container B      |  |</span><br><span class="line">| | - Sidecar Proxy  |  |</span><br><span class="line">| +------------------+  |</span><br><span class="line">+-----------------------+</span><br></pre></td></tr></table></figure>
+
+<p>In this structure, <code>Container A</code> might run the main application, while <code>Container B</code> is a helper (e.g., proxy or logging container). These containers share an IP address and can communicate directly.</p>
+<h2 id="2-Real-Scenario-Explaination"><a href="#2-Real-Scenario-Explaination" class="headerlink" title="2. Real Scenario Explaination"></a>2. Real Scenario Explaination</h2><p>In this setup, the sidecar container collects logs from the PostgreSQL container by sharing a directory between them. Here’s a breakdown of how it works:</p>
+<ol>
+<li><p><strong>Shared Volume</strong>: A shared <code>emptyDir</code> volume, <code>postgres-logs</code>, is mounted in both the PostgreSQL and sidecar containers. PostgreSQL is configured to output logs to <code>/var/log/postgresql</code> within its filesystem, which maps to the shared volume.</p>
+</li>
+<li><p><strong>Log Collector Configuration</strong>: The sidecar container, running Fluent Bit, is configured to read from <code>/var/log/postgresql</code> (also mapped to the shared volume). Fluent Bit’s configuration specifies the <code>tail</code> input plugin to read new entries as they are appended.</p>
+</li>
+<li><p><strong>Log Processing and Output</strong>: Fluent Bit processes the logs, then sends them to Elasticsearch through its output configuration, allowing centralized log analysis and monitoring.</p>
+</li>
+</ol>
+<p>This method ensures that logs are constantly accessible to the sidecar without modifying the PostgreSQL container directly.</p>
+<h3 id="Example-Fluent-Bit-Configuration-in-configmap-yaml"><a href="#Example-Fluent-Bit-Configuration-in-configmap-yaml" class="headerlink" title="Example Fluent Bit Configuration in configmap.yaml"></a>Example Fluent Bit Configuration in <code>configmap.yaml</code></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql-log-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">fluent-bit.conf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [SERVICE]</span></span><br><span class="line"><span class="string">        Flush 1</span></span><br><span class="line"><span class="string">        Log_Level info</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    [<span class="string">INPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">tail</span></span><br><span class="line">        <span class="string">Path</span> <span class="string">/var/log/postgresql/postgresql.log</span></span><br><span class="line">        <span class="string">Tag</span> <span class="string">postgresql</span></span><br><span class="line"></span><br><span class="line">    [<span class="string">OUTPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">es</span></span><br><span class="line">        <span class="string">Match</span> <span class="string">*</span></span><br><span class="line">        <span class="string">Host</span> &#123;&#123; <span class="string">.Values.elasticsearch.host</span> &#125;&#125;</span><br><span class="line">        <span class="string">Port</span> <span class="number">9200</span></span><br><span class="line">        <span class="string">Index</span> &#123;&#123; <span class="string">.Values.elasticsearch.index</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This setup allows the sidecar to monitor log updates efficiently, pushing each entry to Elasticsearch as it appears in the log file.</p>
+<h2 id="2-Kubernetes-Service-Stable-Networking-for-Dynamic-Pods"><a href="#2-Kubernetes-Service-Stable-Networking-for-Dynamic-Pods" class="headerlink" title="2. Kubernetes Service: Stable Networking for Dynamic Pods"></a>2. Kubernetes Service: Stable Networking for Dynamic Pods</h2><p>A <strong>Service</strong> is an abstraction that provides a stable, permanent network interface for a set of Pods. Since Pod IP addresses are temporary, a Service routes requests to Pods and handles the load balancing across them.</p>
+<h3 id="Key-Service-Types"><a href="#Key-Service-Types" class="headerlink" title="Key Service Types"></a>Key Service Types</h3><ul>
+<li><strong>ClusterIP</strong>: Exposes the Service only within the cluster.</li>
+<li><strong>NodePort</strong>: Exposes the Service on each node’s IP at a specific port.</li>
+<li><strong>LoadBalancer</strong>: Exposes the Service externally, often through a cloud provider’s load balancer.</li>
+<li><strong>Headless Service</strong>: Exposes each Pod individually, without load balancing, often used for direct client-to-Pod connections.</li>
+</ul>
+<h3 id="Example-Service-Architecture"><a href="#Example-Service-Architecture" class="headerlink" title="Example Service Architecture"></a>Example Service Architecture</h3><p>The Service selects Pods with specific labels and routes traffic to them dynamically. Here’s a simplified text diagram for a Service:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+             +------------------+</span><br><span class="line">|  Client Request   |------------&gt;|  Service         |</span><br><span class="line">+-------------------+             |  (ClusterIP)     |</span><br><span class="line">                                  +--------+---------+</span><br><span class="line">                                           |</span><br><span class="line">                                           |</span><br><span class="line">                              +------------+-----------+</span><br><span class="line">                              |                        |</span><br><span class="line">                              |                        |</span><br><span class="line">                      +-------v------+       +---------v------+</span><br><span class="line">                      |    Pod       |       |    Pod         |</span><br><span class="line">                      |  IP: Dynamic |       |  IP: Dynamic   |</span><br><span class="line">                      +--------------+       +----------------+</span><br></pre></td></tr></table></figure>
+
+<p>The Service maintains a list of Pods based on matching labels and routes incoming requests to any healthy Pod in the group, providing an abstraction layer for easy access.</p>
+<h2 id="3-Communication-Between-Pods-and-Services"><a href="#3-Communication-Between-Pods-and-Services" class="headerlink" title="3. Communication Between Pods and Services"></a>3. Communication Between Pods and Services</h2><p>Kubernetes manages Pod-to-Service and Service-to-Pod communication using:</p>
+<ol>
+<li><strong>Labels and Selectors</strong>: Services target Pods by their labels.</li>
+<li><strong>Cluster DNS</strong>: Each Service receives a unique hostname, which can be used within the cluster to resolve the Service IP.</li>
+<li><strong>Load Balancing</strong>: Services distribute requests across Pods, using internal load balancing mechanisms (IP tables, kube-proxy).</li>
+</ol>
+<p>When a client inside the cluster calls a Service, Kubernetes DNS resolves the Service name to a virtual IP, and the Service routes the request to one of the associated Pods.</p>
+<h3 id="Dynamic-Pod-Communication-Example"><a href="#Dynamic-Pod-Communication-Example" class="headerlink" title="Dynamic Pod Communication Example"></a>Dynamic Pod Communication Example</h3><p>The following diagram illustrates how a Service enables stable access to multiple Pods, even if the Pods are added or removed over time:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+                  +-----------------+</span><br><span class="line">|    Client         |-----------------&gt;| Service: my-app |</span><br><span class="line">+-------------------+                  |  IP: 10.96.0.1  |</span><br><span class="line">                                       +-------+---------+</span><br><span class="line">                                               |</span><br><span class="line">                           +-------------------+-------------------+</span><br><span class="line">                           |                                       |</span><br><span class="line">                  +--------v-----------+                  +--------v------------+</span><br><span class="line">                  |      Pod           |                  |       Pod           |</span><br><span class="line">                  |  Label: app=my-app |                  |   Label: app=my-app |</span><br><span class="line">                  +--------------------+                  +---------------------+</span><br></pre></td></tr></table></figure>
+
+<p>Here, the client accesses <code>my-app</code>, and the Service dynamically routes the request to an available Pod with the matching label.</p>
+<h2 id="4-Summary"><a href="#4-Summary" class="headerlink" title="4. Summary"></a>4. Summary</h2><ul>
+<li><strong>Pods</strong>: Contain containers, share IP addresses, ephemeral in nature.</li>
+<li><strong>Services</strong>: Provide stable, permanent access to a group of Pods with specific labels, enable load balancing, and ensure that applications can consistently reach the backend Pods, even with dynamic scaling.</li>
+</ul>
+<p>By decoupling Pod IP addresses from the client-facing endpoint, Services ensure reliable, scalable, and high-availability communication within Kubernetes applications.</p>
+<h3 id="Example-Fluent-Bit-Configuration-in-configmap-yaml-1"><a href="#Example-Fluent-Bit-Configuration-in-configmap-yaml-1" class="headerlink" title="Example Fluent Bit Configuration in configmap.yaml"></a>Example Fluent Bit Configuration in <code>configmap.yaml</code></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql-log-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">fluent-bit.conf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [SERVICE]</span></span><br><span class="line"><span class="string">        Flush 1</span></span><br><span class="line"><span class="string">        Log_Level info</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    [<span class="string">INPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">tail</span></span><br><span class="line">        <span class="string">Path</span> <span class="string">/var/log/postgresql/postgresql.log</span></span><br><span class="line">        <span class="string">Tag</span> <span class="string">postgresql</span></span><br><span class="line"></span><br><span class="line">    [<span class="string">OUTPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">es</span></span><br><span class="line">        <span class="string">Match</span> <span class="string">*</span></span><br><span class="line">        <span class="string">Host</span> &#123;&#123; <span class="string">.Values.elasticsearch.host</span> &#125;&#125;</span><br><span class="line">        <span class="string">Port</span> <span class="number">9200</span></span><br><span class="line">        <span class="string">Index</span> &#123;&#123; <span class="string">.Values.elasticsearch.index</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This setup allows the sidecar to monitor log updates efficiently, pushing each entry to Elasticsearch as it appears in the log file.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/30/Microservice-Spring-Cloud-Gateway/" rel="prev" title="Microservice - Spring Cloud Gateway">
+                  <i class="fa fa-angle-left"></i> Microservice - Spring Cloud Gateway
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/30/Best-Practices-of-Deploying-PostgreSQL-in-Kubernetes/" rel="next" title="Best Practices of Deploying PostgreSQL in Kubernetes">
+                  Best Practices of Deploying PostgreSQL in Kubernetes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

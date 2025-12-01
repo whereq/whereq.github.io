@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Choosing the Right React Library for Google MapsThere are two popular libraries for integrating Google Maps into React applications: 1. react-google-maps-apiFeatures: Built with TypeScript support out">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive Developing a React TypeScript Application for Google Maps">
+<meta property="og:url" content="https://www.whereq.com/2025/01/14/Deep-Dive-Developing-a-React-TypeScript-Application-for-Google-Maps/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Choosing the Right React Library for Google MapsThere are two popular libraries for integrating Google Maps into React applications: 1. react-google-maps-apiFeatures: Built with TypeScript support out">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-01-14T22:42:46.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="TypeScript">
+<meta property="article:tag" content="ReactJS">
+<meta property="article:tag" content="GIS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/01/14/Deep-Dive-Developing-a-React-TypeScript-Application-for-Google-Maps/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/01/14/Deep-Dive-Developing-a-React-TypeScript-Application-for-Google-Maps/","path":"2025/01/14/Deep-Dive-Developing-a-React-TypeScript-Application-for-Google-Maps/","title":"Deep Dive Developing a React TypeScript Application for Google Maps"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive Developing a React TypeScript Application for Google Maps | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Choosing-the-Right-React-Library-for-Google-Maps"><span class="nav-number">1.</span> <span class="nav-text">Choosing the Right React Library for Google Maps</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-react-google-maps-api"><span class="nav-number">1.1.</span> <span class="nav-text">1. react-google-maps-api</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Features"><span class="nav-number">1.1.1.</span> <span class="nav-text">Features:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pros"><span class="nav-number">1.1.2.</span> <span class="nav-text">Pros:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cons"><span class="nav-number">1.1.3.</span> <span class="nav-text">Cons:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-react-google-maps-api"><span class="nav-number">1.2.</span> <span class="nav-text">2. @react-google-maps&#x2F;api</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Features-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">Features:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pros-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">Pros:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cons-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">Cons:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Recommendation"><span class="nav-number">1.3.</span> <span class="nav-text">Recommendation:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Considerations-for-Google-Maps-Event-Handling"><span class="nav-number">2.</span> <span class="nav-text">Key Considerations for Google Maps Event Handling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Event-Compatibility"><span class="nav-number">2.1.</span> <span class="nav-text">1. Event Compatibility</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tip"><span class="nav-number">2.1.1.</span> <span class="nav-text">Tip:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Modern-GUI-Concepts"><span class="nav-number">2.2.</span> <span class="nav-text">2. Modern GUI Concepts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Event-Attributes"><span class="nav-number">2.3.</span> <span class="nav-text">3. Event Attributes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example"><span class="nav-number">2.3.1.</span> <span class="nav-text">Example:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Example-Attaching-Event-Listeners-to-Map-Objects"><span class="nav-number">3.</span> <span class="nav-text">Example: Attaching Event Listeners to Map Objects</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Migrating-from-google-maps-marker-to-advancedmarker"><span class="nav-number">4.</span> <span class="nav-text">Migrating from google.maps.marker to advancedmarker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Differences"><span class="nav-number">4.1.</span> <span class="nav-text">Key Differences:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Migration-Steps"><span class="nav-number">4.2.</span> <span class="nav-text">Migration Steps:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-1"><span class="nav-number">4.2.1.</span> <span class="nav-text">Example:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Best-Practices"><span class="nav-number">5.</span> <span class="nav-text">Best Practices</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/01/14/Deep-Dive-Developing-a-React-TypeScript-Application-for-Google-Maps/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive Developing a React TypeScript Application for Google Maps | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive Developing a React TypeScript Application for Google Maps
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-14 17:42:46" itemprop="dateCreated datePublished" datetime="2025-01-14T17:42:46-05:00">2025-01-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/GIS/" itemprop="url" rel="index"><span itemprop="name">GIS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Choosing-the-Right-React-Library-for-Google-Maps"><a href="#Choosing-the-Right-React-Library-for-Google-Maps" class="headerlink" title="Choosing the Right React Library for Google Maps"></a>Choosing the Right React Library for Google Maps</h2><p>There are two popular libraries for integrating Google Maps into React applications:</p>
+<h3 id="1-react-google-maps-api"><a href="#1-react-google-maps-api" class="headerlink" title="1. react-google-maps-api"></a>1. <a target="_blank" rel="noopener" href="https://github.com/JustFly1984/react-google-maps-api">react-google-maps-api</a></h3><h4 id="Features"><a href="#Features" class="headerlink" title="Features:"></a>Features:</h4><ul>
+<li>Built with TypeScript support out of the box.</li>
+<li>Highly optimized for performance.</li>
+<li>Provides detailed type definitions for Google Maps API objects and events.</li>
+<li>Supports SSR (Server-Side Rendering) and lazy loading of the Google Maps API.</li>
+</ul>
+<h4 id="Pros"><a href="#Pros" class="headerlink" title="Pros:"></a>Pros:</h4><ul>
+<li>Excellent TypeScript support.</li>
+<li>Well-maintained and frequently updated.</li>
+<li>Extensive documentation and examples.</li>
+</ul>
+<h4 id="Cons"><a href="#Cons" class="headerlink" title="Cons:"></a>Cons:</h4><ul>
+<li>Requires a steeper learning curve due to its focus on optimization and customization.</li>
+</ul>
+<h3 id="2-react-google-maps-api"><a href="#2-react-google-maps-api" class="headerlink" title="2. @react-google-maps&#x2F;api"></a>2. <a target="_blank" rel="noopener" href="https://visgl.github.io/react-google-maps/">@react-google-maps&#x2F;api</a></h3><h4 id="Features-1"><a href="#Features-1" class="headerlink" title="Features:"></a>Features:</h4><ul>
+<li>A modern, lightweight alternative to <code>react-google-maps-api</code>.</li>
+<li>Provides a simple and intuitive API for Google Maps integration.</li>
+<li>Supports TypeScript.</li>
+<li>Optimized for performance with lazy loading and minimal re-renders.</li>
+</ul>
+<h4 id="Pros-1"><a href="#Pros-1" class="headerlink" title="Pros:"></a>Pros:</h4><ul>
+<li>Lightweight and fast.</li>
+<li>Easy to use with minimal boilerplate.</li>
+<li>Excellent TypeScript support.</li>
+</ul>
+<h4 id="Cons-1"><a href="#Cons-1" class="headerlink" title="Cons:"></a>Cons:</h4><ul>
+<li>Less mature compared to <code>react-google-maps-api</code>.</li>
+<li>Fewer community resources and examples.</li>
+</ul>
+<h3 id="Recommendation"><a href="#Recommendation" class="headerlink" title="Recommendation:"></a>Recommendation:</h3><p>For most applications, <code>react-google-maps-api</code> is the preferred choice due to its robust TypeScript support and active development. However, for simpler projects, <code>@react-google-maps/api</code> may be sufficient.</p>
+<hr>
+<h2 id="Key-Considerations-for-Google-Maps-Event-Handling"><a href="#Key-Considerations-for-Google-Maps-Event-Handling" class="headerlink" title="Key Considerations for Google Maps Event Handling"></a>Key Considerations for Google Maps Event Handling</h2><h3 id="1-Event-Compatibility"><a href="#1-Event-Compatibility" class="headerlink" title="1. Event Compatibility"></a>1. Event Compatibility</h3><p>Google Maps provides different event types for various objects. Ensure the event you are attaching is supported by the target object. For example:</p>
+<ul>
+<li><strong>Polygon</strong> and <strong>Polyline</strong> support the <code>rightclick</code> event.</li>
+<li><strong>MVCArray</strong> does <strong>not</strong> support <code>rightclick</code>, making it challenging to attach such an event directly to a vertex.</li>
+</ul>
+<h4 id="Tip"><a href="#Tip" class="headerlink" title="Tip:"></a>Tip:</h4><p>Always consult the <a target="_blank" rel="noopener" href="https://developers.google.com/maps/documentation/javascript/reference">Google Maps JavaScript API documentation</a> to verify event compatibility.</p>
+<h3 id="2-Modern-GUI-Concepts"><a href="#2-Modern-GUI-Concepts" class="headerlink" title="2. Modern GUI Concepts"></a>2. Modern GUI Concepts</h3><p>When building interactions, remember:</p>
+<ul>
+<li>Many devices, such as iPads and smartphones, lack traditional mouse functionality.</li>
+<li>Avoid relying on events like <code>rightclick</code> for core features. Instead, design user interfaces with touch and gesture interactions in mind.</li>
+</ul>
+<h3 id="3-Event-Attributes"><a href="#3-Event-Attributes" class="headerlink" title="3. Event Attributes"></a>3. Event Attributes</h3><p>Google Maps events like <code>MapMouseEvent</code> or <code>PolyMouseEvent</code> lack a <code>button</code> attribute to identify the mouse button used. Instead, use the <code>domEvent</code> property for this information.</p>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">polygon.<span class="title function_">addListener</span>(<span class="string">&quot;mousedown&quot;</span>, <span class="function">(<span class="params"><span class="attr">event</span>: google.maps.<span class="title class_">PolyMouseEvent</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mouseEvent = event.<span class="property">domEvent</span> <span class="keyword">as</span> <span class="title class_">MouseEvent</span>;</span><br><span class="line">  <span class="keyword">if</span> (mouseEvent.<span class="property">button</span> === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Left mouse button clicked&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mouseEvent.<span class="property">button</span> === <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Right mouse button clicked&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Example-Attaching-Event-Listeners-to-Map-Objects"><a href="#Example-Attaching-Event-Listeners-to-Map-Objects" class="headerlink" title="Example: Attaching Event Listeners to Map Objects"></a>Example: Attaching Event Listeners to Map Objects</h2><p>Below is a React component for managing drawing tools and attaching event listeners to polygons and polylines.</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useEffect, useRef, useCallback, useState &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">addPathListeners</span> = (<span class="params"><span class="attr">path</span>: google.maps.<span class="title class_">MVCArray</span>&lt;google.maps.<span class="title class_">LatLng</span>&gt;</span>) =&gt; &#123;</span><br><span class="line">  path.<span class="title function_">forEach</span>(<span class="function">(<span class="params">_, index</span>) =&gt;</span> &#123;</span><br><span class="line">    google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(path, <span class="string">&quot;mouseover&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Mouse over vertex <span class="subst">$&#123;index&#125;</span>`</span>);</span><br><span class="line">      <span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">style</span>.<span class="property">cursor</span> = <span class="string">&quot;pointer&quot;</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(path, <span class="string">&quot;mouseout&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">style</span>.<span class="property">cursor</span> = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">attachListenersToEditablePolygon</span> = (<span class="params"><span class="attr">polygon</span>: google.maps.<span class="title class_">Polygon</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> path = polygon.<span class="title function_">getPath</span>();</span><br><span class="line"></span><br><span class="line">  <span class="title function_">addPathListeners</span>(path);</span><br><span class="line"></span><br><span class="line">  google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(path, <span class="string">&quot;insert_at&quot;</span>, <span class="function">() =&gt;</span> <span class="title function_">addPathListeners</span>(path));</span><br><span class="line">  google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(path, <span class="string">&quot;remove_at&quot;</span>, <span class="function">() =&gt;</span> <span class="title function_">addPathListeners</span>(path));</span><br><span class="line">  google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(path, <span class="string">&quot;set_at&quot;</span>, <span class="function">() =&gt;</span> <span class="title function_">addPathListeners</span>(path));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">MapDrawingManager</span>: <span class="title class_">React</span>.<span class="property">FC</span>&lt;&#123; <span class="attr">mapRef</span>: <span class="title class_">React</span>.<span class="property">RefObject</span>&lt;google.<span class="property">maps</span>.<span class="property">Map</span> | <span class="literal">null</span>&gt; &#125;&gt; = <span class="function">(<span class="params">&#123; mapRef &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> drawingManagerRef = useRef&lt;google.<span class="property">maps</span>.<span class="property">drawing</span>.<span class="property">DrawingManager</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> handlePolygonComplete = <span class="title function_">useCallback</span>(<span class="function">(<span class="params"><span class="attr">polygon</span>: google.maps.<span class="title class_">Polygon</span></span>) =&gt;</span> &#123;</span><br><span class="line">    polygon.<span class="title function_">setOptions</span>(&#123;</span><br><span class="line">      <span class="attr">fillColor</span>: <span class="string">&quot;#0000FF80&quot;</span>,</span><br><span class="line">      <span class="attr">strokeColor</span>: <span class="string">&quot;#0000FF&quot;</span>,</span><br><span class="line">      <span class="attr">strokeWeight</span>: <span class="number">4</span>,</span><br><span class="line">      <span class="attr">editable</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">attachListenersToEditablePolygon</span>(polygon);</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (mapRef.<span class="property">current</span> &amp;&amp; !drawingManagerRef.<span class="property">current</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> manager = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="property">drawing</span>.<span class="title class_">DrawingManager</span>(&#123;</span><br><span class="line">        <span class="attr">drawingMode</span>: google.<span class="property">maps</span>.<span class="property">drawing</span>.<span class="property">OverlayType</span>.<span class="property">POLYGON</span>,</span><br><span class="line">        <span class="attr">drawingControl</span>: <span class="literal">true</span>,</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      google.<span class="property">maps</span>.<span class="property">event</span>.<span class="title function_">addListener</span>(manager, <span class="string">&quot;polygoncomplete&quot;</span>, handlePolygonComplete);</span><br><span class="line"></span><br><span class="line">      manager.<span class="title function_">setMap</span>(mapRef.<span class="property">current</span>);</span><br><span class="line">      drawingManagerRef.<span class="property">current</span> = manager;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        manager.<span class="title function_">setMap</span>(<span class="literal">null</span>);</span><br><span class="line">        drawingManagerRef.<span class="property">current</span> = <span class="literal">null</span>;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, [mapRef, handlePolygonComplete]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">MapDrawingManager</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Migrating-from-google-maps-marker-to-advancedmarker"><a href="#Migrating-from-google-maps-marker-to-advancedmarker" class="headerlink" title="Migrating from google.maps.marker to advancedmarker"></a>Migrating from <code>google.maps.marker</code> to <code>advancedmarker</code></h2><p>Google has deprecated the <code>google.maps.marker</code> class in favor of the new <code>advancedmarker</code> class. The <code>advancedmarker</code> class offers improved performance and additional features, making it the recommended choice for new projects.</p>
+<h3 id="Key-Differences"><a href="#Key-Differences" class="headerlink" title="Key Differences:"></a>Key Differences:</h3><ul>
+<li><strong>Performance</strong>: <code>advancedmarker</code> is optimized for better performance, especially in applications with a large number of markers.</li>
+<li><strong>Features</strong>: <code>advancedmarker</code> supports advanced features like custom HTML content and improved event handling.</li>
+</ul>
+<h3 id="Migration-Steps"><a href="#Migration-Steps" class="headerlink" title="Migration Steps:"></a>Migration Steps:</h3><ol>
+<li><strong>Update Imports</strong>: Replace <code>google.maps.marker</code> with <code>google.maps.advancedmarker</code>.</li>
+<li><strong>Refactor Code</strong>: Update your code to use the new <code>advancedmarker</code> API. This may involve changes to how you create, configure, and interact with markers.</li>
+<li><strong>Test Thoroughly</strong>: Ensure that your application works as expected after the migration.</li>
+</ol>
+<h4 id="Example-1"><a href="#Example-1" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Old way using google.maps.marker</span></span><br><span class="line"><span class="keyword">const</span> marker = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="title class_">Marker</span>(&#123;</span><br><span class="line">  <span class="attr">position</span>: &#123; <span class="attr">lat</span>: -<span class="number">34.397</span>, <span class="attr">lng</span>: <span class="number">150.644</span> &#125;,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// New way using google.maps.advancedmarker</span></span><br><span class="line"><span class="keyword">const</span> advancedMarker = <span class="keyword">new</span> google.<span class="property">maps</span>.<span class="property">advancedmarker</span>.<span class="title class_">AdvancedMarker</span>(&#123;</span><br><span class="line">  <span class="attr">position</span>: &#123; <span class="attr">lat</span>: -<span class="number">34.397</span>, <span class="attr">lng</span>: <span class="number">150.644</span> &#125;,</span><br><span class="line">  <span class="attr">map</span>: mapRef.<span class="property">current</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h2><ol>
+<li><strong>Design for Touch-First:</strong> Avoid interactions relying on mouse-specific events like <code>rightclick</code>.</li>
+<li><strong>Event Verification:</strong> Confirm the compatibility of events with the target object.</li>
+<li><strong>TypeScript Usage:</strong> Leverage TypeScript for better type safety and developer experience.</li>
+<li><strong>Code Modularity:</strong> Organize logic into reusable functions, such as <code>addPathListeners</code>.</li>
+<li><strong>Migrate to <code>advancedmarker</code>:</strong> Update your code to use the new <code>advancedmarker</code> class for better performance and features.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"><i class="fa fa-tag"></i> TypeScript</a>
+              <a href="/tags/ReactJS/" rel="tag"><i class="fa fa-tag"></i> ReactJS</a>
+              <a href="/tags/GIS/" rel="tag"><i class="fa fa-tag"></i> GIS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/08/Building-a-Google-Maps-Application-with-React-and-TypeScript/" rel="prev" title="Building a Google Maps Application with React and TypeScript">
+                  <i class="fa fa-angle-left"></i> Building a Google Maps Application with React and TypeScript
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/21/Component-Communication-in-React-A-Comprehensive-Guide/" rel="next" title="Component Communication in React: A Comprehensive Guide">
+                  Component Communication in React: A Comprehensive Guide <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

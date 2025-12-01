@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Deployment and Operations Introduction Pre-deployment Preparation 1. Configuration Optimization 2. Security Configuration   Deploying Spring WebFlux Applications 1. Deploying with Docker Creating a D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - X">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Deployment and Operations Introduction Pre-deployment Preparation 1. Configuration Optimization 2. Security Configuration   Deploying Spring WebFlux Applications 1. Deploying with Docker Creating a D">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T18:07:01.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/","title":"Reactive Programming in Spring WebFlux Series - X"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - X | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Deployment-and-Operations"><span class="nav-number">1.</span> <span class="nav-text">Deployment and Operations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pre-deployment-Preparation"><span class="nav-number">3.</span> <span class="nav-text">Pre-deployment Preparation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Configuration-Optimization"><span class="nav-number">3.1.</span> <span class="nav-text">1. Configuration Optimization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Security-Configuration"><span class="nav-number">3.2.</span> <span class="nav-text">2. Security Configuration</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Deploying-Spring-WebFlux-Applications"><span class="nav-number">4.</span> <span class="nav-text">Deploying Spring WebFlux Applications</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Deploying-with-Docker"><span class="nav-number">4.1.</span> <span class="nav-text">1. Deploying with Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Creating-a-Dockerfile"><span class="nav-number">4.1.1.</span> <span class="nav-text">Creating a Dockerfile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Building-and-Running-the-Docker-Image"><span class="nav-number">4.1.2.</span> <span class="nav-text">Building and Running the Docker Image</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Deploying-with-Kubernetes"><span class="nav-number">4.2.</span> <span class="nav-text">2. Deploying with Kubernetes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Creating-a-Kubernetes-Deployment-File"><span class="nav-number">4.2.1.</span> <span class="nav-text">Creating a Kubernetes Deployment File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploying-to-a-Kubernetes-Cluster"><span class="nav-number">4.2.2.</span> <span class="nav-text">Deploying to a Kubernetes Cluster</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Operations-and-Monitoring"><span class="nav-number">5.</span> <span class="nav-text">Operations and Monitoring</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Using-Spring-Boot-Actuator"><span class="nav-number">5.1.</span> <span class="nav-text">1. Using Spring Boot Actuator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Using-Prometheus-and-Grafana"><span class="nav-number">5.2.</span> <span class="nav-text">2. Using Prometheus and Grafana</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Prometheus"><span class="nav-number">5.2.1.</span> <span class="nav-text">Configuring Prometheus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Grafana"><span class="nav-number">5.2.2.</span> <span class="nav-text">Configuring Grafana</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - X | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - X
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:07:01" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:01-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#deployment-and-operations">Deployment and Operations</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#pre-deployment-preparation">Pre-deployment Preparation</a><ul>
+<li><a href="#1-configuration-optimization">1. Configuration Optimization</a></li>
+<li><a href="#2-security-configuration">2. Security Configuration</a></li>
+</ul>
+</li>
+<li><a href="#deploying-spring-webflux-applications">Deploying Spring WebFlux Applications</a><ul>
+<li><a href="#1-deploying-with-docker">1. Deploying with Docker</a><ul>
+<li><a href="#creating-a-dockerfile">Creating a Dockerfile</a></li>
+<li><a href="#building-and-running-the-docker-image">Building and Running the Docker Image</a></li>
+</ul>
+</li>
+<li><a href="#2-deploying-with-kubernetes">2. Deploying with Kubernetes</a><ul>
+<li><a href="#creating-a-kubernetes-deployment-file">Creating a Kubernetes Deployment File</a></li>
+<li><a href="#deploying-to-a-kubernetes-cluster">Deploying to a Kubernetes Cluster</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#operations-and-monitoring">Operations and Monitoring</a><ul>
+<li><a href="#1-using-spring-boot-actuator">1. Using Spring Boot Actuator</a></li>
+<li><a href="#2-using-prometheus-and-grafana">2. Using Prometheus and Grafana</a><ul>
+<li><a href="#configuring-prometheus">Configuring Prometheus</a></li>
+<li><a href="#configuring-grafana">Configuring Grafana</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<h1 id="Deployment-and-Operations"><a href="#Deployment-and-Operations" class="headerlink" title="Deployment and Operations"></a>Deployment and Operations</h1><hr>
+<p><a name="introduction"></a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we explored foundational concepts of Spring WebFlux, including Reactor, error handling, data flow transformation, reactive database access, performance optimization, security, and testing. In this article, we’ll delve into how to deploy and maintain Spring WebFlux applications in a production environment to ensure they run efficiently and reliably.</p>
+<p><a name="pre-deployment-preparation"></a></p>
+<h1 id="Pre-deployment-Preparation"><a href="#Pre-deployment-Preparation" class="headerlink" title="Pre-deployment Preparation"></a>Pre-deployment Preparation</h1><p>Before deploying a Spring WebFlux application to a production environment, there are several critical preparations to ensure the application’s reliability and performance.</p>
+<p><a name="configuration-optimization"></a></p>
+<h2 id="1-Configuration-Optimization"><a href="#1-Configuration-Optimization" class="headerlink" title="1. Configuration Optimization"></a>1. Configuration Optimization</h2><p>Tuning the configuration of Spring Boot and Netty is essential for production. This includes adjusting parameters to handle high-concurrency scenarios.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Increase Netty thread count</span></span><br><span class="line"><span class="attr">reactor.netty.ioWorkerCount</span>=<span class="string">16</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Configure database connection pool</span></span><br><span class="line"><span class="attr">spring.r2dbc.url</span>=<span class="string">r2dbc:pool:postgresql://localhost:5432/mydb</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.initialSize</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.maxSize</span>=<span class="string">50</span></span><br></pre></td></tr></table></figure>
+
+<p>Optimizing thread pools and connection pools is crucial for handling increased traffic in production environments, especially when working with reactive systems.</p>
+<p><a name="security-configuration"></a></p>
+<h2 id="2-Security-Configuration"><a href="#2-Security-Configuration" class="headerlink" title="2. Security Configuration"></a>2. Security Configuration</h2><p>Ensure that all necessary security configurations are enabled in the production environment, such as HTTPS, CSRF protection, and XSS protection.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Enable SSL</span></span><br><span class="line"><span class="attr">server.ssl.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">server.ssl.key-store</span>=<span class="string">classpath:keystore.jks</span></span><br><span class="line"><span class="attr">server.ssl.key-store-password</span>=<span class="string">changeit</span></span><br></pre></td></tr></table></figure>
+
+<p>These settings help secure communication between the client and server, protecting sensitive data.</p>
+<p><a name="deploying-spring-webflux-applications"></a></p>
+<h1 id="Deploying-Spring-WebFlux-Applications"><a href="#Deploying-Spring-WebFlux-Applications" class="headerlink" title="Deploying Spring WebFlux Applications"></a>Deploying Spring WebFlux Applications</h1><p>There are various ways to deploy Spring WebFlux applications, including traditional server deployment, Docker containerization, and Kubernetes orchestration. We will focus on Docker and Kubernetes deployment methods.</p>
+<p><a name="deploying-with-docker"></a></p>
+<h2 id="1-Deploying-with-Docker"><a href="#1-Deploying-with-Docker" class="headerlink" title="1. Deploying with Docker"></a>1. Deploying with Docker</h2><p>Docker simplifies the deployment process, making it easier to run applications consistently across different environments.</p>
+<h3 id="Creating-a-Dockerfile"><a href="#Creating-a-Dockerfile" class="headerlink" title="Creating a Dockerfile"></a>Creating a Dockerfile</h3><p>Create a <code>Dockerfile</code> to build your application’s Docker image:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use the official OpenJDK base image</span></span><br><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">11</span>-jre-slim</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the working directory</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copy the JAR file into the container</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> target/myapp.jar /app/myapp.jar</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Expose the application port</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start the application</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;myapp.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Building-and-Running-the-Docker-Image"><a href="#Building-and-Running-the-Docker-Image" class="headerlink" title="Building and Running the Docker Image"></a>Building and Running the Docker Image</h3><p>Use the following commands to build and run the Docker image:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Build the Docker image</span></span><br><span class="line">docker build -t myapp:latest .</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the Docker container</span></span><br><span class="line">docker run -d -p 8080:8080 myapp:latest</span><br></pre></td></tr></table></figure>
+
+<p><a name="deploying-with-kubernetes"></a></p>
+<h2 id="2-Deploying-with-Kubernetes"><a href="#2-Deploying-with-Kubernetes" class="headerlink" title="2. Deploying with Kubernetes"></a>2. Deploying with Kubernetes</h2><p>Kubernetes is a popular container orchestration platform suited for managing large-scale distributed applications.</p>
+<h3 id="Creating-a-Kubernetes-Deployment-File"><a href="#Creating-a-Kubernetes-Deployment-File" class="headerlink" title="Creating a Kubernetes Deployment File"></a>Creating a Kubernetes Deployment File</h3><p>Create a <code>deployment.yaml</code> file to define the Kubernetes deployment:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">myapp:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Deploying-to-a-Kubernetes-Cluster"><a href="#Deploying-to-a-Kubernetes-Cluster" class="headerlink" title="Deploying to a Kubernetes Cluster"></a>Deploying to a Kubernetes Cluster</h3><p>Use the following commands to deploy the application to a Kubernetes cluster:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Apply the deployment and service configurations</span></span><br><span class="line">kubectl apply -f deployment.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check the deployment status</span></span><br><span class="line">kubectl get deployments</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check the service status</span></span><br><span class="line">kubectl get services</span><br></pre></td></tr></table></figure>
+
+<p><a name="operations-and-monitoring"></a></p>
+<h1 id="Operations-and-Monitoring"><a href="#Operations-and-Monitoring" class="headerlink" title="Operations and Monitoring"></a>Operations and Monitoring</h1><p>After deploying to a production environment, ongoing operations and monitoring are key to ensuring the application runs smoothly.</p>
+<p><a name="using-spring-boot-actuator"></a></p>
+<h2 id="1-Using-Spring-Boot-Actuator"><a href="#1-Using-Spring-Boot-Actuator" class="headerlink" title="1. Using Spring Boot Actuator"></a>1. Using Spring Boot Actuator</h2><p>Spring Boot Actuator provides rich monitoring and management capabilities, allowing real-time health checks and performance tracking.</p>
+<p>Add the dependency to your <code>pom.xml</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Enable Actuator endpoints in the <code>application.properties</code> file:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management.endpoints.web.exposure.include</span>=<span class="string">health,info,metrics,prometheus</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="using-prometheus-and-grafana"></a></p>
+<h2 id="2-Using-Prometheus-and-Grafana"><a href="#2-Using-Prometheus-and-Grafana" class="headerlink" title="2. Using Prometheus and Grafana"></a>2. Using Prometheus and Grafana</h2><p>Prometheus and Grafana are popular open-source monitoring tools suitable for tracking the performance and health of Spring WebFlux applications.</p>
+<h3 id="Configuring-Prometheus"><a href="#Configuring-Prometheus" class="headerlink" title="Configuring Prometheus"></a>Configuring Prometheus</h3><p>In the <code>prometheus.yml</code> file, add the Spring Boot Actuator’s Prometheus endpoint:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;spring-webflux&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:8080&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuring-Grafana"><a href="#Configuring-Grafana" class="headerlink" title="Configuring Grafana"></a>Configuring Grafana</h3><p>Add Prometheus as a data source in Grafana and create dashboards to monitor key application metrics such as memory usage, response times, and request rates.</p>
+<p>This setup provides a full observability stack to keep your Spring WebFlux application under constant monitoring for proactive performance tuning and anomaly detection.</p>
+<p><a name="conclusion"></a></p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>In this article, we discussed how to deploy and operate Spring WebFlux applications in a production environment. With proper configuration optimization, Docker and Kubernetes deployment methods, and continuous monitoring and operations, we can ensure that our applications run efficiently and reliably in production.</p>
+<p>By integrating monitoring tools like Prometheus and Grafana, and leveraging Spring Boot Actuator, you can maintain high visibility into your application’s performance and quickly address any issues that arise.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/" rel="prev" title="Reactive Programming in Spring WebFlux Series - IX">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - IX
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/" rel="next" title="Reactive Programming in Spring WebFlux Series - XI">
+                  Reactive Programming in Spring WebFlux Series - XI <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Local storage is a simple yet powerful tool for persisting data in web applications. In this article, we’ll explore every detail of local storage usage in React with TypeScript, including best practic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Local Storage Usage in React with TypeScript">
+<meta property="og:url" content="https://www.whereq.com/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Local storage is a simple yet powerful tool for persisting data in web applications. In this article, we’ll explore every detail of local storage usage in React with TypeScript, including best practic">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-27T21:00:44.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="TypeScript">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="React">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/","path":"2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/","title":"Deep Dive into Local Storage Usage in React with TypeScript"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Local Storage Usage in React with TypeScript | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Local-Storage"><span class="nav-number">1.</span> <span class="nav-text">What is Local Storage?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Characteristics-of-Local-Storage"><span class="nav-number">1.1.</span> <span class="nav-text">Key Characteristics of Local Storage:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-Local-Storage-in-React-with-TypeScript"><span class="nav-number">2.</span> <span class="nav-text">Using Local Storage in React with TypeScript</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Basic-CRUD-Operations"><span class="nav-number">2.1.</span> <span class="nav-text">1. Basic CRUD Operations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Wrapper-Utility-for-Local-Storage"><span class="nav-number">2.2.</span> <span class="nav-text">Example: Wrapper Utility for Local Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Test-Cases"><span class="nav-number">2.3.</span> <span class="nav-text">Test Cases</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Integrating-Local-Storage-in-React-Components"><span class="nav-number">2.4.</span> <span class="nav-text">2. Integrating Local Storage in React Components</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Using-Local-Storage-with-useState"><span class="nav-number">2.4.1.</span> <span class="nav-text">Example: Using Local Storage with useState</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Test-Cases-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">Test Cases</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-React-Hooks-for-Local-Storage"><span class="nav-number">2.5.</span> <span class="nav-text">3. React Hooks for Local Storage</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Custom-Hook"><span class="nav-number">2.5.1.</span> <span class="nav-text">Example: Custom Hook</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Usage-Example"><span class="nav-number">2.5.2.</span> <span class="nav-text">Usage Example</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Best-Practices-for-Local-Storage-in-React"><span class="nav-number">2.6.</span> <span class="nav-text">4. Best Practices for Local Storage in React</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Tab-Synchronization"><span class="nav-number">2.6.1.</span> <span class="nav-text">Example: Tab Synchronization</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Local Storage Usage in React with TypeScript | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Local Storage Usage in React with TypeScript
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-12-27 16:00:44" itemprop="dateCreated datePublished" datetime="2024-12-27T16:00:44-05:00">2024-12-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/React/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Local storage is a simple yet powerful tool for persisting data in web applications. In this article, we’ll explore every detail of local storage usage in React with TypeScript, including best practices, sample code, and test cases. The illustrations are based on the latest versions of React (18.x) and TypeScript (5.x).</p>
+<hr>
+<h2 id="What-is-Local-Storage"><a href="#What-is-Local-Storage" class="headerlink" title="What is Local Storage?"></a><strong>What is Local Storage?</strong></h2><p>Local storage is a web API that allows developers to store key-value pairs in a web browser. The data persists even after the browser is closed, making it ideal for saving user preferences, authentication tokens, and other non-sensitive data.</p>
+<h3 id="Key-Characteristics-of-Local-Storage"><a href="#Key-Characteristics-of-Local-Storage" class="headerlink" title="Key Characteristics of Local Storage:"></a>Key Characteristics of Local Storage:</h3><ul>
+<li><strong>Synchronous API</strong>: Operations are blocking.</li>
+<li><strong>Storage Limit</strong>: Approximately 5MB per domain.</li>
+<li><strong>Data Lifetime</strong>: Persists until explicitly deleted.</li>
+<li><strong>Data Scope</strong>: Accessible only within the same origin.</li>
+</ul>
+<hr>
+<h2 id="Using-Local-Storage-in-React-with-TypeScript"><a href="#Using-Local-Storage-in-React-with-TypeScript" class="headerlink" title="Using Local Storage in React with TypeScript"></a><strong>Using Local Storage in React with TypeScript</strong></h2><h3 id="1-Basic-CRUD-Operations"><a href="#1-Basic-CRUD-Operations" class="headerlink" title="1. Basic CRUD Operations"></a>1. <strong>Basic CRUD Operations</strong></h3><p>Local storage provides three core methods:</p>
+<ul>
+<li><code>localStorage.setItem(key, value)</code></li>
+<li><code>localStorage.getItem(key)</code></li>
+<li><code>localStorage.removeItem(key)</code></li>
+</ul>
+<h3 id="Example-Wrapper-Utility-for-Local-Storage"><a href="#Example-Wrapper-Utility-for-Local-Storage" class="headerlink" title="Example: Wrapper Utility for Local Storage"></a>Example: Wrapper Utility for Local Storage</h3><p>We can create a type-safe utility to handle common operations:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/localStorage.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">LocalStorageHelper</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> setItem&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">value</span>: T): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(key, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(value));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> getItem&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>): T | <span class="literal">null</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> value = <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(key);</span><br><span class="line">        <span class="keyword">return</span> value ? <span class="title class_">JSON</span>.<span class="title function_">parse</span>(value) <span class="keyword">as</span> T : <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="title function_">removeItem</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">removeItem</span>(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Test-Cases"><a href="#Test-Cases" class="headerlink" title="Test Cases"></a>Test Cases</h3><p>Using Jest, we can write unit tests to validate the utility:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/localStorage.test.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">LocalStorageHelper</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./localStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">describe</span>(<span class="string">&quot;LocalStorageHelper&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">beforeEach</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">clear</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should set and retrieve an item&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;key&quot;</span>, &#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="property">getItem</span>&lt;&#123; <span class="attr">name</span>: <span class="built_in">string</span> &#125;&gt;(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toEqual</span>(&#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span> &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should return null for non-existent keys&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="title function_">getItem</span>(<span class="string">&quot;nonexistent&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toBeNull</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should remove an item&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">removeItem</span>(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="keyword">const</span> item = <span class="title class_">LocalStorageHelper</span>.<span class="title function_">getItem</span>(<span class="string">&quot;key&quot;</span>);</span><br><span class="line">        <span class="title function_">expect</span>(item).<span class="title function_">toBeNull</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-Integrating-Local-Storage-in-React-Components"><a href="#2-Integrating-Local-Storage-in-React-Components" class="headerlink" title="2. Integrating Local Storage in React Components"></a>2. <strong>Integrating Local Storage in React Components</strong></h3><h4 id="Example-Using-Local-Storage-with-useState"><a href="#Example-Using-Local-Storage-with-useState" class="headerlink" title="Example: Using Local Storage with useState"></a>Example: Using Local Storage with <code>useState</code></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/Counter.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">LocalStorageHelper</span> &#125; <span class="keyword">from</span> <span class="string">&quot;../utils/localStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Counter</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = useState&lt;<span class="built_in">number</span>&gt;(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title class_">LocalStorageHelper</span>.<span class="property">getItem</span>&lt;<span class="built_in">number</span>&gt;(<span class="string">&quot;count&quot;</span>) || <span class="number">0</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setItem</span>(<span class="string">&quot;count&quot;</span>, count);</span><br><span class="line">    &#125;, [count]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Counter: &#123;count&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount((prev) =&gt; prev + 1)&#125;&gt;Increment<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount((prev) =&gt; prev - 1)&#125;&gt;Decrement<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Counter</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Test-Cases-1"><a href="#Test-Cases-1" class="headerlink" title="Test Cases"></a>Test Cases</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/Counter.test.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; render, screen, fireEvent &#125; <span class="keyword">from</span> <span class="string">&quot;@testing-library/react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Counter</span> <span class="keyword">from</span> <span class="string">&quot;./Counter&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">describe</span>(<span class="string">&quot;Counter Component&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should initialize with value from local storage&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&quot;count&quot;</span>, <span class="string">&quot;5&quot;</span>);</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: 5/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should increment the counter&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Increment/i</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: 1/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;should decrement the counter&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span>);</span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Decrement/i</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="regexp">/Counter: -1/i</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-React-Hooks-for-Local-Storage"><a href="#3-React-Hooks-for-Local-Storage" class="headerlink" title="3. React Hooks for Local Storage"></a>3. <strong>React Hooks for Local Storage</strong></h3><p>We can create a custom hook to encapsulate the logic for interacting with local storage.</p>
+<h4 id="Example-Custom-Hook"><a href="#Example-Custom-Hook" class="headerlink" title="Example: Custom Hook"></a>Example: Custom Hook</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hooks/useLocalStorage.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; useState &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> useLocalStorage&lt;T&gt;(<span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">initialValue</span>: T) &#123;</span><br><span class="line">    <span class="keyword">const</span> [storedValue, setStoredValue] = useState&lt;T&gt;(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> item = <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(key);</span><br><span class="line">            <span class="keyword">return</span> item ? <span class="title class_">JSON</span>.<span class="title function_">parse</span>(item) : initialValue;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error reading localStorage key&quot;</span>, key, error);</span><br><span class="line">            <span class="keyword">return</span> initialValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">setValue</span> = (<span class="params"><span class="attr">value</span>: T</span>) =&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="title function_">setStoredValue</span>(value);</span><br><span class="line">            <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(key, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(value));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error setting localStorage key&quot;</span>, key, error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [storedValue, setValue] <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> useLocalStorage;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Usage-Example"><a href="#Usage-Example" class="headerlink" title="Usage Example"></a>Usage Example</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// components/ThemeSwitcher.tsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> useLocalStorage <span class="keyword">from</span> <span class="string">&quot;../hooks/useLocalStorage&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">ThemeSwitcher</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> [theme, setTheme] = useLocalStorage&lt;<span class="built_in">string</span>&gt;(<span class="string">&quot;theme&quot;</span>, <span class="string">&quot;light&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&#123;</span>`<span class="attr">theme-</span>$&#123;<span class="attr">theme</span>&#125;`&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Current Theme: &#123;theme&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setTheme(&quot;light&quot;)&#125;&gt;Light<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setTheme(&quot;dark&quot;)&#125;&gt;Dark<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">ThemeSwitcher</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-Best-Practices-for-Local-Storage-in-React"><a href="#4-Best-Practices-for-Local-Storage-in-React" class="headerlink" title="4. Best Practices for Local Storage in React"></a>4. <strong>Best Practices for Local Storage in React</strong></h3><ol>
+<li><strong>Avoid Storing Sensitive Data</strong>: Local storage is not secure; avoid storing sensitive information like passwords or tokens.</li>
+<li><strong>Validate Stored Data</strong>: Always validate and sanitize data retrieved from local storage.</li>
+<li><strong>Error Handling</strong>: Wrap local storage operations in <code>try-catch</code> blocks to handle potential errors.</li>
+<li><strong>Abstract Logic</strong>: Use utilities or hooks to encapsulate local storage interactions for reusability and type safety.</li>
+<li><strong>Synchronize Across Tabs</strong>: Use the <code>storage</code> event to synchronize data across multiple tabs.</li>
+</ol>
+<h4 id="Example-Tab-Synchronization"><a href="#Example-Tab-Synchronization" class="headerlink" title="Example: Tab Synchronization"></a>Example: Tab Synchronization</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hooks/useSyncLocalStorage.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">useSyncLocalStorage</span>(<span class="params"><span class="attr">key</span>: <span class="built_in">string</span>, <span class="attr">callback</span>: (newValue: <span class="built_in">string</span> | <span class="literal">null</span>) =&gt; <span class="built_in">void</span></span>) &#123;</span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="title function_">handler</span> = (<span class="params"><span class="attr">event</span>: <span class="title class_">StorageEvent</span></span>) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (event.<span class="property">key</span> === key) &#123;</span><br><span class="line">                <span class="title function_">callback</span>(event.<span class="property">newValue</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;storage&quot;</span>, handler);</span><br><span class="line">        <span class="keyword">return</span> <span class="function">() =&gt;</span> <span class="variable language_">window</span>.<span class="title function_">removeEventListener</span>(<span class="string">&quot;storage&quot;</span>, handler);</span><br><span class="line">    &#125;, [key, callback]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"><i class="fa fa-tag"></i> TypeScript</a>
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/React/" rel="tag"><i class="fa fa-tag"></i> React</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/" rel="prev" title="Deep Dive: Modal Dialog Mechanism in React Applications">
+                  <i class="fa fa-angle-left"></i> Deep Dive: Modal Dialog Mechanism in React Applications
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/" rel="next" title="Resolving Dependency Issues in useEffect for a React Application">
+                  Resolving Dependency Issues in useEffect for a React Application <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

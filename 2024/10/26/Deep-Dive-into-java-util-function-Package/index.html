@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Deep Dive into java.util.function Package Introduction Key Functional Interfaces Function Consumer Supplier Predicate BiFunction BiConsumer BiPredicate UnaryOperator BinaryOperator   Best Practices R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into java.util.function Package">
+<meta property="og:url" content="https://www.whereq.com/2024/10/26/Deep-Dive-into-java-util-function-Package/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Deep Dive into java.util.function Package Introduction Key Functional Interfaces Function Consumer Supplier Predicate BiFunction BiConsumer BiPredicate UnaryOperator BinaryOperator   Best Practices R">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-27T02:52:06.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Java Core">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/26/Deep-Dive-into-java-util-function-Package/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/26/Deep-Dive-into-java-util-function-Package/","path":"2024/10/26/Deep-Dive-into-java-util-function-Package/","title":"Deep Dive into java.util.function Package"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into java.util.function Package | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Dive-into-java-util-function-Package"><span class="nav-number">1.</span> <span class="nav-text">Deep Dive into java.util.function Package</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Functional-Interfaces"><span class="nav-number">1.2.</span> <span class="nav-text">Key Functional Interfaces</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Function"><span class="nav-number">1.2.1.</span> <span class="nav-text">Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer"><span class="nav-number">1.2.2.</span> <span class="nav-text">Consumer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Supplier"><span class="nav-number">1.2.3.</span> <span class="nav-text">Supplier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Predicate"><span class="nav-number">1.2.4.</span> <span class="nav-text">Predicate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiFunction"><span class="nav-number">1.2.5.</span> <span class="nav-text">BiFunction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiConsumer"><span class="nav-number">1.2.6.</span> <span class="nav-text">BiConsumer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiPredicate"><span class="nav-number">1.2.7.</span> <span class="nav-text">BiPredicate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UnaryOperator"><span class="nav-number">1.2.8.</span> <span class="nav-text">UnaryOperator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BinaryOperator"><span class="nav-number">1.2.9.</span> <span class="nav-text">BinaryOperator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Best-Practices"><span class="nav-number">1.3.</span> <span class="nav-text">Best Practices</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Real-Life-Use-Cases"><span class="nav-number">1.4.</span> <span class="nav-text">Real-Life Use Cases</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-1-Data-Transformation"><span class="nav-number">1.4.1.</span> <span class="nav-text">Use Case 1: Data Transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-2-Event-Handling"><span class="nav-number">1.4.2.</span> <span class="nav-text">Use Case 2: Event Handling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-3-Validation"><span class="nav-number">1.4.3.</span> <span class="nav-text">Use Case 3: Validation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code"><span class="nav-number">1.5.</span> <span class="nav-text">Sample Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Function-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-1"><span class="nav-number">1.5.2.</span> <span class="nav-text">Consumer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Supplier-1"><span class="nav-number">1.5.3.</span> <span class="nav-text">Supplier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Predicate-1"><span class="nav-number">1.5.4.</span> <span class="nav-text">Predicate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiFunction-1"><span class="nav-number">1.5.5.</span> <span class="nav-text">BiFunction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiConsumer-1"><span class="nav-number">1.5.6.</span> <span class="nav-text">BiConsumer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BiPredicate-1"><span class="nav-number">1.5.7.</span> <span class="nav-text">BiPredicate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UnaryOperator-1"><span class="nav-number">1.5.8.</span> <span class="nav-text">UnaryOperator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BinaryOperator-1"><span class="nav-number">1.5.9.</span> <span class="nav-text">BinaryOperator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.6.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/26/Deep-Dive-into-java-util-function-Package/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into java.util.function Package | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into java.util.function Package
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-26 22:52:06" itemprop="dateCreated datePublished" datetime="2024-10-26T22:52:06-04:00">2024-10-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#deep-dive-into-javautilfunction-package">Deep Dive into <code>java.util.function</code> Package</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#key-functional-interfaces">Key Functional Interfaces</a><ul>
+<li><a href="#function">Function</a></li>
+<li><a href="#consumer">Consumer</a></li>
+<li><a href="#supplier">Supplier</a></li>
+<li><a href="#predicate">Predicate</a></li>
+<li><a href="#bifunction">BiFunction</a></li>
+<li><a href="#biconsumer">BiConsumer</a></li>
+<li><a href="#bipredicate">BiPredicate</a></li>
+<li><a href="#unaryoperator">UnaryOperator</a></li>
+<li><a href="#binaryoperator">BinaryOperator</a></li>
+</ul>
+</li>
+<li><a href="#best-practices">Best Practices</a></li>
+<li><a href="#real-life-use-cases">Real-Life Use Cases</a><ul>
+<li><a href="#use-case-1-data-transformation">Use Case 1: Data Transformation</a></li>
+<li><a href="#use-case-2-event-handling">Use Case 2: Event Handling</a></li>
+<li><a href="#use-case-3-validation">Use Case 3: Validation</a></li>
+</ul>
+</li>
+<li><a href="#sample-code">Sample Code</a><ul>
+<li><a href="#function-1">Function</a></li>
+<li><a href="#consumer-1">Consumer</a></li>
+<li><a href="#supplier-1">Supplier</a></li>
+<li><a href="#predicate-1">Predicate</a></li>
+<li><a href="#bifunction-1">BiFunction</a></li>
+<li><a href="#biconsumer-1">BiConsumer</a></li>
+<li><a href="#bipredicate-1">BiPredicate</a></li>
+<li><a href="#unaryoperator-1">UnaryOperator</a></li>
+<li><a href="#binaryoperator-1">BinaryOperator</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Deep-Dive-into-java-util-function-Package"><a href="#Deep-Dive-into-java-util-function-Package" class="headerlink" title="Deep Dive into java.util.function Package"></a>Deep Dive into <code>java.util.function</code> Package</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>The <code>java.util.function</code> package in Java provides a set of functional interfaces that are used to represent various types of lambda expressions and method references. These interfaces are essential for writing concise and expressive code, especially when working with streams, collections, and other functional programming constructs in Java.</p>
+<p>This article will deep dive into the key functional interfaces provided by the <code>java.util.function</code> package, discuss important points and techniques, provide best practices, and present real-life use cases with sample code.</p>
+<p><a name="key-functional-interfaces"></a></p>
+<h2 id="Key-Functional-Interfaces"><a href="#Key-Functional-Interfaces" class="headerlink" title="Key Functional Interfaces"></a>Key Functional Interfaces</h2><p>The <code>java.util.function</code> package includes several functional interfaces, each designed to represent a specific type of lambda expression. Here are the most commonly used ones:</p>
+<p><a name="function"></a></p>
+<h3 id="Function"><a href="#Function" class="headerlink" title="Function"></a>Function</h3><p>The <code>Function&lt;T, R&gt;</code> interface represents a function that takes an argument of type <code>T</code> and returns a result of type <code>R</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Function;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FunctionExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Function&lt;String, Integer&gt; stringLength = s -&gt; s.length();</span><br><span class="line">        System.out.println(stringLength.apply(<span class="string">&quot;Hello, World!&quot;</span>)); <span class="comment">// Output: 13</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="consumer"></a></p>
+<h3 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h3><p>The <code>Consumer&lt;T&gt;</code> interface represents an operation that takes an argument of type <code>T</code> and returns no result. It is typically used for side effects.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Consumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConsumerExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Consumer&lt;String&gt; printUpperCase = s -&gt; System.out.println(s.toUpperCase());</span><br><span class="line">        printUpperCase.accept(<span class="string">&quot;hello&quot;</span>); <span class="comment">// Output: HELLO</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="supplier"></a></p>
+<h3 id="Supplier"><a href="#Supplier" class="headerlink" title="Supplier"></a>Supplier</h3><p>The <code>Supplier&lt;T&gt;</code> interface represents a supplier of results. It takes no arguments and returns a result of type <code>T</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SupplierExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Supplier&lt;String&gt; randomString = () -&gt; <span class="string">&quot;Random String&quot;</span>;</span><br><span class="line">        System.out.println(randomString.get()); <span class="comment">// Output: Random String</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="predicate"></a></p>
+<h3 id="Predicate"><a href="#Predicate" class="headerlink" title="Predicate"></a>Predicate</h3><p>The <code>Predicate&lt;T&gt;</code> interface represents a predicate (boolean-valued function) of one argument. It returns <code>true</code> or <code>false</code> based on the input.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PredicateExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Predicate&lt;Integer&gt; isEven = n -&gt; n % <span class="number">2</span> == <span class="number">0</span>;</span><br><span class="line">        System.out.println(isEven.test(<span class="number">4</span>)); <span class="comment">// Output: true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="bifunction"></a></p>
+<h3 id="BiFunction"><a href="#BiFunction" class="headerlink" title="BiFunction"></a>BiFunction</h3><p>The <code>BiFunction&lt;T, U, R&gt;</code> interface represents a function that takes two arguments of types <code>T</code> and <code>U</code> and returns a result of type <code>R</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiFunction;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiFunctionExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiFunction&lt;Integer, Integer, Integer&gt; add = (a, b) -&gt; a + b;</span><br><span class="line">        System.out.println(add.apply(<span class="number">3</span>, <span class="number">5</span>)); <span class="comment">// Output: 8</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="biconsumer"></a></p>
+<h3 id="BiConsumer"><a href="#BiConsumer" class="headerlink" title="BiConsumer"></a>BiConsumer</h3><p>The <code>BiConsumer&lt;T, U&gt;</code> interface represents an operation that takes two arguments of types <code>T</code> and <code>U</code> and returns no result.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiConsumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiConsumerExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiConsumer&lt;String, Integer&gt; printKeyValue = (k, v) -&gt; System.out.println(k + <span class="string">&quot;: &quot;</span> + v);</span><br><span class="line">        printKeyValue.accept(<span class="string">&quot;Age&quot;</span>, <span class="number">30</span>); <span class="comment">// Output: Age: 30</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="bipredicate"></a></p>
+<h3 id="BiPredicate"><a href="#BiPredicate" class="headerlink" title="BiPredicate"></a>BiPredicate</h3><p>The <code>BiPredicate&lt;T, U&gt;</code> interface represents a predicate (boolean-valued function) of two arguments.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiPredicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiPredicateExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiPredicate&lt;String, String&gt; isSameLength = (s1, s2) -&gt; s1.length() == s2.length();</span><br><span class="line">        System.out.println(isSameLength.test(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)); <span class="comment">// Output: true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="unaryoperator"></a></p>
+<h3 id="UnaryOperator"><a href="#UnaryOperator" class="headerlink" title="UnaryOperator"></a>UnaryOperator</h3><p>The <code>UnaryOperator&lt;T&gt;</code> interface represents an operation on a single operand that produces a result of the same type as its operand.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.UnaryOperator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnaryOperatorExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        UnaryOperator&lt;Integer&gt; square = n -&gt; n * n;</span><br><span class="line">        System.out.println(square.apply(<span class="number">5</span>)); <span class="comment">// Output: 25</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="binaryoperator"></a></p>
+<h3 id="BinaryOperator"><a href="#BinaryOperator" class="headerlink" title="BinaryOperator"></a>BinaryOperator</h3><p>The <code>BinaryOperator&lt;T&gt;</code> interface represents an operation upon two operands of the same type, producing a result of the same type as the operands.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BinaryOperator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BinaryOperatorExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BinaryOperator&lt;Integer&gt; multiply = (a, b) -&gt; a * b;</span><br><span class="line">        System.out.println(multiply.apply(<span class="number">3</span>, <span class="number">4</span>)); <span class="comment">// Output: 12</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="best-practices"></a></p>
+<h2 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h2><ol>
+<li><strong>Use Functional Interfaces Appropriately</strong>: Choose the right functional interface based on the number of arguments and the return type.</li>
+<li><strong>Leverage Method References</strong>: Use method references where possible to make the code more concise and readable.</li>
+<li><strong>Avoid Overusing Lambdas</strong>: While lambdas are powerful, overusing them can make the code harder to read and maintain.</li>
+<li><strong>Combine Functional Interfaces</strong>: Use the <code>andThen</code>, <code>compose</code>, and <code>and</code> methods to combine multiple functional interfaces.</li>
+<li><strong>Use Default Methods</strong>: Take advantage of default methods provided by functional interfaces to create more complex behaviors.</li>
+</ol>
+<p><a name="real-life-use-cases"></a></p>
+<h2 id="Real-Life-Use-Cases"><a href="#Real-Life-Use-Cases" class="headerlink" title="Real-Life Use Cases"></a>Real-Life Use Cases</h2><p><a name="use-case-1-data-transformation"></a></p>
+<h3 id="Use-Case-1-Data-Transformation"><a href="#Use-Case-1-Data-Transformation" class="headerlink" title="Use Case 1: Data Transformation"></a>Use Case 1: Data Transformation</h3><p>In data processing applications, <code>Function</code> and <code>UnaryOperator</code> can be used to transform data from one format to another.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DataTransformationExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;String&gt; names = Arrays.asList(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;Charlie&quot;</span>);</span><br><span class="line">        Function&lt;String, String&gt; toUpperCase = String::toUpperCase;</span><br><span class="line">        List&lt;String&gt; upperCaseNames = names.stream()</span><br><span class="line">                                           .map(toUpperCase)</span><br><span class="line">                                           .collect(Collectors.toList());</span><br><span class="line">        System.out.println(upperCaseNames); <span class="comment">// Output: [ALICE, BOB, CHARLIE]</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="use-case-2-event-handling"></a></p>
+<h3 id="Use-Case-2-Event-Handling"><a href="#Use-Case-2-Event-Handling" class="headerlink" title="Use Case 2: Event Handling"></a>Use Case 2: Event Handling</h3><p>In event-driven applications, <code>Consumer</code> can be used to handle events and perform side effects.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Consumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EventHandlingExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Consumer&lt;String&gt; onEvent = s -&gt; System.out.println(<span class="string">&quot;Event received: &quot;</span> + s);</span><br><span class="line">        onEvent.accept(<span class="string">&quot;Button Clicked&quot;</span>); <span class="comment">// Output: Event received: Button Clicked</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="use-case-3-validation"></a></p>
+<h3 id="Use-Case-3-Validation"><a href="#Use-Case-3-Validation" class="headerlink" title="Use Case 3: Validation"></a>Use Case 3: Validation</h3><p>In validation scenarios, <code>Predicate</code> can be used to check conditions and return a boolean result.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ValidationExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Predicate&lt;String&gt; isValidEmail = s -&gt; s.contains(<span class="string">&quot;@&quot;</span>) &amp;&amp; s.contains(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">        System.out.println(isValidEmail.test(<span class="string">&quot;test@example.com&quot;</span>)); <span class="comment">// Output: true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="sample-code"></a></p>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Function-1"><a href="#Function-1" class="headerlink" title="Function"></a>Function</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Function;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FunctionExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Function&lt;String, Integer&gt; stringLength = s -&gt; s.length();</span><br><span class="line">        System.out.println(stringLength.apply(<span class="string">&quot;Hello, World!&quot;</span>)); <span class="comment">// Output: 13</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Consumer-1"><a href="#Consumer-1" class="headerlink" title="Consumer"></a>Consumer</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Consumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConsumerExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Consumer&lt;String&gt; printUpperCase = s -&gt; System.out.println(s.toUpperCase());</span><br><span class="line">        printUpperCase.accept(<span class="string">&quot;hello&quot;</span>); <span class="comment">// Output: HELLO</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Supplier-1"><a href="#Supplier-1" class="headerlink" title="Supplier"></a>Supplier</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SupplierExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Supplier&lt;String&gt; randomString = () -&gt; <span class="string">&quot;Random String&quot;</span>;</span><br><span class="line">        System.out.println(randomString.get()); <span class="comment">// Output: Random String</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Predicate-1"><a href="#Predicate-1" class="headerlink" title="Predicate"></a>Predicate</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PredicateExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Predicate&lt;Integer&gt; isEven = n -&gt; n % <span class="number">2</span> == <span class="number">0</span>;</span><br><span class="line">        System.out.println(isEven.test(<span class="number">4</span>)); <span class="comment">// Output: true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BiFunction-1"><a href="#BiFunction-1" class="headerlink" title="BiFunction"></a>BiFunction</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiFunction;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiFunctionExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiFunction&lt;Integer, Integer, Integer&gt; add = (a, b) -&gt; a + b;</span><br><span class="line">        System.out.println(add.apply(<span class="number">3</span>, <span class="number">5</span>)); <span class="comment">// Output: 8</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BiConsumer-1"><a href="#BiConsumer-1" class="headerlink" title="BiConsumer"></a>BiConsumer</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiConsumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiConsumerExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiConsumer&lt;String, Integer&gt; printKeyValue = (k, v) -&gt; System.out.println(k + <span class="string">&quot;: &quot;</span> + v);</span><br><span class="line">        printKeyValue.accept(<span class="string">&quot;Age&quot;</span>, <span class="number">30</span>); <span class="comment">// Output: Age: 30</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BiPredicate-1"><a href="#BiPredicate-1" class="headerlink" title="BiPredicate"></a>BiPredicate</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiPredicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BiPredicateExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BiPredicate&lt;String, String&gt; isSameLength = (s1, s2) -&gt; s1.length() == s2.length();</span><br><span class="line">        System.out.println(isSameLength.test(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)); <span class="comment">// Output: true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UnaryOperator-1"><a href="#UnaryOperator-1" class="headerlink" title="UnaryOperator"></a>UnaryOperator</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.UnaryOperator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnaryOperatorExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        UnaryOperator&lt;Integer&gt; square = n -&gt; n * n;</span><br><span class="line">        System.out.println(square.apply(<span class="number">5</span>)); <span class="comment">// Output: 25</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BinaryOperator-1"><a href="#BinaryOperator-1" class="headerlink" title="BinaryOperator"></a>BinaryOperator</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BinaryOperator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BinaryOperatorExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        BinaryOperator&lt;Integer&gt; multiply = (a, b) -&gt; a * b;</span><br><span class="line">        System.out.println(multiply.apply(<span class="number">3</span>, <span class="number">4</span>)); <span class="comment">// Output: 12</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The <code>java.util.function</code> package provides a rich set of functional interfaces that are essential for writing modern, concise, and expressive Java code. By understanding and leveraging these interfaces, you can significantly improve the readability and maintainability of your code. Real-life use cases and sample code demonstrate how these interfaces can be applied in various scenarios, making them indispensable tools for Java developers.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-Core/" rel="tag"><i class="fa fa-tag"></i> Java Core</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/26/Deep-Dive-Comparing-Spring-REST-Clients-with-Spring-Cloud-OpenFeign/" rel="prev" title="Deep Dive: Comparing Spring REST Clients with Spring Cloud OpenFeign">
+                  <i class="fa fa-angle-left"></i> Deep Dive: Comparing Spring REST Clients with Spring Cloud OpenFeign
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-Memory-Cache-in-Spring-Boot-Application/" rel="next" title="Deep Dive into Memory Cache in Spring Boot Application">
+                  Deep Dive into Memory Cache in Spring Boot Application <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

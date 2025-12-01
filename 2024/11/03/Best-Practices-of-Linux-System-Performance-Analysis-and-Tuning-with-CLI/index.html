@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Basic System Monitoring  Check CPU Usage  Check Memory Usage  Check Disk I&#x2F;O  Check Network Traffic   Process Monitoring  List Running Processes  Check Process Status  Kill a Proces">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices of Linux System Performance Analysis and Tuning with CLI">
+<meta property="og:url" content="https://www.whereq.com/2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Basic System Monitoring  Check CPU Usage  Check Memory Usage  Check Disk I&#x2F;O  Check Network Traffic   Process Monitoring  List Running Processes  Check Process Status  Kill a Proces">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-03T17:06:47.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Troubleshooting">
+<meta property="article:tag" content="Best Practices">
+<meta property="article:tag" content="System">
+<meta property="article:tag" content="Performance">
+<meta property="article:tag" content="CLI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/","path":"2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/","title":"Best Practices of Linux System Performance Analysis and Tuning with CLI"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices of Linux System Performance Analysis and Tuning with CLI | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-System-Monitoring"><span class="nav-number">2.</span> <span class="nav-text">Basic System Monitoring</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-CPU-Usage"><span class="nav-number">2.1.</span> <span class="nav-text"> Check CPU Usage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-Memory-Usage"><span class="nav-number">2.2.</span> <span class="nav-text"> Check Memory Usage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-Disk-I-O"><span class="nav-number">2.3.</span> <span class="nav-text"> Check Disk I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-Network-Traffic"><span class="nav-number">2.4.</span> <span class="nav-text"> Check Network Traffic</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process-Monitoring"><span class="nav-number">3.</span> <span class="nav-text">Process Monitoring</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List-Running-Processes"><span class="nav-number">3.1.</span> <span class="nav-text"> List Running Processes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-Process-Status"><span class="nav-number">3.2.</span> <span class="nav-text"> Check Process Status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kill-a-Process"><span class="nav-number">3.3.</span> <span class="nav-text"> Kill a Process</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Performance-Tuning"><span class="nav-number">4.</span> <span class="nav-text">Advanced Performance Tuning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Top"><span class="nav-number">4.1.</span> <span class="nav-text"> Top</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Htop"><span class="nav-number">4.2.</span> <span class="nav-text"> Htop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Iotop"><span class="nav-number">4.3.</span> <span class="nav-text"> Iotop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sar"><span class="nav-number">4.4.</span> <span class="nav-text"> Sar</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Troubleshooting-Real-Production-Issues"><span class="nav-number">5.</span> <span class="nav-text">Troubleshooting Real Production Issues</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#High-CPU-Usage"><span class="nav-number">5.1.</span> <span class="nav-text"> High CPU Usage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High-Memory-Usage"><span class="nav-number">5.2.</span> <span class="nav-text"> High Memory Usage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High-Disk-I-O"><span class="nav-number">5.3.</span> <span class="nav-text"> High Disk I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Network-Latency"><span class="nav-number">5.4.</span> <span class="nav-text"> Network Latency</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices of Linux System Performance Analysis and Tuning with CLI | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices of Linux System Performance Analysis and Tuning with CLI
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-03 12:06:47" itemprop="dateCreated datePublished" datetime="2024-11-03T12:06:47-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/System/" itemprop="url" rel="index"><span itemprop="name">System</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/System/Performance/" itemprop="url" rel="index"><span itemprop="name">Performance</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/System/Performance/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/System/Performance/Troubleshooting/CLI/" itemprop="url" rel="index"><span itemprop="name">CLI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#basic-system-monitoring">Basic System Monitoring</a><ul>
+<li><a href="#-check-cpu-usage"> Check CPU Usage</a></li>
+<li><a href="#-check-memory-usage"> Check Memory Usage</a></li>
+<li><a href="#-check-disk-io"> Check Disk I&#x2F;O</a></li>
+<li><a href="#-check-network-traffic"> Check Network Traffic</a></li>
+</ul>
+</li>
+<li><a href="#process-monitoring">Process Monitoring</a><ul>
+<li><a href="#-list-running-processes"> List Running Processes</a></li>
+<li><a href="#-check-process-status"> Check Process Status</a></li>
+<li><a href="#-kill-a-process"> Kill a Process</a></li>
+</ul>
+</li>
+<li><a href="#advanced-performance-tuning">Advanced Performance Tuning</a><ul>
+<li><a href="#-top"> Top</a></li>
+<li><a href="#-htop"> Htop</a></li>
+<li><a href="#-iotop"> Iotop</a></li>
+<li><a href="#-sar"> Sar</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting-real-production-issues">Troubleshooting Real Production Issues</a><ul>
+<li><a href="#-high-cpu-usage"> High CPU Usage</a></li>
+<li><a href="#-high-memory-usage"> High Memory Usage</a></li>
+<li><a href="#-high-disk-io"> High Disk I&#x2F;O</a></li>
+<li><a href="#-network-latency"> Network Latency</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Monitoring and tuning Linux system performance is crucial for maintaining the health and efficiency of your infrastructure. Command line tools like <code>top</code>, <code>htop</code>, <code>iotop</code>, <code>sar</code>, <code>ps</code>, <code>free</code>, <code>vmstat</code>, and <code>netstat</code> provide powerful capabilities for analyzing and optimizing system performance. This article provides a comprehensive guide to the best practices of using these tools, covering various scenarios such as checking CPU and memory usage, monitoring processes, and troubleshooting real production issues.</p>
+<hr>
+<p><a name="basic-system-monitoring"></a></p>
+<h2 id="Basic-System-Monitoring"><a href="#Basic-System-Monitoring" class="headerlink" title="Basic System Monitoring"></a>Basic System Monitoring</h2><h3 id="Check-CPU-Usage"><a href="#Check-CPU-Usage" class="headerlink" title=" Check CPU Usage"></a><a name="check-cpu-usage"></a> Check CPU Usage</h3><p>To check CPU usage, use the <code>top</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>This command displays real-time CPU and memory usage, along with a list of running processes.</p>
+<h3 id="Check-Memory-Usage"><a href="#Check-Memory-Usage" class="headerlink" title=" Check Memory Usage"></a><a name="check-memory-usage"></a> Check Memory Usage</h3><p>To check memory usage, use the <code>free</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free -h</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the total, used, and free memory in a human-readable format.</p>
+<h3 id="Check-Disk-I-O"><a href="#Check-Disk-I-O" class="headerlink" title=" Check Disk I&#x2F;O"></a><a name="check-disk-io"></a> Check Disk I&#x2F;O</h3><p>To check disk I&#x2F;O, use the <code>iostat</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iostat -x 1</span><br></pre></td></tr></table></figure>
+
+<p>This command displays detailed I&#x2F;O statistics, including read and write rates.</p>
+<h3 id="Check-Network-Traffic"><a href="#Check-Network-Traffic" class="headerlink" title=" Check Network Traffic"></a><a name="check-network-traffic"></a> Check Network Traffic</h3><p>To check network traffic, use the <code>iftop</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iftop -i eth0</span><br></pre></td></tr></table></figure>
+
+<p>This command displays real-time network traffic on the <code>eth0</code> interface.</p>
+<hr>
+<p><a name="process-monitoring"></a></p>
+<h2 id="Process-Monitoring"><a href="#Process-Monitoring" class="headerlink" title="Process Monitoring"></a>Process Monitoring</h2><h3 id="List-Running-Processes"><a href="#List-Running-Processes" class="headerlink" title=" List Running Processes"></a><a name="list-running-processes"></a> List Running Processes</h3><p>To list all running processes, use the <code>ps</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux</span><br></pre></td></tr></table></figure>
+
+<p>This command displays a detailed list of all running processes.</p>
+<h3 id="Check-Process-Status"><a href="#Check-Process-Status" class="headerlink" title=" Check Process Status"></a><a name="check-process-status"></a> Check Process Status</h3><p>To check the status of a specific process, use the <code>ps</code> command with the process ID (PID):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -p &lt;PID&gt; -o pid,ppid,cmd,%cpu,%mem,state</span><br></pre></td></tr></table></figure>
+
+<p>This command displays the status of the process with the specified PID.</p>
+<h3 id="Kill-a-Process"><a href="#Kill-a-Process" class="headerlink" title=" Kill a Process"></a><a name="kill-a-process"></a> Kill a Process</h3><p>To kill a process, use the <code>kill</code> command with the process ID (PID):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> &lt;PID&gt;</span><br></pre></td></tr></table></figure>
+
+<p>This command sends a termination signal to the process with the specified PID.</p>
+<hr>
+<p><a name="advanced-performance-tuning"></a></p>
+<h2 id="Advanced-Performance-Tuning"><a href="#Advanced-Performance-Tuning" class="headerlink" title="Advanced Performance Tuning"></a>Advanced Performance Tuning</h2><h3 id="Top"><a href="#Top" class="headerlink" title=" Top"></a><a name="top"></a> Top</h3><p>To monitor system performance in real-time, use the <code>top</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>This command provides a dynamic view of system resources and running processes.</p>
+<h3 id="Htop"><a href="#Htop" class="headerlink" title=" Htop"></a><a name="htop"></a> Htop</h3><p>To monitor system performance with a more user-friendly interface, use <code>htop</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+
+<p>This command provides a colorful and interactive view of system resources and running processes.</p>
+<h3 id="Iotop"><a href="#Iotop" class="headerlink" title=" Iotop"></a><a name="iotop"></a> Iotop</h3><p>To monitor disk I&#x2F;O in real-time, use the <code>iotop</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iotop</span><br></pre></td></tr></table></figure>
+
+<p>This command displays real-time disk I&#x2F;O statistics for running processes.</p>
+<h3 id="Sar"><a href="#Sar" class="headerlink" title=" Sar"></a><a name="sar"></a> Sar</h3><p>To collect and report system activity, use the <code>sar</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sar -u 1 5</span><br></pre></td></tr></table></figure>
+
+<p>This command collects CPU usage statistics every second for 5 seconds.</p>
+<hr>
+<p><a name="troubleshooting-real-production-issues"></a></p>
+<h2 id="Troubleshooting-Real-Production-Issues"><a href="#Troubleshooting-Real-Production-Issues" class="headerlink" title="Troubleshooting Real Production Issues"></a>Troubleshooting Real Production Issues</h2><h3 id="High-CPU-Usage"><a href="#High-CPU-Usage" class="headerlink" title=" High CPU Usage"></a><a name="high-cpu-usage"></a> High CPU Usage</h3><p>To identify processes causing high CPU usage, use <code>top</code> or <code>htop</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>Sort processes by CPU usage by pressing <code>P</code>.</p>
+<h3 id="High-Memory-Usage"><a href="#High-Memory-Usage" class="headerlink" title=" High Memory Usage"></a><a name="high-memory-usage"></a> High Memory Usage</h3><p>To identify processes causing high memory usage, use <code>top</code> or <code>htop</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>Sort processes by memory usage by pressing <code>M</code>.</p>
+<h3 id="High-Disk-I-O"><a href="#High-Disk-I-O" class="headerlink" title=" High Disk I&#x2F;O"></a><a name="high-disk-io"></a> High Disk I&#x2F;O</h3><p>To identify processes causing high disk I&#x2F;O, use <code>iotop</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iotop</span><br></pre></td></tr></table></figure>
+
+<p>This command displays real-time disk I&#x2F;O statistics for running processes.</p>
+<h3 id="Network-Latency"><a href="#Network-Latency" class="headerlink" title=" Network Latency"></a><a name="network-latency"></a> Network Latency</h3><p>To diagnose network latency, use <code>ping</code> and <code>traceroute</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ping google.com</span><br><span class="line">traceroute google.com</span><br></pre></td></tr></table></figure>
+
+<p>These commands help identify network latency and routing issues.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Monitoring and tuning Linux system performance is essential for maintaining the health and efficiency of your infrastructure. By mastering the various options and scenarios covered in this article, you can effectively use command line tools like <code>top</code>, <code>htop</code>, <code>iotop</code>, <code>sar</code>, <code>ps</code>, <code>free</code>, <code>vmstat</code>, and <code>netstat</code> to analyze and optimize system performance.</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/top.1.html">top Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://hisham.hm/htop/index.php?page=documentation">htop Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ex-parrot.com/pdw/iftop/iftop-man.html">iotop Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/sar.1.html">sar Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/ps.1.html">ps Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/free.1.html">free Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/iostat.8.html">iostat Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ex-parrot.com/pdw/iftop/iftop-man.html">iftop Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/ping.8.html">ping Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/traceroute.8.html">traceroute Man Page</a></li>
+</ol>
+<p>By following these best practices, you can leverage these system performance tools to their full potential and efficiently manage your monitoring and tuning tasks.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Troubleshooting/" rel="tag"><i class="fa fa-tag"></i> Troubleshooting</a>
+              <a href="/tags/Best-Practices/" rel="tag"><i class="fa fa-tag"></i> Best Practices</a>
+              <a href="/tags/System/" rel="tag"><i class="fa fa-tag"></i> System</a>
+              <a href="/tags/Performance/" rel="tag"><i class="fa fa-tag"></i> Performance</a>
+              <a href="/tags/CLI/" rel="tag"><i class="fa fa-tag"></i> CLI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/" rel="prev" title="Best Practices of Using Command Line Tools for Network Analysis">
+                  <i class="fa fa-angle-left"></i> Best Practices of Using Command Line Tools for Network Analysis
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-kubectl/" rel="next" title="Best Practices of kubectl">
+                  Best Practices of kubectl <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

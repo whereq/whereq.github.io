@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Last week, I was tasked with building a Parameters.tsx component, and let me tell you, the struggle was real! I got completely entangled in a web of useEffect dependencies. It was like trying to untan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Resolving Dependency Issues in useEffect for a React Application">
+<meta property="og:url" content="https://www.whereq.com/2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Last week, I was tasked with building a Parameters.tsx component, and let me tell you, the struggle was real! I got completely entangled in a web of useEffect dependencies. It was like trying to untan">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-29T03:15:21.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="useEffect">
+<meta property="article:tag" content="React Hooks">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/","path":"2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/","title":"Resolving Dependency Issues in useEffect for a React Application"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Resolving Dependency Issues in useEffect for a React Application | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Product-Requirement"><span class="nav-number">1.</span> <span class="nav-text">The Product Requirement</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation"><span class="nav-number">2.</span> <span class="nav-text">Implementation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Problem"><span class="nav-number">3.</span> <span class="nav-text">The Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scenario-Details"><span class="nav-number">3.1.</span> <span class="nav-text">Scenario Details</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-This-Happens"><span class="nav-number">3.2.</span> <span class="nav-text">Why This Happens</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Root-Cause-Unnecessary-Dependencies-in-useEffect"><span class="nav-number">4.</span> <span class="nav-text">Root Cause: Unnecessary Dependencies in useEffect</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Impact-of-This-Bug"><span class="nav-number">4.1.</span> <span class="nav-text">Impact of This Bug</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution-Leveraging-useRef"><span class="nav-number">5.</span> <span class="nav-text">Solution: Leveraging useRef</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-useRef-Fixes-the-Problem"><span class="nav-number">6.</span> <span class="nav-text">Why useRef Fixes the Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code-Comparison"><span class="nav-number">7.</span> <span class="nav-text">Code Comparison</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Before-Fixing"><span class="nav-number">7.1.</span> <span class="nav-text">Before Fixing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#After-Fixing"><span class="nav-number">7.2.</span> <span class="nav-text">After Fixing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequence-Diagram-Before-the-Fix"><span class="nav-number">8.</span> <span class="nav-text">Sequence Diagram: Before the Fix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation"><span class="nav-number">8.1.</span> <span class="nav-text">Explanation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequence-Diagram-After-the-Fix"><span class="nav-number">9.</span> <span class="nav-text">Sequence Diagram: After the Fix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation-1"><span class="nav-number">9.1.</span> <span class="nav-text">Explanation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Differences-in-the-Diagrams"><span class="nav-number">10.</span> <span class="nav-text">Key Differences in the Diagrams</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-Takeaways"><span class="nav-number">11.</span> <span class="nav-text">Key Takeaways</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Unnecessary-Dependencies-Are-Problematic"><span class="nav-number">11.1.</span> <span class="nav-text">Why Unnecessary Dependencies Are Problematic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-useRef-Is-the-Solution"><span class="nav-number">11.2.</span> <span class="nav-text">Why useRef Is the Solution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">12.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/28/Resolving-Dependency-Issues-in-useEffect-for-a-React-Application/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Resolving Dependency Issues in useEffect for a React Application | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Resolving Dependency Issues in useEffect for a React Application
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-12-28 22:15:21" itemprop="dateCreated datePublished" datetime="2024-12-28T22:15:21-05:00">2024-12-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/useEffect/" itemprop="url" rel="index"><span itemprop="name">useEffect</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/useEffect/React-Hooks/" itemprop="url" rel="index"><span itemprop="name">React Hooks</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Last week, I was tasked with building a Parameters.tsx component, and let me tell you, the struggle was real! I got completely entangled in a web of useEffect dependencies. It was like trying to untangle a Christmas tree of wires! 🎄 But hey, I finally emerged victorious (mostly) and learned some valuable lessons along the way. Here’s the story…</p>
+<h2 id="The-Product-Requirement"><a href="#The-Product-Requirement" class="headerlink" title="The Product Requirement"></a><strong>The Product Requirement</strong></h2><ol>
+<li>Initializes a table with passed-in parameters (<code>Record&lt;string, string&gt;</code>).  </li>
+<li>Allows in-place editing of table rows.  </li>
+<li>Automatically persists updated parameters to local storage, using a passed-in URL as the key.</li>
+</ol>
+<hr>
+<h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a><strong>Implementation</strong></h2><p>The implementation involves two <code>useEffect</code> hooks:</p>
+<ol>
+<li><strong>First <code>useEffect</code></strong>: Loads the passed-in parameters into the table.</li>
+<li><strong>Second <code>useEffect</code></strong>: Saves the updated parameters to local storage whenever the user makes changes to the table rows.</li>
+</ol>
+<hr>
+<h2 id="The-Problem"><a href="#The-Problem" class="headerlink" title="The Problem"></a><strong>The Problem</strong></h2><p>The <strong>key issue</strong> arises from the second <code>useEffect</code>. Since the URL (used as the storage key) is passed into the component, it was added as a dependency. This caused unintended behavior when switching endpoints, leading to:</p>
+<ul>
+<li>Saving the parameters of a <strong>previous endpoint</strong> under the <strong>new endpoint’s URL</strong>.</li>
+</ul>
+<h3 id="Scenario-Details"><a href="#Scenario-Details" class="headerlink" title="Scenario Details"></a><strong>Scenario Details</strong></h3><p>When switching endpoints, the <code>restfulEndpointUrl</code> (passed-in URL) changes. Since the URL is used as the key for saving parameters to local storage, it was added as a dependency to the second <code>useEffect</code>. However, this led to incorrect behavior:</p>
+<ul>
+<li>When the URL changes, the <code>useEffect</code> is triggered.</li>
+<li>At this point, the table still contains the parameters of the <strong>previous endpoint</strong>.</li>
+<li>As a result, the parameters of the previous endpoint are saved under the <strong>new endpoint’s URL</strong>, which is incorrect.</li>
+</ul>
+<h3 id="Why-This-Happens"><a href="#Why-This-Happens" class="headerlink" title="Why This Happens"></a><strong>Why This Happens</strong></h3><p>The <code>useEffect</code> hook runs whenever any of its dependencies change. By including <code>restfulEndpointUrl</code> in the dependency array, the <code>useEffect</code> is triggered when the URL changes, even though the table content hasn’t been updated yet.</p>
+<hr>
+<h2 id="Root-Cause-Unnecessary-Dependencies-in-useEffect"><a href="#Root-Cause-Unnecessary-Dependencies-in-useEffect" class="headerlink" title="Root Cause: Unnecessary Dependencies in useEffect"></a><strong>Root Cause: Unnecessary Dependencies in <code>useEffect</code></strong></h2><p>Let’s break down why adding <code>restfulEndpointUrl</code> as a dependency caused the issue:</p>
+<ol>
+<li><p><strong>How <code>useEffect</code> Dependencies Work</strong><br>The dependencies in the <code>useEffect</code> array dictate when the hook is re-triggered. By including <code>restfulEndpointUrl</code>, the persistence logic was unnecessarily invoked whenever the URL changed.  </p>
+</li>
+<li><p><strong>Incorrect State Handling</strong><br>When the URL changed, the persistence logic was triggered prematurely, using the <strong>outdated state of <code>rows</code></strong>, leading to data being saved under the incorrect key.</p>
+</li>
+</ol>
+<h3 id="Impact-of-This-Bug"><a href="#Impact-of-This-Bug" class="headerlink" title="Impact of This Bug"></a><strong>Impact of This Bug</strong></h3><p>Here’s a sequence of events that led to the bug:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. restfulEndpointUrl = &quot;endpoint_1&quot;</span><br><span class="line">   - Rows initialized and saved correctly under &quot;endpoint_1&quot;.</span><br><span class="line">2. restfulEndpointUrl changes to &quot;endpoint_2&quot;</span><br><span class="line">   - useEffect triggers immediately.</span><br><span class="line">   - Old rows (from &quot;endpoint_1&quot;) are saved under &quot;endpoint_2&quot;.</span><br><span class="line">3. User edits table.</span><br><span class="line">   - New rows are saved under &quot;endpoint_2&quot;, but previous data is corrupted.</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Solution-Leveraging-useRef"><a href="#Solution-Leveraging-useRef" class="headerlink" title="Solution: Leveraging useRef"></a><strong>Solution: Leveraging <code>useRef</code></strong></h2><p>To fix this, we need to ensure that the persistence logic <strong>only runs when <code>rows</code> changes</strong>, and <strong>not when the URL changes</strong>.<br>This can be achieved by:</p>
+<ol>
+<li>Removing <code>restfulEndpointUrl</code> from the dependency array of the <code>useEffect</code> that handles persistence.</li>
+<li>Using a <code>useRef</code> to always access the latest URL without triggering the <code>useEffect</code>.</li>
+</ol>
+<p>The <code>useRef</code> hook provides a solution by holding a mutable reference to the latest URL without triggering re-renders or re-triggering the <code>useEffect</code>. Here’s why it works:</p>
+<ul>
+<li><strong>Avoiding Dependencies:</strong> By using <code>useRef</code>, we avoid adding <code>restfulEndpointUrl</code> to the dependency array. The persistence logic is now triggered only when <code>rows</code> change.  </li>
+<li><strong>Always Up-to-Date:</strong> Updating the <code>useRef</code> in its own <code>useEffect</code> ensures it always holds the latest URL.</li>
+</ul>
+<hr>
+<h2 id="Why-useRef-Fixes-the-Problem"><a href="#Why-useRef-Fixes-the-Problem" class="headerlink" title="Why useRef Fixes the Problem"></a><strong>Why <code>useRef</code> Fixes the Problem</strong></h2><p>The <code>useRef</code> hook allows us to store a mutable value that persists across renders without causing re-renders. By storing the URL in a <code>ref</code>, we can:</p>
+<ul>
+<li>Access the latest URL value without adding it as a dependency to <code>useEffect</code>.</li>
+<li>Ensure that the persistence logic only runs when <code>rows</code> changes, avoiding incorrect saves.</li>
+</ul>
+<hr>
+<h2 id="Code-Comparison"><a href="#Code-Comparison" class="headerlink" title="Code Comparison"></a><strong>Code Comparison</strong></h2><h3 id="Before-Fixing"><a href="#Before-Fixing" class="headerlink" title="Before Fixing"></a><strong>Before Fixing</strong></h3><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [rows, setRows] = useState&lt;<span class="title class_">Row</span>[]&gt;([]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Initialize rows</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> initialRows = <span class="title class_">Object</span>.<span class="title function_">entries</span>(initialParams).<span class="title function_">map</span>(<span class="function">(<span class="params">[key, value]</span>) =&gt;</span> (&#123;</span><br><span class="line">        <span class="attr">selected</span>: <span class="literal">true</span>,</span><br><span class="line">        key,</span><br><span class="line">        value,</span><br><span class="line">        <span class="attr">description</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    &#125;));</span><br><span class="line">    <span class="title function_">setRows</span>(initialRows);</span><br><span class="line">&#125;, [initialParams]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Persist changes</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (restfulEndpointUrl) &#123;</span><br><span class="line">        <span class="keyword">const</span> params = rows</span><br><span class="line">            .<span class="title function_">filter</span>(<span class="function">(<span class="params">row</span>) =&gt;</span> row.<span class="property">selected</span> &amp;&amp; row.<span class="property">key</span>)</span><br><span class="line">            .<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, row</span>) =&gt;</span> &#123;</span><br><span class="line">                acc[row.<span class="property">key</span>] = row.<span class="property">value</span>;</span><br><span class="line">                <span class="keyword">return</span> acc;</span><br><span class="line">            &#125;, &#123;&#125;);</span><br><span class="line"></span><br><span class="line">        <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setParams</span>(restfulEndpointUrl, params);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, [rows, restfulEndpointUrl]); <span class="comment">// restfulEndpointUrl as a dependency causes issues</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="After-Fixing"><a href="#After-Fixing" class="headerlink" title="After Fixing"></a><strong>After Fixing</strong></h3><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [rows, setRows] = useState&lt;<span class="title class_">Row</span>[]&gt;([]);</span><br><span class="line"><span class="keyword">const</span> restfulEndpointUrlRef = <span class="title function_">useRef</span>(restfulEndpointUrl);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Update ref when URL changes</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    restfulEndpointUrlRef.<span class="property">current</span> = restfulEndpointUrl;</span><br><span class="line">&#125;, [restfulEndpointUrl]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Initialize rows</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> initialRows = <span class="title class_">Object</span>.<span class="title function_">entries</span>(initialParams).<span class="title function_">map</span>(<span class="function">(<span class="params">[key, value]</span>) =&gt;</span> (&#123;</span><br><span class="line">        <span class="attr">selected</span>: <span class="literal">true</span>,</span><br><span class="line">        key,</span><br><span class="line">        value,</span><br><span class="line">        <span class="attr">description</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    &#125;));</span><br><span class="line">    <span class="title function_">setRows</span>(initialRows);</span><br><span class="line">&#125;, [initialParams]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Persist changes</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> params = rows</span><br><span class="line">        .<span class="title function_">filter</span>(<span class="function">(<span class="params">row</span>) =&gt;</span> row.<span class="property">selected</span> &amp;&amp; row.<span class="property">key</span>)</span><br><span class="line">        .<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, row</span>) =&gt;</span> &#123;</span><br><span class="line">            acc[row.<span class="property">key</span>] = row.<span class="property">value</span>;</span><br><span class="line">            <span class="keyword">return</span> acc;</span><br><span class="line">        &#125;, &#123;&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="title class_">LocalStorageHelper</span>.<span class="title function_">setParams</span>(restfulEndpointUrlRef.<span class="property">current</span>, params);</span><br><span class="line">&#125;, [rows]); <span class="comment">// URL dependency removed</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Sequence-Diagram-Before-the-Fix"><a href="#Sequence-Diagram-Before-the-Fix" class="headerlink" title="Sequence Diagram: Before the Fix"></a><strong>Sequence Diagram: Before the Fix</strong></h2><pre><code class="highlight mermaid">sequenceDiagram
+    participant User
+    participant Component
+    participant LocalStorage
+
+    User-&gt;&gt;Component: Switches Endpoint
+    Component-&gt;&gt;Component: restfulEndpointUrl changes
+    Component-&gt;&gt;Component: useEffect (persistence) triggers
+    Component-&gt;&gt;Component: Table still contains params of previous endpoint
+    Component-&gt;&gt;LocalStorage: Incorrect params saved under new endpoint&#x27;s URL</code></pre>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a><strong>Explanation</strong></h3><ol>
+<li>The user switches the endpoint.</li>
+<li>The <code>restfulEndpointUrl</code> changes.</li>
+<li>The <code>useEffect</code> (persistence) triggers because <code>restfulEndpointUrl</code> is a dependency.</li>
+<li>The table still contains the parameters of the <strong>previous endpoint</strong>.</li>
+<li>The incorrect parameters are saved under the <strong>new endpoint’s URL</strong>.</li>
+</ol>
+<hr>
+<h2 id="Sequence-Diagram-After-the-Fix"><a href="#Sequence-Diagram-After-the-Fix" class="headerlink" title="Sequence Diagram: After the Fix"></a><strong>Sequence Diagram: After the Fix</strong></h2><pre><code class="highlight mermaid">sequenceDiagram
+    participant User
+    participant Component
+    participant LocalStorage
+
+    User-&gt;&gt;Component: Switches Endpoint
+    Component-&gt;&gt;Component: restfulEndpointUrl changes
+    Component-&gt;&gt;Component: ref updated with new URL
+    Component-&gt;&gt;Component: Table updated with new endpoint&#x27;s params
+    User-&gt;&gt;Component: Edits Table
+    Component-&gt;&gt;Component: useEffect (persistence) triggers
+    Component-&gt;&gt;LocalStorage: Correct params saved under new endpoint&#x27;s URL</code></pre>
+
+<h3 id="Explanation-1"><a href="#Explanation-1" class="headerlink" title="Explanation"></a><strong>Explanation</strong></h3><ol>
+<li>The user switches the endpoint.</li>
+<li>The <code>restfulEndpointUrl</code> changes.</li>
+<li>The <code>ref</code> is updated with the new URL.</li>
+<li>The table is updated with the new endpoint’s parameters.</li>
+<li>The user edits the table.</li>
+<li>The <code>useEffect</code> (persistence) triggers because <code>rows</code> changed.</li>
+<li>The correct parameters are saved under the <strong>new endpoint’s URL</strong>.</li>
+</ol>
+<hr>
+<h2 id="Key-Differences-in-the-Diagrams"><a href="#Key-Differences-in-the-Diagrams" class="headerlink" title="Key Differences in the Diagrams"></a><strong>Key Differences in the Diagrams</strong></h2><table>
+<thead>
+<tr>
+<th><strong>Before the Fix</strong></th>
+<th><strong>After the Fix</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>useEffect</code> triggers when <code>restfulEndpointUrl</code> changes.</td>
+<td><code>useEffect</code> triggers only when <code>rows</code> changes.</td>
+</tr>
+<tr>
+<td>Incorrect parameters are saved because the table hasn’t been updated yet.</td>
+<td>Correct parameters are saved because the table is updated before persistence.</td>
+</tr>
+<tr>
+<td><code>restfulEndpointUrl</code> is a dependency in <code>useEffect</code>.</td>
+<td><code>restfulEndpointUrl</code> is stored in a <code>ref</code> and not a dependency in <code>useEffect</code>.</td>
+</tr>
+</tbody></table>
+<hr>
+<hr>
+<h2 id="Key-Takeaways"><a href="#Key-Takeaways" class="headerlink" title="Key Takeaways"></a><strong>Key Takeaways</strong></h2><h3 id="Why-Unnecessary-Dependencies-Are-Problematic"><a href="#Why-Unnecessary-Dependencies-Are-Problematic" class="headerlink" title="Why Unnecessary Dependencies Are Problematic"></a><strong>Why Unnecessary Dependencies Are Problematic</strong></h3><ol>
+<li>They can cause re-triggers in <code>useEffect</code> that don’t align with the intended logic.  </li>
+<li>This often leads to outdated or incorrect state usage.</li>
+</ol>
+<h3 id="Why-useRef-Is-the-Solution"><a href="#Why-useRef-Is-the-Solution" class="headerlink" title="Why useRef Is the Solution"></a><strong>Why <code>useRef</code> Is the Solution</strong></h3><ol>
+<li><code>useRef</code> provides a mutable container that doesn’t cause re-renders or hook re-triggers.  </li>
+<li>It allows us to maintain the latest value of a variable without adding it to <code>useEffect</code> dependencies.</li>
+</ol>
+<hr>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a><strong>Conclusion</strong></h2><p>Using <code>useEffect</code> effectively requires careful consideration of its dependencies. In this case, leveraging <code>useRef</code> eliminated unnecessary triggers, ensuring the correct behavior when switching endpoints. This approach is a best practice for similar scenarios where state changes need to be decoupled from unrelated external variables.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/React/" rel="tag"><i class="fa fa-tag"></i> React</a>
+              <a href="/tags/useEffect/" rel="tag"><i class="fa fa-tag"></i> useEffect</a>
+              <a href="/tags/React-Hooks/" rel="tag"><i class="fa fa-tag"></i> React Hooks</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/" rel="prev" title="Deep Dive into Local Storage Usage in React with TypeScript">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Local Storage Usage in React with TypeScript
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/08/Building-a-Google-Maps-Application-with-React-and-TypeScript/" rel="next" title="Building a Google Maps Application with React and TypeScript">
+                  Building a Google Maps Application with React and TypeScript <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

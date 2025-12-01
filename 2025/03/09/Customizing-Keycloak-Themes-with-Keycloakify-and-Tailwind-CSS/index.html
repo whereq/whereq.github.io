@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="What is Keycloakify?Keycloakify is a library that simplifies the process of creating custom Keycloak themes using modern frontend tools like React and Tailwind CSS. It provides:  A set of utility func">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Customizing Keycloak Themes with Keycloakify and Tailwind CSS">
+<meta property="og:url" content="https://www.whereq.com/2025/03/09/Customizing-Keycloak-Themes-with-Keycloakify-and-Tailwind-CSS/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="What is Keycloakify?Keycloakify is a library that simplifies the process of creating custom Keycloak themes using modern frontend tools like React and Tailwind CSS. It provides:  A set of utility func">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-03-10T01:09:42.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Keycloak">
+<meta property="article:tag" content="Keycloakify">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/03/09/Customizing-Keycloak-Themes-with-Keycloakify-and-Tailwind-CSS/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/03/09/Customizing-Keycloak-Themes-with-Keycloakify-and-Tailwind-CSS/","path":"2025/03/09/Customizing-Keycloak-Themes-with-Keycloakify-and-Tailwind-CSS/","title":"Customizing Keycloak Themes with Keycloakify and Tailwind CSS"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Customizing Keycloak Themes with Keycloakify and Tailwind CSS | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Keycloakify"><span class="nav-number">1.</span> <span class="nav-text">What is Keycloakify?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keycloakify%E2%80%99s-kc-Classes"><span class="nav-number">2.</span> <span class="nav-text">Keycloakify’s kc* Classes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Structure-of-kc-Classes"><span class="nav-number">2.1.</span> <span class="nav-text">Structure of kc* Classes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Common-kc-Classes"><span class="nav-number">2.2.</span> <span class="nav-text">Common kc* Classes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pros-and-Cons-of-Using-Keycloakify-Classes"><span class="nav-number">3.</span> <span class="nav-text">Pros and Cons of Using Keycloakify Classes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pros"><span class="nav-number">3.1.</span> <span class="nav-text">Pros</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cons"><span class="nav-number">3.2.</span> <span class="nav-text">Cons</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cleaning-Up-Keycloakify-Classes"><span class="nav-number">4.</span> <span class="nav-text">Cleaning Up Keycloakify Classes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Clean-Up-Keycloakify-Classes"><span class="nav-number">4.1.</span> <span class="nav-text">Why Clean Up Keycloakify Classes?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Steps-to-Clean-Up-Keycloakify-Classes"><span class="nav-number">4.2.</span> <span class="nav-text">Steps to Clean Up Keycloakify Classes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Before"><span class="nav-number">4.2.1.</span> <span class="nav-text">Before:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After"><span class="nav-number">4.2.2.</span> <span class="nav-text">After:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Before-1"><span class="nav-number">4.2.3.</span> <span class="nav-text">Before:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After-1"><span class="nav-number">4.2.4.</span> <span class="nav-text">After:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Before-2"><span class="nav-number">4.2.5.</span> <span class="nav-text">Before:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After-2"><span class="nav-number">4.2.6.</span> <span class="nav-text">After:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Before-3"><span class="nav-number">4.2.7.</span> <span class="nav-text">Before:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After-3"><span class="nav-number">4.2.8.</span> <span class="nav-text">After:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Fully-Customized-Keycloak-Theme-with-Tailwind-CSS"><span class="nav-number">4.3.</span> <span class="nav-text">Example: Fully Customized Keycloak Theme with Tailwind CSS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Again-benefits-of-Using-Tailwind-CSS-Exclusively"><span class="nav-number">5.</span> <span class="nav-text">Again, benefits of Using Tailwind CSS Exclusively</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/03/09/Customizing-Keycloak-Themes-with-Keycloakify-and-Tailwind-CSS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Customizing Keycloak Themes with Keycloakify and Tailwind CSS | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Customizing Keycloak Themes with Keycloakify and Tailwind CSS
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-09 21:09:42" itemprop="dateCreated datePublished" datetime="2025-03-09T21:09:42-04:00">2025-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/Keycloakify/" itemprop="url" rel="index"><span itemprop="name">Keycloakify</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="What-is-Keycloakify"><a href="#What-is-Keycloakify" class="headerlink" title="What is Keycloakify?"></a>What is Keycloakify?</h2><p>Keycloakify is a library that simplifies the process of creating custom Keycloak themes using modern frontend tools like React and Tailwind CSS. It provides:</p>
+<ul>
+<li>A set of utility functions (e.g., <code>clsx</code>, <code>kcClsx</code>) to combine Keycloak’s default classes with custom styles.</li>
+<li>Predefined classes (e.g., <code>kcLoginClass</code>, <code>kcHeaderClass</code>) to ensure compatibility with Keycloak’s theming system.</li>
+<li>Tools to integrate custom themes with Keycloak’s login, registration, and account management pages.</li>
+</ul>
+<p>Keycloakify is particularly useful for developers who want to use React and Tailwind CSS to create custom Keycloak themes without dealing with Keycloak’s legacy theming system.</p>
+<hr>
+<h2 id="Keycloakify’s-kc-Classes"><a href="#Keycloakify’s-kc-Classes" class="headerlink" title="Keycloakify’s kc* Classes"></a>Keycloakify’s <code>kc*</code> Classes</h2><h3 id="Structure-of-kc-Classes"><a href="#Structure-of-kc-Classes" class="headerlink" title="Structure of kc* Classes"></a>Structure of <code>kc*</code> Classes</h3><p>Keycloakify provides a set of predefined classes prefixed with <code>kc*</code> (e.g., <code>kcLoginClass</code>, <code>kcHeaderClass</code>). These classes are designed to:</p>
+<ul>
+<li>Ensure compatibility with Keycloak’s default theming system.</li>
+<li>Provide a base set of styles for common components (e.g., headers, forms, buttons).</li>
+<li>Allow developers to extend or override styles using custom CSS or Tailwind CSS.</li>
+</ul>
+<h3 id="Common-kc-Classes"><a href="#Common-kc-Classes" class="headerlink" title="Common kc* Classes"></a>Common <code>kc*</code> Classes</h3><p>Here are some of the most common <code>kc*</code> classes provided by Keycloakify:</p>
+<table>
+<thead>
+<tr>
+<th>Class Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>kcLoginClass</code></td>
+<td>Applied to the root container of the login page.</td>
+</tr>
+<tr>
+<td><code>kcHeaderClass</code></td>
+<td>Applied to the header section of the login page.</td>
+</tr>
+<tr>
+<td><code>kcFormCardClass</code></td>
+<td>Applied to the form container (e.g., login form, registration form).</td>
+</tr>
+<tr>
+<td><code>kcFormHeaderClass</code></td>
+<td>Applied to the header of forms (e.g., “Login to Your Account”).</td>
+</tr>
+<tr>
+<td><code>kcFormGroupClass</code></td>
+<td>Applied to form groups (e.g., username&#x2F;password fields).</td>
+</tr>
+<tr>
+<td><code>kcAlertClass</code></td>
+<td>Applied to alert messages (e.g., error messages, success messages).</td>
+</tr>
+<tr>
+<td><code>kcSignUpClass</code></td>
+<td>Applied to the footer section of the login page.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Pros-and-Cons-of-Using-Keycloakify-Classes"><a href="#Pros-and-Cons-of-Using-Keycloakify-Classes" class="headerlink" title="Pros and Cons of Using Keycloakify Classes"></a>Pros and Cons of Using Keycloakify Classes</h2><h3 id="Pros"><a href="#Pros" class="headerlink" title="Pros"></a>Pros</h3><ol>
+<li><p><strong>Compatibility</strong>:</p>
+<ul>
+<li>Keycloakify’s <code>kc*</code> classes ensure compatibility with Keycloak’s default theming system, reducing the risk of layout issues.</li>
+</ul>
+</li>
+<li><p><strong>Quick Start</strong>:</p>
+<ul>
+<li>Using Keycloakify’s default classes allows developers to quickly create custom themes without starting from scratch.</li>
+</ul>
+</li>
+<li><p><strong>Consistency</strong>:</p>
+<ul>
+<li>The predefined classes provide a consistent structure for common components (e.g., headers, forms, buttons).</li>
+</ul>
+</li>
+<li><p><strong>Integration with Keycloak</strong>:</p>
+<ul>
+<li>Keycloakify handles the integration between custom themes and Keycloak’s theming system, simplifying the deployment process.</li>
+</ul>
+</li>
+</ol>
+<h3 id="Cons"><a href="#Cons" class="headerlink" title="Cons"></a>Cons</h3><ol>
+<li><p><strong>Styling Conflicts</strong>:</p>
+<ul>
+<li>Keycloakify’s default classes often come with predefined styles (e.g., padding, margins) that can conflict with custom Tailwind CSS styles.</li>
+</ul>
+</li>
+<li><p><strong>Complexity</strong>:</p>
+<ul>
+<li>Combining Keycloakify’s default classes with custom styles can introduce unnecessary complexity, especially when using utility-first frameworks like Tailwind CSS.</li>
+</ul>
+</li>
+<li><p><strong>Limited Flexibility</strong>:</p>
+<ul>
+<li>Relying on Keycloakify’s default classes can limit your ability to fully customize the theme, as you may need to override or work around the predefined styles.</li>
+</ul>
+</li>
+<li><p><strong>Performance Overhead</strong>:</p>
+<ul>
+<li>Including unnecessary default styles can increase the size of your CSS bundle, impacting performance.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="Cleaning-Up-Keycloakify-Classes"><a href="#Cleaning-Up-Keycloakify-Classes" class="headerlink" title="Cleaning Up Keycloakify Classes"></a>Cleaning Up Keycloakify Classes</h2><h3 id="Why-Clean-Up-Keycloakify-Classes"><a href="#Why-Clean-Up-Keycloakify-Classes" class="headerlink" title="Why Clean Up Keycloakify Classes?"></a>Why Clean Up Keycloakify Classes?</h3><p>Keycloakify’s default classes (e.g., <code>kcLoginClass</code>, <code>kcHeaderClass</code>) are designed to ensure compatibility with Keycloak’s theming system. However, they come with several drawbacks:</p>
+<ol>
+<li><p><strong>Avoid Styling Conflicts</strong>:</p>
+<ul>
+<li>Removing Keycloakify’s default classes eliminates the risk of conflicts with custom Tailwind CSS styles.</li>
+</ul>
+</li>
+<li><p><strong>Simplify the Codebase</strong>:</p>
+<ul>
+<li>Relying solely on Tailwind CSS makes the codebase cleaner and easier to maintain.</li>
+</ul>
+</li>
+<li><p><strong>Full Control Over Styling</strong>:</p>
+<ul>
+<li>Using only Tailwind CSS gives you complete control over the theme’s appearance and behavior.</li>
+</ul>
+</li>
+<li><p><strong>Reduce Complexity</strong>:</p>
+<ul>
+<li>Removing unnecessary classes and functions simplifies the development process.</li>
+</ul>
+</li>
+<li><p><strong>Limited Flexibility</strong>:</p>
+<ul>
+<li>Relying on Keycloakify’s default classes limits your ability to fully customize the theme, as you may need to override or work around the predefined styles.</li>
+</ul>
+</li>
+<li><p><strong>Performance Overhead</strong>:</p>
+<ul>
+<li>Including unnecessary default styles increases the size of your CSS bundle, impacting performance.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="Steps-to-Clean-Up-Keycloakify-Classes"><a href="#Steps-to-Clean-Up-Keycloakify-Classes" class="headerlink" title="Steps to Clean Up Keycloakify Classes"></a>Steps to Clean Up Keycloakify Classes</h3><ol>
+<li><strong>Remove <code>clsx</code> and <code>kcClsx</code></strong>:<ul>
+<li>Keycloakify provides <code>clsx</code> and <code>kcClsx</code> functions to combine its default classes with custom styles. Since we’re removing the default classes, these functions are no longer needed.</li>
+</ul>
+</li>
+</ol>
+<h4 id="Before"><a href="#Before" class="headerlink" title="Before:"></a>Before:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;template-full&quot;</span> className=&#123;<span class="title function_">clsx</span>(<span class="title function_">kcClsx</span>(<span class="string">&quot;kcLoginClass&quot;</span>), <span class="string">&quot;h-screen flex flex-col overflow-hidden&quot;</span>)&#125;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="After"><a href="#After" class="headerlink" title="After:"></a>After:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;template-full&quot;</span> className=<span class="string">&quot;h-screen flex flex-col overflow-hidden bg-gray-700&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>Replace <code>kc*</code> Classes with Tailwind CSS</strong>:<ul>
+<li>Replace all instances of <code>clsx(kcClsx(...))</code> with plain Tailwind CSS classes. For example:</li>
+</ul>
+</li>
+</ol>
+<h4 id="Before-1"><a href="#Before-1" class="headerlink" title="Before:"></a>Before:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-header&quot;</span> className=&#123;<span class="title function_">clsx</span>(<span class="title function_">kcClsx</span>(<span class="string">&quot;kcHeaderClass&quot;</span>), <span class="string">&quot;bg-blue-700 border-b border-orange-700 h-[3.125rem] flex items-center px-4 fixed top-0 left-0 right-0 z-50 w-full&quot;</span>)&#125;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="After-1"><a href="#After-1" class="headerlink" title="After:"></a>After:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-header&quot;</span> className=<span class="string">&quot;bg-blue-700 border-b border-orange-700 h-[3.125rem] flex items-center px-4 fixed top-0 left-0 right-0 z-50 w-full&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>Remove Unnecessary Imports</strong>:<ul>
+<li>Remove imports like <code>clsx</code>, <code>getKcClsx</code>, and <code>useSetClassName</code> since they are no longer needed.</li>
+</ul>
+</li>
+</ol>
+<h4 id="Before-2"><a href="#Before-2" class="headerlink" title="Before:"></a>Before:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; clsx &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/tools/clsx&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; getKcClsx &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/login/lib/kcClsx&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useSetClassName &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/tools/useSetClassName&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="After-2"><a href="#After-2" class="headerlink" title="After:"></a>After:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// These imports are no longer needed</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><strong>Ensure Consistent Styling</strong>:<ul>
+<li>Use Tailwind CSS utility classes to define all styles, ensuring consistency and avoiding conflicts. For example:</li>
+</ul>
+</li>
+</ol>
+<h4 id="Before-3"><a href="#Before-3" class="headerlink" title="Before:"></a>Before:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-header-wrapper&quot;</span> className=&#123;<span class="title function_">clsx</span>(<span class="title function_">kcClsx</span>(<span class="string">&quot;kcHeaderWrapperClass&quot;</span>), <span class="string">&quot;flex items-center h-full&quot;</span>)&#125;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="After-3"><a href="#After-3" class="headerlink" title="After:"></a>After:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-header-wrapper&quot;</span> className=<span class="string">&quot;flex items-center h-full&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Example-Fully-Customized-Keycloak-Theme-with-Tailwind-CSS"><a href="#Example-Fully-Customized-Keycloak-Theme-with-Tailwind-CSS" class="headerlink" title="Example: Fully Customized Keycloak Theme with Tailwind CSS"></a>Example: Fully Customized Keycloak Theme with Tailwind CSS</h3><p>Here’s an example of a fully customized Keycloak theme using only Tailwind CSS:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; kcSanitize &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/lib/kcSanitize&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">TemplateProps</span> &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/login/TemplateProps&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useInitialize &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/login/Template.useInitialize&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; I18n &#125; <span class="keyword">from</span> <span class="string">&quot;./i18n&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">KcContext</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./KcContext&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;./template.css&quot;</span>; <span class="comment">// Import the CSS file</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> logoPngUrl <span class="keyword">from</span> <span class="string">&quot;../../assets/img/logo-s.png&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">Template</span>(<span class="params"><span class="attr">props</span>: <span class="title class_">TemplateProps</span>&lt;<span class="title class_">KcContext</span>, I18n&gt;</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123;</span><br><span class="line">        displayMessage = <span class="literal">true</span>,</span><br><span class="line">        displayRequiredFields = <span class="literal">false</span>,</span><br><span class="line">        headerNode,</span><br><span class="line">        socialProvidersNode = <span class="literal">null</span>,</span><br><span class="line">        documentTitle,</span><br><span class="line">        kcContext,</span><br><span class="line">        i18n,</span><br><span class="line">        children</span><br><span class="line">    &#125; = props;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; msg, msgStr, currentLanguage, enabledLanguages &#125; = i18n;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; realm, auth, url, message, isAppInitiatedAction &#125; = kcContext;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">document</span>.<span class="property">title</span> = documentTitle ?? <span class="title function_">msgStr</span>(<span class="string">&quot;loginTitle&quot;</span>, kcContext.<span class="property">realm</span>.<span class="property">displayName</span>);</span><br><span class="line">    &#125;, [documentTitle, kcContext.<span class="property">realm</span>.<span class="property">displayName</span>, msgStr]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; isReadyToRender &#125; = <span class="title function_">useInitialize</span>(&#123; kcContext, <span class="attr">doUseDefaultCss</span>: <span class="literal">false</span> &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isReadyToRender) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;template-full&quot;</span> <span class="attr">className</span>=<span class="string">&quot;h-screen flex flex-col overflow-hidden bg-gray-700&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            &#123;/* Header */&#125;</span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-header&quot;</span> <span class="attr">className</span>=<span class="string">&quot;bg-blue-700 border-b border-orange-700 h-[3.125rem] flex items-center px-4 fixed top-0 left-0 right-0 z-50 w-full&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-header-wrapper&quot;</span> <span class="attr">className</span>=<span class="string">&quot;flex items-center h-full&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;logoPngUrl&#125;</span> <span class="attr">width</span>=<span class="string">&#123;40&#125;</span> <span class="attr">height</span>=<span class="string">&#123;40&#125;</span> <span class="attr">className</span>=<span class="string">&quot;mr-2&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;text-white&quot;</span>&gt;</span>&#123;msg(&quot;loginTitleHtml&quot;, realm.displayNameHtml)&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">            &#123;/* Main Content */&#125;</span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;template-main-content&quot;</span> <span class="attr">className</span>=<span class="string">&quot;flex-grow mt-[3.125rem] mb-[3.125rem] bg-gray-700&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">header</span> <span class="attr">className</span>=<span class="string">&quot;border-b border-orange-700&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    &#123;enabledLanguages.length &gt; 1 &amp;&amp; (</span></span><br><span class="line"><span class="language-xml">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-locale&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-locale-wrapper&quot;</span> <span class="attr">className</span>=<span class="string">&quot;flex gap-2&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                &#123;enabledLanguages</span></span><br><span class="line"><span class="language-xml">                                    .filter((&#123; languageTag &#125;) =&gt; languageTag === &quot;en&quot; || languageTag === &quot;zh-CN&quot;)</span></span><br><span class="line"><span class="language-xml">                                    .map((&#123; languageTag, label, href &#125;) =&gt; (</span></span><br><span class="line"><span class="language-xml">                                        <span class="tag">&lt;<span class="name">button</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                            <span class="attr">key</span>=<span class="string">&#123;languageTag&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                            <span class="attr">className</span>=<span class="string">&quot;px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                            <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> (window.location.href = href)&#125;</span></span><br><span class="line"><span class="language-xml">                                            aria-label=&#123;label&#125;</span></span><br><span class="line"><span class="language-xml">                                        &gt;</span></span><br><span class="line"><span class="language-xml">                                            &#123;languageTag === &quot;en&quot; ? &quot;🇺🇸&quot; : &quot;🇨🇳&quot;&#125;</span></span><br><span class="line"><span class="language-xml">                                        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    ))&#125;</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    )&#125;</span></span><br><span class="line"><span class="language-xml">                    &#123;(() =&gt; &#123;</span></span><br><span class="line"><span class="language-xml">                        const node = !(auth !== undefined &amp;&amp; auth.showUsername &amp;&amp; !auth.showResetCredentials) ? (</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">h1</span> <span class="attr">id</span>=<span class="string">&quot;kc-page-title&quot;</span>&gt;</span>&#123;headerNode&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        ) : (</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-username&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">label</span> <span class="attr">id</span>=<span class="string">&quot;kc-attempted-username&quot;</span>&gt;</span>&#123;auth.attemptedUsername&#125;<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">a</span> <span class="attr">id</span>=<span class="string">&quot;reset-login&quot;</span> <span class="attr">href</span>=<span class="string">&#123;url.loginRestartFlowUrl&#125;</span> <span class="attr">aria-label</span>=<span class="string">&#123;msgStr(</span>&quot;<span class="attr">restartLoginTooltip</span>&quot;)&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;kc-login-tooltip&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                        <span class="tag">&lt;<span class="name">i</span> <span class="attr">className</span>=<span class="string">&quot;kcResetFlowIcon&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                        <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;kc-tooltip-text&quot;</span>&gt;</span>&#123;msg(&quot;restartLoginTooltip&quot;)&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        );</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">                        if (displayRequiredFields) &#123;</span></span><br><span class="line"><span class="language-xml">                            return (</span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;subtitle&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                        <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;required&quot;</span>&gt;</span>*<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                        &#123;msg(&quot;requiredFields&quot;)&#125;</span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;node&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                            );</span></span><br><span class="line"><span class="language-xml">                        &#125;</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">                        return node;</span></span><br><span class="line"><span class="language-xml">                    &#125;)()&#125;</span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">                &#123;/* Content */&#125;</span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-content&quot;</span> <span class="attr">className</span>=<span class="string">&quot;border-b border-orange-700&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-content-wrapper&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        &#123;displayMessage &amp;&amp; message !== undefined &amp;&amp; (message.type !== &quot;warning&quot; || !isAppInitiatedAction) &amp;&amp; (</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&#123;</span>`<span class="attr">alert-</span>$&#123;<span class="attr">message.type</span>&#125;`&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;pf-c-alert__icon&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    &#123;message.type === &quot;success&quot; &amp;&amp; <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;kcFeedbackSuccessIcon&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">                                    &#123;message.type === &quot;warning&quot; &amp;&amp; <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;kcFeedbackWarningIcon&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">                                    &#123;message.type === &quot;error&quot; &amp;&amp; <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;kcFeedbackErrorIcon&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">                                    &#123;message.type === &quot;info&quot; &amp;&amp; <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;kcFeedbackInfoIcon&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">span</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                    <span class="attr">className</span>=<span class="string">&quot;kcAlertTitleClass&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                    <span class="attr">dangerouslySetInnerHTML</span>=<span class="string">&#123;&#123;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                        <span class="attr">__html:</span> <span class="attr">kcSanitize</span>(<span class="attr">message.summary</span>)</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                    &#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                /&gt;</span></span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        )&#125;</span></span><br><span class="line"><span class="language-xml">                        &#123;children&#125;</span></span><br><span class="line"><span class="language-xml">                        &#123;auth !== undefined &amp;&amp; auth.showTryAnotherWayLink &amp;&amp; (</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">&quot;kc-select-try-another-way-form&quot;</span> <span class="attr">action</span>=<span class="string">&#123;url.loginAction&#125;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;tryAnotherWay&quot;</span> <span class="attr">value</span>=<span class="string">&quot;on&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;<span class="name">a</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                        <span class="attr">href</span>=<span class="string">&quot;#&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                        <span class="attr">id</span>=<span class="string">&quot;try-another-way&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                        <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-xml">                                            document.forms[&quot;kc-select-try-another-way-form&quot; as never].submit();</span></span><br><span class="line"><span class="language-xml">                                            return false;</span></span><br><span class="line"><span class="language-xml">                                        &#125;&#125;</span></span><br><span class="line"><span class="language-xml">                                    &gt;</span></span><br><span class="line"><span class="language-xml">                                        &#123;msg(&quot;doTryAnotherWay&quot;)&#125;</span></span><br><span class="line"><span class="language-xml">                                    <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                        )&#125;</span></span><br><span class="line"><span class="language-xml">                        &#123;socialProvidersNode&#125;</span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">            &#123;/* Footer */&#125;</span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;kc-footer&quot;</span> <span class="attr">className</span>=<span class="string">&quot;bg-blue-700 border-t border-orange-700 h-[3.125rem] flex items-center justify-center fixed bottom-0 left-0 right-0 z-50&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">&quot;text-white&quot;</span>&gt;</span>© 2025 WhereQ Inc. All rights reserved.<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Again-benefits-of-Using-Tailwind-CSS-Exclusively"><a href="#Again-benefits-of-Using-Tailwind-CSS-Exclusively" class="headerlink" title="Again, benefits of Using Tailwind CSS Exclusively"></a>Again, benefits of Using Tailwind CSS Exclusively</h2><ol>
+<li><p><strong>No Styling Conflicts</strong>:</p>
+<ul>
+<li>By removing Keycloakify’s default classes, you eliminate the risk of conflicts with custom Tailwind CSS styles.</li>
+</ul>
+</li>
+<li><p><strong>Full Control Over Styling</strong>:</p>
+<ul>
+<li>Using only Tailwind CSS gives you complete control over the theme’s appearance and behavior.</li>
+</ul>
+</li>
+<li><p><strong>Simplified Codebase</strong>:</p>
+<ul>
+<li>The code is cleaner and easier to maintain, with no reliance on Keycloakify’s default theming system.</li>
+</ul>
+</li>
+<li><p><strong>Improved Performance</strong>:</p>
+<ul>
+<li>Removing unnecessary default styles reduces the size of your CSS bundle, improving performance.</li>
+</ul>
+</li>
+</ol>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Keycloak/" rel="tag"><i class="fa fa-tag"></i> Keycloak</a>
+              <a href="/tags/Keycloakify/" rel="tag"><i class="fa fa-tag"></i> Keycloakify</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/09/Customize-kc-css-classes/" rel="prev" title="Customize kc-* css classes">
+                  <i class="fa fa-angle-left"></i> Customize kc-* css classes
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/17/How-the-PersonalInfo-Form-Rendered-KeyCloakify/" rel="next" title="How the PersonalInfo Form Rendered --- KeyCloakify">
+                  How the PersonalInfo Form Rendered --- KeyCloakify <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

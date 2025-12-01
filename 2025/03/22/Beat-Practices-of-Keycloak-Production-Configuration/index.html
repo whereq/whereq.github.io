@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Hostname Configuration in keycloak.confThe hostname setting in keycloak.conf is mandatory for production deployments if Keycloak needs to generate URLs (e.g., for redirects, emails, or tokens). Thi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Beat Practices of Keycloak Production Configuration">
+<meta property="og:url" content="https://www.whereq.com/2025/03/22/Beat-Practices-of-Keycloak-Production-Configuration/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. Hostname Configuration in keycloak.confThe hostname setting in keycloak.conf is mandatory for production deployments if Keycloak needs to generate URLs (e.g., for redirects, emails, or tokens). Thi">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-03-22T22:26:05.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Keycloak">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/03/22/Beat-Practices-of-Keycloak-Production-Configuration/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/03/22/Beat-Practices-of-Keycloak-Production-Configuration/","path":"2025/03/22/Beat-Practices-of-Keycloak-Production-Configuration/","title":"Beat Practices of Keycloak Production Configuration"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Beat Practices of Keycloak Production Configuration | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Hostname-Configuration-in-keycloak-conf"><span class="nav-number">1.</span> <span class="nav-text">1. Hostname Configuration in keycloak.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Proxy-Configuration-in-keycloak-conf"><span class="nav-number">2.</span> <span class="nav-text">2. Proxy Configuration in keycloak.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-complete-keycloak-conf"><span class="nav-number">3.</span> <span class="nav-text">The complete keycloak.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-docker-compose-for-PROD"><span class="nav-number">4.</span> <span class="nav-text">3. docker-compose for PROD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-NGINX-Configuration"><span class="nav-number">5.</span> <span class="nav-text">4. NGINX Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NGINX-Configuration-Example"><span class="nav-number">5.1.</span> <span class="nav-text">NGINX Configuration Example</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Additional-Production-Considerations"><span class="nav-number">6.</span> <span class="nav-text">5. Additional Production Considerations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Database-Connection-Pooling"><span class="nav-number">6.1.</span> <span class="nav-text">a. Database Connection Pooling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Caching"><span class="nav-number">6.2.</span> <span class="nav-text">b. Caching</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Health-Checks-and-Metrics"><span class="nav-number">6.3.</span> <span class="nav-text">c. Health Checks and Metrics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d-Token-and-Session-Timeouts"><span class="nav-number">6.4.</span> <span class="nav-text">d. Token and Session Timeouts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#e-Logging"><span class="nav-number">6.5.</span> <span class="nav-text">e. Logging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#f-Email-Configuration"><span class="nav-number">6.6.</span> <span class="nav-text">f. Email Configuration</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#g-Security-Headers"><span class="nav-number">6.7.</span> <span class="nav-text">g. Security Headers</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Full-keycloak-conf-for-Production"><span class="nav-number">7.</span> <span class="nav-text">6. Full keycloak.conf for Production</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Deployment-Checklist"><span class="nav-number">8.</span> <span class="nav-text">7. Deployment Checklist</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/03/22/Beat-Practices-of-Keycloak-Production-Configuration/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Beat Practices of Keycloak Production Configuration | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Beat Practices of Keycloak Production Configuration
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-22 18:26:05" itemprop="dateCreated datePublished" datetime="2025-03-22T18:26:05-04:00">2025-03-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="1-Hostname-Configuration-in-keycloak-conf"><a href="#1-Hostname-Configuration-in-keycloak-conf" class="headerlink" title="1. Hostname Configuration in keycloak.conf"></a><strong>1. Hostname Configuration in <code>keycloak.conf</code></strong></h3><p>The <code>hostname</code> setting in <code>keycloak.conf</code> is <strong>mandatory for production deployments</strong> if Keycloak needs to generate URLs (e.g., for redirects, emails, or tokens). This ensures that Keycloak uses the correct public-facing URL (e.g., <code>www.keytomarvel.com</code>) instead of the internal server address.</p>
+<ul>
+<li><p><strong>Why is it important?</strong></p>
+<ul>
+<li>Keycloak uses the <code>hostname</code> to construct URLs for redirects, emails, and tokens.</li>
+<li>If not set, Keycloak might generate URLs using the internal server IP or hostname, which won’t work for external clients.</li>
+</ul>
+</li>
+<li><p><strong>Example Configuration</strong>:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hostname</span>=www.keytomarvel.com</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="2-Proxy-Configuration-in-keycloak-conf"><a href="#2-Proxy-Configuration-in-keycloak-conf" class="headerlink" title="2. Proxy Configuration in keycloak.conf"></a><strong>2. Proxy Configuration in <code>keycloak.conf</code></strong></h3><p>Since NGINX is handling HTTPS termination, you need to configure Keycloak to trust the proxy. This is done using the <code>proxy</code> setting.</p>
+<ul>
+<li><p><strong>proxy&#x3D;edge Configuration</strong>:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">proxy</span>=edge</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>proxy=edge</code>: Use this when NGINX terminates HTTPS and forwards requests to Keycloak over HTTP.</li>
+<li>If NGINX forwards requests over HTTPS to Keycloak, use <code>proxy=reencrypt</code>.</li>
+</ul>
+</li>
+<li><p><strong>Why is it important?</strong></p>
+<ul>
+<li>Keycloak needs to know it’s behind a proxy to correctly handle headers like <code>X-Forwarded-For</code> and <code>X-Forwarded-Proto</code>.</li>
+</ul>
+</li>
+<li><p><strong>Trust the X-Forwarded-* headers from the reverse proxy</strong>:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">proxy-headers</span>=xforwarded</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>proxy=edge</code>: Tells Keycloak it is behind a reverse proxy.</li>
+<li><code>proxy-headers=xforwarded</code>: Trusts the <code>X-Forwarded-*</code> headers from Nginx.</li>
+</ul>
+</li>
+<li><p><strong>Update the CSP</strong>:</p>
+<p>Update the CSP in your <code>keycloak.conf</code> file to allow framing over HTTPS:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Content Security Policy configuration</span></span><br><span class="line"><span class="attr">spi-events-listener</span>=csp</span><br><span class="line"><span class="attr">spi-events-listener-csp-policy-directives</span>=frame-src <span class="string">&#x27;self&#x27;</span> https://www.keytomarvel.com</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>frame-src &#39;self&#39; https://www.keytomarvel.com</code>: Allows framing for the Keycloak admin console over HTTPS.</li>
+</ul>
+</li>
+</ul>
+<h3 id="The-complete-keycloak-conf"><a href="#The-complete-keycloak-conf" class="headerlink" title="The complete keycloak.conf"></a>The complete <code>keycloak.conf</code></h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db</span>=postgres</span><br><span class="line"><span class="attr">db-username</span>=username</span><br><span class="line"><span class="attr">db-password</span>=password</span><br><span class="line"><span class="attr">db-url</span>=jdbc:postgresql://<span class="number">192.168</span>.<span class="number">2.128</span>:<span class="number">5432</span>/k2m</span><br><span class="line"></span><br><span class="line"><span class="comment"># Hostname for the Keycloak server. IS MANDATORY FOR PROD!!!</span></span><br><span class="line"><span class="attr">hostname</span>=www.keytomarvel.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># The proxy address forwarding mode if the server is behind a reverse proxy.</span></span><br><span class="line"><span class="attr">proxy</span>=edge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Content Security Policy configuration</span></span><br><span class="line"><span class="attr">spi-events-listener</span>=csp</span><br><span class="line"><span class="attr">spi-events-listener-csp-policy-directives</span>=frame-src <span class="string">&#x27;self&#x27;</span> https://www.keytomarvel.com</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Trust the X-Forwarded-* headers from the reverse proxy</span></span><br><span class="line"><span class="attr">proxy-headers</span>=xforwarded</span><br><span class="line"></span><br><span class="line"><span class="attr">quarkus.hibernate-orm.persistence-xml.ignore</span>=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-docker-compose-for-PROD"><a href="#3-docker-compose-for-PROD" class="headerlink" title="3. docker-compose for PROD"></a><strong>3. docker-compose for PROD</strong></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">keycloak:</span></span><br><span class="line">      <span class="attr">build:</span></span><br><span class="line">        <span class="attr">context:</span> <span class="string">.</span></span><br><span class="line">        <span class="attr">dockerfile:</span> <span class="string">Dockerfile</span></span><br><span class="line">      <span class="attr">environment:</span></span><br><span class="line">        <span class="attr">KEYCLOAK_ADMIN:</span> <span class="string">admin</span></span><br><span class="line">        <span class="attr">KEYCLOAK_ADMIN_PASSWORD:</span> <span class="string">admin</span></span><br><span class="line">        <span class="attr">KC_HTTP_ENABLED:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">        <span class="attr">KC_HTTP_PORT:</span> <span class="number">8080</span></span><br><span class="line">        <span class="attr">KC_LOG:</span> <span class="string">console,file</span></span><br><span class="line">        <span class="attr">KC_LOG_LEVEL:</span> <span class="string">DEBUG</span></span><br><span class="line">        <span class="attr">KC_LOG_FILE:</span> <span class="string">/opt/keycloak/data/log/keycloak.log</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">./volumes/keycloak/conf:/opt/keycloak/conf</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">./volumes/keycloak/log:/opt/keycloak/data/log</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">./volumes/keycloak/providers:/opt/keycloak/providers</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">./volumes/keycloak/themes:/opt/keycloak/themes</span></span><br><span class="line">      <span class="attr">networks:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">database</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">8888</span><span class="string">:8080</span></span><br><span class="line">      <span class="attr">command:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">start</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-NGINX-Configuration"><a href="#4-NGINX-Configuration" class="headerlink" title="4. NGINX Configuration"></a><strong>4. NGINX Configuration</strong></h3><p>Here’s an example NGINX configuration for routing traffic to Keycloak:</p>
+<h4 id="NGINX-Configuration-Example"><a href="#NGINX-Configuration-Example" class="headerlink" title="NGINX Configuration Example"></a><strong>NGINX Configuration Example</strong></h4><p>— &#x2F;etc&#x2F;nginx&#x2F;site-available&#x2F;keytomarvel.com</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">root</span> /var/www/html;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">index</span> index.html index.htm index.nginx-debian.html;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">server_name</span> keytomarvel.com www.keytomarvel.com;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="comment"># Proxy requests to the Keycloak application running on port 8888</span></span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8888;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Port <span class="variable">$server_port</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">listen</span> [::]:<span class="number">443</span> ssl ipv6only=<span class="literal">on</span>; <span class="comment"># managed by Certbot</span></span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl; <span class="comment"># managed by Certbot</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/letsencrypt/live/keytomarvel.com/fullchain.pem; <span class="comment"># managed by Certbot</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/letsencrypt/live/keytomarvel.com/privkey.pem; <span class="comment"># managed by Certbot</span></span><br><span class="line">    <span class="attribute">include</span> /etc/letsencrypt/options-ssl-nginx.conf; <span class="comment"># managed by Certbot</span></span><br><span class="line">    <span class="attribute">ssl_dhparam</span> /etc/letsencrypt/ssl-dhparams.pem; <span class="comment"># managed by Certbot</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">if</span> (<span class="variable">$host</span> = www.keytomarvel.com) &#123;</span><br><span class="line">        <span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br><span class="line">    &#125; <span class="comment"># managed by Certbot</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">if</span> (<span class="variable">$host</span> = keytomarvel.com) &#123;</span><br><span class="line">        <span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br><span class="line">    &#125; <span class="comment"># managed by Certbot</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span> default_server;</span><br><span class="line">    <span class="attribute">listen</span> [::]:<span class="number">80</span> default_server;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">server_name</span> keytomarvel.com www.keytomarvel.com;</span><br><span class="line">    <span class="attribute">return</span> <span class="number">404</span>; <span class="comment"># managed by Certbot</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Key Points</strong>:<ul>
+<li>NGINX terminates HTTPS and forwards requests to Keycloak over HTTP.</li>
+<li>The <code>proxy_set_header</code> directives ensure Keycloak receives the correct client IP and protocol information.</li>
+<li>Ensure Nginx Passes Correct Headers<ul>
+<li><code>proxy_set_header X-Forwarded-Proto $scheme;</code>: Tells Keycloak that the original request was HTTPS.</li>
+<li><code>proxy_set_header X-Forwarded-Host $host;</code>: Passes the original hostname to Keycloak.</li>
+<li><code>proxy_set_header X-Forwarded-Port $server_port;</code>: Passes the original port to Keycloak.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-Additional-Production-Considerations"><a href="#5-Additional-Production-Considerations" class="headerlink" title="5. Additional Production Considerations"></a><strong>5. Additional Production Considerations</strong></h3><p>Here are some additional settings and best practices for a production deployment:</p>
+<h4 id="a-Database-Connection-Pooling"><a href="#a-Database-Connection-Pooling" class="headerlink" title="a. Database Connection Pooling"></a><strong>a. Database Connection Pooling</strong></h4><p>Ensure the database connection pool is configured for production workloads:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db-pool-initial-size</span>=<span class="number">10</span></span><br><span class="line"><span class="attr">db-pool-max-size</span>=<span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="b-Caching"><a href="#b-Caching" class="headerlink" title="b. Caching"></a><strong>b. Caching</strong></h4><p>Enable distributed caching for high availability:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">cache</span>=ispn</span><br><span class="line"><span class="attr">cache-stack</span>=kubernetes <span class="comment"># or &#x27;tcp&#x27; for non-Kubernetes environments</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="c-Health-Checks-and-Metrics"><a href="#c-Health-Checks-and-Metrics" class="headerlink" title="c. Health Checks and Metrics"></a><strong>c. Health Checks and Metrics</strong></h4><p>Enable health checks and metrics for monitoring:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">health-enabled</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">metrics-enabled</span>=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="d-Token-and-Session-Timeouts"><a href="#d-Token-and-Session-Timeouts" class="headerlink" title="d. Token and Session Timeouts"></a><strong>d. Token and Session Timeouts</strong></h4><p>Adjust token and session timeouts for security and usability:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">token-lifespan</span>=<span class="number">3600</span> <span class="comment"># Access token lifespan (1 hour)</span></span><br><span class="line"><span class="attr">refresh-token-lifespan</span>=<span class="number">86400</span> <span class="comment"># Refresh token lifespan (24 hours)</span></span><br><span class="line"><span class="attr">session-max-lifespan</span>=<span class="number">86400</span> <span class="comment"># Maximum session lifespan (24 hours)</span></span><br><span class="line"><span class="attr">session-idle-timeout</span>=<span class="number">1800</span> <span class="comment"># Session idle timeout (30 minutes)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="e-Logging"><a href="#e-Logging" class="headerlink" title="e. Logging"></a><strong>e. Logging</strong></h4><p>Configure logging for production:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">log-level</span>=INFO</span><br><span class="line"><span class="attr">log-console-output</span>=json</span><br><span class="line"><span class="attr">log-file</span>=/var/log/keycloak/keycloak.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="f-Email-Configuration"><a href="#f-Email-Configuration" class="headerlink" title="f. Email Configuration"></a><strong>f. Email Configuration</strong></h4><p>Set up email for password resets and notifications:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">smtp-host</span>=smtp.example.com</span><br><span class="line"><span class="attr">smtp-port</span>=<span class="number">587</span></span><br><span class="line"><span class="attr">smtp-username</span>=user@example.com</span><br><span class="line"><span class="attr">smtp-password</span>=changeit</span><br><span class="line"><span class="attr">smtp-from</span>=keycloak@example.com</span><br><span class="line"><span class="attr">smtp-ssl</span>=<span class="literal">false</span></span><br><span class="line"><span class="attr">smtp-starttls</span>=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="g-Security-Headers"><a href="#g-Security-Headers" class="headerlink" title="g. Security Headers"></a><strong>g. Security Headers</strong></h4><p>Ensure NGINX adds security headers:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">add_header</span> Strict-Transport-Security <span class="string">&quot;max-age=31536000; includeSubDomains&quot;</span> always;</span><br><span class="line"><span class="attribute">add_header</span> X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span> always;</span><br><span class="line"><span class="attribute">add_header</span> X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span> always;</span><br><span class="line"><span class="attribute">add_header</span> X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span> always;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-Full-keycloak-conf-for-Production"><a href="#6-Full-keycloak-conf-for-Production" class="headerlink" title="6. Full keycloak.conf for Production"></a><strong>6. Full <code>keycloak.conf</code> for Production</strong></h3><p>Here’s a complete <code>keycloak.conf</code> tailored for your setup:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Keycloak Production Configuration</span></span><br><span class="line"><span class="comment"># Database Configuration</span></span><br><span class="line"><span class="attr">db</span>=postgres</span><br><span class="line"><span class="attr">db-url</span>=jdbc:postgresql://localhost:<span class="number">5432</span>/keycloak</span><br><span class="line"><span class="attr">db-username</span>=username</span><br><span class="line"><span class="attr">db-password</span>=password</span><br><span class="line"><span class="attr">db-pool-initial-size</span>=<span class="number">10</span></span><br><span class="line"><span class="attr">db-pool-max-size</span>=<span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTP and HTTPS Configuration</span></span><br><span class="line"><span class="attr">http-enabled</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">http-port</span>=<span class="number">8080</span></span><br><span class="line"><span class="attr">hostname</span>=www.keytomarvel.com</span><br><span class="line"><span class="attr">proxy</span>=edge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Cache Configuration</span></span><br><span class="line"><span class="attr">cache</span>=ispn</span><br><span class="line"><span class="attr">cache-stack</span>=kubernetes <span class="comment"># or &#x27;tcp&#x27; for non-Kubernetes environments</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Logging Configuration</span></span><br><span class="line"><span class="attr">log-level</span>=INFO</span><br><span class="line"><span class="attr">log-console-output</span>=json</span><br><span class="line"><span class="attr">log-file</span>=/var/log/keycloak/keycloak.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># Health and Metrics</span></span><br><span class="line"><span class="attr">health-enabled</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">metrics-enabled</span>=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Token and Session Configuration</span></span><br><span class="line"><span class="attr">token-lifespan</span>=<span class="number">3600</span></span><br><span class="line"><span class="attr">refresh-token-lifespan</span>=<span class="number">86400</span></span><br><span class="line"><span class="attr">session-max-lifespan</span>=<span class="number">86400</span></span><br><span class="line"><span class="attr">session-idle-timeout</span>=<span class="number">1800</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Email Configuration</span></span><br><span class="line"><span class="attr">smtp-host</span>=smtp.example.com</span><br><span class="line"><span class="attr">smtp-port</span>=<span class="number">587</span></span><br><span class="line"><span class="attr">smtp-username</span>=user@example.com</span><br><span class="line"><span class="attr">smtp-password</span>=changeit</span><br><span class="line"><span class="attr">smtp-from</span>=keycloak@example.com</span><br><span class="line"><span class="attr">smtp-ssl</span>=<span class="literal">false</span></span><br><span class="line"><span class="attr">smtp-starttls</span>=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="7-Deployment-Checklist"><a href="#7-Deployment-Checklist" class="headerlink" title="7. Deployment Checklist"></a><strong>7. Deployment Checklist</strong></h3><ol>
+<li><strong>Set <code>hostname</code></strong>: Ensure <code>hostname</code> is set to the public-facing URL (<code>www.keytomarvel.com</code>).</li>
+<li><strong>Configure NGINX</strong>: Terminate HTTPS at NGINX and forward requests to Keycloak over HTTP.</li>
+<li><strong>Enable Proxy Mode</strong>: Set <code>proxy=edge</code> in <code>keycloak.conf</code>.</li>
+<li><strong>Database Tuning</strong>: Configure connection pooling and ensure the database is optimized.</li>
+<li><strong>Caching</strong>: Enable distributed caching for high availability.</li>
+<li><strong>Monitoring</strong>: Enable health checks and metrics.</li>
+<li><strong>Security</strong>: Add security headers in NGINX and ensure tokens&#x2F;sessions are securely configured.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Keycloak/" rel="tag"><i class="fa fa-tag"></i> Keycloak</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/18/Customizing-Keycloak-Themes-with-Keycloakify-A-Modern-Approach/" rel="prev" title="Customizing Keycloak Themes with Keycloakify: A Modern Approach">
+                  <i class="fa fa-angle-left"></i> Customizing Keycloak Themes with Keycloakify: A Modern Approach
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/23/PostgreSQL-commands/" rel="next" title="PostgreSQL commands">
+                  PostgreSQL commands <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

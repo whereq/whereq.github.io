@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Data Integrity and Consistency in Databases Introduction Definitions Example Scenario: E-commerce System Products Table Orders Table Part 1: Data Integrity Part 2: Data Consistency in a Transaction T">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Integrity and Consistency in Databases">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Data-Integrity-and-Consistency-in-Databases/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Data Integrity and Consistency in Databases Introduction Definitions Example Scenario: E-commerce System Products Table Orders Table Part 1: Data Integrity Part 2: Data Consistency in a Transaction T">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-25T00:25:06.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="RDBMS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Data-Integrity-and-Consistency-in-Databases/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Data-Integrity-and-Consistency-in-Databases/","path":"2024/10/24/Data-Integrity-and-Consistency-in-Databases/","title":"Data Integrity and Consistency in Databases"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Data Integrity and Consistency in Databases | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Data-Integrity-and-Consistency-in-Databases"><span class="nav-number">1.</span> <span class="nav-text">Data Integrity and Consistency in Databases</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Definitions"><span class="nav-number">1.2.</span> <span class="nav-text">Definitions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Example-Scenario-E-commerce-System"><span class="nav-number">1.3.</span> <span class="nav-text">Example Scenario: E-commerce System</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Products-Table"><span class="nav-number">1.3.1.</span> <span class="nav-text">Products Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Orders-Table"><span class="nav-number">1.3.2.</span> <span class="nav-text">Orders Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-1-Data-Integrity"><span class="nav-number">1.3.3.</span> <span class="nav-text">Part 1: Data Integrity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Part-2-Data-Consistency-in-a-Transaction"><span class="nav-number">1.3.4.</span> <span class="nav-text">Part 2: Data Consistency in a Transaction</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Transaction-Scenario-Placing-an-Order"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">Transaction Scenario: Placing an Order</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Example-of-Inconsistent-State-Without-Transactions"><span class="nav-number">1.4.</span> <span class="nav-text">Example of Inconsistent State Without Transactions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.5.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Data-Integrity-and-Consistency-in-Databases/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Data Integrity and Consistency in Databases | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Data Integrity and Consistency in Databases
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 20:25:06" itemprop="dateCreated datePublished" datetime="2024-10-24T20:25:06-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/RDBMS/" itemprop="url" rel="index"><span itemprop="name">RDBMS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#data-integrity-and-consistency-in-databases">Data Integrity and Consistency in Databases</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#definitions">Definitions</a></li>
+<li><a href="#example-scenario-e-commerce-system">Example Scenario: E-commerce System</a><ul>
+<li><a href="#products-table">Products Table</a></li>
+<li><a href="#orders-table">Orders Table</a></li>
+<li><a href="#part-1-data-integrity">Part 1: Data Integrity</a></li>
+<li><a href="#part-2-data-consistency-in-a-transaction">Part 2: Data Consistency in a Transaction</a><ul>
+<li><a href="#transaction-scenario-placing-an-order">Transaction Scenario: Placing an Order</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example-of-inconsistent-state-without-transactions">Example of Inconsistent State Without Transactions</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Data-Integrity-and-Consistency-in-Databases"><a href="#Data-Integrity-and-Consistency-in-Databases" class="headerlink" title="Data Integrity and Consistency in Databases"></a>Data Integrity and Consistency in Databases</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>To understand <strong>data integrity</strong> and <strong>consistency</strong>, let’s break them down with an example, illustrating how they work in a transactional database environment.</p>
+<hr>
+<p><a name="definitions"></a></p>
+<h2 id="Definitions"><a href="#Definitions" class="headerlink" title="Definitions"></a>Definitions</h2><ul>
+<li><p><strong>Data Integrity</strong>: Refers to the accuracy and reliability of the data. Data integrity ensures that the data is <strong>correct, complete</strong>, and consistent throughout its lifecycle. It is often enforced through rules such as <strong>constraints</strong> (e.g., primary keys, foreign keys, unique constraints).</p>
+</li>
+<li><p><strong>Consistency</strong>: In the context of transactions, consistency ensures that the database transitions from one <strong>valid state</strong> to another. This means that after every transaction, the database adheres to all rules and constraints that maintain its correctness.</p>
+</li>
+</ul>
+<hr>
+<p><a name="example-scenario-ecommerce-system"></a></p>
+<h2 id="Example-Scenario-E-commerce-System"><a href="#Example-Scenario-E-commerce-System" class="headerlink" title="Example Scenario: E-commerce System"></a>Example Scenario: E-commerce System</h2><p>Imagine an e-commerce system where users place orders for products. We have two important tables:</p>
+<ol>
+<li><strong>Products</strong> table: Stores information about products, including <code>product_id</code>, <code>name</code>, <code>price</code>, and <code>quantity_in_stock</code>.</li>
+<li><strong>Orders</strong> table: Stores orders placed by customers, including <code>order_id</code>, <code>product_id</code>, <code>quantity_ordered</code>, and <code>status</code>.</li>
+</ol>
+<h3 id="Products-Table"><a href="#Products-Table" class="headerlink" title="Products Table"></a>Products Table</h3><table>
+<thead>
+<tr>
+<th>product_id</th>
+<th>name</th>
+<th>price</th>
+<th>quantity_in_stock</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Laptop</td>
+<td>1000</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Smartphone</td>
+<td>800</td>
+<td>20</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Headphones</td>
+<td>150</td>
+<td>30</td>
+</tr>
+</tbody></table>
+<h3 id="Orders-Table"><a href="#Orders-Table" class="headerlink" title="Orders Table"></a>Orders Table</h3><table>
+<thead>
+<tr>
+<th>order_id</th>
+<th>product_id</th>
+<th>quantity_ordered</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>1</td>
+<td>2</td>
+<td>PENDING</td>
+</tr>
+<tr>
+<td>102</td>
+<td>2</td>
+<td>1</td>
+<td>SHIPPED</td>
+</tr>
+</tbody></table>
+<hr>
+<p><a name="part-1-data-integrity"></a></p>
+<h3 id="Part-1-Data-Integrity"><a href="#Part-1-Data-Integrity" class="headerlink" title="Part 1: Data Integrity"></a>Part 1: Data Integrity</h3><p><strong>Data Integrity</strong> ensures that the data adheres to business rules and constraints. Let’s define some <strong>integrity constraints</strong> in this system:</p>
+<ol>
+<li><p><strong>Foreign Key Constraint</strong>: Ensures that every <code>product_id</code> in the <code>Orders</code> table refers to a valid <code>product_id</code> in the <code>Products</code> table. This prevents orders from being placed for non-existent products.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Orders</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> fk_product_id</span><br><span class="line"><span class="keyword">FOREIGN</span> KEY (product_id) <span class="keyword">REFERENCES</span> Products(product_id);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example Violation</strong>:<br>If someone tries to insert an order with <code>product_id = 999</code> (which does not exist in the Products table), the foreign key constraint would <strong>reject</strong> the transaction.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Orders (order_id, product_id, quantity_ordered, status)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">103</span>, <span class="number">999</span>, <span class="number">1</span>, <span class="string">&#x27;PENDING&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Result</strong>: Integrity violation. The order cannot be placed because <code>product_id = 999</code> does not exist in the <code>Products</code> table.</p>
+</li>
+<li><p><strong>Check Constraint</strong>: Ensures that no negative quantity can be ordered or stored in the inventory.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Products</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> chk_positive_quantity <span class="keyword">CHECK</span> (quantity_in_stock <span class="operator">&gt;=</span> <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example Violation</strong>:<br>If an update tries to set <code>quantity_in_stock</code> to a negative value, it will be rejected.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Products</span><br><span class="line"><span class="keyword">SET</span> quantity_in_stock <span class="operator">=</span> <span class="number">-5</span></span><br><span class="line"><span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Result</strong>: Integrity violation. Negative stock values are not allowed.</p>
+</li>
+<li><p><strong>Unique Constraint</strong>: Ensures no duplicate <code>product_id</code> exists in the <code>Products</code> table.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Products</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> unique_product_id <span class="keyword">UNIQUE</span> (product_id);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example Violation</strong>:<br>If we try to insert another product with the same <code>product_id</code>:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Products (product_id, name, price, quantity_in_stock)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">&#x27;Tablet&#x27;</span>, <span class="number">500</span>, <span class="number">15</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Result</strong>: Integrity violation. Duplicate product IDs are not allowed.</p>
+</li>
+</ol>
+<p>These constraints enforce <strong>data integrity</strong> by ensuring that only valid data can be inserted or updated in the database.</p>
+<hr>
+<p><a name="part-2-data-consistency-in-a-transaction"></a></p>
+<h3 id="Part-2-Data-Consistency-in-a-Transaction"><a href="#Part-2-Data-Consistency-in-a-Transaction" class="headerlink" title="Part 2: Data Consistency in a Transaction"></a>Part 2: Data Consistency in a Transaction</h3><p><strong>Data Consistency</strong> means that after a transaction, all defined integrity rules are maintained, and the system remains in a valid state. Let’s explore this with a transactional scenario.</p>
+<h4 id="Transaction-Scenario-Placing-an-Order"><a href="#Transaction-Scenario-Placing-an-Order" class="headerlink" title="Transaction Scenario: Placing an Order"></a>Transaction Scenario: Placing an Order</h4><p>When a user places an order, several things happen as part of a <strong>single transaction</strong>:</p>
+<ol>
+<li>The system <strong>decreases</strong> the quantity of the product in the <code>Products</code> table.</li>
+<li>A new order is <strong>inserted</strong> into the <code>Orders</code> table.</li>
+<li>If the order cannot be completed for some reason (e.g., insufficient stock), the entire transaction is <strong>rolled back</strong>.</li>
+</ol>
+<p>Let’s simulate this with an example where a customer places an order for 3 laptops (<code>product_id = 1</code>).</p>
+<ol>
+<li><p><strong>Initial State</strong>:</p>
+<ul>
+<li><code>Products</code> table shows 10 laptops in stock.</li>
+<li>No new order is placed yet.</li>
+</ul>
+</li>
+<li><p><strong>Transaction Start</strong>:</p>
+<ul>
+<li><p>Begin the transaction:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span> TRANSACTION;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>Check Stock</strong>:<br>First, the system checks if there are enough laptops in stock.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> quantity_in_stock <span class="keyword">FROM</span> Products <span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="comment">-- Result: 10</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Decrease Stock</strong>:<br>If there is enough stock, decrease the stock by the ordered quantity.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Products</span><br><span class="line"><span class="keyword">SET</span> quantity_in_stock <span class="operator">=</span> quantity_in_stock <span class="operator">-</span> <span class="number">3</span></span><br><span class="line"><span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>After the update, the stock of laptops is reduced to 7.</p>
+</li>
+<li><p><strong>Insert Order</strong>:<br>Insert the new order into the <code>Orders</code> table.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Orders (order_id, product_id, quantity_ordered, status)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">103</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="string">&#x27;PENDING&#x27;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Commit Transaction</strong>:<br>If everything succeeds (no constraint violations, no failures), commit the transaction.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Final State</strong>:</p>
+<ul>
+<li>The <code>Products</code> table now shows 7 laptops in stock.</li>
+<li>A new order has been added to the <code>Orders</code> table.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Data Consistency</strong> is maintained because the system follows the ACID properties. The <strong>database’s state</strong> transitions from a valid state to another valid state (the stock is updated, and the order is recorded correctly).</p>
+<hr>
+<p><a name="example-of-inconsistent-state-without-transactions"></a></p>
+<h2 id="Example-of-Inconsistent-State-Without-Transactions"><a href="#Example-of-Inconsistent-State-Without-Transactions" class="headerlink" title="Example of Inconsistent State Without Transactions"></a>Example of Inconsistent State Without Transactions</h2><p>Now let’s imagine what would happen if transactions were <strong>not used</strong>, leading to <strong>inconsistent data</strong>.</p>
+<ol>
+<li><p><strong>Decrease Stock</strong>:<br>The system updates the stock to 7 but fails to insert the order due to a system error.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Products</span><br><span class="line"><span class="keyword">SET</span> quantity_in_stock <span class="operator">=</span> quantity_in_stock <span class="operator">-</span> <span class="number">3</span></span><br><span class="line"><span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="comment">-- Success: stock reduced to 7</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Insert Order Fails</strong>:<br>The order insertion fails (due to a network issue or other error).</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Orders (order_id, product_id, quantity_ordered, status)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">103</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="string">&#x27;PENDING&#x27;</span>);</span><br><span class="line"><span class="comment">-- Error: Failure to insert the order</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>Since the database <strong>was not in a transaction</strong>, the stock was reduced but the order was never recorded. This results in an <strong>inconsistent state</strong> where the stock is reduced but no corresponding order exists, violating the system’s expected behavior.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><ul>
+<li><strong>Data Integrity</strong> ensures that only valid and accurate data can be entered or modified in the database by using constraints like foreign keys, check constraints, and unique constraints.</li>
+<li><strong>Data Consistency</strong> ensures that after a transaction, the database remains in a valid state, where all integrity rules are maintained and the system behaves as expected.</li>
+</ul>
+<p>By using proper transaction management and enforcing data integrity rules, we can prevent inconsistent states and maintain the overall reliability of an online system.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RDBMS/" rel="tag"><i class="fa fa-tag"></i> RDBMS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XVII/" rel="prev" title="Reactive Programming in Spring WebFlux Series - XVII">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - XVII
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/" rel="next" title="Considerations on Transactions Across Distributed Systems">
+                  Considerations on Transactions Across Distributed Systems <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

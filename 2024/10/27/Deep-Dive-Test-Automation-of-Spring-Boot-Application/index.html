@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Testing Spring Boot applications is crucial for validating functionality across the persistence, service, and controller layers, especially when deployed in containerized environments. This guide cove">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive Test Automation of Spring Boot Application">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Testing Spring Boot applications is crucial for validating functionality across the persistence, service, and controller layers, especially when deployed in containerized environments. This guide cove">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-27T21:57:50.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Test Automation">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/","path":"2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/","title":"Deep Dive Test Automation of Spring Boot Application"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive Test Automation of Spring Boot Application | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Overview"><span class="nav-number">1.</span> <span class="nav-text">1. Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Testing-the-Persistence-Layer"><span class="nav-number">2.</span> <span class="nav-text">2. Testing the Persistence Layer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Embedded-Database-for-Testing"><span class="nav-number">2.1.</span> <span class="nav-text">Embedded Database for Testing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Integration-Testing-with-Testcontainers"><span class="nav-number">2.2.</span> <span class="nav-text">Integration Testing with Testcontainers</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Testing-the-Service-Layer"><span class="nav-number">3.</span> <span class="nav-text">3. Testing the Service Layer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unit-Tests-with-Mocks"><span class="nav-number">3.1.</span> <span class="nav-text">Unit Tests with Mocks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Integration-Testing-with-Dependencies"><span class="nav-number">3.2.</span> <span class="nav-text">Integration Testing with Dependencies</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Testing-the-Controller-Layer"><span class="nav-number">4.</span> <span class="nav-text">4. Testing the Controller Layer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MockMvc-for-Isolated-Controller-Testing"><span class="nav-number">4.1.</span> <span class="nav-text">MockMvc for Isolated Controller Testing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Testing-Real-Endpoints-in-a-Container"><span class="nav-number">4.2.</span> <span class="nav-text">Testing Real Endpoints in a Container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-Testing-for-API-Endpoints"><span class="nav-number">4.3.</span> <span class="nav-text">Parallel Testing for API Endpoints</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-End-to-End-Testing-in-Containerized-Environments"><span class="nav-number">5.</span> <span class="nav-text">5. End-to-End Testing in Containerized Environments</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Docker-Compose-for-Integration-Testing"><span class="nav-number">5.1.</span> <span class="nav-text">Using Docker Compose for Integration Testing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Sample-Code-and-Configuration-Summary"><span class="nav-number">6.</span> <span class="nav-text">6. Sample Code and Configuration Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Maven-Dependencies"><span class="nav-number">6.1.</span> <span class="nav-text">Maven Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sample-Application-Properties"><span class="nav-number">6.2.</span> <span class="nav-text">Sample Application Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistence-Layer-Test-Example"><span class="nav-number">6.3.</span> <span class="nav-text">Persistence Layer Test Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Layer-Test-Example"><span class="nav-number">6.4.</span> <span class="nav-text">Service Layer Test Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-Layer-Test-Example"><span class="nav-number">6.5.</span> <span class="nav-text">Controller Layer Test Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Integration-Testing-with-Testcontainers-1"><span class="nav-number">6.6.</span> <span class="nav-text">Integration Testing with Testcontainers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-Compose-Configuration"><span class="nav-number">6.7.</span> <span class="nav-text">Docker Compose Configuration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Running-Tests-in-Docker"><span class="nav-number">6.8.</span> <span class="nav-text">Running Tests in Docker</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive Test Automation of Spring Boot Application | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive Test Automation of Spring Boot Application
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 17:57:50" itemprop="dateCreated datePublished" datetime="2024-10-27T17:57:50-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/Test-Automation/" itemprop="url" rel="index"><span itemprop="name">Test Automation</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/Test-Automation/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Testing Spring Boot applications is crucial for validating functionality across the persistence, service, and controller layers, especially when deployed in containerized environments. This guide covers everything from configuring each layer’s tests to handling parallel endpoint testing and leveraging Docker for containerized environments.</p>
+<hr>
+<ul>
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-testing-the-persistence-layer">2. Testing the Persistence Layer</a><ul>
+<li><a href="#embedded-database-for-testing">Embedded Database for Testing</a></li>
+<li><a href="#integration-testing-with-testcontainers">Integration Testing with Testcontainers</a></li>
+</ul>
+</li>
+<li><a href="#3-testing-the-service-layer">3. Testing the Service Layer</a><ul>
+<li><a href="#unit-tests-with-mocks">Unit Tests with Mocks</a></li>
+<li><a href="#integration-testing-with-dependencies">Integration Testing with Dependencies</a></li>
+</ul>
+</li>
+<li><a href="#4-testing-the-controller-layer">4. Testing the Controller Layer</a><ul>
+<li><a href="#mockmvc-for-isolated-controller-testing">MockMvc for Isolated Controller Testing</a></li>
+<li><a href="#testing-real-endpoints-in-a-container">Testing Real Endpoints in a Container</a></li>
+<li><a href="#parallel-testing-for-api-endpoints">Parallel Testing for API Endpoints</a></li>
+</ul>
+</li>
+<li><a href="#5-end-to-end-testing-in-containerized-environments">5. End-to-End Testing in Containerized Environments</a><ul>
+<li><a href="#using-docker-compose-for-integration-testing">Using Docker Compose for Integration Testing</a></li>
+</ul>
+</li>
+<li><a href="#6-sample-code-and-configuration-summary">6. Sample Code and Configuration Summary</a><ul>
+<li><a href="#maven-dependencies">Maven Dependencies</a></li>
+<li><a href="#sample-application-properties">Sample Application Properties</a></li>
+<li><a href="#persistence-layer-test-example">Persistence Layer Test Example</a></li>
+<li><a href="#service-layer-test-example">Service Layer Test Example</a></li>
+<li><a href="#controller-layer-test-example">Controller Layer Test Example</a></li>
+<li><a href="#integration-testing-with-testcontainers-1">Integration Testing with Testcontainers</a></li>
+<li><a href="#docker-compose-configuration">Docker Compose Configuration</a></li>
+<li><a href="#running-tests-in-docker">Running Tests in Docker</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a name="overview"></a></p>
+<h2 id="1-Overview"><a href="#1-Overview" class="headerlink" title="1. Overview"></a>1. Overview</h2><p>Testing a Spring Boot application ensures each layer functions as expected and that the system performs cohesively. Tests should cover:</p>
+<ul>
+<li><strong>Persistence Layer</strong>: Verifying data access and manipulation.</li>
+<li><strong>Service Layer</strong>: Ensuring business logic functions correctly.</li>
+<li><strong>Controller Layer</strong>: Testing API endpoints and interactions.</li>
+</ul>
+<p>This article includes testing strategies for both development and containerized environments, plus configurations for parallel endpoint testing.</p>
+<hr>
+<p><a name="testing-the-persistence-layer"></a></p>
+<h2 id="2-Testing-the-Persistence-Layer"><a href="#2-Testing-the-Persistence-Layer" class="headerlink" title="2. Testing the Persistence Layer"></a>2. Testing the Persistence Layer</h2><p>The persistence layer involves data storage and access. To test without connecting to production databases, use embedded databases for unit testing and Testcontainers for more complex integration tests.</p>
+<p><a name="embedded-database-for-testing"></a></p>
+<h3 id="Embedded-Database-for-Testing"><a href="#Embedded-Database-for-Testing" class="headerlink" title="Embedded Database for Testing"></a>Embedded Database for Testing</h3><p>Embedded databases (like H2) are ideal for simple, fast tests:</p>
+<ol>
+<li><p><strong>Add H2 dependency</strong> in <code>pom.xml</code>:</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Application configuration</strong> for testing (<code>src/test/resources/application-test.yml</code>):</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:mem:testdb</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">org.h2.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Persistence Layer Test</strong>:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSaveUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;John Doe&quot;</span>, <span class="string">&quot;john.doe@example.com&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userRepository.save(user);</span><br><span class="line">        assertNotNull(savedUser.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><a name="integration-testing-with-testcontainers"></a></p>
+<h3 id="Integration-Testing-with-Testcontainers"><a href="#Integration-Testing-with-Testcontainers" class="headerlink" title="Integration Testing with Testcontainers"></a>Integration Testing with Testcontainers</h3><p>For more realistic integration tests with databases (e.g., PostgreSQL), use <strong>Testcontainers</strong>:</p>
+<ol>
+<li><p><strong>Add Testcontainers dependency</strong>:</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Set up Testcontainers for PostgreSQL</strong>:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> PostgreSQLContainer&lt;?&gt; postgres = <span class="keyword">new</span> <span class="title class_">PostgreSQLContainer</span>&lt;&gt;(<span class="string">&quot;postgres:13&quot;</span>)</span><br><span class="line">        .withDatabaseName(<span class="string">&quot;testdb&quot;</span>)</span><br><span class="line">        .withUsername(<span class="string">&quot;user&quot;</span>)</span><br><span class="line">        .withPassword(<span class="string">&quot;password&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DynamicPropertySource</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">configureProperties</span><span class="params">(DynamicPropertyRegistry registry)</span> &#123;</span><br><span class="line">        postgres.start();</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.url&quot;</span>, postgres::getJdbcUrl);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.username&quot;</span>, postgres::getUsername);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.password&quot;</span>, postgres::getPassword);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindUserById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Test logic</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p><a name="testing-the-service-layer"></a></p>
+<h2 id="3-Testing-the-Service-Layer"><a href="#3-Testing-the-Service-Layer" class="headerlink" title="3. Testing the Service Layer"></a>3. Testing the Service Layer</h2><p>The service layer holds business logic. Use mocks for isolated unit tests and real dependencies for integration tests.</p>
+<p><a name="unit-tests-with-mocks"></a></p>
+<h3 id="Unit-Tests-with-Mocks"><a href="#Unit-Tests-with-Mocks" class="headerlink" title="Unit Tests with Mocks"></a>Unit Tests with Mocks</h3><ol>
+<li><strong>Define a test with <code>@MockBean</code></strong>: <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith(MockitoExtension.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testCreateUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        when(userRepository.save(any(User.class))).thenReturn(user);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userService.createUser(user);</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, savedUser.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><a name="integration-testing-with-dependencies"></a></p>
+<h3 id="Integration-Testing-with-Dependencies"><a href="#Integration-Testing-with-Dependencies" class="headerlink" title="Integration Testing with Dependencies"></a>Integration Testing with Dependencies</h3><p>For full service layer integration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;User&gt; users = userService.findAllUsers();</span><br><span class="line">        assertNotNull(users);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="testing-the-controller-layer"></a></p>
+<h2 id="4-Testing-the-Controller-Layer"><a href="#4-Testing-the-Controller-Layer" class="headerlink" title="4. Testing the Controller Layer"></a>4. Testing the Controller Layer</h2><p>Controller tests validate API endpoints. <code>MockMvc</code> is used for isolated testing, while containerized setups allow testing real endpoints.</p>
+<p><a name="mockmvc-for-isolated-controller-testing"></a></p>
+<h3 id="MockMvc-for-Isolated-Controller-Testing"><a href="#MockMvc-for-Isolated-Controller-Testing" class="headerlink" title="MockMvc for Isolated Controller Testing"></a>MockMvc for Isolated Controller Testing</h3><p>MockMvc allows API testing without starting a full web server.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebMvcTest(UserController.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        when(userService.getUserById(anyLong())).thenReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="number">1L</span>, <span class="string">&quot;Alice&quot;</span>));</span><br><span class="line"></span><br><span class="line">        mockMvc.perform(get(<span class="string">&quot;/users/1&quot;</span>))</span><br><span class="line">            .andExpect(status().isOk())</span><br><span class="line">            .andExpect(jsonPath(<span class="string">&quot;$.name&quot;</span>).value(<span class="string">&quot;Alice&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="testing-real-endpoints-in-a-container"></a></p>
+<h3 id="Testing-Real-Endpoints-in-a-Container"><a href="#Testing-Real-Endpoints-in-a-Container" class="headerlink" title="Testing Real Endpoints in a Container"></a>Testing Real Endpoints in a Container</h3><p>For real endpoint testing, use <code>RestTemplate</code> with a server running on a random port:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@LocalServerPort</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> port;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TestRestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        ResponseEntity&lt;User&gt; response = restTemplate.getForEntity(<span class="string">&quot;http://localhost:&quot;</span> + port + <span class="string">&quot;/users/1&quot;</span>, User.class);</span><br><span class="line">        assertEquals(HttpStatus.OK, response.getStatusCode());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="parallel-testing-for-api-endpoints"></a></p>
+<h3 id="Parallel-Testing-for-API-Endpoints"><a href="#Parallel-Testing-for-API-Endpoints" class="headerlink" title="Parallel Testing for API Endpoints"></a>Parallel Testing for API Endpoints</h3><p>When testing multiple endpoints simultaneously, use <code>RANDOM_PORT</code> to prevent port conflicts.</p>
+<hr>
+<p><a name="end-to-end-testing-in-containerized-environments"></a></p>
+<h2 id="5-End-to-End-Testing-in-Containerized-Environments"><a href="#5-End-to-End-Testing-in-Containerized-Environments" class="headerlink" title="5. End-to-End Testing in Containerized Environments"></a>5. End-to-End Testing in Containerized Environments</h2><p>Using Docker Compose, spin up services to perform full integration tests in a controlled environment.</p>
+<p><a name="using-docker-compose-for-integration-testing"></a></p>
+<h3 id="Using-Docker-Compose-for-Integration-Testing"><a href="#Using-Docker-Compose-for-Integration-Testing" class="headerlink" title="Using Docker Compose for Integration Testing"></a>Using Docker Compose for Integration Testing</h3><ol>
+<li><p><strong>Docker Compose File</strong>:</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my-spring-app:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SPRING_PROFILES_ACTIVE=test</span></span><br><span class="line">  <span class="attr">postgres:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres:13</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">POSTGRES_USER:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">POSTGRES_PASSWORD:</span> <span class="string">password</span></span><br><span class="line">      <span class="attr">POSTGRES_DB:</span> <span class="string">testdb</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Run and Tear Down Tests</strong>:</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># Run integration tests</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p><a name="sample-code-and-configuration-summary"></a></p>
+<h2 id="6-Sample-Code-and-Configuration-Summary"><a href="#6-Sample-Code-and-Configuration-Summary" class="headerlink" title="6. Sample Code and Configuration Summary"></a>6. Sample Code and Configuration Summary</h2><p>This section provides practical code snippets and configurations to help automate testing in Spring Boot applications. The examples cover the persistence layer, service layer, controller layer, and containerized testing.</p>
+<h3 id="Maven-Dependencies"><a href="#Maven-Dependencies" class="headerlink" title="Maven Dependencies"></a>Maven Dependencies</h3><p>Make sure to include the necessary dependencies in your <code>pom.xml</code> for testing:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Spring Boot Starter for Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- H2 Database for In-Memory Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- Testcontainers for Integration Testing --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-jupiter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testcontainers<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Sample-Application-Properties"><a href="#Sample-Application-Properties" class="headerlink" title="Sample Application Properties"></a>Sample Application Properties</h3><p>Define properties for the test environment in <code>src/test/resources/application-test.yml</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:h2:mem:testdb</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">org.h2.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Persistence-Layer-Test-Example"><a href="#Persistence-Layer-Test-Example" class="headerlink" title="Persistence Layer Test Example"></a>Persistence Layer Test Example</h3><p>Example of testing a repository with an embedded H2 database:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSaveUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;John Doe&quot;</span>, <span class="string">&quot;john.doe@example.com&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userRepository.save(user);</span><br><span class="line">        assertNotNull(savedUser.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Layer-Test-Example"><a href="#Service-Layer-Test-Example" class="headerlink" title="Service Layer Test Example"></a>Service Layer Test Example</h3><p>Example of unit testing the service layer with Mockito:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith(MockitoExtension.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testCreateUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        when(userRepository.save(any(User.class))).thenReturn(user);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">savedUser</span> <span class="operator">=</span> userService.createUser(user);</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, savedUser.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Controller-Layer-Test-Example"><a href="#Controller-Layer-Test-Example" class="headerlink" title="Controller Layer Test Example"></a>Controller Layer Test Example</h3><p>Example of testing a controller using <code>MockMvc</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebMvcTest(UserController.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserControllerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        when(userService.getUserById(anyLong())).thenReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="number">1L</span>, <span class="string">&quot;Alice&quot;</span>));</span><br><span class="line"></span><br><span class="line">        mockMvc.perform(get(<span class="string">&quot;/users/1&quot;</span>))</span><br><span class="line">            .andExpect(status().isOk())</span><br><span class="line">            .andExpect(jsonPath(<span class="string">&quot;$.name&quot;</span>).value(<span class="string">&quot;Alice&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Integration-Testing-with-Testcontainers-1"><a href="#Integration-Testing-with-Testcontainers-1" class="headerlink" title="Integration Testing with Testcontainers"></a>Integration Testing with Testcontainers</h3><p>Example of a test that uses Testcontainers to spin up a PostgreSQL instance for integration tests:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> PostgreSQLContainer&lt;?&gt; postgres = <span class="keyword">new</span> <span class="title class_">PostgreSQLContainer</span>&lt;&gt;(<span class="string">&quot;postgres:13&quot;</span>)</span><br><span class="line">            .withDatabaseName(<span class="string">&quot;testdb&quot;</span>)</span><br><span class="line">            .withUsername(<span class="string">&quot;user&quot;</span>)</span><br><span class="line">            .withPassword(<span class="string">&quot;password&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DynamicPropertySource</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">configureProperties</span><span class="params">(DynamicPropertyRegistry registry)</span> &#123;</span><br><span class="line">        postgres.start();</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.url&quot;</span>, postgres::getJdbcUrl);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.username&quot;</span>, postgres::getUsername);</span><br><span class="line">        registry.add(<span class="string">&quot;spring.datasource.password&quot;</span>, postgres::getPassword);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testFindUserById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;alice@example.com&quot;</span>);</span><br><span class="line">        userRepository.save(user);</span><br><span class="line"></span><br><span class="line">        Optional&lt;User&gt; foundUser = userRepository.findById(user.getId());</span><br><span class="line">        assertTrue(foundUser.isPresent());</span><br><span class="line">        assertEquals(<span class="string">&quot;Alice&quot;</span>, foundUser.get().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Docker-Compose-Configuration"><a href="#Docker-Compose-Configuration" class="headerlink" title="Docker Compose Configuration"></a>Docker Compose Configuration</h3><p>An example of a <code>docker-compose.yml</code> file for running your application and PostgreSQL for testing:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.8&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my-spring-app:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">SPRING_PROFILES_ACTIVE:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_URL:</span> <span class="string">jdbc:postgresql://postgres:5432/testdb</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_USERNAME:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">SPRING_DATASOURCE_PASSWORD:</span> <span class="string">password</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">postgres:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres:13</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">POSTGRES_USER:</span> <span class="string">user</span></span><br><span class="line">      <span class="attr">POSTGRES_PASSWORD:</span> <span class="string">password</span></span><br><span class="line">      <span class="attr">POSTGRES_DB:</span> <span class="string">testdb</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Running-Tests-in-Docker"><a href="#Running-Tests-in-Docker" class="headerlink" title="Running Tests in Docker"></a>Running Tests in Docker</h3><p>Run your integration tests with Docker Compose:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># Run tests</span></span><br><span class="line">mvn <span class="built_in">test</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure>
+
+<p>This guide offers configurations and code samples to help set up automated testing for Spring Boot applications in both development and containerized environments, suitable for integration into CI&#x2F;CD pipelines.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/Test-Automation/" rel="tag"><i class="fa fa-tag"></i> Test Automation</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/" rel="prev" title="Nginx as HTTPS Proxy for HTTP and TCP Backend Services">
+                  <i class="fa fa-angle-left"></i> Nginx as HTTPS Proxy for HTTP and TCP Backend Services
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Race-Conditions-in-Apache-Velocity/" rel="next" title="Race Conditions in Apache Velocity">
+                  Race Conditions in Apache Velocity <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Best Practices and Common Pitfalls Introduction Best Practices 1. Proper Use of Mono and Flux 2. Error Handling 3. Backpressure Management 4. Non-blocking I&#x2F;O Operations 5. Proper Thread Model C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - XI">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Best Practices and Common Pitfalls Introduction Best Practices 1. Proper Use of Mono and Flux 2. Error Handling 3. Backpressure Management 4. Non-blocking I&#x2F;O Operations 5. Proper Thread Model C">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T18:07:07.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/","title":"Reactive Programming in Spring WebFlux Series - XI"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - XI | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Best-Practices-and-Common-Pitfalls"><span class="nav-number">1.</span> <span class="nav-text">Best Practices and Common Pitfalls</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Best-Practices"><span class="nav-number">3.</span> <span class="nav-text">Best Practices</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Proper-Use-of-Mono-and-Flux"><span class="nav-number">3.1.</span> <span class="nav-text">1. Proper Use of Mono and Flux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Error-Handling"><span class="nav-number">3.2.</span> <span class="nav-text">2. Error Handling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Backpressure-Management"><span class="nav-number">3.3.</span> <span class="nav-text">3. Backpressure Management</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Non-blocking-I-O-Operations"><span class="nav-number">3.4.</span> <span class="nav-text">4. Non-blocking I&#x2F;O Operations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Proper-Thread-Model-Configuration"><span class="nav-number">3.5.</span> <span class="nav-text">5. Proper Thread Model Configuration</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Common-Pitfalls"><span class="nav-number">4.</span> <span class="nav-text">Common Pitfalls</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Blocking-Operations"><span class="nav-number">4.1.</span> <span class="nav-text">1. Blocking Operations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Ignoring-Error-Handling"><span class="nav-number">4.2.</span> <span class="nav-text">2. Ignoring Error Handling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Resource-Leaks"><span class="nav-number">4.3.</span> <span class="nav-text">3. Resource Leaks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Over-reliance-on-Default-Configurations"><span class="nav-number">4.4.</span> <span class="nav-text">4. Over-reliance on Default Configurations</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - XI | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - XI
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:07:07" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:07-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#best-practices-and-common-pitfalls">Best Practices and Common Pitfalls</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#best-practices">Best Practices</a><ul>
+<li><a href="#1-proper-use-of-mono-and-flux">1. Proper Use of Mono and Flux</a></li>
+<li><a href="#2-error-handling">2. Error Handling</a></li>
+<li><a href="#3-backpressure-management">3. Backpressure Management</a></li>
+<li><a href="#4-non-blocking-io-operations">4. Non-blocking I&#x2F;O Operations</a></li>
+<li><a href="#5-proper-thread-model-configuration">5. Proper Thread Model Configuration</a></li>
+</ul>
+</li>
+<li><a href="#common-pitfalls">Common Pitfalls</a><ul>
+<li><a href="#1-blocking-operations">1. Blocking Operations</a></li>
+<li><a href="#2-ignoring-error-handling">2. Ignoring Error Handling</a></li>
+<li><a href="#3-resource-leaks">3. Resource Leaks</a></li>
+<li><a href="#4-over-reliance-on-default-configurations">4. Over-reliance on Default Configurations</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<h1 id="Best-Practices-and-Common-Pitfalls"><a href="#Best-Practices-and-Common-Pitfalls" class="headerlink" title="Best Practices and Common Pitfalls"></a>Best Practices and Common Pitfalls</h1><hr>
+<p><a name="introduction"></a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In the first ten articles of this series, we discussed the foundational concepts of Spring WebFlux, including Reactor, error handling, data flow transformation, reactive database access, performance optimization, security, testing, and deployment. In this article, we will summarize the best practices for developing Spring WebFlux applications and highlight common pitfalls to help developers build more robust and efficient reactive systems.</p>
+<p><a name="best-practices"></a></p>
+<h1 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h1><p><a name="proper-use-of-mono-and-flux"></a></p>
+<h2 id="1-Proper-Use-of-Mono-and-Flux"><a href="#1-Proper-Use-of-Mono-and-Flux" class="headerlink" title="1. Proper Use of Mono and Flux"></a>1. Proper Use of Mono and Flux</h2><ul>
+<li><strong>Mono</strong>: Used for handling asynchronous sequences containing a single element or none. For example, when querying a database for a single user object.</li>
+<li><strong>Flux</strong>: Used for handling asynchronous sequences containing multiple elements. For example, retrieving multiple user objects from a database.</li>
+</ul>
+<p>Ensure that <strong>Mono</strong> and <strong>Flux</strong> are used in appropriate contexts to keep the code simple and readable.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">findAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findAll();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="error-handling"></a></p>
+<h2 id="2-Error-Handling"><a href="#2-Error-Handling" class="headerlink" title="2. Error Handling"></a>2. Error Handling</h2><ul>
+<li><strong>onErrorReturn</strong>: Returns a default value when an error occurs.</li>
+<li><strong>onErrorResume</strong>: Switches to another <code>Publisher</code> upon encountering an error.</li>
+<li><strong>onErrorMap</strong>: Transforms one type of error into another.</li>
+</ul>
+<p>These operators can be used to handle errors gracefully and ensure the application recovers from failures efficiently.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .onErrorReturn(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;default&quot;</span>, <span class="string">&quot;Default User&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="backpressure-management"></a></p>
+<h2 id="3-Backpressure-Management"><a href="#3-Backpressure-Management" class="headerlink" title="3. Backpressure Management"></a>3. Backpressure Management</h2><p>In high-concurrency environments, managing <strong>backpressure</strong> is critical to maintaining system stability. Operators like <code>limitRate</code>, <code>onBackpressureBuffer</code>, and <code>onBackpressureDrop</code> help control the flow of data to prevent overloading.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findAll()</span><br><span class="line">            .limitRate(<span class="number">100</span>)</span><br><span class="line">            .onBackpressureBuffer(<span class="number">50</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="non-blocking-io-operations"></a></p>
+<h2 id="4-Non-blocking-I-O-Operations"><a href="#4-Non-blocking-I-O-Operations" class="headerlink" title="4. Non-blocking I&#x2F;O Operations"></a>4. Non-blocking I&#x2F;O Operations</h2><p>Ensure that all I&#x2F;O operations are non-blocking. Avoid using blocking APIs such as <code>RestTemplate</code>, and instead use <strong>WebClient</strong> for HTTP requests.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create(<span class="string">&quot;http://example.com&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUser</span><span class="params">(String id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/users/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">                .retrieve()</span><br><span class="line">                .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>WebClient provides an efficient and reactive way to make HTTP calls without blocking the thread.</p>
+<p><a name="proper-thread-model-configuration"></a></p>
+<h2 id="5-Proper-Thread-Model-Configuration"><a href="#5-Proper-Thread-Model-Configuration" class="headerlink" title="5. Proper Thread Model Configuration"></a>5. Proper Thread Model Configuration</h2><p>Adjust Reactor and Netty thread configurations based on application requirements to optimize performance in high-concurrency environments.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">reactor.netty.ioWorkerCount</span>=<span class="string">16</span></span><br></pre></td></tr></table></figure>
+
+<p>Fine-tuning the thread pool ensures the application can handle more requests efficiently under high loads.</p>
+<p><a name="common-pitfalls"></a></p>
+<h1 id="Common-Pitfalls"><a href="#Common-Pitfalls" class="headerlink" title="Common Pitfalls"></a>Common Pitfalls</h1><p><a name="blocking-operations"></a></p>
+<h2 id="1-Blocking-Operations"><a href="#1-Blocking-Operations" class="headerlink" title="1. Blocking Operations"></a>1. Blocking Operations</h2><p>Avoid using <strong>blocking operations</strong> in reactive programming, such as thread sleeps or blocking database queries. Blocking calls reduce system performance by causing threads to wait unnecessarily.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="comment">// Avoid using blocking calls</span></span><br><span class="line">    <span class="keyword">return</span> Mono.fromCallable(() -&gt; &#123;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>); <span class="comment">// This is a blocking call</span></span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Blocking operations can be detrimental in a reactive context, where non-blocking operations are essential for throughput.</p>
+<p><a name="ignoring-error-handling"></a></p>
+<h2 id="2-Ignoring-Error-Handling"><a href="#2-Ignoring-Error-Handling" class="headerlink" title="2. Ignoring Error Handling"></a>2. Ignoring Error Handling</h2><p>Ignoring error handling in reactive streams can lead to application crashes when exceptions occur. Ensure that potential errors are handled at every stage of the stream.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findUserById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .onErrorResume(e -&gt; &#123;</span><br><span class="line">                log.error(<span class="string">&quot;Error occurred&quot;</span>, e);</span><br><span class="line">                <span class="keyword">return</span> Mono.empty();</span><br><span class="line">            &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Proper error handling ensures the system remains resilient under failure conditions.</p>
+<p><a name="resource-leaks"></a></p>
+<h2 id="3-Resource-Leaks"><a href="#3-Resource-Leaks" class="headerlink" title="3. Resource Leaks"></a>3. Resource Leaks</h2><p>Ensure that resources such as files, database connections, or network sockets are properly closed after usage to avoid <strong>resource leaks</strong>. For instance, when handling file streams, ensure the file is closed after processing.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Flux&lt;String&gt; <span class="title function_">readFile</span><span class="params">(String path)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Flux.using(</span><br><span class="line">            () -&gt; Files.lines(Paths.get(path)),</span><br><span class="line">            Flux::fromStream,</span><br><span class="line">            Stream::close</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Using the <code>Flux.using</code> construct ensures that resources are cleaned up when no longer needed.</p>
+<p><a name="over-reliance-on-default-configurations"></a></p>
+<h2 id="4-Over-reliance-on-Default-Configurations"><a href="#4-Over-reliance-on-Default-Configurations" class="headerlink" title="4. Over-reliance on Default Configurations"></a>4. Over-reliance on Default Configurations</h2><p>While Spring Boot provides many default configurations, relying on them in a production environment can be risky. Adjust configurations such as <strong>Netty thread count</strong> and <strong>database connection pool size</strong> based on the specific needs of your application.</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.r2dbc.pool.initialSize</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">spring.r2dbc.pool.maxSize</span>=<span class="string">50</span></span><br></pre></td></tr></table></figure>
+
+<p>By customizing these settings, you can optimize resource usage and ensure smooth scaling under different load conditions.</p>
+<p><a name="conclusion"></a></p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>In this article, we summarized the best practices for developing Spring WebFlux applications and highlighted common pitfalls to avoid during development. By following these practices and avoiding common mistakes, developers can build more robust, scalable, and efficient reactive applications.</p>
+<p>Staying mindful of performance, error handling, and resource management while leveraging reactive programming concepts will lead to high-performing, non-blocking systems capable of handling large volumes of traffic efficiently.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/" rel="prev" title="Reactive Programming in Spring WebFlux Series - X">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - X
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XII/" rel="next" title="Reactive Programming in Spring WebFlux Series - XII">
+                  Reactive Programming in Spring WebFlux Series - XII <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Overview of Ollama Ollama Architecture Ollama Storage Structure Ollama Conversation Processing Flow Conclusion References:   Overview of OllamaOllama is a convenient tool for running LLM (Large Langu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI LLM Tool Ollama: Architecture and Conversation Processing Flow Analysis">
+<meta property="og:url" content="https://www.whereq.com/2024/11/03/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Overview of Ollama Ollama Architecture Ollama Storage Structure Ollama Conversation Processing Flow Conclusion References:   Overview of OllamaOllama is a convenient tool for running LLM (Large Langu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.whereq.com/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-1.png">
+<meta property="og:image" content="https://www.whereq.com/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-2.png">
+<meta property="og:image" content="https://www.whereq.com/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-3.png">
+<meta property="og:image" content="https://www.whereq.com/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-4.png">
+<meta property="article:published_time" content="2024-11-03T16:02:38.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.whereq.com/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-1.png">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/03/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/03/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/","path":"2024/11/03/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/","title":"AI LLM Tool Ollama: Architecture and Conversation Processing Flow Analysis"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AI LLM Tool Ollama: Architecture and Conversation Processing Flow Analysis | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Overview-of-Ollama"><span class="nav-number">1.</span> <span class="nav-text">Overview of Ollama</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ollama-Architecture"><span class="nav-number">2.</span> <span class="nav-text">Ollama Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ollama-Storage-Structure"><span class="nav-number">3.</span> <span class="nav-text">Ollama Storage Structure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ollama-Conversation-Processing-Flow"><span class="nav-number">4.</span> <span class="nav-text">Ollama Conversation Processing Flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References:</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="AI LLM Tool Ollama: Architecture and Conversation Processing Flow Analysis | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AI LLM Tool Ollama: Architecture and Conversation Processing Flow Analysis
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-03 11:02:38" itemprop="dateCreated datePublished" datetime="2024-11-03T11:02:38-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#overview-of-ollama">Overview of Ollama</a></li>
+<li><a href="#ollama-architecture">Ollama Architecture</a></li>
+<li><a href="#ollama-storage-structure">Ollama Storage Structure</a></li>
+<li><a href="#ollama-conversation-processing-flow">Ollama Conversation Processing Flow</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References:</a></li>
+</ul>
+<p><a name="overview-of-ollama"></a></p>
+<h2 id="Overview-of-Ollama"><a href="#Overview-of-Ollama" class="headerlink" title="Overview of Ollama"></a>Overview of Ollama</h2><p><code>Ollama</code> is a convenient tool for running <code>LLM</code> (Large Language Models) quickly. With <code>Ollama</code>, users can easily interact with large language models without complex environment configurations.</p>
+<p>This article will analyze the overall architecture of <code>Ollama</code> and detail the specific processing flow when users engage in conversations with <code>Ollama</code>.</p>
+<p><a name="ollama-architecture"></a></p>
+<h2 id="Ollama-Architecture"><a href="#Ollama-Architecture" class="headerlink" title="Ollama Architecture"></a>Ollama Architecture</h2><p><img src="/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-1.png" alt="Ollama Architecture"></p>
+<p><code>Ollama</code> employs a classic CS (Client-Server) architecture, where:</p>
+<ul>
+<li><strong>Client</strong>: Interacts with the user via the command line.</li>
+<li><strong>Server</strong>: Can be started via the command line, desktop application (based on the Electron framework), or Docker. Regardless of the startup method, the same executable file is ultimately invoked.</li>
+<li><strong>Communication</strong>: Client and Server communicate using HTTP.</li>
+</ul>
+<p>The <code>Ollama Server</code> consists of two core components:</p>
+<ul>
+<li><strong><code>ollama-http-server</code></strong>: Handles interactions with the client.</li>
+<li><strong><code>llama.cpp</code></strong>: Serves as the LLM inference engine, responsible for loading and running large language models, processing inference requests, and returning results.</li>
+<li><strong>Interaction</strong>: <code>ollama-http-server</code> and <code>llama.cpp</code> also communicate via HTTP.</li>
+</ul>
+<p><strong>Note</strong>: <code>llama.cpp</code> is an independent open-source project that is cross-platform and hardware-friendly, capable of running on devices without GPUs, including Raspberry Pi.</p>
+<p><a name="ollama-storage-structure"></a></p>
+<h2 id="Ollama-Storage-Structure"><a href="#Ollama-Storage-Structure" class="headerlink" title="Ollama Storage Structure"></a>Ollama Storage Structure</h2><p><img src="/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-2.png" alt="Ollama Storage Architecture"></p>
+<p><code>Ollama</code> uses the default local storage folder path <code>$HOME/.ollama</code>. The file structure is as follows:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$HOME/.ollama/</span><br><span class="line">├── blobs/</span><br><span class="line">├── manifests/</span><br><span class="line">├── logs/</span><br><span class="line">│   └── server.log</span><br><span class="line">├── history</span><br><span class="line">├── id_ed25519</span><br><span class="line">└── id_ed25519.pub</span><br></pre></td></tr></table></figure>
+
+<p>Files can be categorized into three types:</p>
+<ul>
+<li><strong>Log Files</strong>: Includes the <code>history</code> file, which records user conversation inputs, and the <code>logs/server.log</code> server log file.</li>
+<li><strong>Key Files</strong>: Includes the <code>id_ed25519</code> private key and <code>id_ed25519.pub</code> public key.</li>
+<li><strong>Model Files</strong>: Includes <code>blobs</code> raw data files and <code>manifests</code> metadata files.</li>
+</ul>
+<p>The metadata files, such as <code>models/manifests/registry.ollama.ai/library/llama3.2/latest</code>, contain the following content:</p>
+<p><img src="/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-3.png" alt="llama3.2-latest"></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;digest&quot;</span><span class="punctuation">:</span> <span class="string">&quot;sha256:abcdef1234567890&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;size&quot;</span><span class="punctuation">:</span> <span class="number">123456789</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;annotations&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;org.opencontainers.image.title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;llama3.2&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;org.opencontainers.image.version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;latest&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>As shown above, <code>manifests</code> files are in JSON format and draw inspiration from the OCI spec (Open Container Initiative Specification) in cloud-native and container domains. The <code>digest</code> field in <code>manifests</code> corresponds to <code>blobs</code>.</p>
+<p><a name="ollama-conversation-processing-flow"></a></p>
+<h2 id="Ollama-Conversation-Processing-Flow"><a href="#Ollama-Conversation-Processing-Flow" class="headerlink" title="Ollama Conversation Processing Flow"></a>Ollama Conversation Processing Flow</h2><p><img src="/images/AI-LLM-Tool-Ollama-Architecture-and-Conversation-Processing-Flow-Analysis/Image-4.png" alt="Ollama Conversation Processing Flow"></p>
+<p>The general flow of a user conversation with <code>Ollama</code> is as follows:</p>
+<ol>
+<li><p><strong>User Initiates Conversation</strong>: The user executes the command <code>ollama run llama3.2</code> via the CLI to start a conversation (<code>llama3.2</code> is an open-source large language model; you can also use other LLMs).</p>
+</li>
+<li><p><strong>Preparation Phase</strong>:</p>
+<ul>
+<li>The CLI client sends an HTTP request to <code>ollama-http-server</code> to fetch model information. The server attempts to read the local <code>manifests</code> metadata files. If not found, it responds with a 404 not found.</li>
+<li>When the model does not exist, the CLI client requests <code>ollama-http-server</code> to pull the model from the remote repository to the local storage.</li>
+<li>The CLI client then requests the model information again.</li>
+</ul>
+</li>
+<li><p><strong>Interactive Conversation Phase</strong>:</p>
+<ul>
+<li>The CLI sends an empty message <code>/api/generate</code> request to <code>ollama-http-server</code>, which internally handles some channel processing (using Go’s channels).</li>
+<li>If the model information contains <code>messages</code>, they are printed. Users can save the current model and session conversation history as a new model, and the conversation history is saved as <code>messages</code>.</li>
+<li>The conversation officially begins: The CLI calls the <code>/api/chat</code> interface to request <code>ollama-http-server</code>, which relies on the <code>llama.cpp</code> engine to load the model and perform inference (<code>llama.cpp</code> also serves as an HTTP server). <code>ollama-http-server</code> first sends a <code>/health</code> request to <code>llama.cpp</code> to confirm its health status, then sends a <code>/completion</code> request to obtain the conversation response, and finally returns it to the CLI for display.</li>
+</ul>
+</li>
+</ol>
+<p>Through the above steps, <code>Ollama</code> completes the interaction between the user and the large language model.</p>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p><code>Ollama</code> integrates the <code>llama.cpp</code> inference engine and further encapsulates it, making complex LLM technology accessible. It provides developers and technical personnel with an efficient and flexible tool, effectively supporting large language model inference and interaction in various application scenarios.</p>
+<p><a name="references"></a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><ul>
+<li>• <a target="_blank" rel="noopener" href="https://github.com/ollama/ollama">https://github.com/ollama/ollama</a></li>
+<li>• <a target="_blank" rel="noopener" href="https://github.com/ggerganov/llama.cpp">https://github.com/ggerganov/llama.cpp</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/02/Troubleshooting-Pod-to-Pod-Communication-in-Kubernetes/" rel="prev" title="Troubleshooting Pod-to-Pod Communication in Kubernetes">
+                  <i class="fa fa-angle-left"></i> Troubleshooting Pod-to-Pod Communication in Kubernetes
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Using-curl/" rel="next" title="Best Practices of Using curl">
+                  Best Practices of Using curl <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

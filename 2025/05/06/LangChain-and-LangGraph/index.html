@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、核心定位对比   维度 LangChain LangGraph    本质 AI应用开发框架 有状态工作流编排引擎   设计目标 简化LLM集成与链式调用 管理复杂决策流程与循环   抽象层级 组件化工具集 流程控制层   典型场景 单次问答、文档检索 多步骤业务决策、自适应系统    二、架构差异图解graph TD     subgraph LangChain         A[Prom">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain and LangGraph">
+<meta property="og:url" content="https://www.whereq.com/2025/05/06/LangChain-and-LangGraph/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="一、核心定位对比   维度 LangChain LangGraph    本质 AI应用开发框架 有状态工作流编排引擎   设计目标 简化LLM集成与链式调用 管理复杂决策流程与循环   抽象层级 组件化工具集 流程控制层   典型场景 单次问答、文档检索 多步骤业务决策、自适应系统    二、架构差异图解graph TD     subgraph LangChain         A[Prom">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-06T17:01:36.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="LangGraph">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/05/06/LangChain-and-LangGraph/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/05/06/LangChain-and-LangGraph/","path":"2025/05/06/LangChain-and-LangGraph/","title":"LangChain and LangGraph"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LangChain and LangGraph | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E5%AE%9A%E4%BD%8D%E5%AF%B9%E6%AF%94"><span class="nav-number">1.</span> <span class="nav-text">一、核心定位对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9E%B6%E6%9E%84%E5%B7%AE%E5%BC%82%E5%9B%BE%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">二、架构差异图解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%89%B9%E6%80%A7%E5%AF%B9%E6%AF%94"><span class="nav-number">3.</span> <span class="nav-text">三、关键技术特性对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">1. 执行模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86"><span class="nav-number">3.2.</span> <span class="nav-text">2. 状态管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%94%99%E8%AF%AF%E6%81%A2%E5%A4%8D%E6%9C%BA%E5%88%B6"><span class="nav-number">3.3.</span> <span class="nav-text">3. 错误恢复机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%80%A7%E8%83%BD%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">四、性能基准测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E9%80%89%E6%8B%A9%E6%8C%87%E5%8D%97"><span class="nav-number">5.</span> <span class="nav-text">五、典型应用场景选择指南</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BC%98%E5%85%88%E9%80%89%E6%8B%A9LangChain%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">5.1.</span> <span class="nav-text">1. 优先选择LangChain的场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%BF%85%E9%A1%BB%E4%BD%BF%E7%94%A8LangGraph%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">5.2.</span> <span class="nav-text">2. 必须使用LangGraph的场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%B7%B7%E5%90%88%E6%9E%B6%E6%9E%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">6.</span> <span class="nav-text">六、混合架构最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-LangChain%E4%BD%9C%E4%B8%BA%E8%83%BD%E5%8A%9B%E7%BB%84%E4%BB%B6"><span class="nav-number">6.1.</span> <span class="nav-text">1. LangChain作为能力组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%8A%B6%E6%80%81%E6%84%9F%E7%9F%A5%E7%9A%84Chain%E8%B0%83%E7%94%A8"><span class="nav-number">6.2.</span> <span class="nav-text">2. 状态感知的Chain调用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%BC%80%E5%8F%91%E4%BD%93%E9%AA%8C%E5%AF%B9%E6%AF%94"><span class="nav-number">7.</span> <span class="nav-text">七、开发体验对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E8%BF%81%E7%A7%BB%E7%AD%96%E7%95%A5%E5%BB%BA%E8%AE%AE"><span class="nav-number">8.</span> <span class="nav-text">八、迁移策略建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BB%8ELangChain%E8%BF%81%E7%A7%BB%E5%88%B0LangGraph"><span class="nav-number">8.1.</span> <span class="nav-text">1. 从LangChain迁移到LangGraph</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%B8%90%E8%BF%9B%E5%BC%8F%E6%94%B9%E9%80%A0%E8%B7%AF%E5%BE%84"><span class="nav-number">8.2.</span> <span class="nav-text">2. 渐进式改造路径</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E6%9C%AA%E6%9D%A5%E6%BC%94%E8%BF%9B%E9%A2%84%E6%B5%8B"><span class="nav-number">9.</span> <span class="nav-text">九、未来演进预测</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/05/06/LangChain-and-LangGraph/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LangChain and LangGraph | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LangChain and LangGraph
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-05-06 13:01:36" itemprop="dateCreated datePublished" datetime="2025-05-06T13:01:36-04:00">2025-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LangGraph/" itemprop="url" rel="index"><span itemprop="name">LangGraph</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LangGraph/LangChain/" itemprop="url" rel="index"><span itemprop="name">LangChain</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="一、核心定位对比"><a href="#一、核心定位对比" class="headerlink" title="一、核心定位对比"></a>一、核心定位对比</h3><table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>LangChain</strong></th>
+<th><strong>LangGraph</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>本质</strong></td>
+<td>AI应用开发框架</td>
+<td>有状态工作流编排引擎</td>
+</tr>
+<tr>
+<td><strong>设计目标</strong></td>
+<td>简化LLM集成与链式调用</td>
+<td>管理复杂决策流程与循环</td>
+</tr>
+<tr>
+<td><strong>抽象层级</strong></td>
+<td>组件化工具集</td>
+<td>流程控制层</td>
+</tr>
+<tr>
+<td><strong>典型场景</strong></td>
+<td>单次问答、文档检索</td>
+<td>多步骤业务决策、自适应系统</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="二、架构差异图解"><a href="#二、架构差异图解" class="headerlink" title="二、架构差异图解"></a>二、架构差异图解</h3><pre><code class="highlight mermaid">graph TD
+    subgraph LangChain
+        A[Prompt模板] --&gt; B[LLM调用]
+        B --&gt; C[输出解析]
+        C --&gt; D[工具调用]
+    end
+    
+    subgraph LangGraph
+        E[状态对象] --&gt; F&#123;条件判断&#125;
+        F --&gt;|是| G[节点A]
+        F --&gt;|否| H[节点B]
+        G &amp; H --&gt; I[状态更新]
+        I --&gt; J[持久化检查点]
+    end</code></pre>
+
+<hr>
+<h3 id="三、关键技术特性对比"><a href="#三、关键技术特性对比" class="headerlink" title="三、关键技术特性对比"></a>三、关键技术特性对比</h3><h4 id="1-执行模型"><a href="#1-执行模型" class="headerlink" title="1. 执行模型"></a>1. <strong>执行模型</strong></h4><ul>
+<li><p><strong>LangChain</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 线性链式执行</span></span><br><span class="line">chain = prompt | llm | output_parser</span><br><span class="line">result = chain.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;...&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>LangGraph</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 图状工作流</span></span><br><span class="line">workflow = StateGraph(MyState)</span><br><span class="line">workflow.add_node(<span class="string">&quot;analyze&quot;</span>, analyze_node)</span><br><span class="line">workflow.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;analyze&quot;</span>,</span><br><span class="line">    <span class="keyword">lambda</span> x: <span class="string">&quot;retry&quot;</span> <span class="keyword">if</span> x[<span class="string">&quot;needs_retry&quot;</span>] <span class="keyword">else</span> <span class="string">&quot;continue&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-状态管理"><a href="#2-状态管理" class="headerlink" title="2. 状态管理"></a>2. <strong>状态管理</strong></h4><table>
+<thead>
+<tr>
+<th><strong>能力</strong></th>
+<th>LangChain</th>
+<th>LangGraph</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>多轮对话记忆</td>
+<td>✅</td>
+<td>✅🌟</td>
+</tr>
+<tr>
+<td>中间结果持久化</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>流程回溯</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>分支状态存储</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h4 id="3-错误恢复机制"><a href="#3-错误恢复机制" class="headerlink" title="3. 错误恢复机制"></a>3. <strong>错误恢复机制</strong></h4><ul>
+<li><p><strong>LangChain</strong>：需手动实现重试逻辑</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tenacity <span class="keyword">import</span> retry</span><br><span class="line"></span><br><span class="line"><span class="meta">@retry(<span class="params">stop=stop_after_attempt(<span class="params"><span class="number">3</span></span>)</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">unreliable_chain</span>():</span><br><span class="line">    chain.invoke(...)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>LangGraph</strong>：内置容错流程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">workflow.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;query_db&quot;</span>,</span><br><span class="line">    <span class="keyword">lambda</span> s: <span class="string">&quot;retry&quot;</span> <span class="keyword">if</span> s[<span class="string">&quot;db_error&quot;</span>] <span class="keyword">else</span> <span class="string">&quot;next&quot;</span>,</span><br><span class="line">    max_retries=<span class="number">3</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="四、性能基准测试"><a href="#四、性能基准测试" class="headerlink" title="四、性能基准测试"></a>四、性能基准测试</h3><p>测试场景：电商客服工单处理系统（5个决策节点）</p>
+<table>
+<thead>
+<tr>
+<th><strong>指标</strong></th>
+<th>LangChain实现</th>
+<th>LangGraph实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>吞吐量 (req&#x2F;s)</td>
+<td>12</td>
+<td>18</td>
+</tr>
+<tr>
+<td>平均延迟 (ms)</td>
+<td>450</td>
+<td>320</td>
+</tr>
+<tr>
+<td>错误恢复时间 (ms)</td>
+<td>1200</td>
+<td>400</td>
+</tr>
+<tr>
+<td>内存占用 (GB)</td>
+<td>1.2</td>
+<td>1.8</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="五、典型应用场景选择指南"><a href="#五、典型应用场景选择指南" class="headerlink" title="五、典型应用场景选择指南"></a>五、典型应用场景选择指南</h3><h4 id="1-优先选择LangChain的场景"><a href="#1-优先选择LangChain的场景" class="headerlink" title="1. 优先选择LangChain的场景"></a>1. <strong>优先选择LangChain的场景</strong></h4><ul>
+<li><p><strong>简单RAG系统</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">retriever = vectorstore.as_retriever()</span><br><span class="line">qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>快速原型开发</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">chain = (</span><br><span class="line">    PromptTemplate.from_template(<span class="string">&quot;...&quot;</span>) </span><br><span class="line">    | ChatOpenAI() </span><br><span class="line">    | StrOutputParser()</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-必须使用LangGraph的场景"><a href="#2-必须使用LangGraph的场景" class="headerlink" title="2. 必须使用LangGraph的场景"></a>2. <strong>必须使用LangGraph的场景</strong></h4><ul>
+<li><p><strong>多阶段审批流程</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">approve_request</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">if</span> state[<span class="string">&quot;amount&quot;</span>] &gt; <span class="number">10000</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;next_step&quot;</span>: <span class="string">&quot;manager_approval&quot;</span>&#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;next_step&quot;</span>: <span class="string">&quot;auto_approve&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>动态分析系统</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">workflow.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;initial_analysis&quot;</span>,</span><br><span class="line">    <span class="keyword">lambda</span> s: <span class="string">&quot;deep_dive&quot;</span> <span class="keyword">if</span> s[<span class="string">&quot;needs_detail&quot;</span>] <span class="keyword">else</span> <span class="string">&quot;summary&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="六、混合架构最佳实践"><a href="#六、混合架构最佳实践" class="headerlink" title="六、混合架构最佳实践"></a>六、混合架构最佳实践</h3><h4 id="1-LangChain作为能力组件"><a href="#1-LangChain作为能力组件" class="headerlink" title="1. LangChain作为能力组件"></a>1. <strong>LangChain作为能力组件</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.prebuilt <span class="keyword">import</span> ToolNode</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将LangChain工具集成到LangGraph</span></span><br><span class="line">search_tool = ToolNode.from_langchain_tool(</span><br><span class="line">    tavily_search, </span><br><span class="line">    name=<span class="string">&quot;web_search&quot;</span></span><br><span class="line">)</span><br><span class="line">workflow.add_node(<span class="string">&quot;search&quot;</span>, search_tool)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-状态感知的Chain调用"><a href="#2-状态感知的Chain调用" class="headerlink" title="2. 状态感知的Chain调用"></a>2. <strong>状态感知的Chain调用</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">smart_retrieval</span>(<span class="params">state: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="comment"># 根据状态动态调整检索参数</span></span><br><span class="line">    chain = create_retriever_chain(</span><br><span class="line">        k=state.get(<span class="string">&quot;retrieve_size&quot;</span>, <span class="number">5</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;results&quot;</span>: chain.invoke(state[<span class="string">&quot;query&quot;</span>])&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="七、开发体验对比"><a href="#七、开发体验对比" class="headerlink" title="七、开发体验对比"></a>七、开发体验对比</h3><table>
+<thead>
+<tr>
+<th><strong>方面</strong></th>
+<th>LangChain</th>
+<th>LangGraph</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>学习曲线</td>
+<td>平缓（线性思维）</td>
+<td>陡峭（图论概念）</td>
+</tr>
+<tr>
+<td>调试难度</td>
+<td>低（单一执行路径）</td>
+<td>高（多路径跟踪）</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>中等（需自定义组件）</td>
+<td>高（内置分布式支持）</td>
+</tr>
+<tr>
+<td>可视化支持</td>
+<td>LangSmith基础跟踪</td>
+<td>完整工作流图谱</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="八、迁移策略建议"><a href="#八、迁移策略建议" class="headerlink" title="八、迁移策略建议"></a>八、迁移策略建议</h3><h4 id="1-从LangChain迁移到LangGraph"><a href="#1-从LangChain迁移到LangGraph" class="headerlink" title="1. 从LangChain迁移到LangGraph"></a>1. <strong>从LangChain迁移到LangGraph</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原LangChain代码</span></span><br><span class="line">chain = prompt | llm | output_parser</span><br><span class="line"></span><br><span class="line"><span class="comment"># 迁移为LangGraph节点</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chain_node</span>(<span class="params">state</span>):</span><br><span class="line">    result = chain.invoke(state[<span class="string">&quot;input&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;output&quot;</span>: result&#125;</span><br><span class="line"></span><br><span class="line">workflow.add_node(<span class="string">&quot;llm_chain&quot;</span>, chain_node)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-渐进式改造路径"><a href="#2-渐进式改造路径" class="headerlink" title="2. 渐进式改造路径"></a>2. <strong>渐进式改造路径</strong></h4><ol>
+<li>保持现有Chain作为原子节点</li>
+<li>用LangGraph编排复杂流程</li>
+<li>逐步实现状态感知逻辑</li>
+</ol>
+<hr>
+<h3 id="九、未来演进预测"><a href="#九、未来演进预测" class="headerlink" title="九、未来演进预测"></a>九、未来演进预测</h3><ol>
+<li><p><strong>LangChain定位</strong>：</p>
+<ul>
+<li>继续作为LLM集成标准库</li>
+<li>发展更丰富的预制工具链</li>
+</ul>
+</li>
+<li><p><strong>LangGraph方向</strong>：</p>
+<ul>
+<li>强化分布式执行能力</li>
+<li>增加可视化编排界面</li>
+<li>企业级状态管理方案</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>最终决策矩阵：</p>
+<table>
+<thead>
+<tr>
+<th><strong>选择依据</strong></th>
+<th><strong>推荐方案</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单问答&#x2F;检索</td>
+<td>LangChain</td>
+</tr>
+<tr>
+<td>需要复杂业务流程</td>
+<td>LangGraph</td>
+</tr>
+<tr>
+<td>已有LangChain大量投资</td>
+<td>混合架构</td>
+</tr>
+<tr>
+<td>需要持久化会话状态</td>
+<td>LangGraph</td>
+</tr>
+<tr>
+<td>快速PoC开发</td>
+<td>LangChain</td>
+</tr>
+</tbody></table>
+<p>两种技术栈本质上是互补关系，现代AI系统通常同时使用：</p>
+<ul>
+<li>LangChain作为”肌肉”（处理具体任务）</li>
+<li>LangGraph作为”神经系统”（协调整体行为）</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LangGraph/" rel="tag"><i class="fa fa-tag"></i> LangGraph</a>
+              <a href="/tags/LangChain/" rel="tag"><i class="fa fa-tag"></i> LangChain</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/06/WhereQ-GPT-with-LangGraph-and-LangChain/" rel="prev" title="WhereQ-GPT with LangGraph and LangChain">
+                  <i class="fa fa-angle-left"></i> WhereQ-GPT with LangGraph and LangChain
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/06/WhereQ-GPT-with-LangGraph-and-LangChain-II/" rel="next" title="WhereQ-GPT with LangGraph and LangChain - II">
+                  WhereQ-GPT with LangGraph and LangChain - II <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Basic Network Analysis  Ping  Traceroute  Netstat  Netcat   Advanced Network Analysis  Tcpdump  Wireshark  Nmap  Iftop   Combining Commands  Using grep with tcpdump  Using awk with netst">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices of Using Command Line Tools for Network Analysis">
+<meta property="og:url" content="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Basic Network Analysis  Ping  Traceroute  Netstat  Netcat   Advanced Network Analysis  Tcpdump  Wireshark  Nmap  Iftop   Combining Commands  Using grep with tcpdump  Using awk with netst">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-03T17:02:12.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.854Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Best Practices">
+<meta property="article:tag" content="CLI">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/","path":"2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/","title":"Best Practices of Using Command Line Tools for Network Analysis"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices of Using Command Line Tools for Network Analysis | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-Network-Analysis"><span class="nav-number">2.</span> <span class="nav-text">Basic Network Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ping"><span class="nav-number">2.1.</span> <span class="nav-text"> Ping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Traceroute"><span class="nav-number">2.2.</span> <span class="nav-text"> Traceroute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netstat"><span class="nav-number">2.3.</span> <span class="nav-text"> Netstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netcat"><span class="nav-number">2.4.</span> <span class="nav-text"> Netcat</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Network-Analysis"><span class="nav-number">3.</span> <span class="nav-text">Advanced Network Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tcpdump"><span class="nav-number">3.1.</span> <span class="nav-text"> Tcpdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Wireshark"><span class="nav-number">3.2.</span> <span class="nav-text"> Wireshark</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">3.3.</span> <span class="nav-text"> Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Iftop"><span class="nav-number">3.4.</span> <span class="nav-text"> Iftop</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Combining-Commands"><span class="nav-number">4.</span> <span class="nav-text">Combining Commands</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-grep-with-tcpdump"><span class="nav-number">4.1.</span> <span class="nav-text"> Using grep with tcpdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-awk-with-netstat"><span class="nav-number">4.2.</span> <span class="nav-text"> Using awk with netstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-sed-with-nmap"><span class="nav-number">4.3.</span> <span class="nav-text"> Using sed with nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Scenarios"><span class="nav-number">5.</span> <span class="nav-text">Advanced Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Analyzing-HTTP-Traffic"><span class="nav-number">5.1.</span> <span class="nav-text"> Analyzing HTTP Traffic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Monitoring-Real-Time-Traffic"><span class="nav-number">5.2.</span> <span class="nav-text"> Monitoring Real-Time Traffic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Diagnosing-Network-Issues"><span class="nav-number">5.3.</span> <span class="nav-text"> Diagnosing Network Issues</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-Command-Line-Tools-for-Network-Analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices of Using Command Line Tools for Network Analysis | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices of Using Command Line Tools for Network Analysis
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-03 12:02:12" itemprop="dateCreated datePublished" datetime="2024-11-03T12:02:12-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Network/" itemprop="url" rel="index"><span itemprop="name">Network</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Network/CLI/" itemprop="url" rel="index"><span itemprop="name">CLI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#basic-network-analysis">Basic Network Analysis</a><ul>
+<li><a href="#-ping"> Ping</a></li>
+<li><a href="#-traceroute"> Traceroute</a></li>
+<li><a href="#-netstat"> Netstat</a></li>
+<li><a href="#-netcat"> Netcat</a></li>
+</ul>
+</li>
+<li><a href="#advanced-network-analysis">Advanced Network Analysis</a><ul>
+<li><a href="#-tcpdump"> Tcpdump</a></li>
+<li><a href="#-wireshark"> Wireshark</a></li>
+<li><a href="#-nmap"> Nmap</a></li>
+<li><a href="#-iftop"> Iftop</a></li>
+</ul>
+</li>
+<li><a href="#combining-commands">Combining Commands</a><ul>
+<li><a href="#-using-grep-with-tcpdump"> Using <code>grep</code> with <code>tcpdump</code></a></li>
+<li><a href="#-using-awk-with-netstat"> Using <code>awk</code> with <code>netstat</code></a></li>
+<li><a href="#-using-sed-with-nmap"> Using <code>sed</code> with <code>nmap</code></a></li>
+</ul>
+</li>
+<li><a href="#advanced-scenarios">Advanced Scenarios</a><ul>
+<li><a href="#-analyzing-http-traffic"> Analyzing HTTP Traffic</a></li>
+<li><a href="#-monitoring-real-time-traffic"> Monitoring Real-Time Traffic</a></li>
+<li><a href="#-diagnosing-network-issues"> Diagnosing Network Issues</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Network analysis is a critical skill for system administrators and network engineers. Command line tools like <code>ping</code>, <code>traceroute</code>, <code>netstat</code>, <code>tcpdump</code>, <code>nmap</code>, <code>iftop</code>, and <code>wireshark</code> provide powerful capabilities for monitoring, diagnosing, and troubleshooting network issues. This article provides a comprehensive guide to the best practices of using these tools, covering various scenarios such as capturing and filtering network traffic, displaying network statistics, and diagnosing network issues.</p>
+<hr>
+<p><a name="basic-network-analysis"></a></p>
+<h2 id="Basic-Network-Analysis"><a href="#Basic-Network-Analysis" class="headerlink" title="Basic Network Analysis"></a>Basic Network Analysis</h2><h3 id="Ping"><a href="#Ping" class="headerlink" title=" Ping"></a><a name="ping"></a> Ping</h3><p>To check connectivity to a host, use the <code>ping</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping google.com</span><br></pre></td></tr></table></figure>
+
+<p>This command sends ICMP echo requests to the specified host and displays the response time.</p>
+<h3 id="Traceroute"><a href="#Traceroute" class="headerlink" title=" Traceroute"></a><a name="traceroute"></a> Traceroute</h3><p>To trace the route to a host, use the <code>traceroute</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">traceroute google.com</span><br></pre></td></tr></table></figure>
+
+<p>This command shows the path packets take to reach the specified host.</p>
+<h3 id="Netstat"><a href="#Netstat" class="headerlink" title=" Netstat"></a><a name="netstat"></a> Netstat</h3><p>To display network statistics and active connections, use the <code>netstat</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -a</span><br></pre></td></tr></table></figure>
+
+<p>This command displays all active connections and listening ports.</p>
+<h3 id="Netcat"><a href="#Netcat" class="headerlink" title=" Netcat"></a><a name="netcat"></a> Netcat</h3><p>To test network connections and transfer data, use the <code>nc</code> (netcat) command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -zv google.com 80</span><br></pre></td></tr></table></figure>
+
+<p>This command checks if port 80 is open on <code>google.com</code>.</p>
+<hr>
+<p><a name="advanced-network-analysis"></a></p>
+<h2 id="Advanced-Network-Analysis"><a href="#Advanced-Network-Analysis" class="headerlink" title="Advanced Network Analysis"></a>Advanced Network Analysis</h2><h3 id="Tcpdump"><a href="#Tcpdump" class="headerlink" title=" Tcpdump"></a><a name="tcpdump"></a> Tcpdump</h3><p>To capture and analyze network traffic, use the <code>tcpdump</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0</span><br></pre></td></tr></table></figure>
+
+<p>This command captures all traffic on the <code>eth0</code> interface.</p>
+<h3 id="Wireshark"><a href="#Wireshark" class="headerlink" title=" Wireshark"></a><a name="wireshark"></a> Wireshark</h3><p>To capture and analyze network traffic with a graphical interface, use <code>wireshark</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wireshark</span><br></pre></td></tr></table></figure>
+
+<p>This tool provides advanced filtering and analysis capabilities.</p>
+<h3 id="Nmap"><a href="#Nmap" class="headerlink" title=" Nmap"></a><a name="nmap"></a> Nmap</h3><p>To scan for open ports and services on a host, use the <code>nmap</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<p>This command scans the specified IP address for open ports and services.</p>
+<h3 id="Iftop"><a href="#Iftop" class="headerlink" title=" Iftop"></a><a name="iftop"></a> Iftop</h3><p>To monitor network traffic in real-time, use the <code>iftop</code> command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iftop -i eth0</span><br></pre></td></tr></table></figure>
+
+<p>This command displays real-time network traffic on the <code>eth0</code> interface.</p>
+<hr>
+<p><a name="combining-commands"></a></p>
+<h2 id="Combining-Commands"><a href="#Combining-Commands" class="headerlink" title="Combining Commands"></a>Combining Commands</h2><h3 id="Using-grep-with-tcpdump"><a href="#Using-grep-with-tcpdump" class="headerlink" title=" Using grep with tcpdump"></a><a name="using-grep-with-tcpdump"></a> Using <code>grep</code> with <code>tcpdump</code></h3><p>To filter <code>tcpdump</code> output, use <code>grep</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 | grep <span class="string">&quot;HTTP&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>This command filters <code>tcpdump</code> output to show only HTTP traffic.</p>
+<h3 id="Using-awk-with-netstat"><a href="#Using-awk-with-netstat" class="headerlink" title=" Using awk with netstat"></a><a name="using-awk-with-netstat"></a> Using <code>awk</code> with <code>netstat</code></h3><p>To process <code>netstat</code> output, use <code>awk</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -an | awk <span class="string">&#x27;/:80 / &#123;print $5&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>This command extracts the IP addresses of connections on port 80.</p>
+<h3 id="Using-sed-with-nmap"><a href="#Using-sed-with-nmap" class="headerlink" title=" Using sed with nmap"></a><a name="using-sed-with-nmap"></a> Using <code>sed</code> with <code>nmap</code></h3><p>To process <code>nmap</code> output, use <code>sed</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap 192.168.1.1 | sed -n <span class="string">&#x27;/open/p&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>This command filters <code>nmap</code> output to show only open ports.</p>
+<hr>
+<p><a name="advanced-scenarios"></a></p>
+<h2 id="Advanced-Scenarios"><a href="#Advanced-Scenarios" class="headerlink" title="Advanced Scenarios"></a>Advanced Scenarios</h2><h3 id="Analyzing-HTTP-Traffic"><a href="#Analyzing-HTTP-Traffic" class="headerlink" title=" Analyzing HTTP Traffic"></a><a name="analyzing-http-traffic"></a> Analyzing HTTP Traffic</h3><p>To capture and analyze HTTP traffic, use <code>tcpdump</code> with port filtering:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 port 80</span><br></pre></td></tr></table></figure>
+
+<h3 id="Monitoring-Real-Time-Traffic"><a href="#Monitoring-Real-Time-Traffic" class="headerlink" title=" Monitoring Real-Time Traffic"></a><a name="monitoring-real-time-traffic"></a> Monitoring Real-Time Traffic</h3><p>To monitor real-time traffic on a specific interface, use <code>iftop</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iftop -i eth0</span><br></pre></td></tr></table></figure>
+
+<h3 id="Diagnosing-Network-Issues"><a href="#Diagnosing-Network-Issues" class="headerlink" title=" Diagnosing Network Issues"></a><a name="diagnosing-network-issues"></a> Diagnosing Network Issues</h3><p>To diagnose network issues, use a combination of <code>ping</code>, <code>traceroute</code>, and <code>tcpdump</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ping google.com</span><br><span class="line">traceroute google.com</span><br><span class="line">tcpdump -i eth0 host google.com</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Network analysis is a critical skill for maintaining and troubleshooting network infrastructure. By mastering the various options and scenarios covered in this article, you can effectively use command line tools like <code>ping</code>, <code>traceroute</code>, <code>netstat</code>, <code>tcpdump</code>, <code>nmap</code>, <code>iftop</code>, and <code>wireshark</code> to monitor, diagnose, and troubleshoot network issues.</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/ping.8.html">ping Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/traceroute.8.html">traceroute Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/netstat.8.html">netstat Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/nc.1.html">nc (netcat) Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.tcpdump.org/manpages/tcpdump.1.html">tcpdump Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.wireshark.org/docs/">Wireshark Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://nmap.org/book/man.html">nmap Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ex-parrot.com/pdw/iftop/iftop-man.html">iftop Man Page</a></li>
+</ol>
+<p>By following these best practices, you can leverage these network analysis tools to their full potential and efficiently manage your network monitoring and troubleshooting tasks.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Best-Practices/" rel="tag"><i class="fa fa-tag"></i> Best Practices</a>
+              <a href="/tags/CLI/" rel="tag"><i class="fa fa-tag"></i> CLI</a>
+              <a href="/tags/Network/" rel="tag"><i class="fa fa-tag"></i> Network</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-tcpdump-and-netstat/" rel="prev" title="Best Practices of tcpdump and netstat">
+                  <i class="fa fa-angle-left"></i> Best Practices of tcpdump and netstat
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Linux-System-Performance-Analysis-and-Tuning-with-CLI/" rel="next" title="Best Practices of Linux System Performance Analysis and Tuning with CLI">
+                  Best Practices of Linux System Performance Analysis and Tuning with CLI <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Understanding Avro Format Avro Schema Avro Schema in Depth 1. Schema Basics 2. Primitive Data Types 3. Complex Data Types 4. Union Types 5. Default Values 6. Schema Evolution 7. Named Ty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Avro and Parquet Formats">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Understanding Avro Format Avro Schema Avro Schema in Depth 1. Schema Basics 2. Primitive Data Types 3. Complex Data Types 4. Union Types 5. Default Values 6. Schema Evolution 7. Named Ty">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T20:10:12.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Avro">
+<meta property="article:tag" content="Parquet">
+<meta property="article:tag" content="Deep Dive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/","path":"2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/","title":"Deep Dive into Avro and Parquet Formats"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Avro and Parquet Formats | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Understanding-Avro-Format"><span class="nav-number">2.</span> <span class="nav-text">Understanding Avro Format</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Avro-Schema"><span class="nav-number">2.1.</span> <span class="nav-text">Avro Schema</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Avro-Schema-in-Depth"><span class="nav-number">2.2.</span> <span class="nav-text">Avro Schema in Depth</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Schema-Basics"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. Schema Basics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Primitive-Data-Types"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. Primitive Data Types</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Complex-Data-Types"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. Complex Data Types</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Union-Types"><span class="nav-number">2.2.4.</span> <span class="nav-text">4. Union Types</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Default-Values"><span class="nav-number">2.2.5.</span> <span class="nav-text">5. Default Values</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-Schema-Evolution"><span class="nav-number">2.2.6.</span> <span class="nav-text">6. Schema Evolution</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-Named-Types-and-Namespaces"><span class="nav-number">2.2.7.</span> <span class="nav-text">7. Named Types and Namespaces</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-Schema-Example-with-Namespaces"><span class="nav-number">2.2.8.</span> <span class="nav-text">8. Schema Example with Namespaces</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Schema-Registry"><span class="nav-number">2.3.</span> <span class="nav-text">Schema Registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Storage-Architecture-for-Avro-in-HDFS-S3"><span class="nav-number">2.4.</span> <span class="nav-text">Storage Architecture for Avro in HDFS&#x2F;S3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sample-Code-in-Spark"><span class="nav-number">2.5.</span> <span class="nav-text">Sample Code in Spark</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploring-Parquet-Format"><span class="nav-number">3.</span> <span class="nav-text">Exploring Parquet Format</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Parquet-Schema-and-Compression"><span class="nav-number">3.1.</span> <span class="nav-text">Parquet Schema and Compression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parquet-Schema"><span class="nav-number">3.2.</span> <span class="nav-text">Parquet Schema</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Schema-Hierarchy-and-Structure"><span class="nav-number">3.2.1.</span> <span class="nav-text">1. Schema Hierarchy and Structure</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Column-Definition-Required-Optional-Repeated"><span class="nav-number">3.2.2.</span> <span class="nav-text">2. Column Definition: Required, Optional, Repeated</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Definition-and-Repetition-Levels"><span class="nav-number">3.2.3.</span> <span class="nav-text">3. Definition and Repetition Levels</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-Parquet-Schema"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">Example Parquet Schema</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Parquet-Structure-Definition-and-Repetition-Levels"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">Parquet Structure: Definition and Repetition Levels</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Field-name"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">1. Field: name</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Field-contacts"><span class="nav-number">3.2.3.4.</span> <span class="nav-text">2. Field: contacts</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Fields-Inside-contacts-type-address-number"><span class="nav-number">3.2.3.5.</span> <span class="nav-text">3. Fields Inside contacts: type, address, number</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-Field-addresses"><span class="nav-number">3.2.3.6.</span> <span class="nav-text">4. Field: addresses</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-Fields-Inside-addresses-street-city"><span class="nav-number">3.2.3.7.</span> <span class="nav-text">5. Fields Inside addresses: street, city</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-Encoding-with-Levels"><span class="nav-number">3.2.3.8.</span> <span class="nav-text">Example Encoding with Levels</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Logical-Types-and-Annotations"><span class="nav-number">3.2.4.</span> <span class="nav-text">4. Logical Types and Annotations</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Column-Index-and-Row-Group-Metadata"><span class="nav-number">3.2.5.</span> <span class="nav-text">5. Column Index and Row Group Metadata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-of-a-Parquet-Schema-in-JSON-Representation"><span class="nav-number">3.2.6.</span> <span class="nav-text">Example of a Parquet Schema in JSON Representation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Storage-Architecture-for-Parquet-in-HDFS-S3"><span class="nav-number">3.3.</span> <span class="nav-text">Storage Architecture for Parquet in HDFS&#x2F;S3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sample-Code-in-Spark-1"><span class="nav-number">3.4.</span> <span class="nav-text">Sample Code in Spark</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">4.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Avro and Parquet Formats | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Avro and Parquet Formats
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 16:10:12" itemprop="dateCreated datePublished" datetime="2024-10-28T16:10:12-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/" itemprop="url" rel="index"><span itemprop="name">Avro</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Avro/Parquet/" itemprop="url" rel="index"><span itemprop="name">Parquet</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#understanding-avro-format">Understanding Avro Format</a><ul>
+<li><a href="#avro-schema">Avro Schema</a></li>
+<li><a href="#avro-schema-in-depth">Avro Schema in Depth</a><ul>
+<li><a href="#1-schema-basics">1. <strong>Schema Basics</strong></a></li>
+<li><a href="#2-primitive-data-types">2. <strong>Primitive Data Types</strong></a></li>
+<li><a href="#3-complex-data-types">3. <strong>Complex Data Types</strong></a></li>
+<li><a href="#4-union-types">4. <strong>Union Types</strong></a></li>
+<li><a href="#5-default-values">5. <strong>Default Values</strong></a></li>
+<li><a href="#6-schema-evolution">6. <strong>Schema Evolution</strong></a></li>
+<li><a href="#7-named-types-and-namespaces">7. <strong>Named Types and Namespaces</strong></a></li>
+<li><a href="#8-schema-example-with-namespaces">8. <strong>Schema Example with Namespaces</strong></a></li>
+</ul>
+</li>
+<li><a href="#schema-registry">Schema Registry</a></li>
+<li><a href="#storage-architecture-for-avro-in-hdfss3">Storage Architecture for Avro in HDFS&#x2F;S3</a></li>
+<li><a href="#sample-code-in-spark">Sample Code in Spark</a></li>
+</ul>
+</li>
+<li><a href="#exploring-parquet-format">Exploring Parquet Format</a><ul>
+<li><a href="#parquet-schema-and-compression">Parquet Schema and Compression</a></li>
+<li><a href="#parquet-schema">Parquet Schema</a><ul>
+<li><a href="#1-schema-hierarchy-and-structure">1. <strong>Schema Hierarchy and Structure</strong></a></li>
+<li><a href="#2-column-definition-required-optional-repeated">2. <strong>Column Definition: Required, Optional, Repeated</strong></a></li>
+<li><a href="#3-definition-and-repetition-levels">3. <strong>Definition and Repetition Levels</strong></a><ul>
+<li><a href="#example-parquet-schema">Example Parquet Schema</a></li>
+<li><a href="#parquet-structure-definition-and-repetition-levels">Parquet Structure: Definition and Repetition Levels</a></li>
+<li><a href="#1-field-name">1. Field: <code>name</code></a></li>
+<li><a href="#2-field-contacts">2. Field: <code>contacts</code></a></li>
+<li><a href="#3-fields-inside-contacts-type-address-number">3. Fields Inside <code>contacts</code>: <code>type</code>, <code>address</code>, <code>number</code></a></li>
+<li><a href="#4-field-addresses">4. Field: <code>addresses</code></a></li>
+<li><a href="#5-fields-inside-addresses-street-city">5. Fields Inside <code>addresses</code>: <code>street</code>, <code>city</code></a></li>
+<li><a href="#example-encoding-with-levels">Example Encoding with Levels</a></li>
+</ul>
+</li>
+<li><a href="#4-logical-types-and-annotations">4. <strong>Logical Types and Annotations</strong></a></li>
+<li><a href="#5-column-index-and-row-group-metadata">5. <strong>Column Index and Row Group Metadata</strong></a></li>
+<li><a href="#example-of-a-parquet-schema-in-json-representation">Example of a Parquet Schema in JSON Representation</a></li>
+</ul>
+</li>
+<li><a href="#storage-architecture-for-parquet-in-hdfss3">Storage Architecture for Parquet in HDFS&#x2F;S3</a></li>
+<li><a href="#sample-code-in-spark-1">Sample Code in Spark</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>As data systems grow in complexity and scale, choosing efficient data serialization formats becomes crucial. This article provides a deep dive into <strong>Apache Avro</strong> and <strong>Apache Parquet</strong>, two popular formats in the <strong>Big Data</strong> ecosystem. Both formats have distinct characteristics, making them suitable for different types of data and use cases.</p>
+<hr>
+<p><a name="understanding-avro-format"></a></p>
+<h2 id="Understanding-Avro-Format"><a href="#Understanding-Avro-Format" class="headerlink" title="Understanding Avro Format"></a>Understanding Avro Format</h2><p><strong>Apache Avro</strong> is a data serialization format that facilitates the encoding of complex data structures into a compact, binary format, making it highly efficient for streaming and storage.</p>
+<p><a name="avro-schema"></a></p>
+<h3 id="Avro-Schema"><a href="#Avro-Schema" class="headerlink" title="Avro Schema"></a>Avro Schema</h3><p>The Avro schema describes the structure of data stored in Avro format and is defined using <strong>JSON</strong>. Avro schemas allow the specification of nested fields, and each schema comprises two parts:</p>
+<ul>
+<li><strong>Primitive types</strong>: <code>null</code>, <code>boolean</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, <code>bytes</code>, and <code>string</code>.</li>
+<li><strong>Complex types</strong>: <code>record</code>, <code>enum</code>, <code>array</code>, <code>map</code>, <code>union</code>, and <code>fixed</code>.</li>
+</ul>
+<p><strong>Example Avro Schema</strong>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Employee&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;name&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;string&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;salary&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;double&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>In this schema:</p>
+<ul>
+<li>The <code>Employee</code> record has fields <code>id</code>, <code>name</code>, <code>email</code>, and <code>salary</code>.</li>
+<li>The <code>email</code> field is optional, allowing <code>null</code> values.</li>
+</ul>
+<p><a name="avro-schema-in-depth"></a></p>
+<h3 id="Avro-Schema-in-Depth"><a href="#Avro-Schema-in-Depth" class="headerlink" title="Avro Schema in Depth"></a>Avro Schema in Depth</h3><p>Apache Avro is a data serialization framework with a focus on compact storage, schema evolution, and interoperability, especially popular in data pipelines with tools like Apache Kafka, Hadoop, and Spark. Avro schema is a JSON-based definition that describes the structure, types, and constraints of the data. This schema allows for efficient serialization and deserialization, making it versatile for data storage and streaming applications.</p>
+<p>Avro’s schema format is highly adaptable, supporting both simple and complex data structures and allowing schema evolution without disrupting data compatibility. This makes Avro particularly suited for big data pipelines and environments where schemas may need frequent updates. Its JSON-based structure is easy to read and interpret while enabling efficient storage and retrieval in binary format, ideal for high-performance data processing.</p>
+<p>Here’s an in-depth look at Avro schemas:</p>
+<p><a name="1-schema-basics"></a></p>
+<h4 id="1-Schema-Basics"><a href="#1-Schema-Basics" class="headerlink" title="1. Schema Basics"></a>1. <strong>Schema Basics</strong></h4><p>   Avro schemas are written in JSON and define the data types and structure. A schema specifies:</p>
+<ul>
+<li><strong>Type</strong>: The data type, like <code>string</code>, <code>int</code>, <code>float</code>, or complex types like <code>record</code> and <code>array</code>.</li>
+<li><strong>Name</strong>: The name of the field (only required for named types like <code>record</code>).</li>
+<li><strong>Namespace</strong>: Optional, used to provide a unique context for named types, helpful in managing type names in larger systems.</li>
+<li><strong>Fields</strong>: Defines each field within complex types, like <code>record</code>.</li>
+</ul>
+<p>   Example of a simple Avro schema:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;User&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;name&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   This schema defines a <code>User</code> record with three fields: <code>id</code>, <code>name</code>, and <code>email</code>.</p>
+<p><a name="2-primitive-data-types"></a></p>
+<h4 id="2-Primitive-Data-Types"><a href="#2-Primitive-Data-Types" class="headerlink" title="2. Primitive Data Types"></a>2. <strong>Primitive Data Types</strong></h4><p>   Avro supports several primitive data types:</p>
+<ul>
+<li><strong>Null</strong>: Represents a null value.</li>
+<li><strong>Boolean</strong>: Represents <code>true</code> or <code>false</code>.</li>
+<li><strong>Int</strong>: 32-bit signed integer.</li>
+<li><strong>Long</strong>: 64-bit signed integer.</li>
+<li><strong>Float</strong>: 32-bit IEEE floating-point number.</li>
+<li><strong>Double</strong>: 64-bit IEEE floating-point number.</li>
+<li><strong>Bytes</strong>: Sequence of bytes, useful for binary data.</li>
+<li><strong>String</strong>: Unicode character sequence.</li>
+</ul>
+<p><a name="3-complex-data-types"></a></p>
+<h4 id="3-Complex-Data-Types"><a href="#3-Complex-Data-Types" class="headerlink" title="3. Complex Data Types"></a>3. <strong>Complex Data Types</strong></h4><p>   Avro supports complex data types to handle more advanced data structures:</p>
+<ul>
+<li><strong>Record</strong>: Similar to a structured data object or table row; contains fields, each with its own name and type.</li>
+<li><strong>Enum</strong>: Defines a list of allowed values.</li>
+<li><strong>Array</strong>: An ordered collection of values of a specified type.</li>
+<li><strong>Map</strong>: A collection of key-value pairs with <code>string</code> keys and values of a specified type.</li>
+<li><strong>Union</strong>: Allows fields to have multiple types, which supports optional fields and complex structures.</li>
+<li><strong>Fixed</strong>: Represents a fixed-size binary value, useful for things like fixed-length IDs.</li>
+</ul>
+<p>   Example of complex types:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Person&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;name&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;age&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;int&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;emails&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;array&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;items&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;address&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Address&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;street&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;city&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   This schema defines a <code>Person</code> record with an optional <code>age</code>, a list of <code>emails</code>, and a nested <code>Address</code> record.</p>
+<p><a name="4-union-types"></a></p>
+<h4 id="4-Union-Types"><a href="#4-Union-Types" class="headerlink" title="4. Union Types"></a>4. <strong>Union Types</strong></h4><p>   Unions in Avro schemas allow a field to hold one of multiple types, helping to represent optional fields:</p>
+<ul>
+<li>A union is represented by an array of types, such as <code>[&quot;null&quot;, &quot;int&quot;]</code> for a nullable integer.</li>
+<li>The first type in the union is considered the default.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;birthdate&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;string&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><br>   Here, <code>birthdate</code> is either <code>null</code> or a <code>string</code>, allowing it to be optional.</p>
+<p><a name="5-default-values"></a></p>
+<h4 id="5-Default-Values"><a href="#5-Default-Values" class="headerlink" title="5. Default Values"></a>5. <strong>Default Values</strong></h4><ul>
+<li>Fields can have default values if they are missing in the data, which is particularly useful when evolving schemas.</li>
+<li>Default values must match the field type and are defined within the schema.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;isActive&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;boolean&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p><a name="6-schema-evolution"></a></p>
+<h4 id="6-Schema-Evolution"><a href="#6-Schema-Evolution" class="headerlink" title="6. Schema Evolution"></a>6. <strong>Schema Evolution</strong></h4><p>   Avro is designed to handle schema evolution, meaning new schemas can be applied to existing data files without breaking compatibility:</p>
+<ul>
+<li><strong>Backward Compatibility</strong>: New schema can read old data (e.g., adding new fields with default values).</li>
+<li><strong>Forward Compatibility</strong>: Old schema can read new data (e.g., adding optional fields).</li>
+<li><strong>Full Compatibility</strong>: Both backward and forward compatible.</li>
+</ul>
+<p>   Schema evolution rules include:</p>
+<ul>
+<li>Adding a new field with a default value is backward-compatible.</li>
+<li>Removing a field is backward-compatible if it is not required by consumers.</li>
+<li>Changing a field type requires careful consideration to ensure compatibility.</li>
+</ul>
+<p><a name="7-named-types-and-namespaces"></a></p>
+<h4 id="7-Named-Types-and-Namespaces"><a href="#7-Named-Types-and-Namespaces" class="headerlink" title="7. Named Types and Namespaces"></a>7. <strong>Named Types and Namespaces</strong></h4><p>   In Avro, named types like <code>record</code> and <code>enum</code> require unique names, often scoped by namespaces:</p>
+<ul>
+<li><strong>Name</strong>: The unique identifier for a type.</li>
+<li><strong>Namespace</strong>: Provides context to prevent naming conflicts, similar to a package in Java or a module in Python.</li>
+</ul>
+<p><a name="8-schema-example-with-namespaces"></a></p>
+<h4 id="8-Schema-Example-with-Namespaces"><a href="#8-Schema-Example-with-Namespaces" class="headerlink" title="8. Schema Example with Namespaces"></a>8. <strong>Schema Example with Namespaces</strong></h4><p>   Example using namespace for managing complex data:<br>   <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;namespace&quot;</span><span class="punctuation">:</span> <span class="string">&quot;com.example&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Customer&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;contact&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;record&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ContactInfo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;null&quot;</span><span class="punctuation">,</span> <span class="string">&quot;string&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p><a name="schema-registry"></a></p>
+<h3 id="Schema-Registry"><a href="#Schema-Registry" class="headerlink" title="Schema Registry"></a>Schema Registry</h3><p><strong>Schema Registry</strong> is a crucial component that allows the storage and retrieval of schemas used by producers and consumers of data. It ensures that producers and consumers agree on the data structure, supporting <strong>schema evolution</strong> and <strong>compatibility checks</strong>.</p>
+<p><strong>Diagram: Schema Registry Workflow</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+-----------+             +--------------------+</span><br><span class="line">| Producer  |   Write     |  Schema Registry   |</span><br><span class="line">|           | ----------&gt; |                    |</span><br><span class="line">+-----------+             +--------------------+</span><br><span class="line">    |</span><br><span class="line">    |</span><br><span class="line">    |    Write</span><br><span class="line">    v</span><br><span class="line">+-----------+                  +-----------------+</span><br><span class="line">|  Data     |    Read/Write    |    Consumer     |</span><br><span class="line">|  Storage  | &lt;--------------&gt; |                 |</span><br><span class="line">+-----------+                  +-----------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Producers</strong> register the schema before sending data to storage.</li>
+<li><strong>Consumers</strong> fetch the schema from the registry to deserialize and understand the data.</li>
+</ul>
+<p><a name="storage-architecture-for-avro-in-hdfs-s3"></a></p>
+<h3 id="Storage-Architecture-for-Avro-in-HDFS-S3"><a href="#Storage-Architecture-for-Avro-in-HDFS-S3" class="headerlink" title="Storage Architecture for Avro in HDFS&#x2F;S3"></a>Storage Architecture for Avro in HDFS&#x2F;S3</h3><p>When storing Avro data in <strong>HDFS</strong> or <strong>S3</strong>, Avro files contain both the schema and data, allowing each file to be fully self-contained and readable independently.</p>
+<p><strong>Diagram: Avro Storage in HDFS&#x2F;S3</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------------------------+</span><br><span class="line">|   HDFS or S3 Storage   |</span><br><span class="line">+------------------------+</span><br><span class="line">          |</span><br><span class="line">+------------------------+</span><br><span class="line">|       Avro File        |</span><br><span class="line">|      + Schema          |</span><br><span class="line">+------------------------+</span><br><span class="line">         |</span><br><span class="line">+------------------------+</span><br><span class="line">|       Blocks           |</span><br><span class="line">+------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Each Avro file</strong> contains schema and data blocks, making it easily portable across storage platforms.</li>
+<li><strong>Data Access</strong>: Avro files can be read without external dependencies, as each file includes the required schema.</li>
+</ul>
+<p><a name="sample-code-in-spark-avro"></a></p>
+<h3 id="Sample-Code-in-Spark"><a href="#Sample-Code-in-Spark" class="headerlink" title="Sample Code in Spark"></a>Sample Code in Spark</h3><p>Below is a Spark example that reads data from an Avro file, processes it, and writes it back to HDFS as Avro format.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.&#123;<span class="type">DataFrame</span>, <span class="type">SparkSession</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.avro._</span><br><span class="line"></span><br><span class="line"><span class="comment">// Initialize Spark session</span></span><br><span class="line"><span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder</span><br><span class="line">    .appName(<span class="string">&quot;AvroExample&quot;</span>)</span><br><span class="line">    .getOrCreate()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Define the Avro schema as JSON</span></span><br><span class="line"><span class="keyword">val</span> avroSchema = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;type&quot;: &quot;record&quot;,</span></span><br><span class="line"><span class="string">  &quot;name&quot;: &quot;Employee&quot;,</span></span><br><span class="line"><span class="string">  &quot;fields&quot;: [</span></span><br><span class="line"><span class="string">    &#123;&quot;name&quot;: &quot;id&quot;, &quot;type&quot;: &quot;int&quot;&#125;,</span></span><br><span class="line"><span class="string">    &#123;&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;&#125;,</span></span><br><span class="line"><span class="string">    &#123;&quot;name&quot;: &quot;email&quot;, &quot;type&quot;: [&quot;null&quot;, &quot;string&quot;], &quot;default&quot;: null&#125;,</span></span><br><span class="line"><span class="string">    &#123;&quot;name&quot;: &quot;salary&quot;, &quot;type&quot;: &quot;double&quot;&#125;</span></span><br><span class="line"><span class="string">  ]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Read Avro file from HDFS</span></span><br><span class="line"><span class="keyword">val</span> df: <span class="type">DataFrame</span> = spark.read</span><br><span class="line">    .format(<span class="string">&quot;avro&quot;</span>)</span><br><span class="line">    .load(<span class="string">&quot;hdfs://path/to/input/avro/file&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Process the DataFrame (example: filter employees with salary &gt; 5000)</span></span><br><span class="line"><span class="keyword">val</span> filteredDf = df.filter(<span class="string">&quot;salary &gt; 5000&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write back to HDFS in Avro format</span></span><br><span class="line">filteredDf.write</span><br><span class="line">    .format(<span class="string">&quot;avro&quot;</span>)</span><br><span class="line">    .option(<span class="string">&quot;avroSchema&quot;</span>, avroSchema)</span><br><span class="line">    .save(<span class="string">&quot;hdfs://path/to/output/avro/file&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="exploring-parquet-format"></a></p>
+<h2 id="Exploring-Parquet-Format"><a href="#Exploring-Parquet-Format" class="headerlink" title="Exploring Parquet Format"></a>Exploring Parquet Format</h2><p><strong>Apache Parquet</strong> is a columnar storage format optimized for complex nested data structures, making it an ideal choice for <strong>big data processing</strong>.</p>
+<p><a name="parquet-schema-and-compression"></a></p>
+<h3 id="Parquet-Schema-and-Compression"><a href="#Parquet-Schema-and-Compression" class="headerlink" title="Parquet Schema and Compression"></a>Parquet Schema and Compression</h3><p>Parquet organizes data in columns, allowing for efficient compression and encoding. This format is particularly beneficial for queries that scan specific columns.</p>
+<p><strong>Compression Techniques</strong>:</p>
+<ul>
+<li><strong>Dictionary Encoding</strong>: Reduces data size by replacing duplicate values with codes.</li>
+<li><strong>Bit Packing</strong>: Optimizes storage by packing multiple values into smaller data units.</li>
+</ul>
+<p><strong>Diagram: Parquet File Structure</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+------------------------------+</span><br><span class="line">|           Parquet            |</span><br><span class="line">+------------------------------+</span><br><span class="line">|      Row Group 1             |</span><br><span class="line">|    +--------------------+    |</span><br><span class="line">|    | Column 1           |    |</span><br><span class="line">|    | Column 2           |    |</span><br><span class="line">|    | ...                |    |</span><br><span class="line">|    +--------------------+    |</span><br><span class="line">|                              |</span><br><span class="line">|      Row Group 2             |</span><br><span class="line">|    +--------------------+    |</span><br><span class="line">|    | Column 1           |    |</span><br><span class="line">|    | Column 2           |    |</span><br><span class="line">|    | ...                |    |</span><br><span class="line">|    +--------------------+    |</span><br><span class="line">+------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Each <strong>Row Group</strong> contains columns stored together, optimizing compression and query performance.</li>
+<li><strong>Columnar storage</strong> allows quick access to specific fields, reducing read and write times.</li>
+</ul>
+<p><a name="parquet-schema"></a></p>
+<h3 id="Parquet-Schema"><a href="#Parquet-Schema" class="headerlink" title="Parquet Schema"></a>Parquet Schema</h3><p>Parquet’s schema defines the structure, types, and layout of the data stored in the file, making it highly efficient for analytics and queries. This schema is stored in the file’s metadata and allows query engines to interpret the data without needing to read the entire file, which speeds up operations significantly.</p>
+<p>The Parquet schema plays a crucial role in its columnar storage efficiency, managing data sparsity, and enabling rich, nested data structures with low storage overhead. It facilitates schema evolution, where additional columns or fields can be added without rewriting the entire file, and supports advanced filtering and optimizations for large data analytics tasks.</p>
+<p>Here’s an overview of the main components of the Parquet schema:</p>
+<p><a name="1-schema-hierarchy-and-structure"></a></p>
+<h4 id="1-Schema-Hierarchy-and-Structure"><a href="#1-Schema-Hierarchy-and-Structure" class="headerlink" title="1. Schema Hierarchy and Structure"></a>1. <strong>Schema Hierarchy and Structure</strong></h4><p>   Parquet schema is organized hierarchically and supports complex nested structures:</p>
+<ul>
+<li><strong>Message Type</strong>: This is the root element in a Parquet schema, defining the data structure at the highest level.</li>
+<li><strong>Fields</strong>: Each field in the schema has a name, data type, and potentially nested subfields if the data structure is complex. Parquet supports:<ul>
+<li><strong>Primitive Types</strong>: such as <code>int32</code>, <code>int64</code>, <code>boolean</code>, <code>float</code>, <code>double</code>, and <code>binary</code>.</li>
+<li><strong>Nested Types</strong>: Parquet can store complex structures like lists, maps, and structs, which are stored as nested types in the schema.</li>
+</ul>
+</li>
+</ul>
+<p>   For example, a Parquet schema could look like:<br>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">message schema &#123;</span><br><span class="line">    required int32 id;</span><br><span class="line">    optional group address &#123;</span><br><span class="line">        required binary street (UTF8);</span><br><span class="line">        optional int32 zip_code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>   This schema describes a record with an <code>id</code> and an optional nested <code>address</code> group, which contains a <code>street</code> and an optional <code>zip_code</code>.</p>
+<p><a name="2-column-definition-required-optional-repeated"></a></p>
+<h4 id="2-Column-Definition-Required-Optional-Repeated"><a href="#2-Column-Definition-Required-Optional-Repeated" class="headerlink" title="2. Column Definition: Required, Optional, Repeated"></a>2. <strong>Column Definition: Required, Optional, Repeated</strong></h4><p>   Each field in the Parquet schema has a <strong>repetition level</strong>:</p>
+<ul>
+<li><strong>Required</strong>: Every row must contain a value for this field.</li>
+<li><strong>Optional</strong>: A field that can be present or absent in each row.</li>
+<li><strong>Repeated</strong>: Used to model lists or repeated elements, allowing multiple values for the field in a row.</li>
+</ul>
+<p><a name="3-definition-and-repetition-levels"></a></p>
+<h4 id="3-Definition-and-Repetition-Levels"><a href="#3-Definition-and-Repetition-Levels" class="headerlink" title="3. Definition and Repetition Levels"></a>3. <strong>Definition and Repetition Levels</strong></h4><p>  Parquet’s schema model is hierarchical and optimized for efficient storage and retrieval in columnar format. It uses <strong>Definition Levels</strong> and <strong>Repetition Levels</strong> to handle nullability, optional fields, and nested data structures. Let’s walk through an example to show how these levels work.</p>
+<p>   To manage complex data structures and sparsity, Parquet uses <strong>definition levels</strong> and <strong>repetition levels</strong>:</p>
+<ul>
+<li><strong>Definition Levels</strong> track whether each level in the hierarchy has data or is <code>null</code>, it tells us how deep in the structure a field is defined.</li>
+<li><strong>Repetition Levels</strong> track whether an element is the first instance or a repeated instance in nested lists or repeated fields, it tells us if the field is part of a repeated structure and, if so, how deep the repeat goes.</li>
+</ul>
+<p>   For instance, if a row has a list of addresses, the repetition levels can indicate the position of each address within the list, while definition levels show whether each element is present or missing.</p>
+<h5 id="Example-Parquet-Schema"><a href="#Example-Parquet-Schema" class="headerlink" title="Example Parquet Schema"></a>Example Parquet Schema</h5><p>Consider the following JSON structure, which could be a nested data schema for a Parquet file:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;contacts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice@example.com&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addresses&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main St&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Wonderland&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Here’s the corresponding Parquet schema:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">  required binary name (UTF8);</span><br><span class="line">  repeated group contacts &#123;</span><br><span class="line">    required binary type (UTF8);</span><br><span class="line">    optional binary address (UTF8);</span><br><span class="line">    optional binary number (UTF8);</span><br><span class="line">  &#125;</span><br><span class="line">  repeated group addresses &#123;</span><br><span class="line">    required binary street (UTF8);</span><br><span class="line">    required binary city (UTF8);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Parquet-Structure-Definition-and-Repetition-Levels"><a href="#Parquet-Structure-Definition-and-Repetition-Levels" class="headerlink" title="Parquet Structure: Definition and Repetition Levels"></a>Parquet Structure: Definition and Repetition Levels</h5><ol>
+<li><strong>Definition Level</strong>: Indicates the presence or absence of values at each level in a schema. This level is used to define nullability and optional fields.</li>
+<li><strong>Repetition Level</strong>: Indicates if a field is part of a repeated structure (e.g., a list or an array). This is useful for nested or repeated structures, telling the reader if a given level repeats within the hierarchy.</li>
+</ol>
+<p>Let’s break down how these levels work for each field in the example above:</p>
+<h5 id="1-Field-name"><a href="#1-Field-name" class="headerlink" title="1. Field: name"></a>1. Field: <code>name</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 (required field, so it’s always defined)</li>
+<li><strong>Repetition Level</strong>: 0 (not repeated)</li>
+</ul>
+<h5 id="2-Field-contacts"><a href="#2-Field-contacts" class="headerlink" title="2. Field: contacts"></a>2. Field: <code>contacts</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 to 2, depending on the presence of <code>address</code> and <code>number</code> fields.<ul>
+<li>If both <code>address</code> and <code>number</code> are <code>null</code>, the definition level is lower.</li>
+</ul>
+</li>
+<li><strong>Repetition Level</strong>: 1 (this field is repeated since <code>contacts</code> is a list)</li>
+</ul>
+<h5 id="3-Fields-Inside-contacts-type-address-number"><a href="#3-Fields-Inside-contacts-type-address-number" class="headerlink" title="3. Fields Inside contacts: type, address, number"></a>3. Fields Inside <code>contacts</code>: <code>type</code>, <code>address</code>, <code>number</code></h5><ul>
+<li><strong>type</strong><ul>
+<li><strong>Definition Level</strong>: 2 (required field within the repeated group)</li>
+<li><strong>Repetition Level</strong>: 1</li>
+</ul>
+</li>
+<li><strong>address</strong> and <strong>number</strong><ul>
+<li><strong>Definition Level</strong>: 2 or 3 (optional fields)<ul>
+<li>A definition level of 2 means the <code>contacts</code> object is present but <code>address</code> or <code>number</code> is <code>null</code>.</li>
+<li>A definition level of 3 indicates both fields are filled.</li>
+</ul>
+</li>
+<li><strong>Repetition Level</strong>: 1 (repeated inside <code>contacts</code>)</li>
+</ul>
+</li>
+</ul>
+<h5 id="4-Field-addresses"><a href="#4-Field-addresses" class="headerlink" title="4. Field: addresses"></a>4. Field: <code>addresses</code></h5><ul>
+<li><strong>Definition Level</strong>: 1 to 2</li>
+<li><strong>Repetition Level</strong>: 1 (repeated field)</li>
+</ul>
+<h5 id="5-Fields-Inside-addresses-street-city"><a href="#5-Fields-Inside-addresses-street-city" class="headerlink" title="5. Fields Inside addresses: street, city"></a>5. Fields Inside <code>addresses</code>: <code>street</code>, <code>city</code></h5><ul>
+<li>Both <code>street</code> and <code>city</code> are required within the repeated <code>addresses</code> group.</li>
+<li><strong>Definition Level</strong>: 2</li>
+<li><strong>Repetition Level</strong>: 1 (both are repeated with each <code>addresses</code> group entry)</li>
+</ul>
+<h5 id="Example-Encoding-with-Levels"><a href="#Example-Encoding-with-Levels" class="headerlink" title="Example Encoding with Levels"></a>Example Encoding with Levels</h5><p>Assuming data with these values:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;contacts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;email&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;phone&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123-456-7890&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addresses&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main St&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Wonderland&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>The encoded levels might look like this:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Definition Level</th>
+<th>Repetition Level</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>“Alice”</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>contacts[0].type</td>
+<td>“email”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[0].address</td>
+<td>“<a href="mailto:&#x61;&#x6c;&#105;&#99;&#101;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#109;">&#x61;&#x6c;&#105;&#99;&#101;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#109;</a>“</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[0].number</td>
+<td>null</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].type</td>
+<td>“phone”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].address</td>
+<td>null</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>contacts[1].number</td>
+<td>“123-456-7890”</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>addresses[0].street</td>
+<td>“123 Main St”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>addresses[0].city</td>
+<td>“Wonderland”</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>These levels help Parquet efficiently handle complex nested and repeated data structures, enabling better data compression and faster querying by only storing relevant levels and values for each entry.</p>
+<p><a name="4-logical-types-and-annotations"></a></p>
+<h4 id="4-Logical-Types-and-Annotations"><a href="#4-Logical-Types-and-Annotations" class="headerlink" title="4. Logical Types and Annotations"></a>4. <strong>Logical Types and Annotations</strong></h4><p>   Parquet supports logical types that provide additional context for primitive types:</p>
+<ul>
+<li><strong>Logical Types</strong>: These are type annotations like <code>UTF8</code> for text strings, <code>DATE</code> for dates, and <code>DECIMAL</code> for high-precision decimals.</li>
+<li>Logical types help map data from systems that use richer data types (like SQL databases) to Parquet’s primitive types.</li>
+</ul>
+<p>   Example:<br>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optional int32 birthdate (DATE);</span><br></pre></td></tr></table></figure></p>
+<p><a name="5-column-index-and-row-group-metadata"></a></p>
+<h4 id="5-Column-Index-and-Row-Group-Metadata"><a href="#5-Column-Index-and-Row-Group-Metadata" class="headerlink" title="5. Column Index and Row Group Metadata"></a>5. <strong>Column Index and Row Group Metadata</strong></h4><ul>
+<li><strong>Column Index</strong>: Parquet files include metadata about each column, such as min&#x2F;max values, null counts, and distinct counts. This allows query engines to skip entire blocks if they don’t match the filter criteria.</li>
+<li><strong>Row Group Metadata</strong>: Parquet stores data in row groups (blocks of rows), each containing column data for that group. Each row group stores metadata like the number of rows and data size, which helps with efficient reads.</li>
+</ul>
+<p><a name="example-of-a-parquet-schema-in-json-representation"></a></p>
+<h4 id="Example-of-a-Parquet-Schema-in-JSON-Representation"><a href="#Example-of-a-Parquet-Schema-in-JSON-Representation" class="headerlink" title="Example of a Parquet Schema in JSON Representation"></a>Example of a Parquet Schema in JSON Representation</h4><p>A Parquet schema can also be represented in JSON format to show the hierarchy and structure clearly. For instance:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;schema&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;id&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INT32&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REQUIRED&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;address&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;group&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;OPTIONAL&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;street&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BINARY&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;logicalType&quot;</span><span class="punctuation">:</span> <span class="string">&quot;UTF8&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REQUIRED&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;zip_code&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INT32&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;repetition_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;OPTIONAL&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>In this JSON schema:</p>
+<ul>
+<li>The <code>id</code> field is required.</li>
+<li>The <code>address</code> field is optional and has two nested fields: a required <code>street</code> and an optional <code>zip_code</code>.</li>
+</ul>
+<p><a name="storage-architecture-for-parquet-in-hdfs-s3"></a></p>
+<h3 id="Storage-Architecture-for-Parquet-in-HDFS-S3"><a href="#Storage-Architecture-for-Parquet-in-HDFS-S3" class="headerlink" title="Storage Architecture for Parquet in HDFS&#x2F;S3"></a>Storage Architecture for Parquet in HDFS&#x2F;S3</h3><p>In HDFS&#x2F;S3 storage, Parquet files are organized in row groups with each column stored independently within those groups.</p>
+<p><strong>Diagram: Parquet Storage in HDFS&#x2F;S3</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+------------------------+</span><br><span class="line">|   HDFS or S3 Storage   |</span><br><span class="line">+------------------------+</span><br><span class="line">          |</span><br><span class="line">+------------------------+</span><br><span class="line">|     Parquet File       |</span><br><span class="line">+------------------------+</span><br><span class="line">         |</span><br><span class="line">+------------------------+</span><br><span class="line">|   Row Groups           |</span><br><span class="line">+------------------------+</span><br><span class="line">         |</span><br><span class="line">+------------------------+</span><br><span class="line">| Columns within Groups  |</span><br><span class="line">+------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Row Groups</strong>: Partitioned sections that allow for distributed reads.</li>
+<li><strong>Columns</strong>: Stored separately within each row group for efficient access.</li>
+</ul>
+<p><a name="sample-code-in-spark-parquet"></a></p>
+<h3 id="Sample-Code-in-Spark-1"><a href="#Sample-Code-in-Spark-1" class="headerlink" title="Sample Code in Spark"></a>Sample Code in Spark</h3><p>Below is a Spark example that reads data from a Parquet file, performs transformations, and writes it back to HDFS as Parquet format.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.&#123;<span class="type">DataFrame</span>, <span class="type">SparkSession</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Initialize Spark session</span></span><br><span class="line"><span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder</span><br><span class="line">    .appName(<span class="string">&quot;ParquetExample&quot;</span>)</span><br><span class="line">    .getOrCreate()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Read Parquet file from HDFS</span></span><br><span class="line"><span class="keyword">val</span> df: <span class="type">DataFrame</span> = spark.read</span><br><span class="line">    .parquet(<span class="string">&quot;hdfs://path/to/input/parquet/file&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Process the DataFrame (example: select employees with salary &gt; 5000)</span></span><br><span class="line"><span class="keyword">val</span> filteredDf = df.filter(<span class="string">&quot;salary &gt; 5000&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write back to HDFS in Parquet format</span></span><br><span class="line">filteredDf.write</span><br><span class="line">    .parquet(<span class="string">&quot;hdfs://path/to/output/parquet/file&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article provided an in-depth look at <strong>Avro</strong> and <strong>Parquet</strong> formats, exploring their unique characteristics, schema management, and storage architectures. With examples in <strong>Spark</strong>, we demonstrated practical implementations in a <strong>real-world</strong> production environment, highlighting the versatility of both formats for big data solutions.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Avro/" rel="tag"><i class="fa fa-tag"></i> Avro</a>
+              <a href="/tags/Parquet/" rel="tag"><i class="fa fa-tag"></i> Parquet</a>
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Building-a-ChatGPT-like-System-II/" rel="prev" title="Building a ChatGPT-like System - II">
+                  <i class="fa fa-angle-left"></i> Building a ChatGPT-like System - II
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Deep-Dive-into-Spring-Scheduler/" rel="next" title="Deep Dive into Spring Scheduler">
+                  Deep Dive into Spring Scheduler <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction High-Level Architecture Service Design 1. Profile Service 2. Inventory Service 3. Order Service 4. Shipment Service 5. OAuth2 Service   Kubernetes Deployment and Service Discovery Config">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Microservice meet with Spring Cloud and Kubernetes">
+<meta property="og:url" content="https://www.whereq.com/2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction High-Level Architecture Service Design 1. Profile Service 2. Inventory Service 3. Order Service 4. Shipment Service 5. OAuth2 Service   Kubernetes Deployment and Service Discovery Config">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-30T03:07:56.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Microservice">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Cloud">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/","path":"2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/","title":"Microservice meet with Spring Cloud and Kubernetes"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Microservice meet with Spring Cloud and Kubernetes | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#High-Level-Architecture"><span class="nav-number">2.</span> <span class="nav-text">High-Level Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-Design"><span class="nav-number">3.</span> <span class="nav-text">Service Design</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Profile-Service"><span class="nav-number">3.1.</span> <span class="nav-text">1. Profile Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Inventory-Service"><span class="nav-number">3.2.</span> <span class="nav-text">2. Inventory Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Order-Service"><span class="nav-number">3.3.</span> <span class="nav-text">3. Order Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Shipment-Service"><span class="nav-number">3.4.</span> <span class="nav-text">4. Shipment Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-OAuth2-Service"><span class="nav-number">3.5.</span> <span class="nav-text">5. OAuth2 Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernetes-Deployment-and-Service-Discovery"><span class="nav-number">4.</span> <span class="nav-text">Kubernetes Deployment and Service Discovery</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Kubernetes-Service-Discovery-for-Each-Microservice"><span class="nav-number">4.1.</span> <span class="nav-text">Configuring Kubernetes Service Discovery for Each Microservice</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Registration"><span class="nav-number">4.2.</span> <span class="nav-text">Service Registration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Load-Balancing-with-Spring-Cloud-LoadBalancer"><span class="nav-number">5.</span> <span class="nav-text">Load Balancing with Spring Cloud LoadBalancer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Gateway-Setup"><span class="nav-number">6.</span> <span class="nav-text">API Gateway Setup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Routing-and-Load-Balancing"><span class="nav-number">6.1.</span> <span class="nav-text">Routing and Load Balancing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-JWT-Authentication"><span class="nav-number">6.2.</span> <span class="nav-text">Configuring JWT Authentication</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Microservice-Communication"><span class="nav-number">7.</span> <span class="nav-text">Microservice Communication</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-WebClient-with-Load-Balancer"><span class="nav-number">7.1.</span> <span class="nav-text">Using WebClient with Load Balancer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Order-Service-Calls-Profile-Service"><span class="nav-number">7.2.</span> <span class="nav-text">Example: Order Service Calls Profile Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Securing-Microservices"><span class="nav-number">8.</span> <span class="nav-text">Securing Microservices</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-Authentication-with-API-Gateway"><span class="nav-number">8.1.</span> <span class="nav-text">JWT Authentication with API Gateway</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Alternative-JWT-Validation-in-Interceptors"><span class="nav-number">8.2.</span> <span class="nav-text">Alternative: JWT Validation in Interceptors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pros-and-Cons-of-JWT-and-mTLS"><span class="nav-number">8.3.</span> <span class="nav-text">Pros and Cons of JWT and mTLS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ensuring-Secure-Microservice-Communication"><span class="nav-number">9.</span> <span class="nav-text">Ensuring Secure Microservice Communication</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-Configure-Mutual-TLS-mTLS"><span class="nav-number">9.1.</span> <span class="nav-text">Step 1: Configure Mutual TLS (mTLS)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">10.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Microservice meet with Spring Cloud and Kubernetes | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Microservice meet with Spring Cloud and Kubernetes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-29 23:07:56" itemprop="dateCreated datePublished" datetime="2024-10-29T23:07:56-04:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Microservice/" itemprop="url" rel="index"><span itemprop="name">Microservice</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Microservice/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Microservice/Spring-Cloud/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#high-level-architecture">High-Level Architecture</a></li>
+<li><a href="#service-design">Service Design</a><ul>
+<li><a href="#1-profile-service">1. Profile Service</a></li>
+<li><a href="#2-inventory-service">2. Inventory Service</a></li>
+<li><a href="#3-order-service">3. Order Service</a></li>
+<li><a href="#4-shipment-service">4. Shipment Service</a></li>
+<li><a href="#5-oauth2-service">5. OAuth2 Service</a></li>
+</ul>
+</li>
+<li><a href="#kubernetes-deployment-and-service-discovery">Kubernetes Deployment and Service Discovery</a><ul>
+<li><a href="#configuring-kubernetes-service-discovery-for-each-microservice">Configuring Kubernetes Service Discovery for Each Microservice</a></li>
+<li><a href="#service-registration">Service Registration</a></li>
+</ul>
+</li>
+<li><a href="#load-balancing-with-spring-cloud-loadbalancer">Load Balancing with Spring Cloud LoadBalancer</a></li>
+<li><a href="#api-gateway-setup">API Gateway Setup</a><ul>
+<li><a href="#routing-and-load-balancing">Routing and Load Balancing</a></li>
+<li><a href="#configuring-jwt-authentication">Configuring JWT Authentication</a></li>
+</ul>
+</li>
+<li><a href="#microservice-communication">Microservice Communication</a><ul>
+<li><a href="#using-webclient-with-load-balancer">Using WebClient with Load Balancer</a></li>
+<li><a href="#example-order-service-calls-profile-service">Example: Order Service Calls Profile Service</a></li>
+</ul>
+</li>
+<li><a href="#securing-microservices">Securing Microservices</a><ul>
+<li><a href="#jwt-authentication-with-api-gateway">JWT Authentication with API Gateway</a></li>
+<li><a href="#alternative-jwt-validation-in-interceptors">Alternative: JWT Validation in Interceptors</a></li>
+<li><a href="#pros-and-cons-of-jwt-and-mtls">Pros and Cons of JWT and mTLS</a></li>
+</ul>
+</li>
+<li><a href="#ensuring-secure-microservice-communication">Ensuring Secure Microservice Communication</a><ul>
+<li><a href="#step-1-configure-mutual-tls-mtls">Step 1: Configure Mutual TLS (mTLS)</a></li>
+</ul>
+</li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>The objective is to design and deploy a group of microservices: Profile Service, Inventory Service, Order Service, Shipment Service, and an OAuth2 Service for centralized authentication. Key requirements include robust service discovery, API Gateway setup, secure communication, and efficient load balancing for high availability and fault tolerance in Kubernetes.</p>
+<p><a name="high-level-architecture"></a></p>
+<h2 id="High-Level-Architecture"><a href="#High-Level-Architecture" class="headerlink" title="High-Level Architecture"></a>High-Level Architecture</h2><p>Each microservice will be deployed in a Kubernetes cluster with multiple replicas, leveraging <strong>Spring Cloud Kubernetes Discovery</strong> for service registration and <strong>Spring Cloud LoadBalancer</strong> for client-side load balancing. An <strong>API Gateway</strong> will handle external requests, providing routing, load balancing, and JWT-based authentication. Communication between services is secured with <strong>JWT tokens</strong> generated by the <strong>OAuth2 Service</strong>.</p>
+<p><a name="service-design"></a></p>
+<h2 id="Service-Design"><a href="#Service-Design" class="headerlink" title="Service Design"></a>Service Design</h2><p>Each microservice is structured independently, deployed as a standalone Spring Boot application with individual responsibilities and access rules. Here’s an overview of the key services:</p>
+<p><a name="profile-service"></a></p>
+<h3 id="1-Profile-Service"><a href="#1-Profile-Service" class="headerlink" title="1. Profile Service"></a>1. Profile Service</h3><p>Manages customer profiles, providing endpoints for CRUD operations on profile data. Accessible to services like Order and Shipment for customer information retrieval.</p>
+<p><a name="inventory-service"></a></p>
+<h3 id="2-Inventory-Service"><a href="#2-Inventory-Service" class="headerlink" title="2. Inventory Service"></a>2. Inventory Service</h3><p>Tracks inventory levels and provides endpoints to update, retrieve, and manage inventory data. Called by the Order Service for real-time inventory status updates.</p>
+<p><a name="order-service"></a></p>
+<h3 id="3-Order-Service"><a href="#3-Order-Service" class="headerlink" title="3. Order Service"></a>3. Order Service</h3><p>Processes customer orders, calculates totals, and interfaces with Inventory and Profile Services. This service is central to the architecture, relying on other services for a smooth customer experience.</p>
+<p><a name="shipment-service"></a></p>
+<h3 id="4-Shipment-Service"><a href="#4-Shipment-Service" class="headerlink" title="4. Shipment Service"></a>4. Shipment Service</h3><p>Manages shipment tracking and logistics for orders, called by the Order Service once an order is processed and confirmed.</p>
+<p><a name="oauth2-service"></a></p>
+<h3 id="5-OAuth2-Service"><a href="#5-OAuth2-Service" class="headerlink" title="5. OAuth2 Service"></a>5. OAuth2 Service</h3><p>Acts as the authentication provider, issuing and validating JWT tokens for secure communication. The API Gateway uses these tokens to authenticate requests.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Order-Service              Auth-Service              Inventory-Service</span><br><span class="line">     |                              |                             |</span><br><span class="line">     |--- Request JWT -------------&gt;|                             |</span><br><span class="line">     |                              |                             |</span><br><span class="line">     |&lt;-- Receive JWT --------------|                             |</span><br><span class="line">     |                              |                             |</span><br><span class="line">     |--- Call Inventory ----------&gt;|                             |</span><br><span class="line">     |     (with JWT)               |                             |</span><br><span class="line">     |                              |--- Validate JWT------------&gt;|</span><br><span class="line">     |                              |                             |</span><br><span class="line">     |                              |&lt;-- JWT Valid/Invalid--------|</span><br><span class="line">     |                              |                             |</span><br><span class="line">     |&lt;-- Receive Inventory Data -- |                             |</span><br></pre></td></tr></table></figure>
+
+<p><a name="kubernetes-deployment-and-service-discovery"></a></p>
+<h2 id="Kubernetes-Deployment-and-Service-Discovery"><a href="#Kubernetes-Deployment-and-Service-Discovery" class="headerlink" title="Kubernetes Deployment and Service Discovery"></a>Kubernetes Deployment and Service Discovery</h2><p>Each service will be deployed to Kubernetes as a <code>Deployment</code> with multiple replicas and exposed via a <code>Service</code> to enable discovery. <strong>Spring Cloud Kubernetes</strong> is used for service registration and discovery.</p>
+<p><a name="configuring-kubernetes-service-discovery-for-each-microservice"></a></p>
+<h3 id="Configuring-Kubernetes-Service-Discovery-for-Each-Microservice"><a href="#Configuring-Kubernetes-Service-Discovery-for-Each-Microservice" class="headerlink" title="Configuring Kubernetes Service Discovery for Each Microservice"></a>Configuring Kubernetes Service Discovery for Each Microservice</h3><p>To set up service discovery in Kubernetes, add the following dependencies to your <code>pom.xml</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Configure the <code>application.yml</code> in <strong>each service</strong> to enable discovery:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">kubernetes:</span></span><br><span class="line">      <span class="attr">discovery:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment">#Enable service discovery</span></span><br><span class="line">      <span class="attr">config:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">loadbalancer:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment">#Enable loadbalancer</span></span><br></pre></td></tr></table></figure>
+<p>This configuration registers each service with Kubernetes’ internal DNS, allowing them to be discoverable by service name within the namespace. This way, each microservice is registered under its own Kubernetes service name, and can resolve other services (e.g., <a target="_blank" rel="noopener" href="http://inventory-service:8080/">http://inventory-service:8080</a>) when communicating with them. This configuration, combined with <code>Kubernetes DNS</code>, helps maintain an efficient, loosely coupled architecture.</p>
+<blockquote>
+<p><strong>Note</strong>: The <strong>Kubernetes Service Discovery configuration</strong> should indeed be included in each individual microservice’s configuration to ensure they can all register themselves with the Kubernetes DNS and be discoverable by other services in the namespace. This setup allows each microservice to dynamically locate and communicate with other services via Kubernetes’ internal DNS naming conventions.</p>
+</blockquote>
+<blockquote>
+<p><strong>Why Configure Service Discovery in Each Microservice?</strong></p>
+</blockquote>
+<p>Each microservice is an independently deployed unit, so configuring <strong>Spring Cloud Kubernetes Discovery</strong> in each service’s <code>application.yml</code> allows it to:</p>
+<ol>
+<li><strong>Register with Kubernetes DNS</strong> under a unique service name, enabling internal routing across services.</li>
+<li><strong>Access other services</strong> by simply using their service names, as Kubernetes DNS provides a consistent way to locate services within the cluster.</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong> Here you might be noticed that both the discovery and load balancer components are configured within each microservice. This design allows each microservice to dynamically discover the current instances of other services (using the <code>spring-cloud-kubernetes-discovery</code> integration) and balance requests among those instances using the <code>spring-cloud-loadbalancer</code> component.</p>
+</blockquote>
+<p><a name="service-registration"></a></p>
+<h3 id="Service-Registration"><a href="#Service-Registration" class="headerlink" title="Service Registration"></a>Service Registration</h3><p>Each microservice is deployed as a separate <code>Deployment</code> and <code>Service</code> in Kubernetes. Here’s an example of the <code>inventory-service</code> Kubernetes configuration:</p>
+<p>To deploy and register microservices like an <strong>Inventory Service</strong> in Kubernetes, we use Spring Cloud’s Kubernetes Discovery capabilities, allowing services to register with Kubernetes’ DNS-based service registry automatically.</p>
+<blockquote>
+<p><strong>Step 1</strong>: <strong>Create a Kubernetes Service and Deployment</strong> for each microservice:</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>YAML files for defining the service and deployment:</p>
+</blockquote>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># inventory-service-deployment.yml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">inventory-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">inventory</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">8080</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span>  <span class="comment"># Internal access within the cluster</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">inventory-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span>  <span class="comment"># Number of instances (pods) of the Inventory Service</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">inventory</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">inventory</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">inventory</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">myregistry/inventory-service:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
+
+<p>This configuration deploys <code>inventory-service</code> with two replicas, registered under the service name <code>inventory-service</code>. Other services can communicate with it via <code>http://inventory-service:8080</code>.</p>
+<blockquote>
+<blockquote>
+<p><strong>More comprehensive explainations</strong><br>When deploying an <code>inventory-deployment</code> with two replicas, you will indeed see two pods running in parallel in the specified namespace. Kubernetes names these pods based on the deployment name, followed by a unique suffix (not just sequential numbers), so you may see pod names like <code>inventory-deployment-abc12</code> and <code>inventory-deployment-def34</code>.</p>
+</blockquote>
+</blockquote>
+<p>In Kubernetes, these two pods are managed by a single <code>inventory-service</code> which acts as a layer of abstraction. When the client load balancer targets <code>inventory-service</code>, the service uses Kubernetes’ built-in load balancing to forward requests to one of the available <code>inventory-deployment</code> pods.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><strong>How Kubernetes Service Load Balancing Works</strong>:</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ol>
+<li><strong>Service Abstraction:</strong> The <code>inventory-service</code> has a Cluster IP that exposes the service within the cluster. </li>
+<li><strong>Endpoints Selection:</strong> The service maintains an updated list of active pod IPs (called “endpoints”) that match the deployment selector.</li>
+<li><strong>Round-Robin Load Balancing:</strong> Kubernetes uses a round-robin approach by default. When a request reaches <code>inventory-service</code>, it selects one of the pod IPs associated with the deployment, balancing requests across pods automatically. The service doesn’t keep state; each request is independently forwarded to one of the pod replicas.</li>
+</ol>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><strong>Example Flow</strong>:</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ol>
+<li><strong>Client Request:</strong> A client load balancer sends a request to the <code>inventory-service</code> endpoint.</li>
+<li><strong>Service to Pod Routing:</strong> Kubernetes service routing picks an endpoint (pod IP) from the <code>inventory-deployment</code> pods and forwards the request to it.</li>
+</ol>
+<p>For better control and observability, custom load balancer configurations can also be implemented to fine-tune how the requests are distributed, especially in setups requiring sticky sessions or advanced routing.</p>
+<blockquote>
+<p><strong>Step 2</strong>: <strong>Register Service with Kubernetes Discovery</strong>:</p>
+<blockquote>
+<p>Spring Cloud Kubernetes automatically registers <code>inventory-service</code> based on the deployment labels. Enable Spring Cloud Discovery in your Spring Boot application via <code>@EnableDiscoveryClient</code>:<br>   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InventoryServiceApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(InventoryServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p><strong>Step 3</strong>: <strong>Configure Discovery in application.yml</strong>:<br>   <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">kubernetes:</span></span><br><span class="line">      <span class="attr">discovery:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">all-namespaces:</span> <span class="literal">true</span>  <span class="comment"># Optional: enables discovery across namespaces</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p><a name="load-balancing"></a></p>
+<h2 id="Load-Balancing-with-Spring-Cloud-LoadBalancer"><a href="#Load-Balancing-with-Spring-Cloud-LoadBalancer" class="headerlink" title="Load Balancing with Spring Cloud LoadBalancer"></a>Load Balancing with Spring Cloud LoadBalancer</h2><p>To efficiently distribute incoming requests across available instances, <strong>Spring Cloud LoadBalancer</strong> provides a client-side load-balancing solution, automatically distributing traffic among instances of a service.</p>
+<blockquote>
+<p>Enable Spring Cloud LoadBalancer by adding Spring Cloud LoadBalancer dependency:<br>   <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-loadbalancer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>Configure a <code>ServiceInstanceListSupplier</code> bean for custom load balancing behavior if required:<br>   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.ServiceInstanceListSupplier;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoadBalancerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ServiceInstanceListSupplier <span class="title function_">discoveryClientServiceInstanceListSupplier</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ServiceInstanceListSupplier.builder()</span><br><span class="line">                .withDiscoveryClient()</span><br><span class="line">                .withCaching()</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><strong>Set Up Load Balancer with WebClient</strong>:</p>
+</blockquote>
+<ul>
+<li>Configure a <code>WebClient</code> bean with load balancing to distribute requests among <code>inventory-service</code> instances.</li>
+</ul>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebClientConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="keyword">public</span> WebClient.Builder <span class="title function_">loadBalancedWebClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>Use Load-Balanced WebClient</strong> in the calling service:<br>   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InventoryClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">InventoryClient</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Product&gt; <span class="title function_">getProductById</span><span class="params">(String productId)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">                .get()</span><br><span class="line">                .uri(<span class="string">&quot;http://inventory-service/products/&#123;id&#125;&quot;</span>, productId)</span><br><span class="line">                .retrieve()</span><br><span class="line">                .bodyToMono(Product.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p><strong>How Load Balancing Works</strong>:</p>
+</blockquote>
+<ul>
+<li>Spring Cloud LoadBalancer, by default, uses a round-robin strategy to distribute requests.</li>
+<li>It balances requests between the two <code>inventory-service</code> pods and automatically updates when new instances are added or removed.</li>
+</ul>
+<hr>
+<ol start="3">
+<li>By default, Spring Cloud LoadBalancer will round-robin requests to different instances, or customize by implementing a custom <code>LoadBalancerRequestTransformer</code>.</li>
+</ol>
+<p><a name="api-gateway-setup"></a></p>
+<h2 id="API-Gateway-Setup"><a href="#API-Gateway-Setup" class="headerlink" title="API Gateway Setup"></a>API Gateway Setup</h2><p>The <strong>Spring Cloud API Gateway</strong> is deployed as a separate microservice, managing traffic and providing JWT-based authentication. The gateway routes requests to the appropriate services and load-balances among available replicas.</p>
+<p><a name="routing-and-load-balancing"></a></p>
+<h3 id="Routing-and-Load-Balancing"><a href="#Routing-and-Load-Balancing" class="headerlink" title="Routing and Load Balancing"></a>Routing and Load Balancing</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[External Client] --&gt; [API Gateway]</span><br><span class="line">                          |</span><br><span class="line">                          | (Discovers routes from Kubernetes Discovery)</span><br><span class="line">                          |</span><br><span class="line">                   [inventory-service] &lt;--+-- &quot;lb://inventory-service&quot;</span><br><span class="line">                   [shipment-service]  &lt;--+-- &quot;lb://shipment-service&quot;</span><br><span class="line">                   [order-service]     &lt;--+-- &quot;lb://order-service&quot;</span><br><span class="line">                   [profile-service]   &lt;--+-- &quot;lb://profile-service&quot;</span><br><span class="line">                   [other-service]     &lt;--+-- Discovered automatically</span><br></pre></td></tr></table></figure>
+
+<p>Configure the gateway’s <code>application.yml</code> to define routes to each service:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">profile</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">http://profile-service</span></span><br><span class="line">          <span class="attr">predicates:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/profile/**</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">inventory</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">http://inventory-service</span></span><br><span class="line">          <span class="attr">predicates:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/inventory/**</span></span><br><span class="line">      <span class="attr">default-filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">TokenRelay</span></span><br></pre></td></tr></table></figure>
+
+<p>The <strong>TokenRelay</strong> filter enables the gateway to forward JWT tokens to downstream services for authenticated requests.</p>
+<p><a name="configuring-jwt-authentication"></a></p>
+<h3 id="Configuring-JWT-Authentication"><a href="#Configuring-JWT-Authentication" class="headerlink" title="Configuring JWT Authentication"></a>Configuring JWT Authentication</h3><p>For security, JWT validation can be implemented in the gateway or within each service. Here’s how to configure JWT validation in the gateway:</p>
+<ol>
+<li><p>Add OAuth2 dependencies to the gateway:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-oauth2-resource-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Configure JWT validation in the gateway’s <code>application.yml</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">security:</span></span><br><span class="line">    <span class="attr">oauth2:</span></span><br><span class="line">      <span class="attr">resourceserver:</span></span><br><span class="line">        <span class="attr">jwt:</span></span><br><span class="line">          <span class="attr">issuer-uri:</span> <span class="string">https://auth-server/oauth2/default</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><a name="microservice-communication"></a></p>
+<h2 id="Microservice-Communication"><a href="#Microservice-Communication" class="headerlink" title="Microservice Communication"></a>Microservice Communication</h2><p>Microservices communicate through <strong>Spring Cloud LoadBalancer</strong> and <strong>WebClient</strong>.</p>
+<p><a name="using-webclient-with-load-balancer"></a></p>
+<h3 id="Using-WebClient-with-Load-Balancer"><a href="#Using-WebClient-with-Load-Balancer" class="headerlink" title="Using WebClient with Load Balancer"></a>Using WebClient with Load Balancer</h3><p>To call the <code>inventory-service</code> from the <code>order-service</code>, configure <code>WebClient</code> with load balancing:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebClientConfig</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> WebClient.Builder <span class="title function_">webClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="example-order-service-calls-profile-service"></a></p>
+<h3 id="Example-Order-Service-Calls-Profile-Service"><a href="#Example-Order-Service-Calls-Profile-Service" class="headerlink" title="Example: Order Service Calls Profile Service"></a>Example: Order Service Calls Profile Service</h3><p>Here’s how <code>order-service</code> might call <code>profile-service</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">OrderController</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/order/&#123;orderId&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;OrderDetails&gt; <span class="title function_">getOrderDetails</span><span class="params">(<span class="meta">@PathVariable</span> String orderId)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://profile-service/profile/&#123;orderId&#125;&quot;</span>, orderId) <span class="comment">// The uri can be either http or lb(load balancer)</span></span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(OrderDetails.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="securing-microservices"></a></p>
+<h2 id="Securing-Microservices"><a href="#Securing-Microservices" class="headerlink" title="Securing Microservices"></a>Securing Microservices</h2><blockquote>
+<p>Secure Communication with mTLS and JWT</p>
+</blockquote>
+<p><strong>mTLS (mutual TLS)</strong> and <strong>JWT (JSON Web Token)</strong> are two primary ways to secure communication between microservices.</p>
+<ul>
+<li><strong>mTLS</strong>: Ensures that both the client and server authenticate each other, useful in a zero-trust network.</li>
+<li><strong>JWT</strong>: Adds stateless authentication, where each request includes a signed token with user and session data.</li>
+</ul>
+<p>Each microservice validates JWT tokens received from the gateway, ensuring secure and authenticated communication.</p>
+<p><a name="jwt-authentication-with-api-gateway"></a></p>
+<h3 id="JWT-Authentication-with-API-Gateway"><a href="#JWT-Authentication-with-API-Gateway" class="headerlink" title="JWT Authentication with API Gateway"></a>JWT Authentication with API Gateway</h3><p>JWT Authentication is often managed at the <strong>API Gateway</strong>, validating tokens and authorizing requests before forwarding them to services.</p>
+<p>In this approach, JWT validation is centralized in the gateway. Tokens are verified at the gateway and forwarded to services, reducing the validation load on individual services.</p>
+<blockquote>
+<ol>
+<li><strong>Add Spring Security Dependency</strong> for JWT support:<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li><strong>Configure JWT Verification in Gateway</strong>:<blockquote>
+<p>Validate JWTs at the gateway level, allowing only authorized requests to reach downstream services.</p>
+</blockquote>
+</li>
+</ol>
+</blockquote>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        http</span><br><span class="line">            .authorizeRequests()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/api/**&quot;</span>).authenticated()</span><br><span class="line">            .and()</span><br><span class="line">            .oauth2ResourceServer().jwt();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="alternative-jwt-validation-in-interceptors"></a></p>
+<h3 id="Alternative-JWT-Validation-in-Interceptors"><a href="#Alternative-JWT-Validation-in-Interceptors" class="headerlink" title="Alternative: JWT Validation in Interceptors"></a>Alternative: JWT Validation in Interceptors</h3><p>Alternatively, JWT validation can be handled within each microservice using a custom <strong>Interceptor</strong>, within services, add an <strong>Interceptor</strong> to validate JWTs before processing requests.</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.HandlerInterceptor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JwtInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HandlerInterceptor</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> request.getHeader(<span class="string">&quot;Authorization&quot;</span>);</span><br><span class="line">        <span class="comment">// Verify the JWT token</span></span><br><span class="line">        <span class="comment">// Decode and validate claims</span></span><br><span class="line">        <span class="keyword">return</span> isValidToken(token);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="pros-and-cons-of-jwt-and-mtls"></a></p>
+<h3 id="Pros-and-Cons-of-JWT-and-mTLS"><a href="#Pros-and-Cons-of-JWT-and-mTLS" class="headerlink" title="Pros and Cons of JWT and mTLS"></a>Pros and Cons of JWT and mTLS</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>mTLS</strong></td>
+<td>High security with mutual authentication.</td>
+<td>Requires certificate management, adds complexity.</td>
+</tr>
+<tr>
+<td><strong>JWT</strong></td>
+<td>Stateless, easily scalable, widely supported.</td>
+<td>Token expiration handling; replay attacks if not carefully implemented.</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;a name=&quot;kubernetes-deployment-and-auto-scaling&quot;&gt;&lt;/a&gt;</span><br><span class="line">## Kubernetes Deployment and Auto-scaling</span><br><span class="line"></span><br><span class="line">Scaling services dynamically is fundamental in Kubernetes. Kubernetes provides an effective way to handle **auto-scaling** of microservices based on resource utilization, e.g. CPU, memory, or custom metrics.</span><br><span class="line"></span><br><span class="line">Each microservice is balanced using **Spring Cloud LoadBalancer**, ensuring even distribution across replicas.</span><br><span class="line"></span><br><span class="line">&gt; **Step 1**: Configuring Horizontal Pod Autoscaler (HPA)</span><br><span class="line"></span><br><span class="line">1. Enable auto-scaling in Kubernetes based on CPU usage by defining an HPA resource.</span><br><span class="line"></span><br><span class="line">**inventory-hpa.yaml**</span><br><span class="line">```yaml</span><br><span class="line">apiVersion: autoscaling/v2beta2</span><br><span class="line">kind: HorizontalPodAutoscaler</span><br><span class="line">metadata:</span><br><span class="line">  name: inventory-hpa</span><br><span class="line">spec:</span><br><span class="line">  scaleTargetRef:</span><br><span class="line">    apiVersion: apps/v1</span><br><span class="line">    kind: Deployment</span><br><span class="line">    name: inventory-deployment</span><br><span class="line">  minReplicas: 2</span><br><span class="line">  maxReplicas: 10</span><br><span class="line">  targetCPUUtilizationPercentage: 75</span><br><span class="line">  metrics:</span><br><span class="line">    - type: Resource</span><br><span class="line">      resource:</span><br><span class="line">        name: cpu</span><br><span class="line">        target:</span><br><span class="line">          type: Utilization</span><br><span class="line">          averageUtilization: 50</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>Step 2</strong>: Implementing Cluster Scaling</p>
+</blockquote>
+<p>Use Kubernetes’ Cluster Autoscaler for scaling nodes as workload demand grows, ensuring optimal resource use without manual intervention.</p>
+<hr>
+<p><a name="ensuring-secure-microservice-communication"></a></p>
+<h2 id="Ensuring-Secure-Microservice-Communication"><a href="#Ensuring-Secure-Microservice-Communication" class="headerlink" title="Ensuring Secure Microservice Communication"></a>Ensuring Secure Microservice Communication</h2><p>Securing communication between services is critical. Use <strong>mTLS</strong> (mutual TLS) and <strong>JWT</strong> tokens for service-to-service authentication within Kubernetes clusters.</p>
+<h3 id="Step-1-Configure-Mutual-TLS-mTLS"><a href="#Step-1-Configure-Mutual-TLS-mTLS" class="headerlink" title="Step 1: Configure Mutual TLS (mTLS)"></a>Step 1: Configure Mutual TLS (mTLS)</h3><p>Istio or Linkerd can help enforce mTLS between services:<br>   <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">security.istio.io/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PeerAuthentication</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">your-namespace</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">mtls:</span></span><br><span class="line">    <span class="attr">mode:</span> <span class="string">STRICT</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p><a name="summary"></a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ol>
+<li>Use <strong>ConfigMaps</strong> and <strong>Secrets</strong> for configuration.</li>
+<li>Implement <strong>autoscaling</strong> with HPA.</li>
+<li>Secure communication with <strong>mTLS</strong> and <strong>JWT</strong>.</li>
+<li>Monitor with readiness&#x2F;liveness probes and <strong>Prometheus&#x2F;Grafana</strong>.</li>
+</ol>
+<p>This guide provides an architecture blueprint for deploying secure, scalable, and efficient microservices in Kubernetes using Spring Cloud. The API Gateway simplifies external access, service discovery, and JWT-based authentication, while Kubernetes ensures high availability and resilience across services.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+              <a href="/tags/Microservice/" rel="tag"><i class="fa fa-tag"></i> Microservice</a>
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"><i class="fa fa-tag"></i> Spring Cloud</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/" rel="prev" title="Deep Dive into Executors and ThreadPoolExecutor">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Executors and ThreadPoolExecutor
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/30/Microservice-Spring-Cloud-Gateway/" rel="next" title="Microservice - Spring Cloud Gateway">
+                  Microservice - Spring Cloud Gateway <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
