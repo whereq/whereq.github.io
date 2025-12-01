@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="In Python development practice, debugging is an indispensable part of the process. If you rely on print() statements to trace the execution flow of your program, you might encounter persistent excepti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Using print for Python Debugging? You&#39;re Outdated!">
+<meta property="og:url" content="https://www.whereq.com/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="In Python development practice, debugging is an indispensable part of the process. If you rely on print() statements to trace the execution flow of your program, you might encounter persistent excepti">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-09T15:44:10.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/","path":"2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/","title":"Using print for Python Debugging? You're Outdated!"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Using print for Python Debugging? You're Outdated! | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basic-Debugging-Example-Using-print"><span class="nav-number">1.</span> <span class="nav-text">Basic Debugging Example - Using print</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-ic-for-Debugging"><span class="nav-number">2.</span> <span class="nav-text">Using ic for Debugging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Core-Advantages-of-the-ic-Function"><span class="nav-number">3.</span> <span class="nav-text">Core Advantages of the ic Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Advanced-Features-of-the-IceCream-Library"><span class="nav-number">4.</span> <span class="nav-text">Advanced Features of the IceCream Library</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Using print for Python Debugging? You're Outdated! | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Using print for Python Debugging? You're Outdated!
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-12-09 10:44:10" itemprop="dateCreated datePublished" datetime="2024-12-09T10:44:10-05:00">2024-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>In Python development practice, debugging is an indispensable part of the process. If you rely on <code>print()</code> statements to trace the execution flow of your program, you might encounter persistent exceptions that are difficult to pinpoint even after multiple code reviews. This is often due to the limitations of this debugging method as the terminal output grows, making it hard to correlate outputs with their corresponding function calls. This article introduces the IceCream library, a specialized debugging tool that significantly enhances debugging efficiency, making the entire process more systematic and standardized.</p>
+<p><code>print()</code> is the most basic output function in Python and is the preferred debugging tool for most developers. However, when dealing with complex function calls and data structures, this method often leads to cluttered output, reducing debugging efficiency. The <code>ic()</code> function from the IceCream library is optimized for debugging scenarios, providing more practical features.</p>
+<h3 id="Basic-Debugging-Example-Using-print"><a href="#Basic-Debugging-Example-Using-print" class="headerlink" title="Basic Debugging Example - Using print"></a><strong>Basic Debugging Example - Using <code>print</code></strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using print() for function debugging</span></span><br><span class="line"><span class="built_in">print</span>(add(<span class="number">10</span>, <span class="number">20</span>))  <span class="comment"># Output: 30</span></span><br><span class="line"><span class="built_in">print</span>(add(<span class="number">30</span>, <span class="number">40</span>))  <span class="comment"># Output: 70</span></span><br></pre></td></tr></table></figure>
+
+<p>The main issue with this traditional method is that when there are many output results, it becomes difficult to intuitively associate the output values with their corresponding function calls. Additional manual explanations are required.</p>
+<h3 id="Using-ic-for-Debugging"><a href="#Using-ic-for-Debugging" class="headerlink" title="Using ic for Debugging"></a><strong>Using <code>ic</code> for Debugging</strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> icecream <span class="keyword">import</span> ic</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using ic() for function debugging</span></span><br><span class="line">ic(add(<span class="number">10</span>, <span class="number">20</span>))</span><br><span class="line">ic(add(<span class="number">30</span>, <span class="number">40</span>))</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ic| add(10, 20): 30</span><br><span class="line">ic| add(30, 40): 70</span><br></pre></td></tr></table></figure>
+
+<p>By using the <code>ic()</code> function, each output clearly displays the complete information of the function call, including the function name, parameter values, and return results. This output format is particularly suitable for debugging complex sequences of function calls, allowing for quick problem identification.</p>
+<h3 id="Core-Advantages-of-the-ic-Function"><a href="#Core-Advantages-of-the-ic-Function" class="headerlink" title="Core Advantages of the ic Function"></a><strong>Core Advantages of the <code>ic</code> Function</strong></h3><ol>
+<li><p><strong>Detailed Execution Information Tracking</strong></p>
+<p>The <code>ic()</code> function not only displays the execution results but also fully records the operation process, eliminating the need for manually writing debugging information and improving debugging efficiency.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">multiply</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a * b</span><br><span class="line"></span><br><span class="line">ic(multiply(<span class="number">5</span>, <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ic| multiply(5, 5): 25</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Integration of Debugging and Assignment Operations</strong></p>
+<p>One notable feature of the <code>ic()</code> function is its support for simultaneous debugging and variable assignment, which is not possible with traditional <code>print()</code> functions:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># print() method</span></span><br><span class="line">result = <span class="built_in">print</span>(multiply(<span class="number">4</span>, <span class="number">6</span>))  <span class="comment"># Output: 24</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># Output: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ic() method</span></span><br><span class="line">result = ic(multiply(<span class="number">4</span>, <span class="number">6</span>))  <span class="comment"># Output: ic| multiply(4, 6): 24</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># Output: 24</span></span><br></pre></td></tr></table></figure>
+
+<p>Using the <code>ic()</code> function, you can not only view debugging information but also correctly obtain and store the return value, which is particularly useful during debugging.</p>
+</li>
+<li><p><strong>Visualization of Data Structure Access</strong></p>
+<p>When dealing with data structures like dictionaries, the <code>ic()</code> function provides clearer access information:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using ic() to track data access</span></span><br><span class="line">ic(data[<span class="string">&#x27;a&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ic| data[&#x27;a&#x27;]: 1</span><br></pre></td></tr></table></figure>
+
+<p>The output clearly shows the access path and result, helping to understand the data operation process.</p>
+</li>
+<li><p><strong>Optimization of Complex Data Structure Display</strong></p>
+<p>When dealing with nested dictionaries or JSON-like complex data structures, the <code>ic()</code> function provides better readability through structured formatting:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">complex_data = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span>: <span class="number">30</span>,</span><br><span class="line">    <span class="string">&quot;languages&quot;</span>: [<span class="string">&quot;Python&quot;</span>, <span class="string">&quot;JavaScript&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ic(complex_data)</span><br></pre></td></tr></table></figure>
+
+<p>The output uses structured formatting with color differentiation, significantly enhancing the readability of complex data structures, facilitating quick location and analysis of data.</p>
+</li>
+</ol>
+<h3 id="Advanced-Features-of-the-IceCream-Library"><a href="#Advanced-Features-of-the-IceCream-Library" class="headerlink" title="Advanced Features of the IceCream Library"></a><strong>Advanced Features of the IceCream Library</strong></h3><p>In addition to basic debugging functions, the IceCream library offers a series of advanced features that can be customized according to specific needs:</p>
+<ol>
+<li><p><strong>Dynamic Control of Debugging Output</strong></p>
+<p>During development, you can dynamically control the output of debugging information as needed:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ic.disable()  <span class="comment"># Pause debugging output</span></span><br><span class="line">ic(multiply(<span class="number">3</span>, <span class="number">3</span>))  <span class="comment"># No output here</span></span><br><span class="line"></span><br><span class="line">ic.enable()  <span class="comment"># Resume debugging output</span></span><br><span class="line">ic(multiply(<span class="number">3</span>, <span class="number">3</span>))  <span class="comment"># Output: ic| multiply(3, 3): 9</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Custom Configuration of Output Format</strong></p>
+<p>IceCream supports custom output formats, allowing you to adjust the output method according to project requirements:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">log_to_file</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;debug.log&quot;</span>, <span class="string">&quot;a&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(text + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">ic.configureOutput(prefix=<span class="string">&quot;DEBUG| &quot;</span>, outputFunction=log_to_file)</span><br><span class="line"></span><br><span class="line">ic(multiply(<span class="number">7</span>, <span class="number">7</span>))</span><br></pre></td></tr></table></figure>
+
+<p>This configuration can redirect debugging information to a log file and add a custom prefix, facilitating subsequent log analysis.</p>
+</li>
+</ol>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a><strong>Conclusion</strong></h3><p>Although the <code>print()</code> function is widely used as a basic debugging tool in Python, it has obvious limitations in complex development scenarios. The IceCream library effectively addresses the shortcomings of traditional debugging methods by providing more professional debugging tools. Its rich features, flexible configuration options, and clear output format can significantly enhance the debugging efficiency of Python programs. In practical development, using the <code>ic()</code> function properly not only helps developers locate and solve problems faster but also improves code maintainability.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/09/Typescript-interface-vs-class-vs-type/" rel="prev" title="TypeScript interface vs class vs type">
+                  <i class="fa fa-angle-left"></i> TypeScript interface vs class vs type
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/19/Run-a-Proxy-Server-with-cors-anywhere/" rel="next" title="Run a Proxy Server with cors-anywhere">
+                  Run a Proxy Server with cors-anywhere <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

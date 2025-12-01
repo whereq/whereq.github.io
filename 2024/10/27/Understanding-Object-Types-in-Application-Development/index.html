@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Object Types Value Object (VO) Plain Old Java Object (POJO) Data Transfer Object (DTO) Entity Model Persistent Object (PO) Business Object (BO) Data Access Object (DAO)   Transition Diag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding Object Types in Application Development">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Understanding-Object-Types-in-Application-Development/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Object Types Value Object (VO) Plain Old Java Object (POJO) Data Transfer Object (DTO) Entity Model Persistent Object (PO) Business Object (BO) Data Access Object (DAO)   Transition Diag">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T02:27:41.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Theory">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Understanding-Object-Types-in-Application-Development/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Understanding-Object-Types-in-Application-Development/","path":"2024/10/27/Understanding-Object-Types-in-Application-Development/","title":"Understanding Object Types in Application Development"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Understanding Object Types in Application Development | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-Types"><span class="nav-number">2.</span> <span class="nav-text">Object Types</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Object-VO"><span class="nav-number">2.1.</span> <span class="nav-text">Value Object (VO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Plain-Old-Java-Object-POJO"><span class="nav-number">2.2.</span> <span class="nav-text">Plain Old Java Object (POJO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Transfer-Object-DTO"><span class="nav-number">2.3.</span> <span class="nav-text">Data Transfer Object (DTO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Entity"><span class="nav-number">2.4.</span> <span class="nav-text">Entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model"><span class="nav-number">2.5.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent-Object-PO"><span class="nav-number">2.6.</span> <span class="nav-text">Persistent Object (PO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Business-Object-BO"><span class="nav-number">2.7.</span> <span class="nav-text">Business Object (BO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Access-Object-DAO"><span class="nav-number">2.8.</span> <span class="nav-text">Data Access Object (DAO)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transition-Diagram"><span class="nav-number">3.</span> <span class="nav-text">Transition Diagram</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation"><span class="nav-number">3.1.</span> <span class="nav-text">Explanation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scenarios"><span class="nav-number">4.</span> <span class="nav-text">Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Object-VO-1"><span class="nav-number">4.1.</span> <span class="nav-text">Value Object (VO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Plain-Old-Java-Object-POJO-1"><span class="nav-number">4.2.</span> <span class="nav-text">Plain Old Java Object (POJO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Transfer-Object-DTO-1"><span class="nav-number">4.3.</span> <span class="nav-text">Data Transfer Object (DTO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Entity-1"><span class="nav-number">4.4.</span> <span class="nav-text">Entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model-1"><span class="nav-number">4.5.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent-Object-PO-1"><span class="nav-number">4.6.</span> <span class="nav-text">Persistent Object (PO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Business-Object-BO-1"><span class="nav-number">4.7.</span> <span class="nav-text">Business Object (BO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Access-Object-DAO-1"><span class="nav-number">4.8.</span> <span class="nav-text">Data Access Object (DAO)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code"><span class="nav-number">5.</span> <span class="nav-text">Sample Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Object-VO-2"><span class="nav-number">5.1.</span> <span class="nav-text">Value Object (VO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Plain-Old-Java-Object-POJO-2"><span class="nav-number">5.2.</span> <span class="nav-text">Plain Old Java Object (POJO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Transfer-Object-DTO-2"><span class="nav-number">5.3.</span> <span class="nav-text">Data Transfer Object (DTO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Entity-2"><span class="nav-number">5.4.</span> <span class="nav-text">Entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model-2"><span class="nav-number">5.5.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent-Object-PO-2"><span class="nav-number">5.6.</span> <span class="nav-text">Persistent Object (PO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Business-Object-BO-2"><span class="nav-number">5.7.</span> <span class="nav-text">Business Object (BO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Access-Object-DAO-2"><span class="nav-number">5.8.</span> <span class="nav-text">Data Access Object (DAO)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transition-Example"><span class="nav-number">5.9.</span> <span class="nav-text">Transition Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Understanding-Object-Types-in-Application-Development/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Understanding Object Types in Application Development | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Understanding Object Types in Application Development
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 22:27:41" itemprop="dateCreated datePublished" datetime="2024-10-27T22:27:41-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Theory/" itemprop="url" rel="index"><span itemprop="name">Theory</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#object-types">Object Types</a><ul>
+<li><a href="#value-object-vo">Value Object (VO)</a></li>
+<li><a href="#plain-old-java-object-pojo">Plain Old Java Object (POJO)</a></li>
+<li><a href="#data-transfer-object-dto">Data Transfer Object (DTO)</a></li>
+<li><a href="#entity">Entity</a></li>
+<li><a href="#model">Model</a></li>
+<li><a href="#persistent-object-po">Persistent Object (PO)</a></li>
+<li><a href="#business-object-bo">Business Object (BO)</a></li>
+<li><a href="#data-access-object-dao">Data Access Object (DAO)</a></li>
+</ul>
+</li>
+<li><a href="#transition-diagram">Transition Diagram</a><ul>
+<li><a href="#explanation">Explanation</a></li>
+</ul>
+</li>
+<li><a href="#scenarios">Scenarios</a><ul>
+<li><a href="#value-object-vo-1">Value Object (VO)</a></li>
+<li><a href="#plain-old-java-object-pojo-1">Plain Old Java Object (POJO)</a></li>
+<li><a href="#data-transfer-object-dto-1">Data Transfer Object (DTO)</a></li>
+<li><a href="#entity-1">Entity</a></li>
+<li><a href="#model-1">Model</a></li>
+<li><a href="#persistent-object-po-1">Persistent Object (PO)</a></li>
+<li><a href="#business-object-bo-1">Business Object (BO)</a></li>
+<li><a href="#data-access-object-dao-1">Data Access Object (DAO)</a></li>
+</ul>
+</li>
+<li><a href="#sample-code">Sample Code</a><ul>
+<li><a href="#value-object-vo-2">Value Object (VO)</a></li>
+<li><a href="#plain-old-java-object-pojo-2">Plain Old Java Object (POJO)</a></li>
+<li><a href="#data-transfer-object-dto-2">Data Transfer Object (DTO)</a></li>
+<li><a href="#entity-2">Entity</a></li>
+<li><a href="#model-2">Model</a></li>
+<li><a href="#persistent-object-po-2">Persistent Object (PO)</a></li>
+<li><a href="#business-object-bo-2">Business Object (BO)</a></li>
+<li><a href="#data-access-object-dao-2">Data Access Object (DAO)</a></li>
+<li><a href="#transition-example">Transition Example</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In application development, different types of objects serve various purposes. Understanding these objects and their roles is crucial for designing scalable and maintainable systems. This article will explain common object types such as Value Object (VO), Plain Old Java Object (POJO), Data Transfer Object (DTO), Entity, Model, Persistent Object (PO), Business Object (BO), and Data Access Object (DAO). We will also provide a textual diagram to illustrate the transition between these objects and sample code to demonstrate their usage.</p>
+<hr>
+<p><a name="object-types"></a></p>
+<h2 id="Object-Types"><a href="#Object-Types" class="headerlink" title="Object Types"></a>Object Types</h2><h3 id="Value-Object-VO"><a href="#Value-Object-VO" class="headerlink" title="Value Object (VO)"></a><a name="value-object-vo"></a>Value Object (VO)</h3><p>A Value Object is an object that represents a simple entity whose equality is not based on identity but on the value of its properties. VOs are immutable and typically used to represent concepts that are naturally comparable by value.</p>
+<h3 id="Plain-Old-Java-Object-POJO"><a href="#Plain-Old-Java-Object-POJO" class="headerlink" title="Plain Old Java Object (POJO)"></a><a name="plain-old-java-object-pojo"></a>Plain Old Java Object (POJO)</h3><p>A POJO is a simple Java object that does not require any specific framework or library. It is a plain Java object that follows basic Java conventions and does not extend or implement any special classes or interfaces.</p>
+<h3 id="Data-Transfer-Object-DTO"><a href="#Data-Transfer-Object-DTO" class="headerlink" title="Data Transfer Object (DTO)"></a><a name="data-transfer-object-dto"></a>Data Transfer Object (DTO)</h3><p>A DTO is an object used to transfer data between different layers of an application, such as between the service layer and the presentation layer. DTOs are typically simple objects that contain data but do not contain any business logic.</p>
+<h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a><a name="entity"></a>Entity</h3><p>An Entity is an object that represents a persistent domain object, typically mapped to a database table. Entities have a unique identity and are often used to represent business concepts.</p>
+<h3 id="Model"><a href="#Model" class="headerlink" title="Model"></a><a name="model"></a>Model</h3><p>A Model represents the data and business logic of an application. It encapsulates the state and behavior of the application’s domain. Models are often used in the service layer to perform business operations.</p>
+<h3 id="Persistent-Object-PO"><a href="#Persistent-Object-PO" class="headerlink" title="Persistent Object (PO)"></a><a name="persistent-object-po"></a>Persistent Object (PO)</h3><p>A Persistent Object is an object that is mapped to a database table. It is similar to an Entity but is often used in older or specific frameworks where the term Entity is not used.</p>
+<h3 id="Business-Object-BO"><a href="#Business-Object-BO" class="headerlink" title="Business Object (BO)"></a><a name="business-object-bo"></a>Business Object (BO)</h3><p>A Business Object encapsulates the business logic of an application. It is responsible for performing business operations and often interacts with DAOs to persist data.</p>
+<h3 id="Data-Access-Object-DAO"><a href="#Data-Access-Object-DAO" class="headerlink" title="Data Access Object (DAO)"></a><a name="data-access-object-dao"></a>Data Access Object (DAO)</h3><p>A DAO is an object that provides an abstract interface to some type of database or other persistence mechanism. It allows the application to access and manipulate data without exposing the underlying data source.</p>
+<hr>
+<p><a name="transition-diagram"></a></p>
+<h2 id="Transition-Diagram"><a href="#Transition-Diagram" class="headerlink" title="Transition Diagram"></a>Transition Diagram</h2><pre><code class="highlight mermaid">graph TD
+    A[Entity] --&gt;|Map to Database| B[Repository]
+    B --&gt;|Fetch Data| C[Service Layer]
+    C --&gt;|Transform| D[DTO]
+    D --&gt;|Transfer Data| E[Controller]
+    E --&gt;|Present Data| F[View]
+    C --&gt;|Business Logic| G[Model]
+    G --&gt;|Represent Value| H[Value Object]
+    C --&gt;|Business Logic| I[Business Object]
+    I --&gt;|Access Data| J[DAO]
+    J --&gt;|Map to Database| K[Persistent Object]</code></pre>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ol>
+<li><strong>Entity</strong>: Represents a persistent domain object.</li>
+<li><strong>Repository</strong>: Manages the persistence of entities.</li>
+<li><strong>Service Layer</strong>: Contains business logic and transforms entities into DTOs.</li>
+<li><strong>DTO</strong>: Transfers data between layers.</li>
+<li><strong>Controller</strong>: Handles HTTP requests and responses.</li>
+<li><strong>View</strong>: Presents data to the user.</li>
+<li><strong>Model</strong>: Contains business logic and encapsulates state.</li>
+<li><strong>Value Object</strong>: Represents a simple, immutable value.</li>
+<li><strong>Business Object</strong>: Encapsulates business logic.</li>
+<li><strong>DAO</strong>: Provides an abstract interface to the database.</li>
+<li><strong>Persistent Object</strong>: Mapped to a database table.</li>
+</ol>
+<hr>
+<p><a name="scenarios"></a></p>
+<h2 id="Scenarios"><a href="#Scenarios" class="headerlink" title="Scenarios"></a>Scenarios</h2><h3 id="Value-Object-VO-1"><a href="#Value-Object-VO-1" class="headerlink" title="Value Object (VO)"></a>Value Object (VO)</h3><ul>
+<li><strong>Scenario</strong>: Representing a monetary value or a date range.</li>
+<li><strong>Usage</strong>: Used in business logic to ensure immutability and value-based equality.</li>
+</ul>
+<h3 id="Plain-Old-Java-Object-POJO-1"><a href="#Plain-Old-Java-Object-POJO-1" class="headerlink" title="Plain Old Java Object (POJO)"></a>Plain Old Java Object (POJO)</h3><ul>
+<li><strong>Scenario</strong>: Simple data structures without any framework dependencies.</li>
+<li><strong>Usage</strong>: Used in any layer of the application where a simple data structure is needed.</li>
+</ul>
+<h3 id="Data-Transfer-Object-DTO-1"><a href="#Data-Transfer-Object-DTO-1" class="headerlink" title="Data Transfer Object (DTO)"></a>Data Transfer Object (DTO)</h3><ul>
+<li><strong>Scenario</strong>: Transferring data between different layers of the application.</li>
+<li><strong>Usage</strong>: Used in the service layer to transfer data to the presentation layer.</li>
+</ul>
+<h3 id="Entity-1"><a href="#Entity-1" class="headerlink" title="Entity"></a>Entity</h3><ul>
+<li><strong>Scenario</strong>: Representing a persistent domain object.</li>
+<li><strong>Usage</strong>: Used in the persistence layer to map to database tables.</li>
+</ul>
+<h3 id="Model-1"><a href="#Model-1" class="headerlink" title="Model"></a>Model</h3><ul>
+<li><strong>Scenario</strong>: Representing the business logic and state of the application.</li>
+<li><strong>Usage</strong>: Used in the service layer to perform business operations.</li>
+</ul>
+<h3 id="Persistent-Object-PO-1"><a href="#Persistent-Object-PO-1" class="headerlink" title="Persistent Object (PO)"></a>Persistent Object (PO)</h3><ul>
+<li><strong>Scenario</strong>: Mapping to a database table in older or specific frameworks.</li>
+<li><strong>Usage</strong>: Used in the persistence layer to represent database records.</li>
+</ul>
+<h3 id="Business-Object-BO-1"><a href="#Business-Object-BO-1" class="headerlink" title="Business Object (BO)"></a>Business Object (BO)</h3><ul>
+<li><strong>Scenario</strong>: Encapsulating business logic.</li>
+<li><strong>Usage</strong>: Used in the service layer to perform business operations.</li>
+</ul>
+<h3 id="Data-Access-Object-DAO-1"><a href="#Data-Access-Object-DAO-1" class="headerlink" title="Data Access Object (DAO)"></a>Data Access Object (DAO)</h3><ul>
+<li><strong>Scenario</strong>: Providing an abstract interface to the database.</li>
+<li><strong>Usage</strong>: Used in the persistence layer to access and manipulate data.</li>
+</ul>
+<hr>
+<p><a name="sample-code"></a></p>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Value-Object-VO-2"><a href="#Value-Object-VO-2" class="headerlink" title="Value Object (VO)"></a>Value Object (VO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Money</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">double</span> amount;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String currency;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Money</span><span class="params">(<span class="type">double</span> amount, String currency)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.amount = amount;</span><br><span class="line">        <span class="built_in">this</span>.currency = currency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">getAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> amount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getCurrency</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> currency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span> == o) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="literal">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="type">Money</span> <span class="variable">money</span> <span class="operator">=</span> (Money) o;</span><br><span class="line">        <span class="keyword">return</span> Double.compare(money.amount, amount) == <span class="number">0</span> &amp;&amp;</span><br><span class="line">                currency.equals(money.currency);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Objects.hash(amount, currency);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Plain-Old-Java-Object-POJO-2"><a href="#Plain-Old-Java-Object-POJO-2" class="headerlink" title="Plain Old Java Object (POJO)"></a>Plain Old Java Object (POJO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Data-Transfer-Object-DTO-2"><a href="#Data-Transfer-Object-DTO-2" class="headerlink" title="Data Transfer Object (DTO)"></a>Data Transfer Object (DTO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDTO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Entity-2"><a href="#Entity-2" class="headerlink" title="Entity"></a>Entity</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserEntity</span> &#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Model-2"><a href="#Model-2" class="headerlink" title="Model"></a>Model</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserModel</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">validateAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (age &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Age cannot be negative&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Persistent-Object-PO-2"><a href="#Persistent-Object-PO-2" class="headerlink" title="Persistent Object (PO)"></a>Persistent Object (PO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserPO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Business-Object-BO-2"><a href="#Business-Object-BO-2" class="headerlink" title="Business Object (BO)"></a>Business Object (BO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserBO</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserDAO userDAO;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserBO</span><span class="params">(UserDAO userDAO)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userDAO = userDAO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> userDAO.findById(id);</span><br><span class="line">        <span class="type">UserDTO</span> <span class="variable">userDTO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserDTO</span>();</span><br><span class="line">        userDTO.setName(userPO.getName());</span><br><span class="line">        userDTO.setAge(userPO.getAge());</span><br><span class="line">        <span class="keyword">return</span> userDTO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserPO</span>();</span><br><span class="line">        userPO.setName(userDTO.getName());</span><br><span class="line">        userPO.setAge(userDTO.getAge());</span><br><span class="line">        userDAO.save(userPO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Data-Access-Object-DAO-2"><a href="#Data-Access-Object-DAO-2" class="headerlink" title="Data Access Object (DAO)"></a>Data Access Object (DAO)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserDAO</span> &#123;</span><br><span class="line">    UserPO <span class="title function_">findById</span><span class="params">(Long id)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(UserPO userPO)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDAOImpl</span> <span class="keyword">implements</span> <span class="title class_">UserDAO</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> UserPO <span class="title function_">findById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation to fetch user from database</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">UserPO</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(UserPO userPO)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation to save user to database</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Transition-Example"><a href="#Transition-Example" class="headerlink" title="Transition Example"></a>Transition Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserBO userBO;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserService</span><span class="params">(UserBO userBO)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userBO = userBO;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userBO.getUserById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createUser</span><span class="params">(UserDTO userDTO)</span> &#123;</span><br><span class="line">        userBO.createUser(userDTO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Understanding the different types of objects in application development is crucial for designing robust and maintainable systems. Each object type serves a specific purpose and is used in different scenarios. By following best practices and adhering to design principles, developers can create applications that are easier to extend, test, and maintain.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Theory/" rel="tag"><i class="fa fa-tag"></i> Theory</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/" rel="prev" title="The SOLID Principles in Software Design and Development">
+                  <i class="fa fa-angle-left"></i> The SOLID Principles in Software Design and Development
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-MapStruct-A-Java-Bean-Mapping-Framework/" rel="next" title="Deep Dive into MapStruct: A Java Bean Mapping Framework">
+                  Deep Dive into MapStruct: A Java Bean Mapping Framework <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

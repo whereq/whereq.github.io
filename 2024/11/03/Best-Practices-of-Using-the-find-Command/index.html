@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Basic Usage  Find Files by Name  Find Files by Wildcard Pattern  Find Files by Content  Search in Subdirectories   Advanced Search Criteria  Find Files by Owner  Find Files by Date and T">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices of Using the find Command">
+<meta property="og:url" content="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-the-find-Command/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Basic Usage  Find Files by Name  Find Files by Wildcard Pattern  Find Files by Content  Search in Subdirectories   Advanced Search Criteria  Find Files by Owner  Find Files by Date and T">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-03T16:34:35.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Best Practices">
+<meta property="article:tag" content="CLI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-the-find-Command/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/03/Best-Practices-of-Using-the-find-Command/","path":"2024/11/03/Best-Practices-of-Using-the-find-Command/","title":"Best Practices of Using the find Command"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Best Practices of Using the find Command | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-Usage"><span class="nav-number">2.</span> <span class="nav-text">Basic Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Files-by-Name"><span class="nav-number">2.1.</span> <span class="nav-text"> Find Files by Name</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Files-by-Wildcard-Pattern"><span class="nav-number">2.2.</span> <span class="nav-text"> Find Files by Wildcard Pattern</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Files-by-Content"><span class="nav-number">2.3.</span> <span class="nav-text"> Find Files by Content</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Search-in-Subdirectories"><span class="nav-number">2.4.</span> <span class="nav-text"> Search in Subdirectories</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Search-Criteria"><span class="nav-number">3.</span> <span class="nav-text">Advanced Search Criteria</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Files-by-Owner"><span class="nav-number">3.1.</span> <span class="nav-text"> Find Files by Owner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Files-by-Date-and-Time"><span class="nav-number">3.2.</span> <span class="nav-text"> Find Files by Date and Time</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Combining-with-Other-Commands"><span class="nav-number">4.</span> <span class="nav-text">Combining with Other Commands</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-xargs"><span class="nav-number">4.1.</span> <span class="nav-text"> Using xargs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-grep"><span class="nav-number">4.2.</span> <span class="nav-text"> Using grep</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-awk"><span class="nav-number">4.3.</span> <span class="nav-text"> Using awk</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Scenarios"><span class="nav-number">5.</span> <span class="nav-text">Advanced Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-and-Delete-Files"><span class="nav-number">5.1.</span> <span class="nav-text"> Find and Delete Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-and-Move-Files"><span class="nav-number">5.2.</span> <span class="nav-text"> Find and Move Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-and-Copy-Files"><span class="nav-number">5.3.</span> <span class="nav-text"> Find and Copy Files</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Appendix"><span class="nav-number">7.</span> <span class="nav-text">Appendix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-xargs-1"><span class="nav-number">7.1.</span> <span class="nav-text">Using xargs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation"><span class="nav-number">7.2.</span> <span class="nav-text">Explanation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Benefits-of-Using-xargs"><span class="nav-number">7.3.</span> <span class="nav-text">Benefits of Using xargs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">7.4.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-curly-brackets"><span class="nav-number">7.5.</span> <span class="nav-text">Using curly brackets {}</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Command-Breakdown"><span class="nav-number">7.6.</span> <span class="nav-text">Command Breakdown</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-1"><span class="nav-number">7.7.</span> <span class="nav-text">Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/03/Best-Practices-of-Using-the-find-Command/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Best Practices of Using the find Command | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Best Practices of Using the find Command
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-03 11:34:35" itemprop="dateCreated datePublished" datetime="2024-11-03T11:34:35-05:00">2024-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/CLI/" itemprop="url" rel="index"><span itemprop="name">CLI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#basic-usage">Basic Usage</a><ul>
+<li><a href="#-find-files-by-name"> Find Files by Name</a></li>
+<li><a href="#-find-files-by-wildcard-pattern"> Find Files by Wildcard Pattern</a></li>
+<li><a href="#-find-files-by-content"> Find Files by Content</a></li>
+<li><a href="#-search-in-subdirectories"> Search in Subdirectories</a></li>
+</ul>
+</li>
+<li><a href="#advanced-search-criteria">Advanced Search Criteria</a><ul>
+<li><a href="#-find-files-by-owner"> Find Files by Owner</a></li>
+<li><a href="#-find-files-by-date-and-time"> Find Files by Date and Time</a></li>
+</ul>
+</li>
+<li><a href="#combining-with-other-commands">Combining with Other Commands</a><ul>
+<li><a href="#-using-xargs"> Using <code>xargs</code></a></li>
+<li><a href="#-using-grep"> Using <code>grep</code></a></li>
+<li><a href="#-using-awk"> Using <code>awk</code></a></li>
+</ul>
+</li>
+<li><a href="#advanced-scenarios">Advanced Scenarios</a><ul>
+<li><a href="#-find-and-delete-files"> Find and Delete Files</a></li>
+<li><a href="#-find-and-move-files"> Find and Move Files</a></li>
+<li><a href="#-find-and-copy-files"> Find and Copy Files</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#using-xargs">Using <code>xargs</code></a></li>
+<li><a href="#explanation">Explanation</a></li>
+<li><a href="#benefits-of-using-xargs">Benefits of Using <code>xargs</code></a></li>
+<li><a href="#example">Example</a></li>
+<li><a href="#using-curly-brackets-">Using curly brackets <code>&#123;&#125;</code></a></li>
+<li><a href="#command-breakdown">Command Breakdown</a></li>
+<li><a href="#example-1">Example</a></li>
+</ul>
+</li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>The <code>find</code> command is a powerful tool in Unix-like operating systems for searching files and directories based on various criteria such as name, type, size, owner, date, and more. This article provides a comprehensive guide to the best practices of using the <code>find</code> command, covering various scenarios such as finding files by name, content, owner, date, and combining <code>find</code> with other commands using pipelines.</p>
+<hr>
+<p><a name="basic-usage"></a></p>
+<h2 id="Basic-Usage"><a href="#Basic-Usage" class="headerlink" title="Basic Usage"></a>Basic Usage</h2><h3 id="Find-Files-by-Name"><a href="#Find-Files-by-Name" class="headerlink" title=" Find Files by Name"></a><a name="find-files-by-name"></a> Find Files by Name</h3><p>To find files by name, use the <code>-name</code> option:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;filename.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Find-Files-by-Wildcard-Pattern"><a href="#Find-Files-by-Wildcard-Pattern" class="headerlink" title=" Find Files by Wildcard Pattern"></a><a name="find-files-by-wildcard-pattern"></a> Find Files by Wildcard Pattern</h3><p>To find files using a wildcard pattern, use the <code>-name</code> option with wildcards:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.log&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Find-Files-by-Content"><a href="#Find-Files-by-Content" class="headerlink" title=" Find Files by Content"></a><a name="find-files-by-content"></a> Find Files by Content</h3><p>To find files containing specific content, use the <code>-exec</code> option with <code>grep</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -<span class="built_in">type</span> f -<span class="built_in">exec</span> grep -l <span class="string">&quot;search_string&quot;</span> &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Search-in-Subdirectories"><a href="#Search-in-Subdirectories" class="headerlink" title=" Search in Subdirectories"></a><a name="search-in-subdirectories"></a> Search in Subdirectories</h3><p>By default, <code>find</code> searches in all subdirectories. You can specify the starting directory:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;filename.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="advanced-search-criteria"></a></p>
+<h2 id="Advanced-Search-Criteria"><a href="#Advanced-Search-Criteria" class="headerlink" title="Advanced Search Criteria"></a>Advanced Search Criteria</h2><h3 id="Find-Files-by-Owner"><a href="#Find-Files-by-Owner" class="headerlink" title=" Find Files by Owner"></a><a name="find-files-by-owner"></a> Find Files by Owner</h3><p>To find files owned by a specific user, use the <code>-user</code> option:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -user username</span><br></pre></td></tr></table></figure>
+
+<h3 id="Find-Files-by-Date-and-Time"><a href="#Find-Files-by-Date-and-Time" class="headerlink" title=" Find Files by Date and Time"></a><a name="find-files-by-date-and-time"></a> Find Files by Date and Time</h3><p>To find files modified within a specific time range, use the <code>-mtime</code> option:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -mtime -7  <span class="comment"># Files modified in the last 7 days</span></span><br><span class="line">find /path/to/search -mtime +7  <span class="comment"># Files modified more than 7 days ago</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="combining-with-other-commands"></a></p>
+<h2 id="Combining-with-Other-Commands"><a href="#Combining-with-Other-Commands" class="headerlink" title="Combining with Other Commands"></a>Combining with Other Commands</h2><h3 id="Using-xargs"><a href="#Using-xargs" class="headerlink" title=" Using xargs"></a><a name="using-xargs"></a> Using <code>xargs</code></h3><p>To perform an action on the found files, use <code>xargs</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.log&quot;</span> | xargs <span class="built_in">rm</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-grep"><a href="#Using-grep" class="headerlink" title=" Using grep"></a><a name="using-grep"></a> Using <code>grep</code></h3><p>To search for files containing specific content, use <code>grep</code> with <code>find</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -<span class="built_in">type</span> f -<span class="built_in">exec</span> grep -l <span class="string">&quot;search_string&quot;</span> &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-awk"><a href="#Using-awk" class="headerlink" title=" Using awk"></a><a name="using-awk"></a> Using <code>awk</code></h3><p>To process the output of <code>find</code> with <code>awk</code>, use a pipeline:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.txt&quot;</span> | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="advanced-scenarios"></a></p>
+<h2 id="Advanced-Scenarios"><a href="#Advanced-Scenarios" class="headerlink" title="Advanced Scenarios"></a>Advanced Scenarios</h2><h3 id="Find-and-Delete-Files"><a href="#Find-and-Delete-Files" class="headerlink" title=" Find and Delete Files"></a><a name="find-and-delete-files"></a> Find and Delete Files</h3><p>To find and delete files, use the <code>-delete</code> option:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.bak&quot;</span> -delete</span><br></pre></td></tr></table></figure>
+
+<h3 id="Find-and-Move-Files"><a href="#Find-and-Move-Files" class="headerlink" title=" Find and Move Files"></a><a name="find-and-move-files"></a> Find and Move Files</h3><p>To find and move files, use the <code>-exec</code> option with <code>mv</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.log&quot;</span> -<span class="built_in">exec</span> <span class="built_in">mv</span> &#123;&#125; /path/to/destination/ \;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Find-and-Copy-Files"><a href="#Find-and-Copy-Files" class="headerlink" title=" Find and Copy Files"></a><a name="find-and-copy-files"></a> Find and Copy Files</h3><p>To find and copy files, use the <code>-exec</code> option with <code>cp</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.txt&quot;</span> -<span class="built_in">exec</span> <span class="built_in">cp</span> &#123;&#125; /path/to/destination/ \;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The <code>find</code> command is a versatile and powerful tool for searching files and directories based on various criteria. By mastering the various options and scenarios covered in this article, you can effectively use <code>find</code> for a wide range of tasks, from simple file searches to complex operations involving multiple commands and pipelines.</p>
+<hr>
+<p><a name="appendix"></a></p>
+<h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><p><a name="using-xargs"></a></p>
+<h3 id="Using-xargs-1"><a href="#Using-xargs-1" class="headerlink" title="Using xargs"></a>Using <code>xargs</code></h3><p>The command <code>find /path/to/search -type f -exec grep -l &quot;search_string&quot; &#123;&#125; \;</code> can be rewritten using <code>xargs</code>. The <code>xargs</code> command is useful for building and executing command lines from standard input. Here’s how you can rewrite the command using <code>xargs</code>:</p>
+<p>Using <code>xargs</code> to rewrite the <code>find</code> command with <code>-exec</code> can make your command more efficient and easier to read. By leveraging <code>xargs</code>, you can handle large numbers of files more effectively and streamline your command-line operations.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -<span class="built_in">type</span> f | xargs grep -l <span class="string">&quot;search_string&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ol>
+<li><strong><code>find /path/to/search -type f</code></strong>: This part of the command finds all files (<code>-type f</code>) in the specified directory and its subdirectories.</li>
+<li><strong><code>| xargs grep -l &quot;search_string&quot;</code></strong>: The <code>|</code> (pipe) symbol passes the list of files found by <code>find</code> to <code>xargs</code>. <code>xargs</code> then constructs and executes the <code>grep</code> command for each file, searching for the specified string (<code>&quot;search_string&quot;</code>) and printing the names of files that contain the string (<code>-l</code> option).</li>
+</ol>
+<h3 id="Benefits-of-Using-xargs"><a href="#Benefits-of-Using-xargs" class="headerlink" title="Benefits of Using xargs"></a>Benefits of Using <code>xargs</code></h3><ul>
+<li><strong>Efficiency</strong>: <code>xargs</code> can handle a large number of files more efficiently than the <code>-exec</code> option, especially when dealing with a large number of files.</li>
+<li><strong>Simplification</strong>: The <code>xargs</code> version is often simpler and more concise.</li>
+</ul>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><p>Suppose you want to find all files in the <code>/var/log</code> directory that contain the string “error”. You can use the following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /var/log -<span class="built_in">type</span> f | xargs grep -l <span class="string">&quot;error&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>This command will output the names of all files in the <code>/var/log</code> directory and its subdirectories that contain the string “error”.</p>
+<p><a name="using-curly-brackets-"></a></p>
+<h3 id="Using-curly-brackets"><a href="#Using-curly-brackets" class="headerlink" title="Using curly brackets {}"></a>Using curly brackets <code>&#123;&#125;</code></h3><p>The <code>&#123;&#125;</code> in the command <code>find /path/to/search -name &quot;*.log&quot; -exec mv &#123;&#125; /path/to/destination/ \;</code> is a placeholder that represents the current file being processed by the <code>find</code> command. Let’s break down the command and understand the role of <code>&#123;&#125;</code>.</p>
+<p>The <code>&#123;&#125;</code> placeholder in the <code>find</code> command with <code>-exec</code> is a powerful feature that allows you to dynamically insert the current file path into the command being executed. This makes it easy to perform operations on each file found by <code>find</code>, such as moving, copying, or deleting files.</p>
+<h3 id="Command-Breakdown"><a href="#Command-Breakdown" class="headerlink" title="Command Breakdown"></a>Command Breakdown</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.log&quot;</span> -<span class="built_in">exec</span> <span class="built_in">mv</span> &#123;&#125; /path/to/destination/ \;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong><code>find /path/to/search -name &quot;*.log&quot;</code></strong>: This part of the command searches for all files in the <code>/path/to/search</code> directory and its subdirectories that match the pattern <code>*.log</code>.</p>
+</li>
+<li><p><strong><code>-exec mv &#123;&#125; /path/to/destination/ \;</code></strong>: This part of the command executes the <code>mv</code> command for each file found by <code>find</code>.</p>
+<ul>
+<li><strong><code>&#123;&#125;</code></strong>: This placeholder is replaced by the full path of the current file found by <code>find</code>. For example, if <code>find</code> finds a file named <code>example.log</code> in the directory <code>/path/to/search/subdir</code>, <code>&#123;&#125;</code> will be replaced by <code>/path/to/search/subdir/example.log</code>.</li>
+<li><strong><code>/path/to/destination/</code></strong>: This is the destination directory where the files will be moved.</li>
+<li><strong><code>\;</code></strong>: This is the terminator for the <code>-exec</code> command. It tells <code>find</code> that the command is complete.</li>
+</ul>
+</li>
+</ol>
+<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example"></a>Example</h3><p>Suppose you have the following directory structure:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/path/to/search/</span><br><span class="line">├── file1.log</span><br><span class="line">├── file2.log</span><br><span class="line">└── subdir/</span><br><span class="line">    └── file3.log</span><br></pre></td></tr></table></figure>
+
+<p>Running the command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /path/to/search -name <span class="string">&quot;*.log&quot;</span> -<span class="built_in">exec</span> <span class="built_in">mv</span> &#123;&#125; /path/to/destination/ \;</span><br></pre></td></tr></table></figure>
+
+<p>will result in the following actions:</p>
+<ol>
+<li><code>find</code> will locate <code>file1.log</code>, <code>file2.log</code>, and <code>subdir/file3.log</code>.</li>
+<li>For each file found, <code>find</code> will execute the <code>mv</code> command:<ul>
+<li><code>mv /path/to/search/file1.log /path/to/destination/</code></li>
+<li><code>mv /path/to/search/file2.log /path/to/destination/</code></li>
+<li><code>mv /path/to/search/subdir/file3.log /path/to/destination/</code></li>
+</ul>
+</li>
+</ol>
+<p>After the command completes, all <code>.log</code> files will be moved to the <code>/path/to/destination/</code> directory.</p>
+<p><a name="references"></a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/find.1.html">find Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.gnu.org/software/findutils/manual/html_mono/find.html">GNU findutils Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/xargs.1.html">xargs Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/grep.1.html">grep Man Page</a></li>
+<li><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/awk.1p.html">awk Man Page</a></li>
+</ol>
+<p>By following these best practices, you can leverage the <code>find</code> command to its full potential and efficiently manage your file searches and operations from the command line.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Best-Practices/" rel="tag"><i class="fa fa-tag"></i> Best Practices</a>
+              <a href="/tags/CLI/" rel="tag"><i class="fa fa-tag"></i> CLI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Using-curl/" rel="prev" title="Best Practices of Using curl">
+                  <i class="fa fa-angle-left"></i> Best Practices of Using curl
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/03/Best-Practices-of-Using-the-awk-Command/" rel="next" title="Best Practices of Using the awk Command">
+                  Best Practices of Using the awk Command <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Understanding Spring Scheduler Basics Enabling Scheduling Simple Scheduling with @Scheduled   Scheduling Scenarios Sequential Job Execution Parallel Job Execution Job Waiting Until Previ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Spring Scheduler">
+<meta property="og:url" content="https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Understanding Spring Scheduler Basics Enabling Scheduling Simple Scheduling with @Scheduled   Scheduling Scenarios Sequential Job Execution Parallel Job Execution Job Waiting Until Previ">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T20:20:09.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Scheduler">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/","path":"2024/10/28/Deep-Dive-into-Spring-Scheduler/","title":"Deep Dive into Spring Scheduler"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Spring Scheduler | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Understanding-Spring-Scheduler-Basics"><span class="nav-number">2.</span> <span class="nav-text">Understanding Spring Scheduler Basics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Enabling-Scheduling"><span class="nav-number">2.1.</span> <span class="nav-text">Enabling Scheduling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Simple-Scheduling-with-Scheduled"><span class="nav-number">2.2.</span> <span class="nav-text">Simple Scheduling with @Scheduled</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scheduling-Scenarios"><span class="nav-number">3.</span> <span class="nav-text">Scheduling Scenarios</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sequential-Job-Execution"><span class="nav-number">3.1.</span> <span class="nav-text">Sequential Job Execution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-Job-Execution"><span class="nav-number">3.2.</span> <span class="nav-text">Parallel Job Execution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Job-Waiting-Until-Previous-Job-Completes"><span class="nav-number">3.3.</span> <span class="nav-text">Job Waiting Until Previous Job Completes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cron-Expressions-and-Fixed-Rates"><span class="nav-number">4.</span> <span class="nav-text">Cron Expressions and Fixed Rates</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fixed-Rate-vs-Fixed-Delay"><span class="nav-number">4.1.</span> <span class="nav-text">Fixed Rate vs Fixed Delay</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Cron-Expressions"><span class="nav-number">4.2.</span> <span class="nav-text">Using Cron Expressions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conditional-Scheduling-with-Annotations"><span class="nav-number">5.</span> <span class="nav-text">Conditional Scheduling with Annotations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Conditional-Scheduling-Example"><span class="nav-number">5.1.</span> <span class="nav-text">Conditional Scheduling Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#All-In-One-Sample"><span class="nav-number">6.</span> <span class="nav-text">All-In-One Sample</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConditionalOnProperty-with-Scheduled-Job-in-Depth"><span class="nav-number">7.</span> <span class="nav-text">ConditionalOnProperty with Scheduled Job in Depth</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster"><span class="nav-number">7.1.</span> <span class="nav-text">Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Solution-Outline"><span class="nav-number">7.1.1.</span> <span class="nav-text">Solution Outline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Steps-to-Implement"><span class="nav-number">7.1.2.</span> <span class="nav-text">Steps to Implement</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Additional-Consideration-Use-Leader-Election"><span class="nav-number">7.1.3.</span> <span class="nav-text">Additional Consideration: Use Leader Election</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">8.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Spring-Scheduler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Spring Scheduler | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Spring Scheduler
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 16:20:09" itemprop="dateCreated datePublished" datetime="2024-10-28T16:20:09-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/Spring-Scheduler/" itemprop="url" rel="index"><span itemprop="name">Spring Scheduler</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#understanding-spring-scheduler-basics">Understanding Spring Scheduler Basics</a><ul>
+<li><a href="#enabling-scheduling">Enabling Scheduling</a></li>
+<li><a href="#simple-scheduling-with-scheduled">Simple Scheduling with <code>@Scheduled</code></a></li>
+</ul>
+</li>
+<li><a href="#scheduling-scenarios">Scheduling Scenarios</a><ul>
+<li><a href="#sequential-job-execution">Sequential Job Execution</a></li>
+<li><a href="#parallel-job-execution">Parallel Job Execution</a></li>
+<li><a href="#job-waiting-until-previous-job-completes">Job Waiting Until Previous Job Completes</a></li>
+</ul>
+</li>
+<li><a href="#cron-expressions-and-fixed-rates">Cron Expressions and Fixed Rates</a><ul>
+<li><a href="#fixed-rate-vs-fixed-delay">Fixed Rate vs Fixed Delay</a></li>
+<li><a href="#using-cron-expressions">Using Cron Expressions</a></li>
+</ul>
+</li>
+<li><a href="#conditional-scheduling-with-annotations">Conditional Scheduling with Annotations</a><ul>
+<li><a href="#conditional-scheduling-example">Conditional Scheduling Example</a></li>
+</ul>
+</li>
+<li><a href="#all-in-one-sample">All-In-One Sample</a></li>
+<li><a href="#conditionalonproperty-with-scheduled-job-in-depth">ConditionalOnProperty with Scheduled Job in Depth</a><ul>
+<li><a href="#scenario-running-a-scheduled-job-in-only-one-pod-in-a-kubernetes-cluster">Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</a><ul>
+<li><a href="#solution-outline">Solution Outline</a></li>
+<li><a href="#steps-to-implement">Steps to Implement</a></li>
+<li><a href="#additional-consideration-use-leader-election">Additional Consideration: Use Leader Election</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><strong>Spring Scheduler</strong> provides a simple way to schedule tasks within a Spring application. It offers flexibility in managing <strong>time-based events</strong> and <strong>task execution</strong>, allowing developers to configure tasks in a variety of ways, including sequential, parallel, and conditional execution.</p>
+<hr>
+<p><a name="understanding-spring-scheduler-basics"></a></p>
+<h2 id="Understanding-Spring-Scheduler-Basics"><a href="#Understanding-Spring-Scheduler-Basics" class="headerlink" title="Understanding Spring Scheduler Basics"></a>Understanding Spring Scheduler Basics</h2><p>Spring Scheduler uses annotations to simplify the scheduling of methods within beans. The primary annotation used is <code>@Scheduled</code>, which can define various timing configurations, such as fixed rate, fixed delay, and cron expressions.</p>
+<p><a name="enabling-scheduling"></a></p>
+<h3 id="Enabling-Scheduling"><a href="#Enabling-Scheduling" class="headerlink" title="Enabling Scheduling"></a>Enabling Scheduling</h3><p>Before defining tasks, enable scheduling in your Spring application by adding the <code>@EnableScheduling</code> annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SchedulingConfig</span> &#123;</span><br><span class="line">    <span class="comment">// Any other scheduling-related configuration if needed</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="simple-scheduling-with-scheduled"></a></p>
+<h3 id="Simple-Scheduling-with-Scheduled"><a href="#Simple-Scheduling-with-Scheduled" class="headerlink" title="Simple Scheduling with @Scheduled"></a>Simple Scheduling with <code>@Scheduled</code></h3><p>The <code>@Scheduled</code> annotation can be applied to any method to enable scheduling. Below is a simple example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">printMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This message prints every 5 seconds.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>printMessage()</code> runs every 5 seconds.</p>
+<hr>
+<p><a name="scheduling-scenarios"></a></p>
+<h2 id="Scheduling-Scenarios"><a href="#Scheduling-Scenarios" class="headerlink" title="Scheduling Scenarios"></a>Scheduling Scenarios</h2><p>Spring Scheduler supports various scenarios for task scheduling, which can be useful for specific use cases in a production environment.</p>
+<p><a name="sequential-job-execution"></a></p>
+<h3 id="Sequential-Job-Execution"><a href="#Sequential-Job-Execution" class="headerlink" title="Sequential Job Execution"></a>Sequential Job Execution</h3><p>In sequential execution, jobs run in a specific order, with each job waiting for the previous one to complete before starting.</p>
+<p><strong>Example: Sequential Scheduling Using Fixed Delay</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SequentialScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job1</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 started.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">2000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 1 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job2</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 started after Job 1.&quot;</span>);</span><br><span class="line">        <span class="comment">// simulate a delay</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">3000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job 2 completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>With <code>fixedDelay</code>, Job 2 only begins after Job 1 completes.</p>
+<p><a name="parallel-job-execution"></a></p>
+<h3 id="Parallel-Job-Execution"><a href="#Parallel-Job-Execution" class="headerlink" title="Parallel Job Execution"></a>Parallel Job Execution</h3><p>To execute jobs in parallel, we configure a task executor that runs multiple tasks concurrently.</p>
+<p><strong>Example: Parallel Scheduling Using a Custom Task Executor</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelSchedulingConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">2</span>); <span class="comment">// Number of concurrent tasks allowed</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParallelScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobA</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job A started.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">jobB</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parallel Job B started concurrently with Job A.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>With <code>@Async</code>, <code>jobA</code> and <code>jobB</code> run concurrently, allowing for parallel execution.</p>
+<p><a name="job-waiting-until-previous-job-completes"></a></p>
+<h3 id="Job-Waiting-Until-Previous-Job-Completes"><a href="#Job-Waiting-Until-Previous-Job-Completes" class="headerlink" title="Job Waiting Until Previous Job Completes"></a>Job Waiting Until Previous Job Completes</h3><p>To configure jobs to wait for previous jobs to finish, use <code>fixedDelay</code> with asynchronous methods to ensure that each task waits until its predecessor is completed.</p>
+<p><strong>Diagram: Job Waiting until Previous Job Completes</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Job 1   ---&gt; Wait ---&gt;   Job 2   ---&gt; Wait ---&gt;   Job 3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WaitingScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 12000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">job</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job started and waits until the previous instance completes.&quot;</span>);</span><br><span class="line">        <span class="comment">// Simulate processing time</span></span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">5000</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Job completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this scenario, each new execution waits until the previous one finishes.</p>
+<hr>
+<p><a name="cron-expressions-and-fixed-rates"></a></p>
+<h2 id="Cron-Expressions-and-Fixed-Rates"><a href="#Cron-Expressions-and-Fixed-Rates" class="headerlink" title="Cron Expressions and Fixed Rates"></a>Cron Expressions and Fixed Rates</h2><p>Spring Scheduler allows defining precise timing patterns using <strong>fixed rate</strong>, <strong>fixed delay</strong>, and <strong>cron expressions</strong>.</p>
+<p><a name="fixed-rate-vs-fixed-delay"></a></p>
+<h3 id="Fixed-Rate-vs-Fixed-Delay"><a href="#Fixed-Rate-vs-Fixed-Delay" class="headerlink" title="Fixed Rate vs Fixed Delay"></a>Fixed Rate vs Fixed Delay</h3><ul>
+<li><strong>Fixed Rate</strong>: Executes a task at a specified interval, regardless of task completion time.</li>
+<li><strong>Fixed Delay</strong>: Executes a task with a delay between the end of the previous execution and the start of the next.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(fixedRate = 60000)</span> <span class="comment">// Executes every 60 seconds</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedRateTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Rate Task&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Scheduled(fixedDelay = 60000)</span> <span class="comment">// Executes with a 60-second delay after completion</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fixedDelayTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Fixed Delay Task&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="using-cron-expressions"></a></p>
+<h3 id="Using-Cron-Expressions"><a href="#Using-Cron-Expressions" class="headerlink" title="Using Cron Expressions"></a>Using Cron Expressions</h3><p>Cron expressions allow precise scheduling based on time. Format: <code>second minute hour day month weekday</code>.</p>
+<p><strong>Example: Scheduling a Task for 5:00 AM Every Day</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Scheduled(cron = &quot;0 0 5 * * ?&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailyTask</span><span class="params">()</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;This task runs at 5:00 AM every day.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conditional-scheduling-with-annotations"></a></p>
+<h2 id="Conditional-Scheduling-with-Annotations"><a href="#Conditional-Scheduling-with-Annotations" class="headerlink" title="Conditional Scheduling with Annotations"></a>Conditional Scheduling with Annotations</h2><p>Spring allows scheduling tasks based on conditions. Combining <code>@ConditionalOnProperty</code> with <code>@Scheduled</code>, we can configure tasks to run only when certain conditions are met.</p>
+<p><a name="conditional-scheduling-example"></a></p>
+<h3 id="Conditional-Scheduling-Example"><a href="#Conditional-Scheduling-Example" class="headerlink" title="Conditional Scheduling Example"></a>Conditional Scheduling Example</h3><p>This example schedules a job only if a specific property is set to <code>true</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConditionalScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 10000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">conditionalTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;This task runs only if &#x27;scheduler.enabled=true&#x27;.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To enable or disable this task, add <code>scheduler.enabled=true</code> or <code>false</code> in the configuration.</p>
+<hr>
+<p><a name="all-in-one-sample"></a></p>
+<h2 id="All-In-One-Sample"><a href="#All-In-One-Sample" class="headerlink" title="All-In-One Sample"></a>All-In-One Sample</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableScheduling;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionSchedulerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ThreadPoolTaskExecutor <span class="title function_">taskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">3</span>);</span><br><span class="line">        executor.setMaxPoolSize(<span class="number">5</span>);</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Async;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionScheduler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0 0 12 * * ?&quot;)</span> <span class="comment">// Executes at noon daily</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dailySummaryJob</span><span class="params">()</span> &#123;</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line"> System.out.println(<span class="string">&quot;Executing daily summary job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async</span></span><br><span class="line">    <span class="meta">@Scheduled(fixedDelay = 15000)</span> <span class="comment">// Executes every 15 seconds after the previous execution ends</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">periodicCleanupJob</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Running periodic cleanup job...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conditionalonproperty-with-scheduled-job-in-depth"></a></p>
+<h2 id="ConditionalOnProperty-with-Scheduled-Job-in-Depth"><a href="#ConditionalOnProperty-with-Scheduled-Job-in-Depth" class="headerlink" title="ConditionalOnProperty with Scheduled Job in Depth"></a>ConditionalOnProperty with Scheduled Job in Depth</h2><p>The <code>@ConditionalOnProperty</code> annotation in Spring is typically used to conditionally enable or disable beans based on specific configuration properties. In this case:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>This will activate the annotated bean only if the <code>scheduler.enabled</code> property is set to <code>true</code> in your configuration (like in <code>application.properties</code> or environment variables).</p>
+<h3 id="Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster"><a href="#Scenario-Running-a-Scheduled-Job-in-Only-One-Pod-in-a-Kubernetes-Cluster" class="headerlink" title="Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster"></a>Scenario: Running a Scheduled Job in Only One Pod in a Kubernetes Cluster</h3><p>When deploying a Spring application in a Kubernetes cluster across multiple containers (pods), ensuring that a scheduled job only runs in one specific pod can be tricky because Spring’s <code>@Scheduled</code> jobs will run in every instance where the job bean is active. Here’s how to solve this problem by using the <code>@ConditionalOnProperty</code> annotation in combination with Kubernetes configurations.</p>
+<h4 id="Solution-Outline"><a href="#Solution-Outline" class="headerlink" title="Solution Outline"></a>Solution Outline</h4><ol>
+<li><strong>Set a Leader Pod</strong>: Configure only one of the pods to have <code>scheduler.enabled=true</code> using Kubernetes annotations and environment variables, making it the leader pod responsible for running the scheduled job.</li>
+<li><strong>Configure Pods with Unique Environment Variables</strong>: Use Kubernetes <code>configMaps</code> or <code>Secrets</code> to assign the <code>scheduler.enabled</code> property as <code>true</code> only in the leader pod’s environment. Other pods should not have this property set to <code>true</code>, so they won’t run the job.</li>
+</ol>
+<h4 id="Steps-to-Implement"><a href="#Steps-to-Implement" class="headerlink" title="Steps to Implement"></a>Steps to Implement</h4><ol>
+<li><p><strong>Create a ConfigMap or Secret for the Scheduler Property</strong>:</p>
+<ul>
+<li>Define a ConfigMap that holds the <code>scheduler.enabled</code> setting for the lead pod.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">scheduler.enabled:</span> <span class="string">&quot;true&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Use Pod Annotations to Select the Leader Pod</strong>:</p>
+<ul>
+<li>When deploying multiple replicas, use a label selector or custom script to ensure only one pod is given the <code>scheduler.enabled=true</code> setting.</li>
+</ul>
+</li>
+<li><p><strong>Configure the Deployment to Pass the <code>scheduler.enabled</code> Environment Variable</strong>:</p>
+<ul>
+<li>In your Kubernetes Deployment file, you can use <code>envFrom</code> to load the environment variables from the ConfigMap, but with a selector so only one pod uses this ConfigMap.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">scheduler-job</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>  <span class="comment"># Running multiple instances</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">scheduler-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">scheduler-container</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">your-image</span></span><br><span class="line">          <span class="attr">envFrom:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">scheduler-config</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POD_NAME</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Conditional Logic in Spring Boot</strong>:</p>
+<ul>
+<li>With <code>@ConditionalOnProperty</code>, the <code>@Scheduled</code> method will only activate if the <code>scheduler.enabled</code> property is <code>true</code>. So, only the pod with the <code>scheduler.enabled=true</code> environment variable will run the job.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty(name = &quot;scheduler.enabled&quot;, havingValue = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScheduledJob</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(fixedRate = 5000)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Scheduled job is running on the leader pod!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Additional-Consideration-Use-Leader-Election"><a href="#Additional-Consideration-Use-Leader-Election" class="headerlink" title="Additional Consideration: Use Leader Election"></a>Additional Consideration: Use Leader Election</h4><p>For robust setups, you could implement leader election to dynamically select the leader pod. This can be achieved using tools like <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-kubernetes">Spring Cloud Kubernetes Leader Election</a> or implementing a custom leader election mechanism based on a shared lock in an external data store, such as Redis or ZooKeeper.</p>
+<p>By setting <code>scheduler.enabled=true</code> conditionally based on which pod is the elected leader, you can ensure the scheduled job runs in only one container at a time, with the ability to switch seamlessly if the leader pod goes down.</p>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Spring Scheduler provides flexibility and control over task scheduling. By using <code>@Scheduled</code> with different configurations, we can create complex scheduling workflows that address specific business needs.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/Spring-Scheduler/" rel="tag"><i class="fa fa-tag"></i> Spring Scheduler</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Deep-Dive-into-Avro-and-Parquet-Formats/" rel="prev" title="Deep Dive into Avro and Parquet Formats">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Avro and Parquet Formats
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Avro-to-Parquet-Pipeline-in-Big-Data-Applications/" rel="next" title="Avro to Parquet Pipeline in Big Data Applications">
+                  Avro to Parquet Pipeline in Big Data Applications <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

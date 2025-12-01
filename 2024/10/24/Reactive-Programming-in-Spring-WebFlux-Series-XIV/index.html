@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Event-Driven Architecture Introduction What is Event-Driven Architecture? Why Choose Event-Driven Architecture? Building Event-Driven Architecture with Spring WebFlux Project Setup Configuring Kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - XIV">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIV/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Event-Driven Architecture Introduction What is Event-Driven Architecture? Why Choose Event-Driven Architecture? Building Event-Driven Architecture with Spring WebFlux Project Setup Configuring Kafka">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T18:07:24.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIV/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIV/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIV/","title":"Reactive Programming in Spring WebFlux Series - XIV"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - XIV | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Event-Driven-Architecture"><span class="nav-number">1.</span> <span class="nav-text">Event-Driven Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Event-Driven-Architecture"><span class="nav-number">1.2.</span> <span class="nav-text">What is Event-Driven Architecture?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Choose-Event-Driven-Architecture"><span class="nav-number">1.3.</span> <span class="nav-text">Why Choose Event-Driven Architecture?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Building-Event-Driven-Architecture-with-Spring-WebFlux"><span class="nav-number">1.4.</span> <span class="nav-text">Building Event-Driven Architecture with Spring WebFlux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Project-Setup"><span class="nav-number">1.5.</span> <span class="nav-text">Project Setup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Configuring-Kafka"><span class="nav-number">1.6.</span> <span class="nav-text">Configuring Kafka</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Event-Model"><span class="nav-number">1.7.</span> <span class="nav-text">Event Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Event-Producer"><span class="nav-number">1.8.</span> <span class="nav-text">Event Producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Event-Consumer"><span class="nav-number">1.9.</span> <span class="nav-text">Event Consumer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-Layer-Integration-with-Event-Driven"><span class="nav-number">1.10.</span> <span class="nav-text">Service Layer Integration with Event-Driven</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Connecting-the-Pieces"><span class="nav-number">1.11.</span> <span class="nav-text">Connecting the Pieces</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BookEventConsumer-Listening-to-the-Topic"><span class="nav-number">1.11.1.</span> <span class="nav-text">BookEventConsumer Listening to the Topic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BookEventProducer-Producing-Events-to-the-Topic"><span class="nav-number">1.11.2.</span> <span class="nav-text">BookEventProducer Producing Events to the Topic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BookService-Integration"><span class="nav-number">1.11.3.</span> <span class="nav-text">BookService Integration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-of-Event-Handling-in-BookEventConsumer"><span class="nav-number">1.11.4.</span> <span class="nav-text">Example of Event Handling in BookEventConsumer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.12.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - XIV | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - XIV
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:07:24" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:24-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#event-driven-architecture">Event-Driven Architecture</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#what-is-event-driven-architecture">What is Event-Driven Architecture?</a></li>
+<li><a href="#why-choose-event-driven-architecture">Why Choose Event-Driven Architecture?</a></li>
+<li><a href="#building-event-driven-architecture-with-spring-webflux">Building Event-Driven Architecture with Spring WebFlux</a></li>
+<li><a href="#project-setup">Project Setup</a></li>
+<li><a href="#configuring-kafka">Configuring Kafka</a></li>
+<li><a href="#event-model">Event Model</a></li>
+<li><a href="#event-producer">Event Producer</a></li>
+<li><a href="#event-consumer">Event Consumer</a></li>
+<li><a href="#service-layer-integration-with-event-driven">Service Layer Integration with Event-Driven</a></li>
+<li><a href="#connecting-the-pieces">Connecting the Pieces</a><ul>
+<li><a href="#bookeventconsumer-listening-to-the-topic">BookEventConsumer Listening to the Topic</a></li>
+<li><a href="#bookeventproducer-producing-events-to-the-topic">BookEventProducer Producing Events to the Topic</a></li>
+<li><a href="#bookservice-integration">BookService Integration</a></li>
+<li><a href="#example-of-event-handling-in-bookeventconsumer">Example of Event Handling in BookEventConsumer</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Event-Driven-Architecture"><a href="#Event-Driven-Architecture" class="headerlink" title="Event-Driven Architecture"></a>Event-Driven Architecture</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the previous thirteen articles, we have explored the foundational concepts of Spring WebFlux, Reactor, error handling, data stream transformations, reactive database access, performance optimization, security, testing, deployment and operations, best practices and common pitfalls, as well as integration with microservices architecture. This article will delve into how to use Spring WebFlux to build an event-driven architecture, enhancing system scalability and responsiveness.</p>
+<p><a name="what-is-event-driven-architecture"></a></p>
+<h2 id="What-is-Event-Driven-Architecture"><a href="#What-is-Event-Driven-Architecture" class="headerlink" title="What is Event-Driven Architecture?"></a>What is Event-Driven Architecture?</h2><p>Event-Driven Architecture (EDA) is a software design pattern where the behavior of the system is driven by events. Events can represent user actions, system state changes, or other triggering conditions. EDA typically consists of the following components:</p>
+<ul>
+<li><strong>Event</strong>: Represents a state change or action within the system.</li>
+<li><strong>Event Producer</strong>: Generates and publishes events.</li>
+<li><strong>Event Consumer</strong>: Subscribes to and processes events.</li>
+<li><strong>Event Bus</strong>: Manages the transmission and routing of events.</li>
+</ul>
+<p><a name="why-choose-event-driven-architecture"></a></p>
+<h2 id="Why-Choose-Event-Driven-Architecture"><a href="#Why-Choose-Event-Driven-Architecture" class="headerlink" title="Why Choose Event-Driven Architecture?"></a>Why Choose Event-Driven Architecture?</h2><p>Event-Driven Architecture offers several advantages:</p>
+<ul>
+<li><strong>Loose Coupling</strong>: Producers and consumers communicate via events, reducing system coupling.</li>
+<li><strong>Scalability</strong>: Producers and consumers can be scaled independently based on load, enhancing system scalability.</li>
+<li><strong>Real-Time Responsiveness</strong>: Enables real-time event handling, improving system responsiveness and flexibility.</li>
+</ul>
+<p><a name="building-event-driven-architecture-with-spring-webflux"></a></p>
+<h2 id="Building-Event-Driven-Architecture-with-Spring-WebFlux"><a href="#Building-Event-Driven-Architecture-with-Spring-WebFlux" class="headerlink" title="Building Event-Driven Architecture with Spring WebFlux"></a>Building Event-Driven Architecture with Spring WebFlux</h2><p>Spring WebFlux and Project Reactor provide robust support for building event-driven architectures. Below is an example of using Spring WebFlux and Kafka to construct an event-driven architecture.</p>
+<p><a name="project-setup"></a></p>
+<h2 id="Project-Setup"><a href="#Project-Setup" class="headerlink" title="Project Setup"></a>Project Setup</h2><p>First, create a Spring Boot project and include the necessary dependencies:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka-reactive<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-r2dbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.r2dbc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>r2dbc-h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="configuring-kafka"></a></p>
+<h2 id="Configuring-Kafka"><a href="#Configuring-Kafka" class="headerlink" title="Configuring Kafka"></a>Configuring Kafka</h2><p>Configure Kafka in <code>application.properties</code>:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.kafka.bootstrap-servers</span>=<span class="string">localhost:9092</span></span><br><span class="line"><span class="attr">spring.kafka.consumer.group-id</span>=<span class="string">book-consumers</span></span><br><span class="line"><span class="attr">spring.kafka.consumer.auto-offset-reset</span>=<span class="string">earliest</span></span><br><span class="line"><span class="attr">spring.kafka.producer.key-serializer</span>=<span class="string">org.apache.kafka.common.serialization.StringSerializer</span></span><br><span class="line"><span class="attr">spring.kafka.producer.value-serializer</span>=<span class="string">org.apache.kafka.common.serialization.StringSerializer</span></span><br><span class="line"><span class="attr">spring.kafka.consumer.key-deserializer</span>=<span class="string">org.apache.kafka.common.serialization.StringDeserializer</span></span><br><span class="line"><span class="attr">spring.kafka.consumer.value-deserializer</span>=<span class="string">org.apache.kafka.common.serialization.StringDeserializer</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="event-model"></a></p>
+<h2 id="Event-Model"><a href="#Event-Model" class="headerlink" title="Event Model"></a>Event Model</h2><p>Define a simple event model:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookEvent</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String eventId;</span><br><span class="line">    <span class="keyword">private</span> String eventType;</span><br><span class="line">    <span class="keyword">private</span> Book book;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Constructors, Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="event-producer"></a></p>
+<h2 id="Event-Producer"><a href="#Event-Producer" class="headerlink" title="Event Producer"></a>Event Producer</h2><p>Create an event producer to publish book-related events:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.kafka.core.KafkaTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookEventProducer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> KafkaTemplate&lt;String, BookEvent&gt; kafkaTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookEventProducer</span><span class="params">(KafkaTemplate&lt;String, BookEvent&gt; kafkaTemplate)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.kafkaTemplate = kafkaTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">sendEvent</span><span class="params">(BookEvent event)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.fromRunnable(() -&gt; kafkaTemplate.send(<span class="string">&quot;book-events&quot;</span>, event));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="event-consumer"></a></p>
+<h2 id="Event-Consumer"><a href="#Event-Consumer" class="headerlink" title="Event Consumer"></a>Event Consumer</h2><p>Create an event consumer to handle book-related events:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.kafka.annotation.KafkaListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.FluxSink;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookEventConsumer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> FluxSink&lt;BookEvent&gt; sink;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookEventConsumer</span><span class="params">(FluxSink&lt;BookEvent&gt; sink)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.sink = sink;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@KafkaListener(topics = &quot;book-events&quot;, groupId = &quot;book-consumers&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">consume</span><span class="params">(BookEvent event)</span> &#123;</span><br><span class="line">        sink.next(event);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="service-layer-integration-with-event-driven"></a></p>
+<h2 id="Service-Layer-Integration-with-Event-Driven"><a href="#Service-Layer-Integration-with-Event-Driven" class="headerlink" title="Service Layer Integration with Event-Driven"></a>Service Layer Integration with Event-Driven</h2><p>Integrate event-driven architecture in the <code>BookService</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookEventProducer eventProducer;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(BookRepository bookRepository, BookEventProducer eventProducer)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">        <span class="built_in">this</span>.eventProducer = eventProducer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">addBook</span><span class="params">(Book book)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.save(book)</span><br><span class="line">            .flatMap(savedBook -&gt; &#123;</span><br><span class="line">                <span class="type">BookEvent</span> <span class="variable">event</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BookEvent</span>(UUID.randomUUID().toString(), <span class="string">&quot;BOOK_CREATED&quot;</span>, savedBook);</span><br><span class="line">                <span class="keyword">return</span> eventProducer.sendEvent(event).thenReturn(savedBook);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">deleteBook</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .flatMap(book -&gt; &#123;</span><br><span class="line">                <span class="type">BookEvent</span> <span class="variable">event</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BookEvent</span>(UUID.randomUUID().toString(), <span class="string">&quot;BOOK_DELETED&quot;</span>, book);</span><br><span class="line">                <span class="keyword">return</span> eventProducer.sendEvent(event).then(bookRepository.deleteById(id));</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="connecting-the-pieces"></a></p>
+<h2 id="Connecting-the-Pieces"><a href="#Connecting-the-Pieces" class="headerlink" title="Connecting the Pieces"></a>Connecting the Pieces</h2><h3 id="BookEventConsumer-Listening-to-the-Topic"><a href="#BookEventConsumer-Listening-to-the-Topic" class="headerlink" title="BookEventConsumer Listening to the Topic"></a>BookEventConsumer Listening to the Topic</h3><p>The <code>BookEventConsumer</code> listens to the Kafka topic <code>book-events</code> and processes incoming events. When an event is received, it pushes the event to a <code>FluxSink</code>, which can be used to propagate the event to other parts of the application.</p>
+<h3 id="BookEventProducer-Producing-Events-to-the-Topic"><a href="#BookEventProducer-Producing-Events-to-the-Topic" class="headerlink" title="BookEventProducer Producing Events to the Topic"></a>BookEventProducer Producing Events to the Topic</h3><p>The <code>BookEventProducer</code> is responsible for producing events to the Kafka topic <code>book-events</code>. When a book is added or deleted, the <code>BookService</code> uses the <code>BookEventProducer</code> to send corresponding events.</p>
+<h3 id="BookService-Integration"><a href="#BookService-Integration" class="headerlink" title="BookService Integration"></a>BookService Integration</h3><p>The <code>BookService</code> integrates the event-driven architecture by:</p>
+<ol>
+<li><strong>Producing Events</strong>: When a book is added or deleted, the <code>BookService</code> creates a <code>BookEvent</code> and sends it to the Kafka topic using the <code>BookEventProducer</code>.</li>
+<li><strong>Consuming Events</strong>: The <code>BookEventConsumer</code> listens to the Kafka topic and processes the events. Depending on the event type, it can trigger further actions, such as updating a cache or sending notifications.</li>
+</ol>
+<h3 id="Example-of-Event-Handling-in-BookEventConsumer"><a href="#Example-of-Event-Handling-in-BookEventConsumer" class="headerlink" title="Example of Event Handling in BookEventConsumer"></a>Example of Event Handling in BookEventConsumer</h3><p>To illustrate how the <code>BookEventConsumer</code> can integrate with the <code>BookService</code>, let’s extend the <code>BookEventConsumer</code> to handle specific events:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.kafka.annotation.KafkaListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.FluxSink;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookEventConsumer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> FluxSink&lt;BookEvent&gt; sink;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookService bookService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookEventConsumer</span><span class="params">(FluxSink&lt;BookEvent&gt; sink, BookService bookService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.sink = sink;</span><br><span class="line">        <span class="built_in">this</span>.bookService = bookService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@KafkaListener(topics = &quot;book-events&quot;, groupId = &quot;book-consumers&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">consume</span><span class="params">(BookEvent event)</span> &#123;</span><br><span class="line">        sink.next(event);</span><br><span class="line">        handleEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleEvent</span><span class="params">(BookEvent event)</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (event.getEventType()) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;BOOK_CREATED&quot;</span>:</span><br><span class="line">                bookService.handleBookCreated(event.getBook()).subscribe();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;BOOK_DELETED&quot;</span>:</span><br><span class="line">                bookService.handleBookDeleted(event.getBook().getId()).subscribe();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">// Handle other event types as needed</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, the <code>BookEventConsumer</code> not only pushes events to the <code>FluxSink</code> but also calls methods in the <code>BookService</code> to handle specific events. This ensures that the business logic related to event handling is centralized in the <code>BookService</code>.</p>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to build an event-driven architecture using Spring WebFlux. By leveraging event-driven architecture, we can enhance system scalability and responsiveness, creating more flexible and efficient distributed systems. The integration of <code>BookEventProducer</code>, <code>BookEventConsumer</code>, and <code>BookService</code> demonstrates how events can be produced, consumed, and handled within a reactive and event-driven context.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII/" rel="prev" title="Reactive Programming in Spring WebFlux Series - XIII">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - XIII
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XV/" rel="next" title="Reactive Programming in Spring WebFlux Series - XV">
+                  Reactive Programming in Spring WebFlux Series - XV <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

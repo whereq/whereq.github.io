@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Architecture 2.1 Overview Spring Boot Quarkus   2.2 Microservices Spring Boot Quarkus   2.3 Dependency Injection Spring Boot Quarkus   2.4 Reactive Programming Spring Boot Quarkus     Pe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Spring Boot and Quarkus">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Architecture 2.1 Overview Spring Boot Quarkus   2.2 Microservices Spring Boot Quarkus   2.3 Dependency Injection Spring Boot Quarkus   2.4 Reactive Programming Spring Boot Quarkus     Pe">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T03:38:08.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Quarkus">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/","path":"2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/","title":"Deep Dive into Spring Boot and Quarkus"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Spring Boot and Quarkus | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture"><span class="nav-number">2.</span> <span class="nav-text">Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Overview"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot"><span class="nav-number">2.1.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus"><span class="nav-number">2.1.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Microservices"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Microservices</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Dependency-Injection"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Dependency Injection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Reactive-Programming"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Reactive Programming</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-3"><span class="nav-number">2.4.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-3"><span class="nav-number">2.4.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Performance"><span class="nav-number">3.</span> <span class="nav-text">Performance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Startup-Time"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Startup Time</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-4"><span class="nav-number">3.1.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-4"><span class="nav-number">3.1.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Memory-Usage"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Memory Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-5"><span class="nav-number">3.2.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-5"><span class="nav-number">3.2.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Runtime-Efficiency"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Runtime Efficiency</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-6"><span class="nav-number">3.3.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-6"><span class="nav-number">3.3.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ecosystem-and-Community"><span class="nav-number">4.</span> <span class="nav-text">Ecosystem and Community</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Spring-Ecosystem"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Spring Ecosystem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Quarkus-Ecosystem"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Quarkus Ecosystem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Community-Support"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 Community Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-Boot-7"><span class="nav-number">4.3.1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Quarkus-7"><span class="nav-number">4.3.2.</span> <span class="nav-text">Quarkus</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code"><span class="nav-number">5.</span> <span class="nav-text">Sample Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Spring-Boot-Example"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Spring Boot Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Quarkus-Example"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 Quarkus Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Spring-Boot-and-Quarkus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Spring Boot and Quarkus | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Spring Boot and Quarkus
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 23:38:08" itemprop="dateCreated datePublished" datetime="2024-10-27T23:38:08-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Spring-Boot/Quarkus/" itemprop="url" rel="index"><span itemprop="name">Quarkus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#architecture">Architecture</a><ul>
+<li><a href="#21-overview">2.1 Overview</a><ul>
+<li><a href="#spring-boot">Spring Boot</a></li>
+<li><a href="#quarkus">Quarkus</a></li>
+</ul>
+</li>
+<li><a href="#22-microservices">2.2 Microservices</a><ul>
+<li><a href="#spring-boot-1">Spring Boot</a></li>
+<li><a href="#quarkus-1">Quarkus</a></li>
+</ul>
+</li>
+<li><a href="#23-dependency-injection">2.3 Dependency Injection</a><ul>
+<li><a href="#spring-boot-2">Spring Boot</a></li>
+<li><a href="#quarkus-2">Quarkus</a></li>
+</ul>
+</li>
+<li><a href="#24-reactive-programming">2.4 Reactive Programming</a><ul>
+<li><a href="#spring-boot-3">Spring Boot</a></li>
+<li><a href="#quarkus-3">Quarkus</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#performance">Performance</a><ul>
+<li><a href="#31-startup-time">3.1 Startup Time</a><ul>
+<li><a href="#spring-boot-4">Spring Boot</a></li>
+<li><a href="#quarkus-4">Quarkus</a></li>
+</ul>
+</li>
+<li><a href="#32-memory-usage">3.2 Memory Usage</a><ul>
+<li><a href="#spring-boot-5">Spring Boot</a></li>
+<li><a href="#quarkus-5">Quarkus</a></li>
+</ul>
+</li>
+<li><a href="#33-runtime-efficiency">3.3 Runtime Efficiency</a><ul>
+<li><a href="#spring-boot-6">Spring Boot</a></li>
+<li><a href="#quarkus-6">Quarkus</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#ecosystem-and-community">Ecosystem and Community</a><ul>
+<li><a href="#41-spring-ecosystem">4.1 Spring Ecosystem</a></li>
+<li><a href="#42-quarkus-ecosystem">4.2 Quarkus Ecosystem</a></li>
+<li><a href="#43-community-support">4.3 Community Support</a><ul>
+<li><a href="#spring-boot-7">Spring Boot</a></li>
+<li><a href="#quarkus-7">Quarkus</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sample-code">Sample Code</a><ul>
+<li><a href="#51-spring-boot-example">5.1 Spring Boot Example</a></li>
+<li><a href="#52-quarkus-example">5.2 Quarkus Example</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Spring Boot and Quarkus are two of the most popular frameworks for building Java applications. Both frameworks aim to simplify the development process and provide robust solutions for modern application development. However, they have different philosophies and approaches. This article will provide a detailed comparison of Spring Boot and Quarkus, exploring their architecture, performance, ecosystem, and community support.</p>
+<p><a name="architecture"></a></p>
+<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p><a name="21-overview"></a></p>
+<h3 id="2-1-Overview"><a href="#2-1-Overview" class="headerlink" title="2.1 Overview"></a>2.1 Overview</h3><h4 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot is built on top of the Spring framework and provides a streamlined way to create stand-alone, production-grade Spring-based applications. It leverages the Spring ecosystem to offer a wide range of features out of the box.</p>
+<h4 id="Quarkus"><a href="#Quarkus" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus is a Kubernetes-native Java framework designed for OpenJDK HotSpot and GraalVM. It is optimized for low memory usage and fast startup times, making it ideal for cloud-native applications.</p>
+<p><a name="22-microservices"></a></p>
+<h3 id="2-2-Microservices"><a href="#2-2-Microservices" class="headerlink" title="2.2 Microservices"></a>2.2 Microservices</h3><h4 id="Spring-Boot-1"><a href="#Spring-Boot-1" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot is well-suited for building microservices. It provides built-in support for service discovery, configuration management, and circuit breakers through Spring Cloud Kubernetes, which integrates with Kubernetes’ native service discovery mechanisms.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +----------------------------------+</span><br><span class="line">| Spring Boot       |       | Spring Cloud      |       | Kubernetes                       |</span><br><span class="line">| Microservice      |       | Kubernetes        |       | (Service Discovery and Config    |</span><br><span class="line">+-------------------+       +-------------------+       +----------------------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (1) Service Discovery     |                           |</span><br><span class="line">        |--------------------------&gt;|                           |</span><br><span class="line">        |                           | (2) Configuration Fetch   |</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (3) Circuit Breaker       |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +--------------------------------+</span><br><span class="line">| Spring Boot       |       | Spring Cloud      |       | Kubernetes                     |</span><br><span class="line">| Microservice      |       | Kubernetes        |       | (Service Discovery and Config  |</span><br><span class="line">+-------------------+       +-------------------+       +--------------------------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="Quarkus-1"><a href="#Quarkus-1" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus also supports microservices with extensions for service discovery, configuration management, and fault tolerance. It integrates well with Kubernetes and provides native support for GraalVM.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Quarkus           |       | Kubernetes        |       | GraalVM           |</span><br><span class="line">| Microservice      |       | (Service Discovery|       | (Native Image)    |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (1) Service Discovery     |                           |</span><br><span class="line">        |--------------------------&gt;|                           |</span><br><span class="line">        |                           | (2) Configuration Fetch  |</span><br><span class="line">        |                           |--------------------------&gt;|</span><br><span class="line">        |                           |                           |</span><br><span class="line">        | (3) Native Image Build    |                           |</span><br><span class="line">        |&lt;--------------------------|                           |</span><br><span class="line">        |                           |                           |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Quarkus           |       | Kubernetes        |       | GraalVM           |</span><br><span class="line">| Microservice      |       | (Service Discovery|       | (Native Image)    |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
+
+<p><a name="23-dependency-injection"></a></p>
+<h3 id="2-3-Dependency-Injection"><a href="#2-3-Dependency-Injection" class="headerlink" title="2.3 Dependency Injection"></a>2.3 Dependency Injection</h3><h4 id="Spring-Boot-2"><a href="#Spring-Boot-2" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot uses the Spring Framework’s dependency injection mechanism, which is based on the Inversion of Control (IoC) principle.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello, Spring Boot!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MyService myService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/message&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> myService.getMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Quarkus-2"><a href="#Quarkus-2" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus uses the Contexts and Dependency Injection (CDI) standard for dependency injection, which is part of the Java EE specification.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ApplicationScoped</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello, Quarkus!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Path(&quot;/message&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyResource</span> &#123;</span><br><span class="line">    <span class="meta">@Inject</span></span><br><span class="line">    MyService myService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GET</span></span><br><span class="line">    <span class="meta">@Produces(MediaType.TEXT_PLAIN)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> myService.getMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="24-reactive-programming"></a></p>
+<h3 id="2-4-Reactive-Programming"><a href="#2-4-Reactive-Programming" class="headerlink" title="2.4 Reactive Programming"></a>2.4 Reactive Programming</h3><h4 id="Spring-Boot-3"><a href="#Spring-Boot-3" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot supports reactive programming through Spring WebFlux, which is built on top of Project Reactor.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyReactiveController</span> &#123;</span><br><span class="line">    <span class="meta">@GetMapping(&quot;/reactive-message&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">getReactiveMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(<span class="string">&quot;Hello, Reactive Spring Boot!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Quarkus-3"><a href="#Quarkus-3" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus supports reactive programming through its Reactive Streams Operators and integrates well with frameworks like Vert.x.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Path(&quot;/reactive-message&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyReactiveResource</span> &#123;</span><br><span class="line">    <span class="meta">@GET</span></span><br><span class="line">    <span class="meta">@Produces(MediaType.TEXT_PLAIN)</span></span><br><span class="line">    <span class="keyword">public</span> Uni&lt;String&gt; <span class="title function_">getReactiveMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Uni.createFrom().item(<span class="string">&quot;Hello, Reactive Quarkus!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="performance"></a></p>
+<h2 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h2><p><a name="31-startup-time"></a></p>
+<h3 id="3-1-Startup-Time"><a href="#3-1-Startup-Time" class="headerlink" title="3.1 Startup Time"></a>3.1 Startup Time</h3><h4 id="Spring-Boot-4"><a href="#Spring-Boot-4" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot applications typically have a longer startup time due to the extensive initialization of the Spring framework.</p>
+<h4 id="Quarkus-4"><a href="#Quarkus-4" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus applications have a much faster startup time, especially when using GraalVM to build native images.</p>
+<p><a name="32-memory-usage"></a></p>
+<h3 id="3-2-Memory-Usage"><a href="#3-2-Memory-Usage" class="headerlink" title="3.2 Memory Usage"></a>3.2 Memory Usage</h3><h4 id="Spring-Boot-5"><a href="#Spring-Boot-5" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot applications generally consume more memory due to the heavyweight nature of the Spring framework.</p>
+<h4 id="Quarkus-5"><a href="#Quarkus-5" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus applications consume less memory, making them more efficient for containerized environments.</p>
+<p><a name="33-runtime-efficiency"></a></p>
+<h3 id="3-3-Runtime-Efficiency"><a href="#3-3-Runtime-Efficiency" class="headerlink" title="3.3 Runtime Efficiency"></a>3.3 Runtime Efficiency</h3><h4 id="Spring-Boot-6"><a href="#Spring-Boot-6" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot applications are optimized for traditional Java runtime environments.</p>
+<h4 id="Quarkus-6"><a href="#Quarkus-6" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus applications are optimized for modern, cloud-native environments and can take advantage of GraalVM for native execution.</p>
+<p><a name="ecosystem-and-community"></a></p>
+<h2 id="Ecosystem-and-Community"><a href="#Ecosystem-and-Community" class="headerlink" title="Ecosystem and Community"></a>Ecosystem and Community</h2><p><a name="41-spring-ecosystem"></a></p>
+<h3 id="4-1-Spring-Ecosystem"><a href="#4-1-Spring-Ecosystem" class="headerlink" title="4.1 Spring Ecosystem"></a>4.1 Spring Ecosystem</h3><p>Spring Boot benefits from the extensive Spring ecosystem, which includes Spring Data, Spring Security, Spring Cloud Kubernetes, and many other modules.</p>
+<p><a name="42-quarkus-ecosystem"></a></p>
+<h3 id="4-2-Quarkus-Ecosystem"><a href="#4-2-Quarkus-Ecosystem" class="headerlink" title="4.2 Quarkus Ecosystem"></a>4.2 Quarkus Ecosystem</h3><p>Quarkus has a growing ecosystem with extensions for various technologies, including databases, messaging systems, and cloud services.</p>
+<p><a name="43-community-support"></a></p>
+<h3 id="4-3-Community-Support"><a href="#4-3-Community-Support" class="headerlink" title="4.3 Community Support"></a>4.3 Community Support</h3><h4 id="Spring-Boot-7"><a href="#Spring-Boot-7" class="headerlink" title="Spring Boot"></a>Spring Boot</h4><p>Spring Boot has a large and active community, with extensive documentation, tutorials, and third-party libraries.</p>
+<h4 id="Quarkus-7"><a href="#Quarkus-7" class="headerlink" title="Quarkus"></a>Quarkus</h4><p>Quarkus has a rapidly growing community, with increasing support from Red Hat and other contributors.</p>
+<p><a name="sample-code"></a></p>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><p><a name="51-spring-boot-example"></a></p>
+<h3 id="5-1-Spring-Boot-Example"><a href="#5-1-Spring-Boot-Example" class="headerlink" title="5.1 Spring Boot Example"></a>5.1 Spring Boot Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootExample.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HelloController</span> &#123;</span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">hello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello, Spring Boot!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="52-quarkus-example"></a></p>
+<h3 id="5-2-Quarkus-Example"><a href="#5-2-Quarkus-Example" class="headerlink" title="5.2 Quarkus Example"></a>5.2 Quarkus Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.quarkus.runtime.Quarkus;</span><br><span class="line"><span class="keyword">import</span> io.quarkus.runtime.annotations.QuarkusMain;</span><br><span class="line"><span class="keyword">import</span> javax.ws.rs.GET;</span><br><span class="line"><span class="keyword">import</span> javax.ws.rs.Path;</span><br><span class="line"><span class="keyword">import</span> javax.ws.rs.Produces;</span><br><span class="line"><span class="keyword">import</span> javax.ws.rs.core.MediaType;</span><br><span class="line"></span><br><span class="line"><span class="meta">@QuarkusMain</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">QuarkusExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Quarkus.run(args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Path(&quot;/hello&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloResource</span> &#123;</span><br><span class="line">    <span class="meta">@GET</span></span><br><span class="line">    <span class="meta">@Produces(MediaType.TEXT_PLAIN)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">hello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello, Quarkus!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Both Spring Boot and Quarkus are powerful frameworks for building Java applications, each with its own strengths and weaknesses. Spring Boot offers a mature and feature-rich ecosystem, making it a great choice for a wide range of applications. Quarkus, on the other hand, is optimized for modern, cloud-native environments and provides excellent performance and efficiency.</p>
+<p>Choosing between Spring Boot and Quarkus depends on the specific requirements of your project, including performance, ecosystem, and community support. By understanding the differences and capabilities of both frameworks, you can make an informed decision that best suits your needs.</p>
+<p><a name="references"></a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-boot">Spring Boot Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://quarkus.io/guides/">Quarkus Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.baeldung.com/spring-boot-vs-quarkus">Spring Boot vs Quarkus: A Comprehensive Comparison</a></li>
+</ul>
+<hr>
+<p>This article provides a comprehensive comparison of Spring Boot and Quarkus, covering their architecture, performance, ecosystem, and community support. By understanding these frameworks, developers can choose the best tool for their projects and build efficient and scalable applications.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/Quarkus/" rel="tag"><i class="fa fa-tag"></i> Quarkus</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-into-Keycloak/" rel="prev" title="Deep Dive into Keycloak">
+                  <i class="fa fa-angle-left"></i> Deep Dive into Keycloak
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/28/Comprehensive-Guide-to-Kubernetes/" rel="next" title="Comprehensive Guide to Kubernetes">
+                  Comprehensive Guide to Kubernetes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

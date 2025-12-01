@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Single Responsibility Principle (SRP) Definition Broken Example Correct Example   Open&#x2F;Closed Principle (OCP) Definition Broken Example Correct Example   Liskov Substitution Princip">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The SOLID Principles in Software Design and Development">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Single Responsibility Principle (SRP) Definition Broken Example Correct Example   Open&#x2F;Closed Principle (OCP) Definition Broken Example Correct Example   Liskov Substitution Princip">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.whereq.com/images/The-SOLID-Principles-in-Software-Design-and-Development/SOLID_Principles.png">
+<meta property="article:published_time" content="2024-10-28T01:56:31.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Theory">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.whereq.com/images/The-SOLID-Principles-in-Software-Design-and-Development/SOLID_Principles.png">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/","path":"2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/","title":"The SOLID Principles in Software Design and Development"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>The SOLID Principles in Software Design and Development | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-Responsibility-Principle-SRP"><span class="nav-number">2.</span> <span class="nav-text">Single Responsibility Principle (SRP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition"><span class="nav-number">2.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broken-Example"><span class="nav-number">2.2.</span> <span class="nav-text">Broken Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Correct-Example"><span class="nav-number">2.3.</span> <span class="nav-text">Correct Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Open-Closed-Principle-OCP"><span class="nav-number">3.</span> <span class="nav-text">Open&#x2F;Closed Principle (OCP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition-1"><span class="nav-number">3.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broken-Example-1"><span class="nav-number">3.2.</span> <span class="nav-text">Broken Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Correct-Example-1"><span class="nav-number">3.3.</span> <span class="nav-text">Correct Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Liskov-Substitution-Principle-LSP"><span class="nav-number">4.</span> <span class="nav-text">Liskov Substitution Principle (LSP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition-2"><span class="nav-number">4.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broken-Example-2"><span class="nav-number">4.2.</span> <span class="nav-text">Broken Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Correct-Example-2"><span class="nav-number">4.3.</span> <span class="nav-text">Correct Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interface-Segregation-Principle-ISP"><span class="nav-number">5.</span> <span class="nav-text">Interface Segregation Principle (ISP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition-3"><span class="nav-number">5.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broken-Example-3"><span class="nav-number">5.2.</span> <span class="nav-text">Broken Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Correct-Example-3"><span class="nav-number">5.3.</span> <span class="nav-text">Correct Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependency-Inversion-Principle-DIP"><span class="nav-number">6.</span> <span class="nav-text">Dependency Inversion Principle (DIP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition-4"><span class="nav-number">6.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broken-Example-4"><span class="nav-number">6.2.</span> <span class="nav-text">Broken Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation"><span class="nav-number">6.3.</span> <span class="nav-text">Explanation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-High-Level-Module-Depends-on-Low-Level-Module"><span class="nav-number">6.4.</span> <span class="nav-text">Why High-Level Module Depends on Low-Level Module</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Correct-Example-4"><span class="nav-number">6.5.</span> <span class="nav-text">Correct Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Explanation-of-Correct-Example"><span class="nav-number">6.6.</span> <span class="nav-text">Explanation of Correct Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">8.</span> <span class="nav-text">References:</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/The-SOLID-Principles-in-Software-Design-and-Development/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="The SOLID Principles in Software Design and Development | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          The SOLID Principles in Software Design and Development
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 21:56:31" itemprop="dateCreated datePublished" datetime="2024-10-27T21:56:31-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Theory/" itemprop="url" rel="index"><span itemprop="name">Theory</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#single-responsibility-principle-srp">Single Responsibility Principle (SRP)</a><ul>
+<li><a href="#definition">Definition</a></li>
+<li><a href="#broken-example">Broken Example</a></li>
+<li><a href="#correct-example">Correct Example</a></li>
+</ul>
+</li>
+<li><a href="#openclosed-principle-ocp">Open&#x2F;Closed Principle (OCP)</a><ul>
+<li><a href="#definition-1">Definition</a></li>
+<li><a href="#broken-example-1">Broken Example</a></li>
+<li><a href="#correct-example-1">Correct Example</a></li>
+</ul>
+</li>
+<li><a href="#liskov-substitution-principle-lsp">Liskov Substitution Principle (LSP)</a><ul>
+<li><a href="#definition-2">Definition</a></li>
+<li><a href="#broken-example-2">Broken Example</a></li>
+<li><a href="#correct-example-2">Correct Example</a></li>
+</ul>
+</li>
+<li><a href="#interface-segregation-principle-isp">Interface Segregation Principle (ISP)</a><ul>
+<li><a href="#definition-3">Definition</a></li>
+<li><a href="#broken-example-3">Broken Example</a></li>
+<li><a href="#correct-example-3">Correct Example</a></li>
+</ul>
+</li>
+<li><a href="#dependency-inversion-principle-dip">Dependency Inversion Principle (DIP)</a><ul>
+<li><a href="#definition-4">Definition</a></li>
+<li><a href="#broken-example-4">Broken Example</a></li>
+<li><a href="#explanation">Explanation</a></li>
+<li><a href="#why-high-level-module-depends-on-low-level-module">Why High-Level Module Depends on Low-Level Module</a></li>
+<li><a href="#correct-example-4">Correct Example</a></li>
+<li><a href="#explanation-of-correct-example">Explanation of Correct Example</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References:</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>The SOLID principles are a set of five design principles intended to make software designs more understandable, flexible, and maintainable. These principles were introduced by Robert C. Martin (also known as Uncle Bob) and are widely accepted in the software development community. The acronym SOLID stands for:</p>
+<ul>
+<li><strong>S</strong>ingle Responsibility Principle (SRP)</li>
+<li><strong>O</strong>pen&#x2F;Closed Principle (OCP)</li>
+<li><strong>L</strong>iskov Substitution Principle (LSP)</li>
+<li><strong>I</strong>nterface Segregation Principle (ISP)</li>
+<li><strong>D</strong>ependency Inversion Principle (DIP)</li>
+</ul>
+<p><img src="/images/The-SOLID-Principles-in-Software-Design-and-Development/SOLID_Principles.png" alt="SOLID Principles"><br>This article will explain each principle, provide examples of how they can be broken, and show the correct implementation to fix them.</p>
+<hr>
+<p><a name="single-responsibility-principle-srp"></a></p>
+<h2 id="Single-Responsibility-Principle-SRP"><a href="#Single-Responsibility-Principle-SRP" class="headerlink" title="Single Responsibility Principle (SRP)"></a>Single Responsibility Principle (SRP)</h2><h3 id="Definition"><a href="#Definition" class="headerlink" title="Definition"></a>Definition</h3><p>The Single Responsibility Principle states that a class should have only one reason to change, meaning it should have only one job or responsibility.</p>
+<h3 id="Broken-Example"><a href="#Broken-Example" class="headerlink" title="Broken Example"></a>Broken Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Employee</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> salary;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Employee</span><span class="params">(String name, <span class="type">double</span> salary)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.salary = salary;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Code to save employee data to the database</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Employee saved to database: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">calculateSalary</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Code to calculate salary</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Salary calculated: &quot;</span> + salary);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Correct-Example"><a href="#Correct-Example" class="headerlink" title="Correct Example"></a>Correct Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Employee</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> salary;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Employee</span><span class="params">(String name, <span class="type">double</span> salary)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.salary = salary;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">calculateSalary</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Code to calculate salary</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Salary calculated: &quot;</span> + salary);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmployeeRepository</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(Employee employee)</span> &#123;</span><br><span class="line">        <span class="comment">// Code to save employee data to the database</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Employee saved to database: &quot;</span> + employee.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="openclosed-principle-ocp"></a></p>
+<h2 id="Open-Closed-Principle-OCP"><a href="#Open-Closed-Principle-OCP" class="headerlink" title="Open&#x2F;Closed Principle (OCP)"></a>Open&#x2F;Closed Principle (OCP)</h2><h3 id="Definition-1"><a href="#Definition-1" class="headerlink" title="Definition"></a>Definition</h3><p>The Open&#x2F;Closed Principle states that software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.</p>
+<h3 id="Broken-Example-1"><a href="#Broken-Example-1" class="headerlink" title="Broken Example"></a>Broken Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    String type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Shape</span><span class="params">(String type)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AreaCalculator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">(Shape shape)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (shape.type.equals(<span class="string">&quot;circle&quot;</span>)) &#123;</span><br><span class="line">            <span class="comment">// Calculate area for circle</span></span><br><span class="line">            <span class="keyword">return</span> Math.PI * Math.pow(<span class="number">5</span>, <span class="number">2</span>); <span class="comment">// Assuming radius is 5</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shape.type.equals(<span class="string">&quot;rectangle&quot;</span>)) &#123;</span><br><span class="line">            <span class="comment">// Calculate area for rectangle</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">10</span> * <span class="number">5</span>; <span class="comment">// Assuming width is 10 and height is 5</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Correct-Example-1"><a href="#Correct-Example-1" class="headerlink" title="Correct Example"></a>Correct Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">implements</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> radius;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Circle</span><span class="params">(<span class="type">double</span> radius)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.radius = radius;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Math.PI * Math.pow(radius, <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Rectangle</span> <span class="keyword">implements</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> width;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> height;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Rectangle</span><span class="params">(<span class="type">double</span> width, <span class="type">double</span> height)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.width = width;</span><br><span class="line">        <span class="built_in">this</span>.height = height;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> width * height;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AreaCalculator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">(Shape shape)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> shape.calculateArea();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="liskov-substitution-principle-lsp"></a></p>
+<h2 id="Liskov-Substitution-Principle-LSP"><a href="#Liskov-Substitution-Principle-LSP" class="headerlink" title="Liskov Substitution Principle (LSP)"></a>Liskov Substitution Principle (LSP)</h2><h3 id="Definition-2"><a href="#Definition-2" class="headerlink" title="Definition"></a>Definition</h3><p>The Liskov Substitution Principle states that objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.</p>
+<h3 id="Broken-Example-2"><a href="#Broken-Example-2" class="headerlink" title="Broken Example"></a>Broken Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Flying...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Ostrich</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;Ostriches cannot fly&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Correct-Example-2"><a href="#Correct-Example-2" class="headerlink" title="Correct Example"></a>Correct Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Eating...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FlyingBird</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Flying...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Ostrich</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">    <span class="comment">// Ostriches do not fly, so no fly method here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="interface-segregation-principle-isp"></a></p>
+<h2 id="Interface-Segregation-Principle-ISP"><a href="#Interface-Segregation-Principle-ISP" class="headerlink" title="Interface Segregation Principle (ISP)"></a>Interface Segregation Principle (ISP)</h2><h3 id="Definition-3"><a href="#Definition-3" class="headerlink" title="Definition"></a>Definition</h3><p>The Interface Segregation Principle states that clients should not be forced to depend on interfaces they do not use.</p>
+<h3 id="Broken-Example-3"><a href="#Broken-Example-3" class="headerlink" title="Broken Example"></a>Broken Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Worker</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">work</span><span class="params">()</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Robot</span> <span class="keyword">implements</span> <span class="title class_">Worker</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">work</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Robot working...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;Robots do not eat&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Correct-Example-3"><a href="#Correct-Example-3" class="headerlink" title="Correct Example"></a>Correct Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Workable</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">work</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Eatable</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Robot</span> <span class="keyword">implements</span> <span class="title class_">Workable</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">work</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Robot working...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Human</span> <span class="keyword">implements</span> <span class="title class_">Workable</span>, Eatable &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">work</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Human working...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Human eating...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="dependency-inversion-principle-dip"></a></p>
+<h2 id="Dependency-Inversion-Principle-DIP"><a href="#Dependency-Inversion-Principle-DIP" class="headerlink" title="Dependency Inversion Principle (DIP)"></a>Dependency Inversion Principle (DIP)</h2><h3 id="Definition-4"><a href="#Definition-4" class="headerlink" title="Definition"></a>Definition</h3><p>The Dependency Inversion Principle states that high-level modules should not depend on low-level modules. Both should depend on abstractions. Additionally, abstractions should not depend on details. Details should depend on abstractions.</p>
+<h3 id="Broken-Example-4"><a href="#Broken-Example-4" class="headerlink" title="Broken Example"></a>Broken Example</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LightBulb</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">turnOn</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;LightBulb turned on&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">turnOff</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;LightBulb turned off&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Switch</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> LightBulb bulb;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Switch</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.bulb = <span class="keyword">new</span> <span class="title class_">LightBulb</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">operate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isOn) &#123;</span><br><span class="line">            bulb.turnOff();</span><br><span class="line">            isOn = <span class="literal">false</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            bulb.turnOn();</span><br><span class="line">            isOn = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isOn</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><p>In the broken example, the <code>Switch</code> class directly depends on the <code>LightBulb</code> class. This creates a tight coupling between the <code>Switch</code> (high-level module) and the <code>LightBulb</code> (low-level module). Here’s why this violates the Dependency Inversion Principle:</p>
+<ol>
+<li><p><strong>Direct Dependency</strong>: The <code>Switch</code> class directly creates an instance of <code>LightBulb</code> within its constructor. This means that the <code>Switch</code> class is tightly coupled to the <code>LightBulb</code> class. If you want to change the type of device that the <code>Switch</code> controls (e.g., a fan instead of a light bulb), you would need to modify the <code>Switch</code> class itself.</p>
+</li>
+<li><p><strong>Lack of Abstraction</strong>: There is no abstraction layer between the <code>Switch</code> and the <code>LightBulb</code>. The <code>Switch</code> class is directly aware of the implementation details of the <code>LightBulb</code> class. This makes the <code>Switch</code> class less flexible and harder to extend or modify.</p>
+</li>
+<li><p><strong>Rigidity</strong>: The <code>Switch</code> class is rigid because it can only operate on a <code>LightBulb</code>. If you want to add support for other devices (e.g., a <code>Fan</code>), you would need to create a new <code>Switch</code> class or modify the existing one, which is not ideal.</p>
+</li>
+</ol>
+<h3 id="Why-High-Level-Module-Depends-on-Low-Level-Module"><a href="#Why-High-Level-Module-Depends-on-Low-Level-Module" class="headerlink" title="Why High-Level Module Depends on Low-Level Module"></a>Why High-Level Module Depends on Low-Level Module</h3><ul>
+<li><strong>Direct Instantiation</strong>: The <code>Switch</code> class directly instantiates the <code>LightBulb</code> class within its constructor. This means that the <code>Switch</code> class is directly dependent on the <code>LightBulb</code> class.</li>
+<li><strong>No Abstraction Layer</strong>: There is no interface or abstract class that both the <code>Switch</code> and <code>LightBulb</code> classes implement. This lack of abstraction means that the <code>Switch</code> class is tightly coupled to the specific implementation of the <code>LightBulb</code> class.</li>
+</ul>
+<h3 id="Correct-Example-4"><a href="#Correct-Example-4" class="headerlink" title="Correct Example"></a>Correct Example</h3><p>To adhere to the Dependency Inversion Principle, we introduce an abstraction (an interface) that both the <code>Switch</code> and the <code>LightBulb</code> classes depend on.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Switchable</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">turnOn</span><span class="params">()</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">turnOff</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LightBulb</span> <span class="keyword">implements</span> <span class="title class_">Switchable</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">turnOn</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;LightBulb turned on&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">turnOff</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;LightBulb turned off&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Switch</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Switchable device;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Switch</span><span class="params">(Switchable device)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.device = device;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">operate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isOn) &#123;</span><br><span class="line">            device.turnOff();</span><br><span class="line">            isOn = <span class="literal">false</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            device.turnOn();</span><br><span class="line">            isOn = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">isOn</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation-of-Correct-Example"><a href="#Explanation-of-Correct-Example" class="headerlink" title="Explanation of Correct Example"></a>Explanation of Correct Example</h3><ol>
+<li><strong>Abstraction Layer</strong>: The <code>Switchable</code> interface acts as an abstraction layer. Both the <code>Switch</code> and the <code>LightBulb</code> classes depend on this abstraction.</li>
+<li><strong>Dependency Injection</strong>: The <code>Switch</code> class now takes a <code>Switchable</code> object as a parameter in its constructor. This allows the <code>Switch</code> class to operate on any device that implements the <code>Switchable</code> interface, not just a <code>LightBulb</code>.</li>
+<li><strong>Flexibility</strong>: This design makes the <code>Switch</code> class flexible and easier to extend. You can now create other classes that implement the <code>Switchable</code> interface (e.g., <code>Fan</code>) and pass them to the <code>Switch</code> class without modifying the <code>Switch</code> class itself.</li>
+</ol>
+<p>By adhering to the Dependency Inversion Principle, we ensure that high-level modules (like <code>Switch</code>) do not depend on low-level modules (like <code>LightBulb</code>). Instead, both depend on abstractions (like the <code>Switchable</code> interface), making the system more modular, flexible, and easier to maintain.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The SOLID principles are fundamental to writing clean, maintainable, and scalable software. By adhering to these principles, developers can create code that is easier to understand, extend, and refactor. Each principle addresses a specific aspect of software design, and understanding how to apply them correctly can significantly improve the quality of your code.</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><p><a target="_blank" rel="noopener" href="https://blog.bytebytego.com/p/mastering-design-principles-solid">https://blog.bytebytego.com/p/mastering-design-principles-solid</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Theory/" rel="tag"><i class="fa fa-tag"></i> Theory</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/" rel="prev" title="Troubleshooting High Currency Issues in Kubernetes - Continued">
+                  <i class="fa fa-angle-left"></i> Troubleshooting High Currency Issues in Kubernetes - Continued
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Understanding-Object-Types-in-Application-Development/" rel="next" title="Understanding Object Types in Application Development">
+                  Understanding Object Types in Application Development <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

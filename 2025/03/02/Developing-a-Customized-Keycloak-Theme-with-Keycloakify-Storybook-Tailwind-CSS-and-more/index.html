@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Introduction What is Keycloakify? Why Customize Keycloak Themes?   2. Prerequisites Tools and Dependencies Setting Up the Development Environment   3. Project Setup Initialize a Vite + React + Typ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Developing a Customized Keycloak Theme with Keycloakify, Storybook, Tailwind CSS and more...">
+<meta property="og:url" content="https://www.whereq.com/2025/03/02/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. Introduction What is Keycloakify? Why Customize Keycloak Themes?   2. Prerequisites Tools and Dependencies Setting Up the Development Environment   3. Project Setup Initialize a Vite + React + Typ">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.whereq.com/images/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/kc-header-wrapper-customization.png">
+<meta property="article:published_time" content="2025-03-02T17:35:31.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Keycloak">
+<meta property="article:tag" content="Keycloakify">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.whereq.com/images/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/kc-header-wrapper-customization.png">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/03/02/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/03/02/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/","path":"2025/03/02/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/","title":"Developing a Customized Keycloak Theme with Keycloakify, Storybook, Tailwind CSS and more..."}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Developing a Customized Keycloak Theme with Keycloakify, Storybook, Tailwind CSS and more... | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-Keycloakify"><span class="nav-number">1.1.</span> <span class="nav-text">What is Keycloakify?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Customize-Keycloak-Themes"><span class="nav-number">1.2.</span> <span class="nav-text">Why Customize Keycloak Themes?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Prerequisites"><span class="nav-number">2.</span> <span class="nav-text">2. Prerequisites</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tools-and-Dependencies"><span class="nav-number">2.1.</span> <span class="nav-text">Tools and Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Up-the-Development-Environment"><span class="nav-number">2.2.</span> <span class="nav-text">Setting Up the Development Environment</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Project-Setup"><span class="nav-number">3.</span> <span class="nav-text">3. Project Setup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initialize-a-Vite-React-TypeScript-Project"><span class="nav-number">3.1.</span> <span class="nav-text">Initialize a Vite + React + TypeScript Project</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-Required-Dependencies"><span class="nav-number">3.2.</span> <span class="nav-text">Install Required Dependencies</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Set-Up-Storybook-for-Local-Testing"><span class="nav-number">4.</span> <span class="nav-text">4. Set Up Storybook for Local Testing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initialize-Storybook"><span class="nav-number">4.1.</span> <span class="nav-text">Initialize Storybook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configure-Storybook"><span class="nav-number">4.2.</span> <span class="nav-text">Configure Storybook</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Integrate-Keycloakify-with-Vite"><span class="nav-number">5.</span> <span class="nav-text">5. Integrate Keycloakify with Vite</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-the-src-keycloak-theme-Directory"><span class="nav-number">5.1.</span> <span class="nav-text">Create the src&#x2F;keycloak-theme Directory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Migrate-the-Source-Code-from-Keycloakify-Starter"><span class="nav-number">5.2.</span> <span class="nav-text">Migrate the Source Code from Keycloakify Starter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rename-src-main-tsx-to-src-main-app-tsx"><span class="nav-number">5.3.</span> <span class="nav-text">Rename src&#x2F;main.tsx to src&#x2F;main.app.tsx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Migrate-Keycloakify-Starter%E2%80%99s-main-tsx"><span class="nav-number">5.4.</span> <span class="nav-text">Migrate Keycloakify Starter’s main.tsx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Update-index-html"><span class="nav-number">5.5.</span> <span class="nav-text">Update index.html</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Customizing-the-Theme"><span class="nav-number">6.</span> <span class="nav-text">6. Customizing the Theme</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Tailwind-CSS"><span class="nav-number">6.1.</span> <span class="nav-text">Adding Tailwind CSS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vite-config-ts"><span class="nav-number">6.2.</span> <span class="nav-text">vite.config.ts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Setting-Up-the-Open-Sans-Font"><span class="nav-number">6.3.</span> <span class="nav-text">Setting Up the Open Sans Font</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementing-a-Dark-Theme"><span class="nav-number">6.4.</span> <span class="nav-text">Implementing a Dark Theme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Customizing-Login-Page"><span class="nav-number">6.5.</span> <span class="nav-text">Customizing Login Page</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Final-Solution-Code"><span class="nav-number">6.5.1.</span> <span class="nav-text">Final Solution Code:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Customizing-Keycloak-Pages"><span class="nav-number">6.6.</span> <span class="nav-text">Customizing Keycloak Pages</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Configuration-Files"><span class="nav-number">7.</span> <span class="nav-text">7. Configuration Files</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#vite-config-ts-1"><span class="nav-number">7.1.</span> <span class="nav-text">vite.config.ts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tailwind-config-js"><span class="nav-number">7.2.</span> <span class="nav-text">tailwind.config.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#postcss-config-js"><span class="nav-number">7.3.</span> <span class="nav-text">postcss.config.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#eslintrc-js"><span class="nav-number">7.4.</span> <span class="nav-text">.eslintrc.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tsconfig-json"><span class="nav-number">7.5.</span> <span class="nav-text">tsconfig.json</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Building-and-Deploying-the-Theme"><span class="nav-number">8.</span> <span class="nav-text">8. Building and Deploying the Theme</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Building-the-Theme"><span class="nav-number">8.1.</span> <span class="nav-text">Building the Theme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generating-the-JAR-File"><span class="nav-number">8.2.</span> <span class="nav-text">Generating the JAR File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploying-to-Keycloak"><span class="nav-number">8.3.</span> <span class="nav-text">Deploying to Keycloak</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Advanced-Customizations"><span class="nav-number">9.</span> <span class="nav-text">9. Advanced Customizations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Custom-Pages"><span class="nav-number">9.1.</span> <span class="nav-text">Adding Custom Pages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Theming-Keycloak-Emails"><span class="nav-number">9.2.</span> <span class="nav-text">Theming Keycloak Emails</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Localization-and-Internationalization"><span class="nav-number">9.3.</span> <span class="nav-text">Localization and Internationalization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Troubleshooting"><span class="nav-number">10.</span> <span class="nav-text">10. Troubleshooting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Common-Issues-and-Fixes"><span class="nav-number">10.1.</span> <span class="nav-text">Common Issues and Fixes</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/03/02/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Developing a Customized Keycloak Theme with Keycloakify, Storybook, Tailwind CSS and more... | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Developing a Customized Keycloak Theme with Keycloakify, Storybook, Tailwind CSS and more...
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-02 12:35:31" itemprop="dateCreated datePublished" datetime="2025-03-02T12:35:31-05:00">2025-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Keycloak/Keycloakify/" itemprop="url" rel="index"><span itemprop="name">Keycloakify</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#1-introduction">1. Introduction</a><ul>
+<li><a href="#what-is-keycloakify">What is Keycloakify?</a></li>
+<li><a href="#why-customize-keycloak-themes">Why Customize Keycloak Themes?</a></li>
+</ul>
+</li>
+<li><a href="#2-prerequisites">2. Prerequisites</a><ul>
+<li><a href="#tools-and-dependencies">Tools and Dependencies</a></li>
+<li><a href="#setting-up-the-development-environment">Setting Up the Development Environment</a></li>
+</ul>
+</li>
+<li><a href="#3-project-setup">3. Project Setup</a><ul>
+<li><a href="#initialize-a-vite--react--typescript-project">Initialize a Vite + React + TypeScript Project</a></li>
+<li><a href="#install-required-dependencies">Install Required Dependencies</a></li>
+</ul>
+</li>
+<li><a href="#4-set-up-storybook-for-local-testing">4. Set Up Storybook for Local Testing</a><ul>
+<li><a href="#initialize-storybook">Initialize Storybook</a></li>
+<li><a href="#configure-storybook">Configure Storybook</a></li>
+</ul>
+</li>
+<li><a href="#5-integrate-keycloakify-with-vite">5. Integrate Keycloakify with Vite</a><ul>
+<li><a href="#create-the-srckeycloak-theme-directory">Create the <code>src/keycloak-theme</code> Directory</a></li>
+<li><a href="#migrate-the-source-code-from-keycloakify-starter">Migrate the Source Code from Keycloakify Starter</a></li>
+<li><a href="#rename-srcmaintsx-to-srcmainapptsx">Rename <code>src/main.tsx</code> to <code>src/main.app.tsx</code></a></li>
+<li><a href="#migrate-keycloakify-starters-maintsx">Migrate Keycloakify Starter’s <code>main.tsx</code></a></li>
+<li><a href="#update-indexhtml">Update <code>index.html</code></a></li>
+</ul>
+</li>
+<li><a href="#6-customizing-the-theme">6. Customizing the Theme</a><ul>
+<li><a href="#adding-tailwind-css">Adding Tailwind CSS</a></li>
+<li><a href="#viteconfigts"><code>vite.config.ts</code></a></li>
+<li><a href="#setting-up-the-open-sans-font">Setting Up the Open Sans Font</a></li>
+<li><a href="#implementing-a-dark-theme">Implementing a Dark Theme</a></li>
+<li><a href="#customizing-login-page">Customizing Login Page</a><ul>
+<li><a href="#final-solution-code">Final Solution Code:</a></li>
+</ul>
+</li>
+<li><a href="#customizing-keycloak-pages">Customizing Keycloak Pages</a></li>
+</ul>
+</li>
+<li><a href="#7-configuration-files">7. Configuration Files</a><ul>
+<li><a href="#viteconfigts-1"><code>vite.config.ts</code></a></li>
+<li><a href="#tailwindconfigjs"><code>tailwind.config.js</code></a></li>
+<li><a href="#postcssconfigjs"><code>postcss.config.js</code></a></li>
+<li><a href="#eslintrcjs"><code>.eslintrc.js</code></a></li>
+<li><a href="#tsconfigjson"><code>tsconfig.json</code></a></li>
+</ul>
+</li>
+<li><a href="#8-building-and-deploying-the-theme">8. Building and Deploying the Theme</a><ul>
+<li><a href="#building-the-theme">Building the Theme</a></li>
+<li><a href="#generating-the-jar-file">Generating the JAR File</a></li>
+<li><a href="#deploying-to-keycloak">Deploying to Keycloak</a></li>
+</ul>
+</li>
+<li><a href="#9-advanced-customizations">9. Advanced Customizations</a><ul>
+<li><a href="#adding-custom-pages">Adding Custom Pages</a></li>
+<li><a href="#theming-keycloak-emails">Theming Keycloak Emails</a></li>
+<li><a href="#localization-and-internationalization">Localization and Internationalization</a></li>
+</ul>
+</li>
+<li><a href="#10-troubleshooting">10. Troubleshooting</a><ul>
+<li><a href="#common-issues-and-fixes">Common Issues and Fixes</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><h3 id="What-is-Keycloakify"><a href="#What-is-Keycloakify" class="headerlink" title="What is Keycloakify?"></a>What is Keycloakify?</h3><p><strong>Keycloakify</strong> is a tool that allows you to create custom themes for <strong>Keycloak</strong> using modern web technologies like <strong>React.js</strong> and <strong>TypeScript</strong>. It simplifies the process of building and deploying Keycloak themes by providing a streamlined workflow and integration with tools like <strong>Vite</strong>.</p>
+<h3 id="Why-Customize-Keycloak-Themes"><a href="#Why-Customize-Keycloak-Themes" class="headerlink" title="Why Customize Keycloak Themes?"></a>Why Customize Keycloak Themes?</h3><p>Customizing Keycloak themes allows you to:</p>
+<ul>
+<li>Match the look and feel of your application.</li>
+<li>Improve user experience with modern design and responsiveness.</li>
+<li>Add custom functionality to Keycloak pages (e.g., login, registration).</li>
+</ul>
+<hr>
+<h2 id="2-Prerequisites"><a href="#2-Prerequisites" class="headerlink" title="2. Prerequisites"></a>2. Prerequisites</h2><h3 id="Tools-and-Dependencies"><a href="#Tools-and-Dependencies" class="headerlink" title="Tools and Dependencies"></a>Tools and Dependencies</h3><ul>
+<li><strong>Node.js</strong> (v18 or higher)</li>
+<li><strong>Yarn</strong></li>
+<li><strong>Keycloak</strong> (latest version)</li>
+<li><strong>React.js</strong>, <strong>TypeScript</strong>, <strong>Vite</strong>, <strong>Tailwind CSS</strong>, <strong>Open Sans Font</strong>, <strong>Storybook</strong></li>
+</ul>
+<h3 id="Setting-Up-the-Development-Environment"><a href="#Setting-Up-the-Development-Environment" class="headerlink" title="Setting Up the Development Environment"></a>Setting Up the Development Environment</h3><ol>
+<li>Install Node.js: <a target="_blank" rel="noopener" href="https://nodejs.org/">Download Node.js</a></li>
+<li>Install Yarn (if not already installed):<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g yarn</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="3-Project-Setup"><a href="#3-Project-Setup" class="headerlink" title="3. Project Setup"></a>3. Project Setup</h2><h3 id="Initialize-a-Vite-React-TypeScript-Project"><a href="#Initialize-a-Vite-React-TypeScript-Project" class="headerlink" title="Initialize a Vite + React + TypeScript Project"></a>Initialize a Vite + React + TypeScript Project</h3><ol>
+<li>Create a new project using Vite:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn create vite keycloakify-poc --template react-ts</span><br><span class="line"><span class="built_in">cd</span> keycloakify-poc</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Install-Required-Dependencies"><a href="#Install-Required-Dependencies" class="headerlink" title="Install Required Dependencies"></a>Install Required Dependencies</h3><p>Install additional dependencies for Tailwind CSS, Open Sans, Storybook, and dark theme support:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yarn add keycloakify react react-dom</span><br><span class="line">yarn add -D typescript vite vite-plugin-react</span><br><span class="line">yarn add -D storybook @storybook/react-vite @storybook/addon-essentials @storybook/react</span><br><span class="line">yarn add -D tailwindcss postcss autoprefixer @tailwindcss/postcss @tailwindcss/vite</span><br><span class="line">yarn add @fontsource/open-sans</span><br><span class="line">yarn add zustand</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-Set-Up-Storybook-for-Local-Testing"><a href="#4-Set-Up-Storybook-for-Local-Testing" class="headerlink" title="4. Set Up Storybook for Local Testing"></a>4. Set Up Storybook for Local Testing</h2><h3 id="Initialize-Storybook"><a href="#Initialize-Storybook" class="headerlink" title="Initialize Storybook"></a>Initialize Storybook</h3><ol>
+<li><p>Initialize Storybook:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx storybook init</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Start Storybook:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn storybook</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Configure-Storybook"><a href="#Configure-Storybook" class="headerlink" title="Configure Storybook"></a>Configure Storybook</h3><p>Ensure Storybook is configured to serve static files from the <code>public</code> directory. Update <code>.storybook/main.ts</code>:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">StorybookConfig</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@storybook/react-vite&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">config</span>: <span class="title class_">StorybookConfig</span> = &#123;</span><br><span class="line">  <span class="attr">stories</span>: [</span><br><span class="line">    <span class="string">&quot;../src/**/*.mdx&quot;</span>,</span><br><span class="line">    <span class="string">&quot;../src/**/*.stories.@(js|jsx|mjs|ts|tsx)&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">addons</span>: [</span><br><span class="line">    <span class="string">&quot;@storybook/addon-essentials&quot;</span>,</span><br><span class="line">    <span class="string">&quot;@storybook/addon-onboarding&quot;</span>,</span><br><span class="line">    <span class="string">&quot;@chromatic-com/storybook&quot;</span>,</span><br><span class="line">    <span class="string">&quot;@storybook/experimental-addon-test&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">framework</span>: &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;@storybook/react-vite&quot;</span>,</span><br><span class="line">    <span class="attr">options</span>: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">staticDirs</span>: [<span class="string">&quot;../public&quot;</span>], <span class="comment">// Add this line</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> config;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-Integrate-Keycloakify-with-Vite"><a href="#5-Integrate-Keycloakify-with-Vite" class="headerlink" title="5. Integrate Keycloakify with Vite"></a>5. Integrate Keycloakify with Vite</h2><h3 id="Create-the-src-keycloak-theme-Directory"><a href="#Create-the-src-keycloak-theme-Directory" class="headerlink" title="Create the src/keycloak-theme Directory"></a>Create the <code>src/keycloak-theme</code> Directory</h3><p>Keycloakify expects a <code>keycloak-theme</code> directory in your <code>src</code> folder. This directory will contain all the theme-related files.</p>
+<p>The <code>keycloak-theme</code> directory will be created in the next step</p>
+<h3 id="Migrate-the-Source-Code-from-Keycloakify-Starter"><a href="#Migrate-the-Source-Code-from-Keycloakify-Starter" class="headerlink" title="Migrate the Source Code from Keycloakify Starter"></a>Migrate the Source Code from Keycloakify Starter</h3><p>To scaffold your project, you can use the <strong>Keycloakify Starter</strong> repository as a template.</p>
+<ol>
+<li><p>Clone the Keycloakify Starter repository into a temporary directory:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/keycloakify/keycloakify-starter tmp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Move the <code>src</code> folder from the cloned repository into your project’s <code>src/keycloak-theme</code> directory:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> tmp/src src/keycloak-theme</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Clean up the temporary directory:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf tmp</span><br><span class="line"><span class="built_in">rm</span> src/keycloak-theme/vite-env.d.ts</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Rename-src-main-tsx-to-src-main-app-tsx"><a href="#Rename-src-main-tsx-to-src-main-app-tsx" class="headerlink" title="Rename src/main.tsx to src/main.app.tsx"></a>Rename <code>src/main.tsx</code> to <code>src/main.app.tsx</code></h3><p>The <code>main.tsx</code> file is the entry point for your application. Rename it to <code>main.app.tsx</code> to avoid conflicts with Keycloakify’s <code>main.tsx</code>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> src/main.tsx src/main.app.tsx</span><br></pre></td></tr></table></figure>
+
+<p>Update the content of <code>src/main.app.tsx</code> to ensure it exports a valid React component:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">StrictMode</span> &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createRoot &#125; <span class="keyword">from</span> <span class="string">&quot;react-dom/client&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;./index.css&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&quot;./App&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Define a React component that wraps the App component</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">MainApp</span> = (<span class="params"></span>) =&gt; (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">App</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Export the MainApp component as the default export</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">MainApp</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Render the MainApp component to the DOM</span></span><br><span class="line"><span class="keyword">const</span> root = <span class="title function_">createRoot</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;root&quot;</span>)!);</span><br><span class="line">root.<span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">MainApp</span> /&gt;</span></span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Migrate-Keycloakify-Starter’s-main-tsx"><a href="#Migrate-Keycloakify-Starter’s-main-tsx" class="headerlink" title="Migrate Keycloakify Starter’s main.tsx"></a>Migrate Keycloakify Starter’s <code>main.tsx</code></h3><p>Move the <code>main.tsx</code> file from the <code>keycloak-theme</code> directory to the root <code>src</code> directory:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> src/keycloak-theme/main.tsx src/main.tsx</span><br></pre></td></tr></table></figure>
+
+<p>Update the content of <code>src/main.tsx</code> to lazily load the <code>MainApp</code> component and handle Keycloak context:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createRoot &#125; <span class="keyword">from</span> <span class="string">&quot;react-dom/client&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; lazy, <span class="title class_">StrictMode</span>, <span class="title class_">Suspense</span> &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">KcPage</span>, <span class="keyword">type</span> <span class="title class_">KcContext</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./keycloak-theme/kc.gen&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lazy load the MainApp component</span></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">AppEntrypoint</span> = <span class="title function_">lazy</span>(<span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&quot;./main.app&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="title function_">createRoot</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;root&quot;</span>)!).<span class="title function_">render</span>(</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    &#123;!window.kcContext ? (</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">Suspense</span> <span class="attr">fallback</span>=<span class="string">&#123;</span>&lt;<span class="attr">div</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">div</span>&gt;</span>&#125;&gt;</span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">AppEntrypoint</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">Suspense</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    ) : (</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">KcPage</span> <span class="attr">kcContext</span>=<span class="string">&#123;window.kcContext&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">    )&#125;</span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="variable language_">global</span> &#123;</span><br><span class="line">  <span class="keyword">interface</span> <span class="title class_">Window</span> &#123;</span><br><span class="line">    kcContext?: <span class="title class_">KcContext</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Update-index-html"><a href="#Update-index-html" class="headerlink" title="Update index.html"></a>Update <code>index.html</code></h3><p>Exclude elements from the HTML <code>&lt;head&gt;</code> that are not relevant in the context of Keycloak pages. Use the <code>keycloakify-ignore</code> meta tags to achieve this.</p>
+<p>Update <code>index.html</code>:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;icon&quot;</span> <span class="attr">type</span>=<span class="string">&quot;image/svg+xml&quot;</span> <span class="attr">href</span>=<span class="string">&quot;/vite.svg&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keycloakify-ignore-start&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>WhereQ --- Keycloakify POC<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">      <span class="variable language_">window</span>.<span class="property">ENV</span> = &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="attr">API_ADDRESS</span>: <span class="string">&#x27;$&#123;API_ADDRESS&#125;&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">        <span class="attr">SENTRY_DSN</span>: <span class="string">&#x27;$&#123;SENTRY_DSN&#125;&#x27;</span></span></span><br><span class="line"><span class="language-javascript">      &#125;;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keycloakify-ignore-end&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span> <span class="attr">src</span>=<span class="string">&quot;/src/main.tsx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-Customizing-the-Theme"><a href="#6-Customizing-the-Theme" class="headerlink" title="6. Customizing the Theme"></a>6. Customizing the Theme</h2><h3 id="Adding-Tailwind-CSS"><a href="#Adding-Tailwind-CSS" class="headerlink" title="Adding Tailwind CSS"></a>Adding Tailwind CSS</h3><ol>
+<li><p>Create a <code>tailwind.config.js</code> file:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** <span class="doctag">@type</span> &#123;<span class="type">import(&#x27;tailwindcss&#x27;).Config</span>&#125; */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">darkMode</span>: <span class="string">&quot;class&quot;</span>,</span><br><span class="line">  <span class="attr">content</span>: [</span><br><span class="line">    <span class="string">&quot;./index.html&quot;</span>,</span><br><span class="line">    <span class="string">&quot;./src/**/*.&#123;js,ts,jsx,tsx&#125;&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">theme</span>: &#123;</span><br><span class="line">    <span class="attr">extend</span>: &#123;</span><br><span class="line">      <span class="attr">fontFamily</span>: &#123;</span><br><span class="line">        <span class="attr">sans</span>: [<span class="string">&#x27;&quot;Open Sans&quot;&#x27;</span>, <span class="string">&#x27;sans-serif&#x27;</span>],</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Create a <code>postcss.config.js</code> file:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">plugins</span>: &#123;</span><br><span class="line">    <span class="string">&quot;@tailwindcss/postcss&quot;</span>: &#123;&#125;,</span><br><span class="line">    <span class="attr">autoprefixer</span>: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Update <code>vite.config.ts</code> with the <code>tailwindcss</code> and <code>keycloakify</code> plugin</p>
+</li>
+</ol>
+<h3 id="vite-config-ts"><a href="#vite-config-ts" class="headerlink" title="vite.config.ts"></a><code>vite.config.ts</code></h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> react <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> tailwindcss <span class="keyword">from</span> <span class="string">&quot;@tailwindcss/vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; keycloakify &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/vite-plugin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title function_">react</span>(),</span><br><span class="line">    <span class="title function_">tailwindcss</span>(),</span><br><span class="line">    <span class="title function_">keycloakify</span>(&#123;</span><br><span class="line">      <span class="attr">accountThemeImplementation</span>: <span class="string">&quot;none&quot;</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+<ol start="4">
+<li><p>Create a CSS file (<code>src/index.css</code>) and add Tailwind directives:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;tailwindcss&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@import</span> <span class="string">&quot;@fontsource/open-sans&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">&quot;Open Sans&quot;</span>, sans-serif;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@layer</span> components &#123;</span><br><span class="line">  <span class="selector-class">.dark</span> &#123;</span><br><span class="line">    <span class="keyword">@apply</span> bg-gray-<span class="number">900</span> text-white;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>NOTE</strong>: In Tailwind CSS v4 (which introduces the new tailwindcss function instead of @tailwind), so <code>@import &quot;tailwindcss&quot;;</code> is enough </p>
+</li>
+<li><p>Import the CSS file in <code>src/main.tsx</code>:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createRoot &#125; <span class="keyword">from</span> <span class="string">&quot;react-dom/client&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; lazy, <span class="title class_">StrictMode</span>, <span class="title class_">Suspense</span> &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">KcPage</span>, <span class="keyword">type</span> <span class="title class_">KcContext</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./keycloak-theme/kc.gen&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;./index.css&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lazy load the MainApp component</span></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">AppEntrypoint</span> = <span class="title function_">lazy</span>(<span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&quot;./main.app&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// The following block can be uncommented to test a specific page with `yarn dev`</span></span><br><span class="line"><span class="comment">// Don&#x27;t forget to comment back or your bundle size will increase</span></span><br><span class="line"><span class="keyword">import</span> &#123; getKcContextMock &#125; <span class="keyword">from</span> <span class="string">&quot;./login/KcPageStory&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">DEV</span>) &#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">kcContext</span> = <span class="title function_">getKcContextMock</span>(&#123;</span><br><span class="line">        <span class="comment">// pageId: &quot;register.ftl&quot;,</span></span><br><span class="line">        <span class="attr">pageId</span>: <span class="string">&quot;login.ftl&quot;</span>,</span><br><span class="line">        <span class="attr">overrides</span>: &#123;&#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">createRoot</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;root&quot;</span>)!).<span class="title function_">render</span>(</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    &#123;!window.kcContext ? (</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">Suspense</span> <span class="attr">fallback</span>=<span class="string">&#123;</span>&lt;<span class="attr">div</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">div</span>&gt;</span>&#125;&gt;</span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">AppEntrypoint</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">Suspense</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    ) : (</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">KcPage</span> <span class="attr">kcContext</span>=<span class="string">&#123;window.kcContext&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">    )&#125;</span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">StrictMode</span>&gt;</span></span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="variable language_">global</span> &#123;</span><br><span class="line">  <span class="keyword">interface</span> <span class="title class_">Window</span> &#123;</span><br><span class="line">    kcContext?: <span class="title class_">KcContext</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>NOTE</strong>: To facilitate debugging during development with <code>yarn dev</code>, the <code>if (import.meta.env.DEV)</code> block has been uncommented, enabling development-specific functionality outside of the Storybook environment.</p>
+<h3 id="Setting-Up-the-Open-Sans-Font"><a href="#Setting-Up-the-Open-Sans-Font" class="headerlink" title="Setting Up the Open Sans Font"></a>Setting Up the Open Sans Font</h3><ol>
+<li><p>Install the Open Sans font:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add @fontsource/open-sans</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Import the font in <code>src/index.css</code>:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;@fontsource/open-sans&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">&quot;Open Sans&quot;</span>, sans-serif;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Implementing-a-Dark-Theme"><a href="#Implementing-a-Dark-Theme" class="headerlink" title="Implementing a Dark Theme"></a>Implementing a Dark Theme</h3><ol>
+<li>Enable dark mode in <code>tailwind.config.js</code>:<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">darkMode</span>: <span class="string">&quot;class&quot;</span>, <span class="comment">// or &#x27;media&#x27; for system preference</span></span><br><span class="line">  <span class="attr">content</span>: [</span><br><span class="line">    <span class="string">&quot;./index.html&quot;</span>,</span><br><span class="line">    <span class="string">&quot;./src/**/*.&#123;js,ts,jsx,tsx&#125;&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">theme</span>: &#123;</span><br><span class="line">    <span class="attr">extend</span>: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Customizing-Login-Page"><a href="#Customizing-Login-Page" class="headerlink" title="Customizing Login Page"></a>Customizing Login Page</h3><p><img src="/images/Developing-a-Customized-Keycloak-Theme-with-Keycloakify-Storybook-Tailwind-CSS-and-more/kc-header-wrapper-customization.png" alt="Customize kc-header-wrapper clss"></p>
+<p>In this case, the issue stemmed from the <code>kc-header-wrapper</code> class, which is part of Keycloak’s original default theme (<code>login.css</code>). This class had predefined styles (e.g., <code>padding</code>, <code>line-height</code>, <code>font-size</code>, etc.) that were overriding the Tailwind CSS styles applied via inline classes in the React component. The <code>kc-</code> prefixed classes are part of Keycloak’s default theme, and customizing them with Tailwind CSS can be challenging because Tailwind’s utility classes are often overridden by these predefined styles.</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>A separate CSS file (<code>template.css</code>) was created to reset the problematic properties of <code>#kc-header-wrapper</code> using <code>!important</code>. This ensured that the styles from <code>login.css</code> were overridden.</li>
+<li>The <code>template.css</code> file was imported into the <code>Template.tsx</code> component to apply the reset styles.</li>
+</ul>
+<h4 id="Final-Solution-Code"><a href="#Final-Solution-Code" class="headerlink" title="Final Solution Code:"></a>Final Solution Code:</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* template.css */</span></span><br><span class="line"><span class="selector-id">#kc-header-wrapper</span> &#123;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: inherit <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">text-transform</span>: none <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">letter-spacing</span>: normal <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">white-space</span>: normal <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Customizing-Keycloak-Pages"><a href="#Customizing-Keycloak-Pages" class="headerlink" title="Customizing Keycloak Pages"></a>Customizing Keycloak Pages</h3><ol>
+<li><p>Add story<br>Choose <code>login.ftl</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx keycloakify add-story</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Eject a Keycloak page (e.g., login page):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx keycloakify eject-page login</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Modify <code>KcPage.tsx</code> according to the <code>eject-page</code> command<br><strong>Note</strong>: Make sure import the <code>index.css</code></p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Suspense</span>, lazy &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">ClassKey</span> &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/login&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">KcContext</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./KcContext&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useI18n &#125; <span class="keyword">from</span> <span class="string">&quot;./i18n&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">DefaultPage</span> <span class="keyword">from</span> <span class="string">&quot;keycloakify/login/DefaultPage&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Template</span> <span class="keyword">from</span> <span class="string">&quot;./Template&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;../../index.css&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">UserProfileFormFields</span> = <span class="title function_">lazy</span>(</span><br><span class="line">    <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&quot;keycloakify/login/UserProfileFormFields&quot;</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> doMakeUserConfirmPassword = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Login</span> = <span class="title function_">lazy</span>(<span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&quot;./pages/Login&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">KcPage</span>(<span class="params"><span class="attr">props</span>: &#123; kcContext: KcContext &#125;</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; kcContext &#125; = props;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; i18n &#125; = <span class="title function_">useI18n</span>(&#123; kcContext &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">Suspense</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            &#123;(() =&gt; &#123;</span></span><br><span class="line"><span class="language-xml">                switch (kcContext.pageId) &#123;</span></span><br><span class="line"><span class="language-xml">                    case &quot;login.ftl&quot;: return (</span></span><br><span class="line"><span class="language-xml">                        <span class="tag">&lt;<span class="name">Login</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                            &#123;<span class="attr">...</span>&#123; <span class="attr">kcContext</span>, <span class="attr">i18n</span>, <span class="attr">classes</span> &#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                            <span class="attr">Template</span>=<span class="string">&#123;Template&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                            <span class="attr">doUseDefaultCss</span>=<span class="string">&#123;true&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        /&gt;</span></span></span><br><span class="line"><span class="language-xml">                    );</span></span><br><span class="line"><span class="language-xml">                    default:</span></span><br><span class="line"><span class="language-xml">                        return (</span></span><br><span class="line"><span class="language-xml">                            <span class="tag">&lt;<span class="name">DefaultPage</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">kcContext</span>=<span class="string">&#123;kcContext&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">i18n</span>=<span class="string">&#123;i18n&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">classes</span>=<span class="string">&#123;classes&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">Template</span>=<span class="string">&#123;Template&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">doUseDefaultCss</span>=<span class="string">&#123;true&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">UserProfileFormFields</span>=<span class="string">&#123;UserProfileFormFields&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                                <span class="attr">doMakeUserConfirmPassword</span>=<span class="string">&#123;doMakeUserConfirmPassword&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                            /&gt;</span></span></span><br><span class="line"><span class="language-xml">                        );</span></span><br><span class="line"><span class="language-xml">                &#125;</span></span><br><span class="line"><span class="language-xml">            &#125;)()&#125;</span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">Suspense</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> classes = &#123;&#125; <span class="keyword">satisfies</span> &#123; [key <span class="keyword">in</span> <span class="title class_">ClassKey</span>]?: <span class="built_in">string</span> &#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Customize the ejected page (<code>src/pages/Login.tsx</code>):<br><strong>Replace the original submit button (kcButtonClass) with tailwindcss button</strong></p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;kc-form-buttons&quot;</span> className=&#123;<span class="title function_">kcClsx</span>(<span class="string">&quot;kcFormGroupClass&quot;</span>)&#125;&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">id</span>=<span class="string">&quot;id-hidden-input&quot;</span> <span class="attr">name</span>=<span class="string">&quot;credentialId&quot;</span> <span class="attr">value</span>=<span class="string">&#123;auth.selectedCredential&#125;</span> /&gt;</span></span></span><br><span class="line">  &#123;<span class="comment">/* &lt;input</span></span><br><span class="line"><span class="comment">      tabIndex=&#123;7&#125;</span></span><br><span class="line"><span class="comment">      disabled=&#123;isLoginButtonDisabled&#125;</span></span><br><span class="line"><span class="comment">      className=&#123;kcClsx(&quot;kcButtonClass&quot;, &quot;kcButtonPrimaryClass&quot;, &quot;kcButtonBlockClass&quot;, &quot;kcButtonLargeClass&quot;)&#125;</span></span><br><span class="line"><span class="comment">      name=&quot;login&quot;</span></span><br><span class="line"><span class="comment">      id=&quot;kc-login&quot;</span></span><br><span class="line"><span class="comment">      type=&quot;submit&quot;</span></span><br><span class="line"><span class="comment">      value=&#123;msgStr(&quot;doLogIn&quot;)&#125;</span></span><br><span class="line"><span class="comment">  /&gt; */</span>&#125;</span><br><span class="line">  &lt;button</span><br><span class="line">    tabIndex=&#123;<span class="number">7</span>&#125;</span><br><span class="line">    disabled=&#123;isLoginButtonDisabled&#125;</span><br><span class="line">    className=<span class="string">&quot;w-full px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed&quot;</span></span><br><span class="line">    name=<span class="string">&quot;login&quot;</span></span><br><span class="line">    id=<span class="string">&quot;kc-login&quot;</span></span><br><span class="line">    <span class="keyword">type</span>=<span class="string">&quot;submit&quot;</span></span><br><span class="line">    &gt;</span><br><span class="line">    &#123;<span class="title function_">msgStr</span>(<span class="string">&quot;doLogIn&quot;</span>)&#125;</span><br><span class="line">  &lt;/button&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>Test</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn storybook</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="7-Configuration-Files"><a href="#7-Configuration-Files" class="headerlink" title="7. Configuration Files"></a>7. Configuration Files</h2><h3 id="vite-config-ts-1"><a href="#vite-config-ts-1" class="headerlink" title="vite.config.ts"></a><code>vite.config.ts</code></h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> react <span class="keyword">from</span> <span class="string">&quot;@vitejs/plugin-react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> tailwindcss <span class="keyword">from</span> <span class="string">&quot;@tailwindcss/vite&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; keycloakify &#125; <span class="keyword">from</span> <span class="string">&quot;keycloakify/vite-plugin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title function_">react</span>(),</span><br><span class="line">    <span class="title function_">tailwindcss</span>(),</span><br><span class="line">    <span class="title function_">keycloakify</span>(&#123;</span><br><span class="line">      <span class="attr">accountThemeImplementation</span>: <span class="string">&quot;none&quot;</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="tailwind-config-js"><a href="#tailwind-config-js" class="headerlink" title="tailwind.config.js"></a><code>tailwind.config.js</code></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** <span class="doctag">@type</span> &#123;<span class="type">import(&#x27;tailwindcss&#x27;).Config</span>&#125; */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">darkMode</span>: <span class="string">&quot;class&quot;</span>,</span><br><span class="line">  <span class="attr">content</span>: [</span><br><span class="line">    <span class="string">&quot;./index.html&quot;</span>,</span><br><span class="line">    <span class="string">&quot;./src/**/*.&#123;js,ts,jsx,tsx&#125;&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">theme</span>: &#123;</span><br><span class="line">    <span class="attr">extend</span>: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="postcss-config-js"><a href="#postcss-config-js" class="headerlink" title="postcss.config.js"></a><code>postcss.config.js</code></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">plugins</span>: &#123;</span><br><span class="line">    <span class="string">&quot;@tailwindcss/postcss&quot;</span>: &#123;&#125;,</span><br><span class="line">    <span class="attr">autoprefixer</span>: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="eslintrc-js"><a href="#eslintrc-js" class="headerlink" title=".eslintrc.js"></a><code>.eslintrc.js</code></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">env</span>: &#123;</span><br><span class="line">    <span class="attr">node</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">es2022</span>: <span class="literal">true</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">parserOptions</span>: &#123;</span><br><span class="line">    <span class="attr">ecmaVersion</span>: <span class="string">&quot;latest&quot;</span>,</span><br><span class="line">    <span class="attr">sourceType</span>: <span class="string">&quot;module&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="comment">// Your ESLint rules...</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="tsconfig-json"><a href="#tsconfig-json" class="headerlink" title="tsconfig.json"></a><code>tsconfig.json</code></h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;compilerOptions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;target&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ES2020&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;useDefineForClassFields&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lib&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;ES2020&quot;</span><span class="punctuation">,</span> <span class="string">&quot;DOM&quot;</span><span class="punctuation">,</span> <span class="string">&quot;DOM.Iterable&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;module&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ESNext&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;skipLibCheck&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;moduleResolution&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bundler&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowImportingTsExtensions&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;resolveJsonModule&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;isolatedModules&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noEmit&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;jsx&quot;</span><span class="punctuation">:</span> <span class="string">&quot;react-jsx&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;strict&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedLocals&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noUnusedParameters&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;noFallthroughCasesInSwitch&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;include&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;src&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;references&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./tsconfig.node.json&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-Building-and-Deploying-the-Theme"><a href="#8-Building-and-Deploying-the-Theme" class="headerlink" title="8. Building and Deploying the Theme"></a>8. Building and Deploying the Theme</h2><p>**Make sure you added the command <code>build-keycloak-theme</code> in package.json</p>
+<figure class="highlight json"><figcaption><span>(package.json)</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;tsc -b &amp;&amp; vite build&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;build-keycloak-theme&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm run build &amp;&amp; keycloakify build&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;lint&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eslint .&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;preview&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite preview&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;storybook&quot;</span><span class="punctuation">:</span> <span class="string">&quot;storybook dev -p 6006&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;build-storybook&quot;</span><span class="punctuation">:</span> <span class="string">&quot;storybook build&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+<h3 id="Building-the-Theme"><a href="#Building-the-Theme" class="headerlink" title="Building the Theme"></a>Building the Theme</h3><p>Run the following command to build the theme:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build-keycloak-theme</span><br></pre></td></tr></table></figure>
+
+<h3 id="Generating-the-JAR-File"><a href="#Generating-the-JAR-File" class="headerlink" title="Generating the JAR File"></a>Generating the JAR File</h3><ol>
+<li><p>Package the theme into a JAR file:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn keycloakify build</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>The JAR file will be generated in the <code>build/keycloak-theme</code> directory.</p>
+</li>
+</ol>
+<h3 id="Deploying-to-Keycloak"><a href="#Deploying-to-Keycloak" class="headerlink" title="Deploying to Keycloak"></a>Deploying to Keycloak</h3><ol>
+<li>Copy the generated JAR file to your Keycloak server’s <code>themes</code> directory.</li>
+<li>Restart Keycloak to apply the new theme.</li>
+</ol>
+<hr>
+<h2 id="9-Advanced-Customizations"><a href="#9-Advanced-Customizations" class="headerlink" title="9. Advanced Customizations"></a>9. Advanced Customizations</h2><h3 id="Adding-Custom-Pages"><a href="#Adding-Custom-Pages" class="headerlink" title="Adding Custom Pages"></a>Adding Custom Pages</h3><p>You can add custom pages (e.g., a custom error page) by ejecting and modifying the corresponding page:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx keycloakify eject-page error</span><br></pre></td></tr></table></figure>
+
+<p>This will generate the necessary files for the error page in the <code>src/keycloak-theme</code> directory. You can then customize the page as needed.</p>
+<hr>
+<h3 id="Theming-Keycloak-Emails"><a href="#Theming-Keycloak-Emails" class="headerlink" title="Theming Keycloak Emails"></a>Theming Keycloak Emails</h3><p>Keycloakify also supports customizing email templates. To customize email templates:</p>
+<ol>
+<li>Eject the email template you want to modify:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx keycloakify eject-email &lt;email-template-name&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>Replace <code>&lt;email-template-name&gt;</code> with the name of the email template (e.g., <code>verify-email</code>, <code>password-reset</code>).</p>
+<ol start="2">
+<li>Customize the ejected email template in the <code>src/keycloak-theme</code> directory.</li>
+</ol>
+<hr>
+<h3 id="Localization-and-Internationalization"><a href="#Localization-and-Internationalization" class="headerlink" title="Localization and Internationalization"></a>Localization and Internationalization</h3><p>Keycloak supports multiple languages out of the box. To add localization to your theme:</p>
+<ol>
+<li><p>Add language files to the <code>src/keycloak-theme/messages</code> directory. For example:</p>
+<ul>
+<li><code>messages_en.properties</code> for English</li>
+<li><code>messages_fr.properties</code> for French</li>
+</ul>
+</li>
+<li><p>Use the <code>msg()</code> function in your components to display localized text:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">Login</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; msg &#125; = <span class="title function_">useI18n</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;msg(&quot;loginTitle&quot;)&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;msg(&quot;loginDescription&quot;)&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Add translations to your language files:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># messages_en.properties</span></span><br><span class="line"><span class="attr">loginTitle</span>=<span class="string">Login</span></span><br><span class="line"><span class="attr">loginDescription</span>=<span class="string">Please enter your credentials.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># messages_fr.properties</span></span><br><span class="line"><span class="attr">loginTitle</span>=<span class="string">Connexion</span></span><br><span class="line"><span class="attr">loginDescription</span>=<span class="string">Veuillez entrer vos identifiants.</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="10-Troubleshooting"><a href="#10-Troubleshooting" class="headerlink" title="10. Troubleshooting"></a>10. Troubleshooting</h2><h3 id="Common-Issues-and-Fixes"><a href="#Common-Issues-and-Fixes" class="headerlink" title="Common Issues and Fixes"></a>Common Issues and Fixes</h3><ul>
+<li><p><strong>Tailwind CSS Not Working</strong>:</p>
+<ul>
+<li>Ensure <code>postcss.config.js</code> and <code>tailwind.config.js</code> are correctly configured.</li>
+<li>Verify that the <code>@import &quot;tailwindcss&quot;;</code> directive is included in <code>src/index.css</code>.</li>
+</ul>
+</li>
+<li><p><strong>Font Not Loading</strong>:</p>
+<ul>
+<li>Verify the font import path in <code>index.css</code>.</li>
+<li>Ensure the <code>@fontsource/open-sans</code> package is installed.</li>
+</ul>
+</li>
+<li><p><strong>Dark Mode Not Applying</strong>:</p>
+<ul>
+<li>Ensure <code>darkMode: &quot;class&quot;</code> is set in <code>tailwind.config.js</code>.</li>
+<li>Verify that the <code>dark</code> class is applied to the root element (e.g., <code>&lt;html&gt;</code>).</li>
+</ul>
+</li>
+<li><p><strong>Storybook Not Rendering Components</strong>:</p>
+<ul>
+<li>Ensure the <code>staticDirs</code> configuration in <code>.storybook/main.ts</code> points to the <code>public</code> directory.</li>
+<li>Verify that the <code>index.css</code> file is imported in your components.</li>
+</ul>
+</li>
+<li><p><strong>Keycloakify Build Fails</strong>:</p>
+<ul>
+<li>Ensure the <code>keycloak-theme</code> directory exists and contains valid theme files.</li>
+<li>Check for errors in the terminal output and resolve them.</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Keycloak/" rel="tag"><i class="fa fa-tag"></i> Keycloak</a>
+              <a href="/tags/Keycloakify/" rel="tag"><i class="fa fa-tag"></i> Keycloakify</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/18/Arrow-Function-Continues/" rel="prev" title="Arrow Function Continues...">
+                  <i class="fa fa-angle-left"></i> Arrow Function Continues...
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/09/Customize-kc-css-classes/" rel="next" title="Customize kc-* css classes">
+                  Customize kc-* css classes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

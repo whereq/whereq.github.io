@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Test Introduction Why Testing is Necessary Types of Testing in Spring WebFlux 1. Unit Testing 1.1 Testing Controllers with WebTestClient 1.2 Testing Services with Mockito   2. Integration Testing 3.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - IX">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Test Introduction Why Testing is Necessary Types of Testing in Spring WebFlux 1. Unit Testing 1.1 Testing Controllers with WebTestClient 1.2 Testing Services with Mockito   2. Integration Testing 3.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T18:06:56.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/","title":"Reactive Programming in Spring WebFlux Series - IX"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - IX | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Test"><span class="nav-number">1.</span> <span class="nav-text">Test</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Testing-is-Necessary"><span class="nav-number">2.1.</span> <span class="nav-text">Why Testing is Necessary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Types-of-Testing-in-Spring-WebFlux"><span class="nav-number">2.2.</span> <span class="nav-text">Types of Testing in Spring WebFlux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Unit-Testing"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. Unit Testing</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Testing-Controllers-with-WebTestClient"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">1.1 Testing Controllers with WebTestClient</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Testing-Services-with-Mockito"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">1.2 Testing Services with Mockito</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Integration-Testing"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. Integration Testing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-End-to-End-Testing"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. End-to-End Testing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">2.3.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - IX | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - IX
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:06:56" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:56-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><hr>
+<ul>
+<li><a href="#test">Test</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#why-testing-is-necessary">Why Testing is Necessary</a></li>
+<li><a href="#types-of-testing-in-spring-webflux">Types of Testing in Spring WebFlux</a><ul>
+<li><a href="#1-unit-testing">1. Unit Testing</a><ul>
+<li><a href="#11-testing-controllers-with-webtestclient">1.1 Testing Controllers with WebTestClient</a></li>
+<li><a href="#12-testing-services-with-mockito">1.2 Testing Services with Mockito</a></li>
+</ul>
+</li>
+<li><a href="#2-integration-testing">2. Integration Testing</a></li>
+<li><a href="#3-end-to-end-testing">3. End-to-End Testing</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h1><hr>
+<p><a name="introduction"></a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we explored the foundational concepts of Spring WebFlux, Reactor, error handling, data flow transformation, reactive database access, performance optimization, complex scenarios, and security. This article delves into how to conduct testing in Spring WebFlux to ensure that our reactive applications run reliably in both development and production environments.</p>
+<p><a name="why-testing-is-necessary"></a></p>
+<h2 id="Why-Testing-is-Necessary"><a href="#Why-Testing-is-Necessary" class="headerlink" title="Why Testing is Necessary"></a>Why Testing is Necessary</h2><p>Testing is an indispensable part of the software development process. Through testing, we can validate code correctness, ensure individual modules function as expected, and promptly identify and resolve potential issues. For reactive applications like those built with Spring WebFlux, testing is particularly important because reactive programming introduces asynchronous and non-blocking operations, which increase the complexity of debugging and validation.</p>
+<p><a name="types-of-testing-in-spring-webflux"></a></p>
+<h2 id="Types-of-Testing-in-Spring-WebFlux"><a href="#Types-of-Testing-in-Spring-WebFlux" class="headerlink" title="Types of Testing in Spring WebFlux"></a>Types of Testing in Spring WebFlux</h2><p>In Spring WebFlux, there are typically three main types of tests:</p>
+<ul>
+<li>Unit Testing: Testing individual modules or components to ensure their behavior matches expectations.</li>
+<li>Integration Testing: Testing the interactions between multiple modules to ensure they work together correctly.</li>
+<li>End-to-End Testing: Simulating real user actions and verifying the behavior of the entire system.</li>
+</ul>
+<p><a name="unit-testing"></a></p>
+<h3 id="1-Unit-Testing"><a href="#1-Unit-Testing" class="headerlink" title="1. Unit Testing"></a>1. Unit Testing</h3><p>Unit testing is the smallest test scope, focusing on individual functionality or components. In Spring WebFlux, we commonly test controllers, services, and data access layers.</p>
+<p><a name="testing-controllers-with-webtestclient"></a></p>
+<h4 id="1-1-Testing-Controllers-with-WebTestClient"><a href="#1-1-Testing-Controllers-with-WebTestClient" class="headerlink" title="1.1 Testing Controllers with WebTestClient"></a>1.1 Testing Controllers with WebTestClient</h4><p><code>WebTestClient</code> is a powerful tool for testing the web layer of Spring WebFlux applications.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebFluxTest(UserHandler.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandlerTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/user/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This example shows how to test a controller using <code>WebTestClient</code>, focusing on the <code>GET /user/1</code> and <code>GET /users</code> endpoints.</p>
+<p><a name="testing-services-with-mockito"></a></p>
+<h4 id="1-2-Testing-Services-with-Mockito"><a href="#1-2-Testing-Services-with-Mockito" class="headerlink" title="1.2 Testing Services with Mockito"></a>1.2 Testing Services with Mockito</h4><p>Mockito is a popular mocking framework used to create and manage dependencies in tests.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.jupiter.api.Assertions.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.mockito.InjectMocks;</span><br><span class="line"><span class="keyword">import</span> org.mockito.Mock;</span><br><span class="line"><span class="keyword">import</span> org.mockito.MockitoAnnotations;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserServiceTest</span><span class="params">()</span> &#123;</span><br><span class="line">        MockitoAnnotations.openMocks(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">        when(userRepository.findById(<span class="string">&quot;1&quot;</span>)).thenReturn(Mono.just(user));</span><br><span class="line"></span><br><span class="line">        Mono&lt;User&gt; result = userService.getUser(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        assertEquals(<span class="string">&quot;John Doe&quot;</span>, result.block().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, we use Mockito to mock the <code>UserRepository</code> and verify that the <code>UserService</code> correctly retrieves the user.</p>
+<p><a name="integration-testing"></a></p>
+<h3 id="2-Integration-Testing"><a href="#2-Integration-Testing" class="headerlink" title="2. Integration Testing"></a>2. Integration Testing</h3><p>Integration tests validate the interactions between multiple modules. In Spring WebFlux, we usually use the <code>@SpringBootTest</code> annotation to load the entire application context and use <code>WebTestClient</code> to perform tests.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApplicationIntegrationTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetUser</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/user/1&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, the entire application is loaded and tested for correctness across modules using <code>WebTestClient</code>.</p>
+<p><a name="end-to-end-testing"></a></p>
+<h3 id="3-End-to-End-Testing"><a href="#3-End-to-End-Testing" class="headerlink" title="3. End-to-End Testing"></a>3. End-to-End Testing</h3><p>End-to-end testing simulates real user actions and verifies the behavior of the entire system. These tests are generally more complex as they involve starting the whole application and mimicking various user interaction scenarios.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EndToEndTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUserFlow</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Create a new user</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">newUser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="literal">null</span>, <span class="string">&quot;Alice&quot;</span>);</span><br><span class="line">        webTestClient.post().uri(<span class="string">&quot;/user&quot;</span>)</span><br><span class="line">            .bodyValue(newUser)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;Alice&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Get all users</span></span><br><span class="line">        webTestClient.get().uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class).hasSize(<span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This example tests the flow of creating a new user and then retrieving all users to ensure the system works end-to-end.</p>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we discussed how to perform testing in Spring WebFlux. By conducting unit tests, integration tests, and end-to-end tests, you can ensure that every part of your application functions as expected. Additionally, understanding common vulnerabilities like CSRF and XSS is crucial for building secure applications.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/" rel="prev" title="Reactive Programming in Spring WebFlux Series - VIII">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - VIII
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-X/" rel="next" title="Reactive Programming in Spring WebFlux Series - X">
+                  Reactive Programming in Spring WebFlux Series - X <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="OverviewWe’ll configure NGINX to act as an HTTPS proxy in front of the following backend services:  Kafka Cluster (TCP-based) Elasticsearch Cluster (HTTP-based) Avro Schema Registry (HTTP-based) MinIO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx as HTTPS Proxy for HTTP and TCP Backend Services">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="OverviewWe’ll configure NGINX to act as an HTTPS proxy in front of the following backend services:  Kafka Cluster (TCP-based) Elasticsearch Cluster (HTTP-based) Avro Schema Registry (HTTP-based) MinIO">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-27T21:33:02.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/","path":"2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/","title":"Nginx as HTTPS Proxy for HTTP and TCP Backend Services"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nginx as HTTPS Proxy for HTTP and TCP Backend Services | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prerequisites"><span class="nav-number">2.</span> <span class="nav-text">Prerequisites</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NGINX-Installation-with-Required-Modules"><span class="nav-number">2.1.</span> <span class="nav-text">NGINX Installation with Required Modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Verifying-Installed-Modules"><span class="nav-number">2.2.</span> <span class="nav-text">Verifying Installed Modules</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NGINX-Configuration"><span class="nav-number">3.</span> <span class="nav-text">NGINX Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-General-NGINX-HTTPS-Configuration"><span class="nav-number">3.1.</span> <span class="nav-text">Step 1: General NGINX HTTPS Configuration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-Configure-Each-Backend-Service"><span class="nav-number">3.2.</span> <span class="nav-text">Step 2: Configure Each Backend Service</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-based-Services-Elasticsearch-Avro-Schema-Registry-MinIO"><span class="nav-number">3.2.1.</span> <span class="nav-text">HTTP-based Services (Elasticsearch, Avro Schema Registry, MinIO)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-based-Service-Kafka"><span class="nav-number">3.2.2.</span> <span class="nav-text">TCP-based Service (Kafka)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-Complete-Configuration-Example"><span class="nav-number">3.3.</span> <span class="nav-text">Step 3: Complete Configuration Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Verifying-the-Configuration"><span class="nav-number">4.</span> <span class="nav-text">Verifying the Configuration</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Nginx-as-HTTPS-Proxy-for-HTTP-and-TCP-Backend-Services/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Nginx as HTTPS Proxy for HTTP and TCP Backend Services | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx as HTTPS Proxy for HTTP and TCP Backend Services
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 17:33:02" itemprop="dateCreated datePublished" datetime="2024-10-27T17:33:02-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Nginx/" itemprop="url" rel="index"><span itemprop="name">Nginx</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>We’ll configure NGINX to act as an HTTPS proxy in front of the following backend services:</p>
+<ul>
+<li><strong>Kafka Cluster</strong> (TCP-based)</li>
+<li><strong>Elasticsearch Cluster</strong> (HTTP-based)</li>
+<li><strong>Avro Schema Registry</strong> (HTTP-based)</li>
+<li><strong>MinIO Cluster</strong> (HTTP-based)</li>
+</ul>
+<p>NGINX will be set up to:</p>
+<ol>
+<li>Route requests to different backend services based on ports.</li>
+<li>Securely serve HTTPS traffic.</li>
+<li>Enable and configure the required NGINX modules for HTTP and TCP traffic management.</li>
+</ol>
+<hr>
+<h2 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h2><h3 id="NGINX-Installation-with-Required-Modules"><a href="#NGINX-Installation-with-Required-Modules" class="headerlink" title="NGINX Installation with Required Modules"></a>NGINX Installation with Required Modules</h3><p>Ensure that NGINX is installed with both the HTTP and Stream modules enabled:</p>
+<ul>
+<li><strong>HTTP Module</strong> (<code>ngx_http_module</code>): Enabled by default and necessary for HTTP-based services.</li>
+<li><strong>Stream Module</strong> (<code>ngx_stream_module</code>): Required for TCP-based services, like Kafka.</li>
+</ul>
+<h3 id="Verifying-Installed-Modules"><a href="#Verifying-Installed-Modules" class="headerlink" title="Verifying Installed Modules"></a>Verifying Installed Modules</h3><p>Run the following command to check if these modules are enabled:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -V 2&gt;&amp;1 | grep -o <span class="string">&#x27;with-http\|with-stream&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>If <code>--with-stream</code> is missing, install NGINX with the Stream module. On most Linux distributions, the full version of NGINX (<code>nginx-full</code> or <code>nginx-extras</code>) will include the Stream module:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># On Ubuntu/Debian</span></span><br><span class="line"><span class="built_in">sudo</span> apt-get install nginx-full</span><br><span class="line"></span><br><span class="line"><span class="comment"># On CentOS/RHEL</span></span><br><span class="line"><span class="built_in">sudo</span> yum install nginx</span><br></pre></td></tr></table></figure>
+
+<p>To verify that both modules are available:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -V 2&gt;&amp;1 | grep -o <span class="string">&#x27;with-http\|with-stream&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>You should see both <code>with-http</code> and <code>with-stream</code> in the output.</p>
+<hr>
+<h2 id="NGINX-Configuration"><a href="#NGINX-Configuration" class="headerlink" title="NGINX Configuration"></a>NGINX Configuration</h2><p>This configuration assumes that we’re using separate ports to route traffic to each backend service through NGINX.</p>
+<h3 id="Step-1-General-NGINX-HTTPS-Configuration"><a href="#Step-1-General-NGINX-HTTPS-Configuration" class="headerlink" title="Step 1: General NGINX HTTPS Configuration"></a>Step 1: General NGINX HTTPS Configuration</h3><p>Set up SSL&#x2F;TLS to handle HTTPS traffic. Here’s an example configuration with SSL settings:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># Define SSL settings for all services</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> your-nginx-domain.com;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /path/to/your_certificate.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /path/to/your_private_key.key;</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># TLS configuration for security</span></span><br><span class="line">        <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">        <span class="attribute">ssl_ciphers</span> <span class="string">&#x27;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384&#x27;</span>;</span><br><span class="line">        <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Redirect based on port to respective services</span></span><br><span class="line">        <span class="section">location</span> /elasticsearch/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://elasticsearch_cluster/;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /schema-registry/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://schema_registry/;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /minio/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://minio_cluster/;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-2-Configure-Each-Backend-Service"><a href="#Step-2-Configure-Each-Backend-Service" class="headerlink" title="Step 2: Configure Each Backend Service"></a>Step 2: Configure Each Backend Service</h3><h4 id="HTTP-based-Services-Elasticsearch-Avro-Schema-Registry-MinIO"><a href="#HTTP-based-Services-Elasticsearch-Avro-Schema-Registry-MinIO" class="headerlink" title="HTTP-based Services (Elasticsearch, Avro Schema Registry, MinIO)"></a>HTTP-based Services (Elasticsearch, Avro Schema Registry, MinIO)</h4><ol>
+<li><strong>Elasticsearch</strong> (port <code>9200</code>):<ul>
+<li>Direct HTTP requests to the Elasticsearch cluster.</li>
+</ul>
+</li>
+<li><strong>Avro Schema Registry</strong> (port <code>8081</code>):<ul>
+<li>Redirect requests on <code>/schema-registry</code> to Avro Schema Registry.</li>
+</ul>
+</li>
+<li><strong>MinIO</strong> (port <code>9000</code>):<ul>
+<li>Redirect MinIO requests for storage management.</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="section">upstream</span> elasticsearch_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> es1:<span class="number">9200</span>;</span><br><span class="line">        <span class="attribute">server</span> es2:<span class="number">9200</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">upstream</span> schema_registry &#123;</span><br><span class="line">        <span class="attribute">server</span> schema-registry1:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">upstream</span> minio_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> minio1:<span class="number">9000</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> your-nginx-domain.com;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /path/to/your_certificate.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /path/to/your_private_key.key;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /elasticsearch/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://elasticsearch_cluster;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /schema-registry/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://schema_registry;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /minio/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://minio_cluster;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="TCP-based-Service-Kafka"><a href="#TCP-based-Service-Kafka" class="headerlink" title="TCP-based Service (Kafka)"></a>TCP-based Service (Kafka)</h4><ol>
+<li>Kafka will require a separate configuration block under <code>stream</code> to handle TCP-based traffic on port <code>9092</code>.</li>
+</ol>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Stream block for TCP traffic</span></span><br><span class="line"><span class="section">stream</span> &#123;</span><br><span class="line">    <span class="comment"># Kafka upstream cluster</span></span><br><span class="line">    <span class="section">upstream</span> kafka_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> kafka1:<span class="number">9092</span>;</span><br><span class="line">        <span class="attribute">server</span> kafka2:<span class="number">9092</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># TCP Proxy for Kafka</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">9092</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span> kafka_cluster;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Logging (optional for debugging)</span></span><br><span class="line">        <span class="attribute">access_log</span> /var/log/nginx/kafka_access.log;</span><br><span class="line">        <span class="attribute">error_log</span> /var/log/nginx/kafka_error.log;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-3-Complete-Configuration-Example"><a href="#Step-3-Complete-Configuration-Example" class="headerlink" title="Step 3: Complete Configuration Example"></a>Step 3: Complete Configuration Example</h3><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span> auto;</span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span> <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># HTTP services upstreams</span></span><br><span class="line">    <span class="section">upstream</span> elasticsearch_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> es1:<span class="number">9200</span>;</span><br><span class="line">        <span class="attribute">server</span> es2:<span class="number">9200</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">upstream</span> schema_registry &#123;</span><br><span class="line">        <span class="attribute">server</span> schema-registry1:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">upstream</span> minio_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> minio1:<span class="number">9000</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># SSL and HTTP proxy configurations</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> your-nginx-domain.com;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /path/to/your_certificate.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /path/to/your_private_key.key;</span><br><span class="line">        <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">        <span class="attribute">ssl_ciphers</span> <span class="string">&#x27;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384&#x27;</span>;</span><br><span class="line">        <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /elasticsearch/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://elasticsearch_cluster;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /schema-registry/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://schema_registry;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /minio/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://minio_cluster;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Stream block for TCP traffic to Kafka</span></span><br><span class="line"><span class="section">stream</span> &#123;</span><br><span class="line">    <span class="section">upstream</span> kafka_cluster &#123;</span><br><span class="line">        <span class="attribute">server</span> kafka1:<span class="number">9092</span>;</span><br><span class="line">        <span class="attribute">server</span> kafka2:<span class="number">9092</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">9092</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span> kafka_cluster;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">access_log</span> /var/log/nginx/kafka_access.log;</span><br><span class="line">        <span class="attribute">error_log</span> /var/log/nginx/kafka_error.log;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Verifying-the-Configuration"><a href="#Verifying-the-Configuration" class="headerlink" title="Verifying the Configuration"></a>Verifying the Configuration</h2><ol>
+<li><strong>Test Configuration Syntax</strong>: Ensure there are no syntax errors in the configuration file.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nginx -t</span><br></pre></td></tr></table></figure></li>
+<li><strong>Reload NGINX</strong>: Apply changes.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl reload nginx</span><br></pre></td></tr></table></figure></li>
+<li><strong>Confirm Stream Module Availability</strong>:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -V 2&gt;&amp;1 | grep -- <span class="string">&#x27;with-stream&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>Check Connection to Services</strong>: Using <code>curl</code> for HTTP services or Kafka client tools, verify that requests are correctly routed.</li>
+</ol>
+<hr>
+<p>This setup provides a secure, flexible solution to route requests to both HTTP and TCP-based backend services via NGINX, using HTTPS for secure communications and the necessary modules for protocol compatibility.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Nginx/" rel="tag"><i class="fa fa-tag"></i> Nginx</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Kubernetes-StatefulSet-and-Deployment/" rel="prev" title="Kubernetes StatefulSet and Deployment">
+                  <i class="fa fa-angle-left"></i> Kubernetes StatefulSet and Deployment
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Deep-Dive-Test-Automation-of-Spring-Boot-Application/" rel="next" title="Deep Dive Test Automation of Spring Boot Application">
+                  Deep Dive Test Automation of Spring Boot Application <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

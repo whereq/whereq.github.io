@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="WebClient and RestTemplate in Spring Boot 1. Overview 2. What is RestTemplate? Characteristics: Code Sample:   3. What is WebClient? Characteristics: Code Sample:   4. Key Differences 4.1 Synchronous">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebClient and RestTemplate in Spring Boot">
+<meta property="og:url" content="https://www.whereq.com/2024/10/23/WebClient-and-RestTemplate-in-Spring-Boot/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="WebClient and RestTemplate in Spring Boot 1. Overview 2. What is RestTemplate? Characteristics: Code Sample:   3. What is WebClient? Characteristics: Code Sample:   4. Key Differences 4.1 Synchronous">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T02:16:39.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/23/WebClient-and-RestTemplate-in-Spring-Boot/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/23/WebClient-and-RestTemplate-in-Spring-Boot/","path":"2024/10/23/WebClient-and-RestTemplate-in-Spring-Boot/","title":"WebClient and RestTemplate in Spring Boot"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>WebClient and RestTemplate in Spring Boot | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#WebClient-and-RestTemplate-in-Spring-Boot"><span class="nav-number">1.</span> <span class="nav-text">WebClient and RestTemplate in Spring Boot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Overview"><span class="nav-number">1.1.</span> <span class="nav-text">1. Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-What-is-RestTemplate"><span class="nav-number">1.2.</span> <span class="nav-text">2. What is RestTemplate?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Characteristics"><span class="nav-number">1.2.1.</span> <span class="nav-text">Characteristics:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-Sample"><span class="nav-number">1.2.2.</span> <span class="nav-text">Code Sample:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-What-is-WebClient"><span class="nav-number">1.3.</span> <span class="nav-text">3. What is WebClient?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Characteristics-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">Characteristics:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-Sample-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">Code Sample:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Key-Differences"><span class="nav-number">1.4.</span> <span class="nav-text">4. Key Differences</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Synchronous-vs-Asynchronous"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 Synchronous vs Asynchronous</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Reactive-Support"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 Reactive Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Error-Handling"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 Error Handling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Performance"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 Performance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Flexibility-Features"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 Flexibility &amp; Features</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Best-Practices-and-Use-Cases"><span class="nav-number">1.5.</span> <span class="nav-text">5. Best Practices and Use Cases</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Best-Practices"><span class="nav-number">1.5.1.</span> <span class="nav-text">Best Practices:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Real-Life-Use-Case-Example"><span class="nav-number">1.6.</span> <span class="nav-text">6. Real-Life Use Case Example</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Using-RestTemplate-Synchronous"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 Using RestTemplate (Synchronous)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Using-WebClient-Asynchronous"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 Using WebClient (Asynchronous)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Adding-Retry-and-Fallback-WebClient"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 Adding Retry and Fallback (WebClient)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Conclusion"><span class="nav-number">1.7.</span> <span class="nav-text">7. Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Diagrams"><span class="nav-number">1.8.</span> <span class="nav-text">8. Diagrams</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-Synchronous-RestTemplate-Workflow"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 Synchronous RestTemplate Workflow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-Asynchronous-WebClient-Workflow"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 Asynchronous WebClient Workflow</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Deep-Dive-into-Backpressure"><span class="nav-number">1.9.</span> <span class="nav-text">9. Deep Dive into Backpressure</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-What-is-Backpressure-in-Reactive-Systems"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 What is Backpressure in Reactive Systems?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-Is-Backpressure-Good-or-Bad"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 Is Backpressure Good or Bad?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-How-WebClient-Supports-Backpressure"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 How WebClient Supports Backpressure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-Code-Example-of-WebClient-Supporting-Backpressure"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 Code Example of WebClient Supporting Backpressure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-Why-RestTemplate-Doesn%E2%80%99t-Have-Backpressure"><span class="nav-number">1.9.5.</span> <span class="nav-text">9.5 Why RestTemplate Doesn’t Have Backpressure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-When-to-Use-RestTemplate"><span class="nav-number">1.9.6.</span> <span class="nav-text">9.6 When to Use RestTemplate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-7-Conclusion"><span class="nav-number">1.9.7.</span> <span class="nav-text">9.7 Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-Takeaways"><span class="nav-number">1.9.8.</span> <span class="nav-text">Key Takeaways:</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/23/WebClient-and-RestTemplate-in-Spring-Boot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="WebClient and RestTemplate in Spring Boot | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WebClient and RestTemplate in Spring Boot
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-23 22:16:39" itemprop="dateCreated datePublished" datetime="2024-10-23T22:16:39-04:00">2024-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#webclient-and-resttemplate-in-spring-boot">WebClient and RestTemplate in Spring Boot</a><ul>
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-what-is-resttemplate">2. What is RestTemplate?</a><ul>
+<li><a href="#characteristics">Characteristics:</a></li>
+<li><a href="#code-sample">Code Sample:</a></li>
+</ul>
+</li>
+<li><a href="#3-what-is-webclient">3. What is WebClient?</a><ul>
+<li><a href="#characteristics-1">Characteristics:</a></li>
+<li><a href="#code-sample-1">Code Sample:</a></li>
+</ul>
+</li>
+<li><a href="#4-key-differences">4. Key Differences</a><ul>
+<li><a href="#41-synchronous-vs-asynchronous">4.1 Synchronous vs Asynchronous</a></li>
+<li><a href="#42-reactive-support">4.2 Reactive Support</a></li>
+<li><a href="#43-error-handling">4.3 Error Handling</a></li>
+<li><a href="#44-performance">4.4 Performance</a></li>
+<li><a href="#45-flexibility--features">4.5 Flexibility &amp; Features</a></li>
+</ul>
+</li>
+<li><a href="#5-best-practices-and-use-cases">5. Best Practices and Use Cases</a><ul>
+<li><a href="#best-practices">Best Practices:</a></li>
+</ul>
+</li>
+<li><a href="#6-real-life-use-case-example">6. Real-Life Use Case Example</a><ul>
+<li><a href="#61-using-resttemplate-synchronous">6.1 Using RestTemplate (Synchronous)</a></li>
+<li><a href="#62-using-webclient-asynchronous">6.2 Using WebClient (Asynchronous)</a></li>
+<li><a href="#63-adding-retry-and-fallback-webclient">6.3 Adding Retry and Fallback (WebClient)</a></li>
+</ul>
+</li>
+<li><a href="#7-conclusion">7. Conclusion</a></li>
+<li><a href="#8-diagrams">8. Diagrams</a><ul>
+<li><a href="#81-synchronous-resttemplate-workflow">8.1 Synchronous RestTemplate Workflow</a></li>
+<li><a href="#82-asynchronous-webclient-workflow">8.2 Asynchronous WebClient Workflow</a></li>
+</ul>
+</li>
+<li><a href="#9-deep-dive-into-backpressure">9. Deep Dive into Backpressure</a><ul>
+<li><a href="#91-what-is-backpressure-in-reactive-systems">9.1 What is Backpressure in Reactive Systems?</a></li>
+<li><a href="#92-is-backpressure-good-or-bad">9.2 Is Backpressure Good or Bad?</a></li>
+<li><a href="#93-how-webclient-supports-backpressure">9.3 How WebClient Supports Backpressure</a></li>
+<li><a href="#94-code-example-of-webclient-supporting-backpressure">9.4 Code Example of WebClient Supporting Backpressure</a></li>
+<li><a href="#95-why-resttemplate-doesnt-have-backpressure">9.5 Why RestTemplate Doesn’t Have Backpressure</a></li>
+<li><a href="#96-when-to-use-resttemplate">9.6 When to Use RestTemplate</a></li>
+<li><a href="#97-conclusion">9.7 Conclusion</a></li>
+<li><a href="#key-takeaways">Key Takeaways:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="WebClient-and-RestTemplate-in-Spring-Boot"><a href="#WebClient-and-RestTemplate-in-Spring-Boot" class="headerlink" title="WebClient and RestTemplate in Spring Boot"></a>WebClient and RestTemplate in Spring Boot</h1><hr>
+<h2 id="1-Overview"><a href="#1-Overview" class="headerlink" title="1. Overview"></a>1. Overview</h2><p><a name="1-overview"></a></p>
+<p>Spring Boot offers two primary ways to make HTTP requests: <code>RestTemplate</code> and <code>WebClient</code>. While both can be used to interact with external APIs, they differ significantly in features, capabilities, and usage. In this article, we’ll explore the key differences, when to use each, and best practices through practical examples.</p>
+<h2 id="2-What-is-RestTemplate"><a href="#2-What-is-RestTemplate" class="headerlink" title="2. What is RestTemplate?"></a>2. What is RestTemplate?</h2><p><a name="2-what-is-resttemplate"></a></p>
+<p><code>RestTemplate</code> is a synchronous client designed to perform HTTP requests and handle responses. It has been around for a long time and is simple to use but is gradually being deprecated in favor of <code>WebClient</code> for reactive programming.</p>
+<h3 id="Characteristics"><a href="#Characteristics" class="headerlink" title="Characteristics:"></a>Characteristics:</h3><ul>
+<li><strong>Synchronous&#x2F;blocking operations</strong>: Each request blocks the thread until the response is received.</li>
+<li><strong>Easy to use</strong>: Simplified API for HTTP interactions.</li>
+<li><strong>Wide range of RESTful operations</strong>: Supports GET, POST, PUT, DELETE, etc.</li>
+<li><strong>Deprecated</strong>: Spring team recommends using <code>WebClient</code> for new applications.</li>
+</ul>
+<h3 id="Code-Sample"><a href="#Code-Sample" class="headerlink" title="Code Sample:"></a>Code Sample:</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RestTemplate</span> <span class="variable">restTemplate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;https://catfact.ninja/facts&quot;</span>;</span><br><span class="line">ResponseEntity&lt;String&gt; response = restTemplate.getForEntity(url, String.class);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">&quot;Response: &quot;</span> + response.getBody());</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-What-is-WebClient"><a href="#3-What-is-WebClient" class="headerlink" title="3. What is WebClient?"></a>3. What is WebClient?</h2><p><a name="3-what-is-webclient"></a></p>
+<p><code>WebClient</code> is the successor to <code>RestTemplate</code>, introduced in Spring 5. It supports both synchronous and asynchronous (non-blocking) calls and is designed for reactive programming, making it more suitable for modern web applications.</p>
+<h3 id="Characteristics-1"><a href="#Characteristics-1" class="headerlink" title="Characteristics:"></a>Characteristics:</h3><ul>
+<li><strong>Asynchronous and non-blocking</strong>: Allows multiple requests to be handled concurrently without blocking threads.</li>
+<li><strong>Part of Spring WebFlux</strong>: Built on top of the reactive stack.</li>
+<li><strong>Supports backpressure</strong>: Crucial for reactive streams to manage data flow.</li>
+<li><strong>Chaining operations</strong>: Allows declarative chaining of multiple operations.</li>
+</ul>
+<h3 id="Code-Sample-1"><a href="#Code-Sample-1" class="headerlink" title="Code Sample:"></a>Code Sample:</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create(<span class="string">&quot;https://catfact.ninja&quot;</span>);</span><br><span class="line"></span><br><span class="line">Mono&lt;String&gt; response = webClient.get()</span><br><span class="line">    .uri(<span class="string">&quot;/facts&quot;</span>)</span><br><span class="line">    .retrieve()</span><br><span class="line">    .bodyToMono(String.class);</span><br><span class="line"></span><br><span class="line">response.subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Key-Differences"><a href="#4-Key-Differences" class="headerlink" title="4. Key Differences"></a>4. Key Differences</h2><p><a name="4-key-differences"></a></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>RestTemplate</th>
+<th>WebClient</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Type</strong></td>
+<td>Synchronous</td>
+<td>Asynchronous and Reactive</td>
+</tr>
+<tr>
+<td><strong>Concurrency</strong></td>
+<td>Blocking (each request waits)</td>
+<td>Non-blocking (multiple requests in parallel)</td>
+</tr>
+<tr>
+<td><strong>Backpressure</strong></td>
+<td>No (Processes whole response at once)</td>
+<td>Yes, Supports backpressure in reactive systems, flow control</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Simple but lacks flexibility</td>
+<td>Advanced error handling with <code>.onStatus()</code></td>
+</tr>
+<tr>
+<td><strong>Support for Streams</strong></td>
+<td>No</td>
+<td>Yes, can handle large streams of data</td>
+</tr>
+<tr>
+<td><strong>Flexibility</strong></td>
+<td>Limited customizations</td>
+<td>Highly flexible and configurable</td>
+</tr>
+</tbody></table>
+<h3 id="4-1-Synchronous-vs-Asynchronous"><a href="#4-1-Synchronous-vs-Asynchronous" class="headerlink" title="4.1 Synchronous vs Asynchronous"></a>4.1 Synchronous vs Asynchronous</h3><p><a name="41-synchronous-vs-asynchronous"></a></p>
+<ul>
+<li><strong>RestTemplate</strong>: Operates in a synchronous&#x2F;blocking fashion, meaning the thread is blocked until the response arrives.</li>
+<li><strong>WebClient</strong>: Can operate both synchronously and asynchronously, allowing for non-blocking I&#x2F;O and better scalability.</li>
+</ul>
+<h3 id="4-2-Reactive-Support"><a href="#4-2-Reactive-Support" class="headerlink" title="4.2 Reactive Support"></a>4.2 Reactive Support</h3><p><a name="42-reactive-support"></a></p>
+<p><code>WebClient</code> is built to support the reactive paradigm of programming, which allows applications to handle a massive number of requests efficiently by leveraging non-blocking I&#x2F;O operations. RestTemplate does not have this support.</p>
+<h3 id="4-3-Error-Handling"><a href="#4-3-Error-Handling" class="headerlink" title="4.3 Error Handling"></a>4.3 Error Handling</h3><p><a name="43-error-handling"></a></p>
+<p><code>WebClient</code> provides more flexible error handling with methods like <code>.onStatus()</code> for dealing with specific HTTP status codes.</p>
+<h3 id="4-4-Performance"><a href="#4-4-Performance" class="headerlink" title="4.4 Performance"></a>4.4 Performance</h3><p><a name="44-performance"></a></p>
+<p>Due to its asynchronous nature, <code>WebClient</code> typically offers better performance in handling multiple HTTP requests concurrently, making it more suitable for high-performance applications.</p>
+<h3 id="4-5-Flexibility-Features"><a href="#4-5-Flexibility-Features" class="headerlink" title="4.5 Flexibility &amp; Features"></a>4.5 Flexibility &amp; Features</h3><p><a name="45-flexibility--features"></a></p>
+<p><code>WebClient</code> can be configured with timeouts, retries, and fallbacks more easily compared to <code>RestTemplate</code>. It supports streaming large amounts of data and provides reactive streams to manage data flow.</p>
+<h2 id="5-Best-Practices-and-Use-Cases"><a href="#5-Best-Practices-and-Use-Cases" class="headerlink" title="5. Best Practices and Use Cases"></a>5. Best Practices and Use Cases</h2><p><a name="5-best-practices-and-use-cases"></a></p>
+<ul>
+<li><p><strong>When to use RestTemplate</strong>:</p>
+<ul>
+<li>Small applications with minimal requirements for concurrency.</li>
+<li>Use cases where synchronous&#x2F;blocking operations are acceptable.</li>
+</ul>
+</li>
+<li><p><strong>When to use WebClient</strong>:</p>
+<ul>
+<li>Modern applications requiring scalability and performance.</li>
+<li>When working with large-scale microservices architectures.</li>
+<li>For non-blocking and reactive API calls.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices:"></a>Best Practices:</h3><ul>
+<li>Use <code>WebClient</code> for new applications that need to scale.</li>
+<li>Avoid using <code>RestTemplate</code> for large-scale systems due to its synchronous nature.</li>
+<li>Handle errors properly using <code>onStatus()</code> in <code>WebClient</code>.</li>
+</ul>
+<h2 id="6-Real-Life-Use-Case-Example"><a href="#6-Real-Life-Use-Case-Example" class="headerlink" title="6. Real-Life Use Case Example"></a>6. Real-Life Use Case Example</h2><p><a name="6-real-life-use-case-example"></a></p>
+<p>Let’s assume a situation where you are building a service to fetch data from multiple APIs concurrently. <code>RestTemplate</code> would block on each request, but <code>WebClient</code> would allow you to make all the calls concurrently and return the responses as they come in.</p>
+<h3 id="6-1-Using-RestTemplate-Synchronous"><a href="#6-1-Using-RestTemplate-Synchronous" class="headerlink" title="6.1 Using RestTemplate (Synchronous)"></a>6.1 Using RestTemplate (Synchronous)</h3><p><a name="61-using-resttemplate-synchronous"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">RestTemplate</span> <span class="variable">restTemplate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/data&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">fetchData</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">api1Response</span> <span class="operator">=</span> restTemplate.getForObject(<span class="string">&quot;https://catfact.ninja/facts&quot;</span>, String.class);</span><br><span class="line">        <span class="type">String</span> <span class="variable">api2Response</span> <span class="operator">=</span> restTemplate.getForObject(<span class="string">&quot;https://catfact.ninja/fact&quot;</span>, String.class);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Data from API1: &quot;</span> + api1Response + <span class="string">&quot; and API2: &quot;</span> + api2Response;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-Using-WebClient-Asynchronous"><a href="#6-2-Using-WebClient-Asynchronous" class="headerlink" title="6.2 Using WebClient (Asynchronous)"></a>6.2 Using WebClient (Asynchronous)</h3><p><a name="62-using-webclient-asynchronous"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/data&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">fetchData</span><span class="params">()</span> &#123;</span><br><span class="line">        Mono&lt;String&gt; api1Response = webClient.get().uri(<span class="string">&quot;https://catfact.ninja/facts&quot;</span>).retrieve().bodyToMono(String.class);</span><br><span class="line">        Mono&lt;String&gt; api2Response = webClient.get().uri(<span class="string">&quot;https://catfact.ninja/fact&quot;</span>).retrieve().bodyToMono(String.class);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Mono.zip(api1Response, api2Response, (api1, api2) -&gt; <span class="string">&quot;Data from API1: &quot;</span> + api1 + <span class="string">&quot; and API2: &quot;</span> + api2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-Adding-Retry-and-Fallback-WebClient"><a href="#6-3-Adding-Retry-and-Fallback-WebClient" class="headerlink" title="6.3 Adding Retry and Fallback (WebClient)"></a>6.3 Adding Retry and Fallback (WebClient)</h3><p><a name="63-adding-retry-and-fallback-webclient"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.builder()</span><br><span class="line">        .baseUrl(<span class="string">&quot;https://catfact.ninja&quot;</span>)</span><br><span class="line">        .filter(ExchangeFilterFunctions.statusError(HttpStatus::is4xxClientError, clientResponse -&gt; <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;API Error&quot;</span>)))</span><br><span class="line">        .build();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Retryable(value = &#123;RuntimeException.class&#125;, maxAttempts = 3)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">fetchDataWithRetry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">            .uri(<span class="string">&quot;/data&quot;</span>)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(String.class)</span><br><span class="line">            .onErrorReturn(<span class="string">&quot;Fallback Data&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h2><p><a name="7-conclusion"></a></p>
+<p><code>RestTemplate</code> is simple and suitable for synchronous applications, but for modern, scalable applications, <code>WebClient</code> is the clear choice due to its non-blocking and reactive features. In Spring Boot applications, it’s recommended to move towards <code>WebClient</code> for future-proofing your code.</p>
+<h2 id="8-Diagrams"><a href="#8-Diagrams" class="headerlink" title="8. Diagrams"></a>8. Diagrams</h2><p><a name="8-diagrams"></a></p>
+<h3 id="8-1-Synchronous-RestTemplate-Workflow"><a href="#8-1-Synchronous-RestTemplate-Workflow" class="headerlink" title="8.1 Synchronous RestTemplate Workflow"></a>8.1 Synchronous RestTemplate Workflow</h3><p><a name="81-synchronous-resttemplate-workflow"></a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Request -&gt; Server -&gt; Blocking I/O -&gt; Response -&gt; Client</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-Asynchronous-WebClient-Workflow"><a href="#8-2-Asynchronous-WebClient-Workflow" class="headerlink" title="8.2 Asynchronous WebClient Workflow"></a>8.2 Asynchronous WebClient Workflow</h3><p><a name="82-asynchronous-webclient-workflow"></a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Request -&gt; Server -&gt; Non-Blocking I/O -&gt; Reactive Stream -&gt; Response -&gt; Client</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-Deep-Dive-into-Backpressure"><a href="#9-Deep-Dive-into-Backpressure" class="headerlink" title="9. Deep Dive into Backpressure"></a>9. Deep Dive into Backpressure</h2><p><a name="9-deep-dive-into-backpressure"></a></p>
+<h3 id="9-1-What-is-Backpressure-in-Reactive-Systems"><a href="#9-1-What-is-Backpressure-in-Reactive-Systems" class="headerlink" title="9.1 What is Backpressure in Reactive Systems?"></a>9.1 What is Backpressure in Reactive Systems?</h3><p><a name="91-what-is-backpressure-in-reactive-systems"></a></p>
+<p>Backpressure refers to a mechanism used in reactive systems to control the flow of data between producers and consumers. It allows the consumer to handle data at a rate it can manage, preventing overload or crashes. If the producer is emitting data faster than the consumer can process, backpressure signals the producer to slow down or pause until the consumer catches up.</p>
+<h3 id="9-2-Is-Backpressure-Good-or-Bad"><a href="#9-2-Is-Backpressure-Good-or-Bad" class="headerlink" title="9.2 Is Backpressure Good or Bad?"></a>9.2 Is Backpressure Good or Bad?</h3><p><a name="92-is-backpressure-good-or-bad"></a></p>
+<p><strong>Good</strong>:</p>
+<ul>
+<li><strong>Efficient Resource Management</strong>: Backpressure prevents resource exhaustion by controlling how much data is in the system.</li>
+<li><strong>System Stability</strong>: It helps prevent overloading a service, ensuring it operates smoothly without being overwhelmed by data.</li>
+<li><strong>Improved Scalability</strong>: In distributed systems, especially when handling streams of real-time data, backpressure enables better scalability and responsiveness.</li>
+</ul>
+<p><strong>Challenges</strong>:</p>
+<ul>
+<li><strong>Increased Complexity</strong>: While beneficial, backpressure introduces more complexity in system design. Developers need to think carefully about flow control.</li>
+<li><strong>Latency</strong>: If not managed properly, backpressure can introduce latency because the producer has to wait until the consumer is ready to receive more data.</li>
+</ul>
+<h3 id="9-3-How-WebClient-Supports-Backpressure"><a href="#9-3-How-WebClient-Supports-Backpressure" class="headerlink" title="9.3 How WebClient Supports Backpressure"></a>9.3 How WebClient Supports Backpressure</h3><p><a name="93-how-webclient-supports-backpressure"></a></p>
+<p>In Spring WebFlux, <code>WebClient</code> works in a reactive, non-blocking way and is integrated with Project Reactor to support backpressure. When fetching large streams of data, WebClient can handle them without overwhelming the system. Here’s how it works:</p>
+<ul>
+<li><p><strong>Reactive Streams</strong>: WebClient communicates using <code>Publisher</code> and <code>Subscriber</code> patterns, which allows it to handle streams of data asynchronously. If the subscriber (consumer) is slower than the publisher (producer), it can request data at a manageable rate, applying backpressure when needed.</p>
+</li>
+<li><p><strong>Flow Control</strong>: In a typical scenario, the subscriber can signal how much data it wants to receive at any given moment. This avoids a flood of data that could cause the system to run out of resources. WebClient ensures that consumers can throttle the data based on their processing capacity.</p>
+</li>
+</ul>
+<h3 id="9-4-Code-Example-of-WebClient-Supporting-Backpressure"><a href="#9-4-Code-Example-of-WebClient-Supporting-Backpressure" class="headerlink" title="9.4 Code Example of WebClient Supporting Backpressure"></a>9.4 Code Example of WebClient Supporting Backpressure</h3><p><a name="94-code-example-of-webclient-supporting-backpressure"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create();</span><br><span class="line"></span><br><span class="line">Flux&lt;String&gt; response = webClient.get()</span><br><span class="line">    .uri(<span class="string">&quot;/large-data-stream&quot;</span>)</span><br><span class="line">    .retrieve()</span><br><span class="line">    .bodyToFlux(String.class)</span><br><span class="line">    .limitRate(<span class="number">10</span>); <span class="comment">// apply backpressure by limiting the rate of consumption</span></span><br><span class="line"></span><br><span class="line">response.subscribe(data -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Processing: &quot;</span> + data);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>In this example, the <code>limitRate()</code> method ensures the consumer processes the data stream at a manageable rate, effectively applying backpressure.</p>
+<h3 id="9-5-Why-RestTemplate-Doesn’t-Have-Backpressure"><a href="#9-5-Why-RestTemplate-Doesn’t-Have-Backpressure" class="headerlink" title="9.5 Why RestTemplate Doesn’t Have Backpressure"></a>9.5 Why RestTemplate Doesn’t Have Backpressure</h3><p><a name="95-why-resttemplate-doesnt-have-backpressure"></a></p>
+<p>RestTemplate is built on a blocking I&#x2F;O model, which means it waits for each HTTP request to complete before proceeding to the next task. This approach works well for synchronous operations, but it lacks the flow control mechanisms needed for backpressure. Here’s why RestTemplate doesn’t support backpressure:</p>
+<ol>
+<li><p><strong>Blocking Nature</strong>: RestTemplate blocks the current thread while waiting for a response, handling each request in sequence, which inherently prevents a need for backpressure.</p>
+</li>
+<li><p><strong>Lack of Reactive Streams</strong>: Unlike WebClient, which is built around reactive streams and the non-blocking <code>Publisher-Subscriber</code> pattern, RestTemplate doesn’t have the underlying architecture to request data in chunks or manage flow control. It processes the entire response in a blocking call and holds it in memory until the response is complete.</p>
+</li>
+<li><p><strong>Thread-per-request Model</strong>: RestTemplate uses a traditional thread-per-request model, which consumes a thread for the entire duration of a request. This model isn’t designed to handle large streams of data efficiently or manage backpressure when dealing with data that arrives at varying rates.</p>
+</li>
+</ol>
+<h3 id="9-6-When-to-Use-RestTemplate"><a href="#9-6-When-to-Use-RestTemplate" class="headerlink" title="9.6 When to Use RestTemplate"></a>9.6 When to Use RestTemplate</h3><p><a name="96-when-to-use-resttemplate"></a></p>
+<p>RestTemplate is still useful for simple, synchronous tasks that don’t require fine-grained control over how data is processed, particularly when working with legacy systems or simple API interactions that don’t involve heavy real-time data streaming.</p>
+<p>However, for reactive programming, high throughput, and complex asynchronous data handling, WebClient is the better choice, as it is designed to handle backpressure effectively.</p>
+<h3 id="9-7-Conclusion"><a href="#9-7-Conclusion" class="headerlink" title="9.7 Conclusion"></a>9.7 Conclusion</h3><p><a name="97-conclusion"></a></p>
+<p>Backpressure is essential in reactive systems for maintaining stability and scalability. Spring WebClient leverages Project Reactor to support it, making it an excellent choice for modern applications handling large streams of data. While it adds some complexity, the benefits of resource management and smooth performance outweigh the drawbacks.</p>
+<h3 id="Key-Takeaways"><a href="#Key-Takeaways" class="headerlink" title="Key Takeaways:"></a>Key Takeaways:</h3><ul>
+<li><strong>Backpressure</strong>: A mechanism to control data flow in reactive systems.</li>
+<li><strong>WebClient</strong>: Supports backpressure and is suitable for modern, scalable applications.</li>
+<li><strong>RestTemplate</strong>: Synchronous and blocking, not suitable for handling large streams of data.</li>
+<li><strong>Best Practices</strong>: Use WebClient for new applications requiring scalability and performance.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/23/Deep-Dive-Spring-Boot-Retry-Mechanism-and-Implementation/" rel="prev" title="Deep Dive Spring Boot Retry Mechanism and Implementation">
+                  <i class="fa fa-angle-left"></i> Deep Dive Spring Boot Retry Mechanism and Implementation
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/23/Deep-Dive-Backpressure-Flow-Control-with-WebClient-in-Spring-Boot/" rel="next" title="Deep Dive Backpressure Flow Control with WebClient in Spring Boot">
+                  Deep Dive Backpressure Flow Control with WebClient in Spring Boot <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

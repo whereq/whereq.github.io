@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Online Systems: Defining Transactions, Database Transaction Management, and Lock ManagementWhen working with complex online systems (e.g., e-commerce platforms, distributed systems, microservices arch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Considerations on Transactions Across Distributed Systems">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Online Systems: Defining Transactions, Database Transaction Management, and Lock ManagementWhen working with complex online systems (e.g., e-commerce platforms, distributed systems, microservices arch">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-25T00:43:50.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Transaction">
+<meta property="article:tag" content="Distributed System">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/","path":"2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/","title":"Considerations on Transactions Across Distributed Systems"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Considerations on Transactions Across Distributed Systems | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Online-Systems-Defining-Transactions-Database-Transaction-Management-and-Lock-Management"><span class="nav-number">1.</span> <span class="nav-text">Online Systems: Defining Transactions, Database Transaction Management, and Lock Management</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Defining-Transactions-in-Online-Systems"><span class="nav-number">2.</span> <span class="nav-text">1. Defining Transactions in Online Systems</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Key-Transaction-Properties-ACID-vs-BASE"><span class="nav-number">2.1.</span> <span class="nav-text">Key Transaction Properties: ACID vs BASE</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Transaction-Management-in-Complex-Online-Systems"><span class="nav-number">3.</span> <span class="nav-text">2. Transaction Management in Complex Online Systems</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Distributed-Transactions-Two-Phase-Commit"><span class="nav-number">3.1.</span> <span class="nav-text">a. Distributed Transactions (Two-Phase Commit)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Saga-Pattern"><span class="nav-number">3.2.</span> <span class="nav-text">b. Saga Pattern</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Eventual-Consistency-and-Compensation"><span class="nav-number">3.3.</span> <span class="nav-text">c. Eventual Consistency and Compensation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d-Message-Driven-Transactions"><span class="nav-number">3.4.</span> <span class="nav-text">d. Message-Driven Transactions</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Lock-Management"><span class="nav-number">4.</span> <span class="nav-text">3. Lock Management</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Optimistic-vs-Pessimistic-Locking"><span class="nav-number">4.1.</span> <span class="nav-text">a. Optimistic vs Pessimistic Locking</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Distributed-Locks"><span class="nav-number">4.2.</span> <span class="nav-text">b. Distributed Locks</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Deadlock-Detection-and-Prevention"><span class="nav-number">4.3.</span> <span class="nav-text">c. Deadlock Detection and Prevention</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Considerations-on-Transactions-Across-Distributed-Systems/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Considerations on Transactions Across Distributed Systems | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Considerations on Transactions Across Distributed Systems
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 20:43:50" itemprop="dateCreated datePublished" datetime="2024-10-24T20:43:50-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/" itemprop="url" rel="index"><span itemprop="name">Transaction</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Transaction/Distributed-System/" itemprop="url" rel="index"><span itemprop="name">Distributed System</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="Online-Systems-Defining-Transactions-Database-Transaction-Management-and-Lock-Management"><a href="#Online-Systems-Defining-Transactions-Database-Transaction-Management-and-Lock-Management" class="headerlink" title="Online Systems: Defining Transactions, Database Transaction Management, and Lock Management"></a>Online Systems: Defining Transactions, Database Transaction Management, and Lock Management</h3><p>When working with <strong>complex online systems</strong> (e.g., e-commerce platforms, distributed systems, microservices architecture), transactions span beyond a single database. This requires a broader understanding of transaction management, involving <strong>distributed transactions</strong>, <strong>data consistency across systems</strong>, and sophisticated <strong>lock management</strong> techniques. Let’s break this down with a focus on the key topics: defining transactions in online systems, transaction management (beyond the database), and lock management in such environments.</p>
+<hr>
+<h3 id="1-Defining-Transactions-in-Online-Systems"><a href="#1-Defining-Transactions-in-Online-Systems" class="headerlink" title="1. Defining Transactions in Online Systems"></a>1. Defining Transactions in Online Systems</h3><p>In an <strong>online system</strong>, a <strong>transaction</strong> is a <strong>sequence of operations</strong> performed as a single logical unit, ensuring <strong>consistency, correctness, and isolation</strong> across different subsystems. These operations could involve:</p>
+<ul>
+<li><strong>Database operations</strong> (e.g., updating inventory, placing an order)</li>
+<li><strong>Third-party API calls</strong> (e.g., payment gateways, external services)</li>
+<li><strong>Message queue handling</strong> (e.g., Kafka, RabbitMQ for event-driven architecture)</li>
+<li><strong>Microservices interaction</strong> (e.g., coordination between an inventory service and an order service)</li>
+</ul>
+<p>In simple terms, a transaction in an online system is any series of related actions across multiple components that must either <strong>complete successfully together</strong> or <strong>fail together</strong> to maintain a consistent system state.</p>
+<h4 id="Key-Transaction-Properties-ACID-vs-BASE"><a href="#Key-Transaction-Properties-ACID-vs-BASE" class="headerlink" title="Key Transaction Properties: ACID vs BASE"></a>Key Transaction Properties: ACID vs BASE</h4><p>In large-scale systems, transactions must be designed for both <strong>strong consistency</strong> (ACID) or <strong>eventual consistency</strong> (BASE), depending on the use case.</p>
+<ol>
+<li><p><strong>ACID (Atomicity, Consistency, Isolation, Durability)</strong>:</p>
+<ul>
+<li>Guarantees <strong>strong consistency</strong>.</li>
+<li>Used when all subsystems must maintain a single consistent state.</li>
+<li>Common in <strong>single database</strong> transactions or within tightly-coupled services.</li>
+</ul>
+</li>
+<li><p><strong>BASE (Basically Available, Soft-state, Eventually consistent)</strong>:</p>
+<ul>
+<li>Sacrifices immediate consistency for <strong>availability</strong> and <strong>scalability</strong>.</li>
+<li>Often used in <strong>distributed systems</strong> where components may not always be in sync (e.g., eventual consistency in NoSQL databases).</li>
+</ul>
+</li>
+</ol>
+<p>In online systems, distributed transactions often require a mix of <strong>ACID</strong> and <strong>BASE</strong> properties, depending on the criticality of the operation.</p>
+<hr>
+<h3 id="2-Transaction-Management-in-Complex-Online-Systems"><a href="#2-Transaction-Management-in-Complex-Online-Systems" class="headerlink" title="2. Transaction Management in Complex Online Systems"></a>2. Transaction Management in Complex Online Systems</h3><p>Transaction management in online systems can no longer rely solely on single-database transaction managers. These systems often require <strong>distributed transaction management</strong>. Some of the most critical techniques include:</p>
+<h4 id="a-Distributed-Transactions-Two-Phase-Commit"><a href="#a-Distributed-Transactions-Two-Phase-Commit" class="headerlink" title="a. Distributed Transactions (Two-Phase Commit)"></a>a. <strong>Distributed Transactions (Two-Phase Commit)</strong></h4><p>When a transaction spans across <strong>multiple services</strong> or databases, a <strong>Two-Phase Commit (2PC)</strong> protocol is commonly used to ensure atomicity. </p>
+<ul>
+<li><strong>Phase 1 - Prepare</strong>: All participating systems are asked to <strong>prepare</strong> (lock resources and confirm they can commit the transaction).</li>
+<li><strong>Phase 2 - Commit&#x2F;Rollback</strong>: If all participants agree, the transaction is <strong>committed</strong>. If any participant fails, the entire transaction is <strong>rolled back</strong>.</li>
+</ul>
+<p>Example:</p>
+<ul>
+<li>An order is placed in an online store:<ul>
+<li>The <strong>Order Service</strong> inserts an order into the database.</li>
+<li>The <strong>Payment Service</strong> processes the payment.</li>
+<li>The <strong>Inventory Service</strong> updates the stock.</li>
+</ul>
+</li>
+</ul>
+<p>All three operations must be successful for the order to be confirmed. The <strong>2PC</strong> ensures that if any step fails, all previous operations are rolled back.</p>
+<p>However, <strong>2PC</strong> can be slow and does not scale well in high-throughput environments due to blocking resources during the “prepare” phase.</p>
+<h4 id="b-Saga-Pattern"><a href="#b-Saga-Pattern" class="headerlink" title="b. Saga Pattern"></a>b. <strong>Saga Pattern</strong></h4><p>The <strong>Saga Pattern</strong> is an alternative to 2PC, often used in <strong>microservices architectures</strong> where long-lived transactions are undesirable. Instead of blocking resources, the Saga breaks a distributed transaction into a series of smaller transactions.</p>
+<ul>
+<li>Each service involved in the transaction performs its work independently.</li>
+<li>If one step fails, the previous steps are <strong>compensated</strong> by executing defined rollback actions.</li>
+</ul>
+<p>Example:</p>
+<ol>
+<li><strong>Order Service</strong> places an order.</li>
+<li><strong>Payment Service</strong> charges the customer.</li>
+<li><strong>Inventory Service</strong> updates the stock.</li>
+<li>If the <strong>Inventory Service</strong> fails, a compensating transaction <strong>refunds</strong> the payment and <strong>cancels</strong> the order.</li>
+</ol>
+<p><strong>Sagas</strong> offer better <strong>scalability</strong> compared to 2PC and are particularly suited for <strong>event-driven</strong> architectures where each microservice manages its own transaction.</p>
+<h4 id="c-Eventual-Consistency-and-Compensation"><a href="#c-Eventual-Consistency-and-Compensation" class="headerlink" title="c. Eventual Consistency and Compensation"></a>c. <strong>Eventual Consistency and Compensation</strong></h4><p>In some distributed systems, strict ACID properties are relaxed for <strong>eventual consistency</strong>, especially in <strong>BASE systems</strong> (e.g., NoSQL databases, cloud-native architectures). Instead of locking resources, systems rely on <strong>compensation</strong> logic:</p>
+<ul>
+<li>If a downstream service fails or an external API does not respond, the system might retry the operation or initiate compensating actions to restore consistency.</li>
+</ul>
+<p><strong>Eventual Consistency Example</strong>:</p>
+<ul>
+<li>In a <strong>global payment system</strong>, payments made across multiple time zones and currencies may not reflect immediately but will eventually be reconciled to ensure data consistency.</li>
+</ul>
+<h4 id="d-Message-Driven-Transactions"><a href="#d-Message-Driven-Transactions" class="headerlink" title="d. Message-Driven Transactions"></a>d. <strong>Message-Driven Transactions</strong></h4><p>In <strong>event-driven systems</strong>, message queues (e.g., <strong>Kafka</strong>, <strong>RabbitMQ</strong>) help decouple services, allowing them to handle transactions asynchronously. Here, services:</p>
+<ul>
+<li><strong>Emit events</strong> for actions like “Order Placed” or “Payment Processed”.</li>
+<li><strong>Listen</strong> for events from other services to trigger corresponding actions (e.g., update inventory when an order is placed).</li>
+</ul>
+<p>By designing for <strong>idempotency</strong> (ensuring repeated operations have the same effect as a single operation), these systems can handle eventual consistency and retries gracefully.</p>
+<hr>
+<h3 id="3-Lock-Management"><a href="#3-Lock-Management" class="headerlink" title="3. Lock Management"></a>3. Lock Management</h3><p>In online systems, <strong>lock management</strong> becomes complex due to multiple participants, different types of data stores, and network latencies. Locking is crucial to prevent data corruption or race conditions during concurrent transactions.</p>
+<h4 id="a-Optimistic-vs-Pessimistic-Locking"><a href="#a-Optimistic-vs-Pessimistic-Locking" class="headerlink" title="a. Optimistic vs Pessimistic Locking"></a>a. <strong>Optimistic vs Pessimistic Locking</strong></h4><ul>
+<li><p><strong>Pessimistic Locking</strong>: A <strong>resource is locked</strong> for the entire duration of the transaction, preventing any other transaction from accessing it.</p>
+<ul>
+<li>Used when <strong>contention</strong> for the resource is high or when updates must be serialized (e.g., bank account transfers).</li>
+<li>Example: A row in the <code>Inventory</code> table is locked while updating stock.</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Products <span class="keyword">WHERE</span> product_id <span class="operator">=</span> <span class="number">1</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Optimistic Locking</strong>: Assumes conflicts are rare and does not lock the resource. Instead, it checks for conflicts only at the end of the transaction.</p>
+<ul>
+<li><strong>Version columns</strong> or <strong>timestamps</strong> are used to detect if another transaction modified the same data. If so, the transaction fails, and a retry is triggered.</li>
+<li>Example: Update an order only if no other transaction has modified it.</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Orders</span><br><span class="line"><span class="keyword">SET</span> status <span class="operator">=</span> <span class="string">&#x27;SHIPPED&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> order_id <span class="operator">=</span> <span class="number">101</span> <span class="keyword">AND</span> version <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="b-Distributed-Locks"><a href="#b-Distributed-Locks" class="headerlink" title="b. Distributed Locks"></a>b. <strong>Distributed Locks</strong></h4><p>In distributed systems, transactions may need to span multiple nodes or databases. To handle this, <strong>distributed locks</strong> ensure that shared resources are not modified concurrently by different parts of the system.</p>
+<ol>
+<li><p><strong>Redis-Based Locks</strong>: A simple solution is to use <strong>Redis</strong> to acquire distributed locks.</p>
+<p>Example:<br>When updating inventory, each microservice tries to acquire a lock for the product:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET product_lock:1 my_unique_id NX PX 10000</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>NX</code> ensures the lock is acquired only if it doesn’t exist.</li>
+<li><code>PX 10000</code> ensures the lock expires after 10 seconds if not released.</li>
+</ul>
+</li>
+<li><p><strong>Zookeeper or Etcd</strong>: More robust systems like <strong>Zookeeper</strong> or <strong>Etcd</strong> can handle distributed coordination, offering <strong>leader election</strong>, <strong>mutexes</strong>, and <strong>barriers</strong>.</p>
+<p>Example: Distributed systems can use Zookeeper to ensure that <strong>only one instance</strong> of a service performs a critical operation (e.g., process payments in a sharded environment).</p>
+</li>
+</ol>
+<h4 id="c-Deadlock-Detection-and-Prevention"><a href="#c-Deadlock-Detection-and-Prevention" class="headerlink" title="c. Deadlock Detection and Prevention"></a>c. <strong>Deadlock Detection and Prevention</strong></h4><p>In systems with complex transactions and lock dependencies, <strong>deadlocks</strong> can occur, where two transactions are waiting for resources locked by each other.</p>
+<ul>
+<li><p><strong>Deadlock Detection</strong>: The system detects circular dependencies and aborts one of the transactions to resolve the deadlock.</p>
+<p>Example:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> innodb_lock_wait_timeout <span class="operator">=</span> <span class="number">50</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Deadlock Prevention</strong>: In systems like <strong>databases</strong> or <strong>distributed systems</strong>, adopting strategies like <strong>acquiring locks in a consistent order</strong> can prevent deadlocks.</p>
+</li>
+</ul>
+<hr>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>In an <strong>online system</strong>, transaction management and lock management are more complex than in a simple intranet application. The system must account for <strong>distributed transactions</strong> across multiple services and databases, often relying on protocols like <strong>2PC</strong>, <strong>Sagas</strong>, or <strong>message-driven event handling</strong> to ensure consistency and reliability. Locks, whether in-database or distributed, are critical for managing concurrency and ensuring data integrity but must be handled with care to avoid performance bottlenecks or deadlocks.</p>
+<p>In essence, designing transactions in a modern online system requires a mix of strategies from <strong>distributed transaction management</strong>, <strong>eventual consistency models</strong>, and <strong>advanced locking mechanisms</strong> to maintain data reliability, availability, and scalability.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transaction/" rel="tag"><i class="fa fa-tag"></i> Transaction</a>
+              <a href="/tags/Distributed-System/" rel="tag"><i class="fa fa-tag"></i> Distributed System</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Data-Integrity-and-Consistency-in-Databases/" rel="prev" title="Data Integrity and Consistency in Databases">
+                  <i class="fa fa-angle-left"></i> Data Integrity and Consistency in Databases
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice/" rel="next" title="Approaches to Rolling Back or Canceling Transactions in Microservice">
+                  Approaches to Rolling Back or Canceling Transactions in Microservice <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

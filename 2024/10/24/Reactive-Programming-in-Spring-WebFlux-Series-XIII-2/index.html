@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Deep Dive: Integrating Spring WebFlux with Microservices Architecture Introduction Microservices Architecture Overview Integrating Spring WebFlux with Microservices Using Spring Cloud Service Registr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - XIII-2">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Deep Dive: Integrating Spring WebFlux with Microservices Architecture Introduction Microservices Architecture Overview Integrating Spring WebFlux with Microservices Using Spring Cloud Service Registr">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-25T03:43:33.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/","title":"Reactive Programming in Spring WebFlux Series - XIII-2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - XIII-2 | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Dive-Integrating-Spring-WebFlux-with-Microservices-Architecture"><span class="nav-number">1.</span> <span class="nav-text">Deep Dive: Integrating Spring WebFlux with Microservices Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Microservices-Architecture-Overview"><span class="nav-number">1.2.</span> <span class="nav-text">Microservices Architecture Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Integrating-Spring-WebFlux-with-Microservices"><span class="nav-number">1.3.</span> <span class="nav-text">Integrating Spring WebFlux with Microservices</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-Spring-Cloud"><span class="nav-number">1.4.</span> <span class="nav-text">Using Spring Cloud</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-Registration-and-Discovery"><span class="nav-number">1.5.</span> <span class="nav-text">Service Registration and Discovery</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Dependencies"><span class="nav-number">1.5.1.</span> <span class="nav-text">Adding Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Service-Registration-and-Discovery"><span class="nav-number">1.5.2.</span> <span class="nav-text">Configuring Service Registration and Discovery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Annotating-the-Main-Class"><span class="nav-number">1.5.3.</span> <span class="nav-text">Annotating the Main Class</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Gateway"><span class="nav-number">1.6.</span> <span class="nav-text">API Gateway</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Dependencies-1"><span class="nav-number">1.6.1.</span> <span class="nav-text">Adding Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Gateway-Routes"><span class="nav-number">1.6.2.</span> <span class="nav-text">Configuring Gateway Routes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-Side-Load-Balancing"><span class="nav-number">1.7.</span> <span class="nav-text">Client-Side Load Balancing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Dependencies-2"><span class="nav-number">1.7.1.</span> <span class="nav-text">Adding Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Load-Balancer"><span class="nav-number">1.7.2.</span> <span class="nav-text">Configuring Load Balancer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Load-Balancer"><span class="nav-number">1.7.3.</span> <span class="nav-text">Using Load Balancer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Circuit-Breaker"><span class="nav-number">1.8.</span> <span class="nav-text">Circuit Breaker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-Dependencies-3"><span class="nav-number">1.8.1.</span> <span class="nav-text">Adding Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Configuring-Circuit-Breaker"><span class="nav-number">1.8.2.</span> <span class="nav-text">Configuring Circuit Breaker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Circuit-Breaker"><span class="nav-number">1.8.3.</span> <span class="nav-text">Using Circuit Breaker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Diagram"><span class="nav-number">1.8.4.</span> <span class="nav-text">Diagram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Life-Production-Use-Cases"><span class="nav-number">1.8.5.</span> <span class="nav-text">Real-Life Production Use Cases</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Use-Case-1-E-commerce-Platform"><span class="nav-number">1.8.5.1.</span> <span class="nav-text">Use Case 1: E-commerce Platform</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Order-Service-Communicating-with-Product-Service"><span class="nav-number">1.8.5.2.</span> <span class="nav-text">Example: Order Service Communicating with Product Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Use-Case-2-Financial-Services"><span class="nav-number">1.8.5.3.</span> <span class="nav-text">Use Case 2: Financial Services</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Transaction-Service-with-Circuit-Breaker"><span class="nav-number">1.8.5.4.</span> <span class="nav-text">Example: Transaction Service with Circuit Breaker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sample-Code"><span class="nav-number">1.9.</span> <span class="nav-text">Sample Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Registration-and-Discovery-1"><span class="nav-number">1.9.1.</span> <span class="nav-text">Service Registration and Discovery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API-Gateway-1"><span class="nav-number">1.9.2.</span> <span class="nav-text">API Gateway</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client-Side-Load-Balancing-1"><span class="nav-number">1.9.3.</span> <span class="nav-text">Client-Side Load Balancing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-WebClient-to-Call-Different-Services"><span class="nav-number">1.9.4.</span> <span class="nav-text">Using WebClient to Call Different Services</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Circuit-Breaker-1"><span class="nav-number">1.9.5.</span> <span class="nav-text">Circuit Breaker</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.10.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XIII-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - XIII-2 | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - XIII-2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 23:43:33" itemprop="dateCreated datePublished" datetime="2024-10-24T23:43:33-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Spring-Cloud/Reactive/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#deep-dive-integrating-spring-webflux-with-microservices-architecture">Deep Dive: Integrating Spring WebFlux with Microservices Architecture</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#microservices-architecture-overview">Microservices Architecture Overview</a></li>
+<li><a href="#integrating-spring-webflux-with-microservices">Integrating Spring WebFlux with Microservices</a></li>
+<li><a href="#using-spring-cloud">Using Spring Cloud</a></li>
+<li><a href="#service-registration-and-discovery">Service Registration and Discovery</a><ul>
+<li><a href="#adding-dependencies">Adding Dependencies</a></li>
+<li><a href="#configuring-service-registration-and-discovery">Configuring Service Registration and Discovery</a></li>
+<li><a href="#annotating-the-main-class">Annotating the Main Class</a></li>
+</ul>
+</li>
+<li><a href="#api-gateway">API Gateway</a><ul>
+<li><a href="#adding-dependencies-1">Adding Dependencies</a></li>
+<li><a href="#configuring-gateway-routes">Configuring Gateway Routes</a></li>
+</ul>
+</li>
+<li><a href="#client-side-load-balancing">Client-Side Load Balancing</a><ul>
+<li><a href="#adding-dependencies-2">Adding Dependencies</a></li>
+<li><a href="#configuring-load-balancer">Configuring Load Balancer</a></li>
+<li><a href="#using-load-balancer">Using Load Balancer</a></li>
+</ul>
+</li>
+<li><a href="#circuit-breaker">Circuit Breaker</a><ul>
+<li><a href="#adding-dependencies-3">Adding Dependencies</a></li>
+<li><a href="#configuring-circuit-breaker">Configuring Circuit Breaker</a></li>
+<li><a href="#using-circuit-breaker">Using Circuit Breaker</a></li>
+<li><a href="#diagram">Diagram</a></li>
+<li><a href="#real-life-production-use-cases">Real-Life Production Use Cases</a><ul>
+<li><a href="#use-case-1-e-commerce-platform">Use Case 1: E-commerce Platform</a></li>
+<li><a href="#example-order-service-communicating-with-product-service">Example: Order Service Communicating with Product Service</a></li>
+<li><a href="#use-case-2-financial-services">Use Case 2: Financial Services</a></li>
+<li><a href="#example-transaction-service-with-circuit-breaker">Example: Transaction Service with Circuit Breaker</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sample-code">Sample Code</a><ul>
+<li><a href="#service-registration-and-discovery-1">Service Registration and Discovery</a></li>
+<li><a href="#api-gateway-1">API Gateway</a></li>
+<li><a href="#client-side-load-balancing-1">Client-Side Load Balancing</a></li>
+<li><a href="#using-webclient-to-call-different-services">Using <code>WebClient</code> to Call Different Services</a></li>
+<li><a href="#circuit-breaker-1">Circuit Breaker</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Deep-Dive-Integrating-Spring-WebFlux-with-Microservices-Architecture"><a href="#Deep-Dive-Integrating-Spring-WebFlux-with-Microservices-Architecture" class="headerlink" title="Deep Dive: Integrating Spring WebFlux with Microservices Architecture"></a>Deep Dive: Integrating Spring WebFlux with Microservices Architecture</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the previous articles, we have delved into the foundational concepts of Spring WebFlux, Reactor, error handling, data stream transformations, reactive database access, performance optimization, security, testing, deployment and operations, as well as best practices and common pitfalls. This article will focus on integrating Spring WebFlux with microservices architecture to build high-performance, scalable distributed systems.</p>
+<p><a name="microservices-architecture-overview"></a></p>
+<h2 id="Microservices-Architecture-Overview"><a href="#Microservices-Architecture-Overview" class="headerlink" title="Microservices Architecture Overview"></a>Microservices Architecture Overview</h2><p>Microservices architecture is an approach that breaks down an application into a set of small, independently deployable services, each running in its own process and communicating through lightweight mechanisms, typically HTTP or message queues. The benefits of microservices architecture include:</p>
+<ul>
+<li><strong>Independent Deployment</strong>: Each service can be deployed and updated independently, reducing system downtime.</li>
+<li><strong>Scalability</strong>: Services can be scaled independently, improving resource utilization.</li>
+<li><strong>Technological Diversity</strong>: Different services can use the most suitable technology stacks, increasing flexibility in technology choices.</li>
+</ul>
+<p><a name="integrating-spring-webflux-with-microservices"></a></p>
+<h2 id="Integrating-Spring-WebFlux-with-Microservices"><a href="#Integrating-Spring-WebFlux-with-Microservices" class="headerlink" title="Integrating Spring WebFlux with Microservices"></a>Integrating Spring WebFlux with Microservices</h2><p>Spring WebFlux, as a reactive web framework within the Spring ecosystem, is well-suited for building high-concurrency, low-latency microservices. Here are some key points for integrating Spring WebFlux with microservices.</p>
+<p><a name="using-spring-cloud"></a></p>
+<h2 id="Using-Spring-Cloud"><a href="#Using-Spring-Cloud" class="headerlink" title="Using Spring Cloud"></a>Using Spring Cloud</h2><p>Spring Cloud provides a set of tools to simplify development and management in distributed systems, particularly in microservices architectures based on Spring Boot. Key components include:</p>
+<ul>
+<li><strong>Spring Cloud Kubernetes</strong>: Integrates with Kubernetes for service registration and discovery, configuration, and more.</li>
+<li><strong>Spring Cloud Gateway</strong>: An API gateway built on Spring WebFlux, offering dynamic routing, monitoring, and rate limiting.</li>
+<li><strong>Spring Cloud Config</strong>: Provides centralized configuration management for distributed systems.</li>
+</ul>
+<p><a name="service-registration-and-discovery"></a></p>
+<h2 id="Service-Registration-and-Discovery"><a href="#Service-Registration-and-Discovery" class="headerlink" title="Service Registration and Discovery"></a>Service Registration and Discovery</h2><p>Service registration and discovery are crucial components in microservices architecture, allowing services to dynamically register themselves and discover other services. Spring Cloud Kubernetes integrates with Kubernetes’ native service discovery mechanisms.</p>
+<h3 id="Adding-Dependencies"><a href="#Adding-Dependencies" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Kubernetes dependencies to your service:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-kubernetes-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuring-Service-Registration-and-Discovery"><a href="#Configuring-Service-Registration-and-Discovery" class="headerlink" title="Configuring Service Registration and Discovery"></a>Configuring Service Registration and Discovery</h3><p>Configure service registration and discovery in <code>application.properties</code>:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.application.name</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.kubernetes.discovery.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Annotating-the-Main-Class"><a href="#Annotating-the-Main-Class" class="headerlink" title="Annotating the Main Class"></a>Annotating the Main Class</h3><p>Annotate your Spring Boot main class with <code>@EnableDiscoveryClient</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookServiceApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(BookServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="api-gateway"></a></p>
+<h2 id="API-Gateway"><a href="#API-Gateway" class="headerlink" title="API Gateway"></a>API Gateway</h2><p>An API gateway is another critical component in microservices architecture, handling all external requests and routing them to the appropriate services. Spring Cloud Gateway is an API gateway built on Spring WebFlux.</p>
+<h3 id="Adding-Dependencies-1"><a href="#Adding-Dependencies-1" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Gateway dependency to your gateway service:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuring-Gateway-Routes"><a href="#Configuring-Gateway-Routes" class="headerlink" title="Configuring Gateway Routes"></a>Configuring Gateway Routes</h3><p>Configure routes in <code>application.properties</code>:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.gateway.routes[0].id</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].uri</span>=<span class="string">lb://book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].predicates[0]</span>=<span class="string">Path=/books/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].id</span>=<span class="string">user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].uri</span>=<span class="string">lb://user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].predicates[0]</span>=<span class="string">Path=/users/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].id</span>=<span class="string">order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].uri</span>=<span class="string">lb://order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].predicates[0]</span>=<span class="string">Path=/orders/**</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="client-side-load-balancing"></a></p>
+<h2 id="Client-Side-Load-Balancing"><a href="#Client-Side-Load-Balancing" class="headerlink" title="Client-Side Load Balancing"></a>Client-Side Load Balancing</h2><p>Spring Cloud provides client-side load balancing through Spring Cloud LoadBalancer, which allows services to distribute requests across multiple instances.</p>
+<h3 id="Adding-Dependencies-2"><a href="#Adding-Dependencies-2" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud LoadBalancer dependency to your service:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-loadbalancer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuring-Load-Balancer"><a href="#Configuring-Load-Balancer" class="headerlink" title="Configuring Load Balancer"></a>Configuring Load Balancer</h3><p>Configure the load balancer in <code>application.properties</code>:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.loadbalancer.ribbon.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-Load-Balancer"><a href="#Using-Load-Balancer" class="headerlink" title="Using Load Balancer"></a>Using Load Balancer</h3><p>Use the load balancer in your service:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="keyword">public</span> WebClient.Builder <span class="title function_">loadBalancedWebClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>When you make a request using the <code>WebClient.Builder</code>, you typically specify the service name in the URI (e.g., <code>http://book-service/books</code>). The <code>@LoadBalanced</code> annotation tells Spring Cloud LoadBalancer to intercept this request and resolve the service name (<code>book-service</code>) to the actual service instances.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://book-service/books/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Book.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="circuit-breaker"></a></p>
+<h2 id="Circuit-Breaker"><a href="#Circuit-Breaker" class="headerlink" title="Circuit Breaker"></a>Circuit Breaker</h2><p>Circuit breakers are an essential pattern in microservices architecture, handling service call failures to prevent fault propagation. Spring Cloud Circuit Breaker provides circuit breaker functionality with support for multiple implementations like Resilience4J.</p>
+<h3 id="Adding-Dependencies-3"><a href="#Adding-Dependencies-3" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>Add the Spring Cloud Circuit Breaker and Resilience4J dependencies to your service:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-circuitbreaker-reactor-resilience4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuring-Circuit-Breaker"><a href="#Configuring-Circuit-Breaker" class="headerlink" title="Configuring Circuit Breaker"></a>Configuring Circuit Breaker</h3><p>Configure the circuit breaker in <code>application.properties</code>:</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.failureRateThreshold</span>=<span class="string">50</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.waitDurationInOpenState</span>=<span class="string">5s</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.ringBufferSizeInHalfOpenState</span>=<span class="string">10</span></span><br><span class="line"><span class="attr">resilience4j.circuitbreaker.instances.bookService.ringBufferSizeInClosedState</span>=<span class="string">100</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-Circuit-Breaker"><a href="#Using-Circuit-Breaker" class="headerlink" title="Using Circuit Breaker"></a>Using Circuit Breaker</h3><p>Use the circuit breaker in your service:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReactiveCircuitBreakerFactory circuitBreakerFactory;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(ReactiveCircuitBreakerFactory circuitBreakerFactory, BookRepository bookRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.circuitBreakerFactory = circuitBreakerFactory;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .transform(it -&gt; circuitBreakerFactory.create(<span class="string">&quot;bookService&quot;</span>).run(it, throwable -&gt; Mono.just(<span class="keyword">new</span> <span class="title class_">Book</span>(id, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown&quot;</span>, <span class="number">0.0</span>))));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Diagram"><a href="#Diagram" class="headerlink" title="Diagram"></a>Diagram</h3><ul>
+<li>Client-Side: WebClient - Alternative of Spring-Cloud OpenFeign</li>
+<li>API Gateway: Routes</li>
+<li>BookService: Integerated CircuitBreaker(Actual Implementation is resilience4j)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">| Client-Side       |       | API Gateway       |       | Actual BookService|</span><br><span class="line">| MultiServiceCaller|       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">| +-------------+   |       | +-------------+   |       | +-------------+   |</span><br><span class="line">| | WebClient   |   |       | | Routes      |   |       | | Circuit    |   |</span><br><span class="line">| |             |   |       | |             |   |       | | Breaker    |   |</span><br><span class="line">| | +---------+ |   |       | | +---------+ |   |       | | +---------+ |   |</span><br><span class="line">| | | Request | |   |       | | | Request | |   |       | | | Request | |   |</span><br><span class="line">| | +---------+ |   |       | | +---------+ |   |       | | +---------+ |   |</span><br><span class="line">| +-------------+   |       | +-------------+   |       | +-------------+   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">|                   |       |                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="Real-Life-Production-Use-Cases"><a href="#Real-Life-Production-Use-Cases" class="headerlink" title="Real-Life Production Use Cases"></a>Real-Life Production Use Cases</h3><h4 id="Use-Case-1-E-commerce-Platform"><a href="#Use-Case-1-E-commerce-Platform" class="headerlink" title="Use Case 1: E-commerce Platform"></a>Use Case 1: E-commerce Platform</h4><p>In an e-commerce platform, multiple microservices interact to handle various functionalities such as product catalog, user management, and order processing. Spring WebFlux and Spring Cloud components can be used to build a scalable and resilient system.</p>
+<h4 id="Example-Order-Service-Communicating-with-Product-Service"><a href="#Example-Order-Service-Communicating-with-Product-Service" class="headerlink" title="Example: Order Service Communicating with Product Service"></a>Example: Order Service Communicating with Product Service</h4><p>The Order Service needs to retrieve product details from the Product Service to process orders. Spring Cloud Gateway can be used as an API gateway to route requests, and Spring Cloud LoadBalancer can be used for client-side load balancing.</p>
+<h4 id="Use-Case-2-Financial-Services"><a href="#Use-Case-2-Financial-Services" class="headerlink" title="Use Case 2: Financial Services"></a>Use Case 2: Financial Services</h4><p>In financial services, microservices handle transactions, account management, and reporting. Spring WebFlux can be used to build high-performance services, and Spring Cloud Circuit Breaker can be used to handle failures gracefully.</p>
+<h4 id="Example-Transaction-Service-with-Circuit-Breaker"><a href="#Example-Transaction-Service-with-Circuit-Breaker" class="headerlink" title="Example: Transaction Service with Circuit Breaker"></a>Example: Transaction Service with Circuit Breaker</h4><p>The Transaction Service needs to call the Account Service to validate account balances. If the Account Service is down, the circuit breaker can return a default response to prevent system failure.</p>
+<p><a name="sample-code"></a></p>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Service-Registration-and-Discovery-1"><a href="#Service-Registration-and-Discovery-1" class="headerlink" title="Service Registration and Discovery"></a>Service Registration and Discovery</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookServiceApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(BookServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="API-Gateway-1"><a href="#API-Gateway-1" class="headerlink" title="API Gateway"></a>API Gateway</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.cloud.gateway.routes[0].id</span>=<span class="string">book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].uri</span>=<span class="string">lb://book-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[0].predicates[0]</span>=<span class="string">Path=/books/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].id</span>=<span class="string">user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].uri</span>=<span class="string">lb://user-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[1].predicates[0]</span>=<span class="string">Path=/users/**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].id</span>=<span class="string">order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].uri</span>=<span class="string">lb://order-service</span></span><br><span class="line"><span class="attr">spring.cloud.gateway.routes[2].predicates[0]</span>=<span class="string">Path=/orders/**</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Client-Side-Load-Balancing-1"><a href="#Client-Side-Load-Balancing-1" class="headerlink" title="Client-Side Load Balancing"></a>Client-Side Load Balancing</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="keyword">public</span> WebClient.Builder <span class="title function_">loadBalancedWebClientBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> WebClient.builder();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-WebClient-to-Call-Different-Services"><a href="#Using-WebClient-to-Call-Different-Services" class="headerlink" title="Using WebClient to Call Different Services"></a>Using <code>WebClient</code> to Call Different Services</h3><p>Create a service class that uses the <code>WebClient.Builder</code> to interact with different registered services:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MultiServiceCaller</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient.Builder webClientBuilder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MultiServiceCaller</span><span class="params">(WebClient.Builder webClientBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClientBuilder = webClientBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://book-service/books/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Book.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://user-service/users/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Order&gt; <span class="title function_">getOrderById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClientBuilder.build()</span><br><span class="line">            .get()</span><br><span class="line">            .uri(<span class="string">&quot;http://order-service/orders/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(Order.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Circuit-Breaker-1"><a href="#Circuit-Breaker-1" class="headerlink" title="Circuit Breaker"></a>Circuit Breaker</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReactiveCircuitBreakerFactory circuitBreakerFactory;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BookRepository bookRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BookService</span><span class="params">(ReactiveCircuitBreakerFactory circuitBreakerFactory, BookRepository bookRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.circuitBreakerFactory = circuitBreakerFactory;</span><br><span class="line">        <span class="built_in">this</span>.bookRepository = bookRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">            .transform(it -&gt; circuitBreakerFactory.create(<span class="string">&quot;bookService&quot;</span>).run(it, throwable -&gt; Mono.just(<span class="keyword">new</span> <span class="title class_">Book</span>(id, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown&quot;</span>, <span class="number">0.0</span>))));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to integrate Spring WebFlux with microservices architecture using the latest Spring Cloud components. By leveraging Spring Cloud Kubernetes, Spring Cloud Gateway, Spring Cloud LoadBalancer, and Spring Cloud Circuit Breaker, we can easily build high-performance, scalable distributed systems. Real-life production use cases and sample code demonstrate the practical application of these components in building resilient and scalable microservices.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"><i class="fa fa-tag"></i> Spring Cloud</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Approaches-to-Rolling-Back-or-Canceling-Transactions-in-Microservice/" rel="prev" title="Approaches to Rolling Back or Canceling Transactions in Microservice">
+                  <i class="fa fa-angle-left"></i> Approaches to Rolling Back or Canceling Transactions in Microservice
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/26/Deep-Dive-into-Spring-Cloud-OpenFeign/" rel="next" title="Deep Dive into Spring Cloud OpenFeign --- Deprecated">
+                  Deep Dive into Spring Cloud OpenFeign --- Deprecated <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

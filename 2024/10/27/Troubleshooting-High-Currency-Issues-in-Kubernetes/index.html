@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Pod Restart CrashLoopBackOff Loop Due to High Concurrency Introduction Problem Background Analysis Process Investigating the Issue TCP Connection Timeout Understanding CPU Load Kernel Parameter Tunin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Troubleshooting High Currency Issues in Kubernetes">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Pod Restart CrashLoopBackOff Loop Due to High Concurrency Introduction Problem Background Analysis Process Investigating the Issue TCP Connection Timeout Understanding CPU Load Kernel Parameter Tunin">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-28T01:20:30.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Troubleshooting">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/","path":"2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/","title":"Troubleshooting High Currency Issues in Kubernetes"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Troubleshooting High Currency Issues in Kubernetes | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency"><span class="nav-number">1.</span> <span class="nav-text">Pod Restart CrashLoopBackOff Loop Due to High Concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Problem-Background"><span class="nav-number">1.2.</span> <span class="nav-text">Problem Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Analysis-Process"><span class="nav-number">1.3.</span> <span class="nav-text">Analysis Process</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Investigating-the-Issue"><span class="nav-number">1.4.</span> <span class="nav-text">Investigating the Issue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-Connection-Timeout"><span class="nav-number">1.5.</span> <span class="nav-text">TCP Connection Timeout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Understanding-CPU-Load"><span class="nav-number">1.6.</span> <span class="nav-text">Understanding CPU Load</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-Parameter-Tuning"><span class="nav-number">1.7.</span> <span class="nav-text">Kernel Parameter Tuning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-State-Transition-Diagram"><span class="nav-number">1.7.1.</span> <span class="nav-text">TCP State Transition Diagram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adjusting-Kernel-Parameters"><span class="nav-number">1.7.2.</span> <span class="nav-text">Adjusting Kernel Parameters</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.8.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Troubleshooting High Currency Issues in Kubernetes | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Troubleshooting High Currency Issues in Kubernetes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 21:20:30" itemprop="dateCreated datePublished" datetime="2024-10-27T21:20:30-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#pod-restart-crashloopbackoff-loop-due-to-high-concurrency">Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#problem-background">Problem Background</a></li>
+<li><a href="#analysis-process">Analysis Process</a></li>
+<li><a href="#investigating-the-issue">Investigating the Issue</a></li>
+<li><a href="#tcp-connection-timeout">TCP Connection Timeout</a></li>
+<li><a href="#understanding-cpu-load">Understanding CPU Load</a></li>
+<li><a href="#kernel-parameter-tuning">Kernel Parameter Tuning</a><ul>
+<li><a href="#tcp-state-transition-diagram">TCP State Transition Diagram</a></li>
+<li><a href="#adjusting-kernel-parameters">Adjusting Kernel Parameters</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency"><a href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency" class="headerlink" title="Pod Restart CrashLoopBackOff Loop Due to High Concurrency"></a>Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In a Kubernetes cluster environment, a business operation involving extensive configuration distribution (lasting several hours or more) led to repeated restarts of Calico pods. This article details the troubleshooting process, focusing on identifying the root cause and implementing a solution.</p>
+<hr>
+<p><a name="problem-background"></a></p>
+<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>During a high-concurrency operation, Calico pods in the Kubernetes cluster began to restart repeatedly.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get pod -n kube-system -owide | grep node01</span><br><span class="line">calico-kube-controllers-6f59b8cdd8-8v2qw   1/1     Running            0          4h45m   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">calico-node-b8w2b                          1/1     CrashLoopBackOff   43         3d19h   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">coredns-795cc9c45c-k7qpb                   1/1     Running            0          4h45m   177.177.237.42    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="analysis-process"></a></p>
+<h2 id="Analysis-Process"><a href="#Analysis-Process" class="headerlink" title="Analysis Process"></a>Analysis Process</h2><p>Upon observing the <code>CrashLoopBackOff</code> state of the pods, the first step was to use <code>kubectl describe</code> to gather more information.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl describe pod -n kube-system calico-node-b8w2b</span><br><span class="line">...</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                      From               Message</span><br><span class="line">  ----     ------     ----                     ----               -------</span><br><span class="line">  Warning  Unhealthy  58m (x111 over 3h12m)    kubelet, node01  (combined from similar events): Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Normal   Pulled     43m (x36 over 3d19h)     kubelet, node01  Container image <span class="string">&quot;calico/node:v3.15.1&quot;</span> already present on machine</span><br><span class="line">  Warning  Unhealthy  8m16s (x499 over 3h43m)  kubelet, node01  Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Warning  BackOff    3m31s (x437 over 3h3m)   kubelet, node01  Back-off restarting failed container</span><br></pre></td></tr></table></figure>
+
+<p>The events indicated that the liveness probe was failing due to a connection timeout.</p>
+<hr>
+<p><a name="investigating-the-issue"></a></p>
+<h2 id="Investigating-the-Issue"><a href="#Investigating-the-Issue" class="headerlink" title="Investigating the Issue"></a>Investigating the Issue</h2><p>Manual execution of the health check command revealed slow response times, which were significantly higher than the usual millisecond-level response.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 06:24:35 GMT</span><br><span class="line">real    0m1.012s</span><br><span class="line">user    0m0.003s</span><br><span class="line">sys     0m0.005s</span><br></pre></td></tr></table></figure>
+
+<p>Logs from Calico’s bird, confd, and felix components did not show any apparent errors. Checking the port status indicated that it was listening correctly.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# netstat -anp | grep 9099</span><br><span class="line">tcp        0      0 127.0.0.1:9099          0.0.0.0:*               LISTEN      1202/calico-node    </span><br><span class="line">tcp        0      0 127.0.0.1:9099          127.0.0.1:56728         TIME_WAIT   -                   </span><br><span class="line">tcp        0      0 127.0.0.1:56546         127.0.0.1:9099          TIME_WAIT   -</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="tcp-connection-timeout"></a></p>
+<h2 id="TCP-Connection-Timeout"><a href="#TCP-Connection-Timeout" class="headerlink" title="TCP Connection Timeout"></a>TCP Connection Timeout</h2><p>Given the connection timeout error, the TCP connection state was observed.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -na | awk <span class="string">&#x27;/^tcp/&#123;s[$6]++&#125;END&#123;for(key in s) print key,s[key]&#125;&#x27;</span></span><br><span class="line">LISTEN 49</span><br><span class="line">ESTABLISHED 284</span><br><span class="line">SYN_SENT 4</span><br><span class="line">TIME_WAIT 176</span><br></pre></td></tr></table></figure>
+
+<p>The <code>top</code> command showed that the business Java process was consuming high CPU, peaking at over 2000%.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# top</span><br><span class="line">top - 14:28:57 up 13 days, 27 min,  2 <span class="built_in">users</span>,  load average: 9.55, 9.93, 9.91</span><br><span class="line">Tasks: 1149 total,   1 running, 1146 sleeping,   0 stopped,   2 zombie</span><br><span class="line">%Cpu(s): 16.0 us,  2.9 sy,  0.0 ni, 80.9 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st</span><br><span class="line">KiB Mem : 15249982+total, 21419184 free, 55542588 used, 75538048 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used. 94226176 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                                                                        </span><br><span class="line"> 6754 root      20   0   66.8g  25.1g 290100 S 700.0 17.3   2971:49 java                                                                                           </span><br><span class="line">25214 root      20   0 6309076 179992  37016 S  36.8  0.1 439:06.29 kubelet                                                                                        </span><br><span class="line">20331 root      20   0 3196660 172364  24908 S  21.1  0.1 349:56.64 dockerd</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="understanding-cpu-load"></a></p>
+<h2 id="Understanding-CPU-Load"><a href="#Understanding-CPU-Load" class="headerlink" title="Understanding CPU Load"></a>Understanding CPU Load</h2><p>Checking the total number of CPU cores and comparing it with the load average and CPU usage indicated that the load was not excessively high.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;physical id&quot;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> | <span class="built_in">wc</span> -l</span><br><span class="line">48</span><br><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;cpu cores&quot;</span> | <span class="built_in">uniq</span></span><br><span class="line">cpu cores: 1</span><br></pre></td></tr></table></figure>
+
+<p>Given the high concurrency, the issue was likely related to the TCP connection setup. Understanding the TCP connection phases helped pinpoint the problem.</p>
+<hr>
+<p><a name="kernel-parameter-tuning"></a></p>
+<h2 id="Kernel-Parameter-Tuning"><a href="#Kernel-Parameter-Tuning" class="headerlink" title="Kernel Parameter Tuning"></a>Kernel Parameter Tuning</h2><p>The issue was traced to the <code>SYN_SENT</code> phase of TCP connections. Adjusting kernel parameters related to TCP connections resolved the problem.</p>
+<h3 id="TCP-State-Transition-Diagram"><a href="#TCP-State-Transition-Diagram" class="headerlink" title="TCP State Transition Diagram"></a>TCP State Transition Diagram</h3><pre><code class="highlight mermaid">graph TD
+    CLOSED --&gt;|Client sends SYN| SYN_SENT
+    SYN_SENT --&gt;|Server responds with SYN+ACK| SYN_RECV
+    SYN_RECV --&gt;|Client sends ACK| ESTABLISHED
+    ESTABLISHED --&gt;|Connection closed by either party| FIN_WAIT_1
+    FIN_WAIT_1 --&gt;|ACK received| FIN_WAIT_2
+    FIN_WAIT_2 --&gt;|FIN received| TIME_WAIT
+    TIME_WAIT --&gt;|Timeout| CLOSED
+    FIN_WAIT_1 --&gt;|FIN received| CLOSING
+    CLOSING --&gt;|ACK received| TIME_WAIT
+    SYN_RECV --&gt;|Server sends FIN| LAST_ACK
+    LAST_ACK --&gt;|Client sends ACK| CLOSED</code></pre>
+
+<h3 id="Adjusting-Kernel-Parameters"><a href="#Adjusting-Kernel-Parameters" class="headerlink" title="Adjusting Kernel Parameters"></a>Adjusting Kernel Parameters</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /etc/sysctl.conf </span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# sysctl -p</span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
+
+<p>After applying these changes, the health check commands executed without delay, and the pods returned to normal.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 14:48:38 GMT</span><br><span class="line">real    0m0.011s</span><br><span class="line">user    0m0.004s</span><br><span class="line">sys     0m0.004s</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding and tuning kernel parameters in high-concurrency scenarios. By adjusting parameters related to TCP connection handling, the issue of repeated pod restarts due to high CPU load and connection timeouts was resolved. This approach can be applied to similar issues in Kubernetes environments to ensure stable and efficient operation.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+              <a href="/tags/Troubleshooting/" rel="tag"><i class="fa fa-tag"></i> Troubleshooting</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/" rel="prev" title="Analyzing High Memory Usage in Kubernetes">
+                  <i class="fa fa-angle-left"></i> Analyzing High Memory Usage in Kubernetes
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/" rel="next" title="Troubleshooting High Currency Issues in Kubernetes - Continued">
+                  Troubleshooting High Currency Issues in Kubernetes - Continued <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

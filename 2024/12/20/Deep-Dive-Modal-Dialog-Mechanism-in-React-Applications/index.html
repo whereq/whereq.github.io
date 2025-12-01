@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Modal dialogs are a common UI pattern used to display important information, collect user input, or confirm actions. In React applications, implementing a modal dialog involves managing state, renderi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive: Modal Dialog Mechanism in React Applications">
+<meta property="og:url" content="https://www.whereq.com/2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Modal dialogs are a common UI pattern used to display important information, collect user input, or confirm actions. In React applications, implementing a modal dialog involves managing state, renderi">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-20T16:28:22.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="ReactJS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/","path":"2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/","title":"Deep Dive: Modal Dialog Mechanism in React Applications"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive: Modal Dialog Mechanism in React Applications | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Table-of-Contents"><span class="nav-number">1.</span> <span class="nav-text">Table of Contents</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Introduction-to-Modal-Dialogs"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction to Modal Dialogs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Key-Concepts-in-Modal-Dialogs"><span class="nav-number">3.</span> <span class="nav-text">2. Key Concepts in Modal Dialogs</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-State-Management"><span class="nav-number">3.1.</span> <span class="nav-text">a. State Management</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Conditional-Rendering"><span class="nav-number">3.2.</span> <span class="nav-text">b. Conditional Rendering</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Focus-Management"><span class="nav-number">3.3.</span> <span class="nav-text">c. Focus Management</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d-Z-Index"><span class="nav-number">3.4.</span> <span class="nav-text">d. Z-Index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#e-Escape-Key-Handling"><span class="nav-number">3.5.</span> <span class="nav-text">e. Escape Key Handling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Using-react-modal-in-React"><span class="nav-number">4.</span> <span class="nav-text">3. Using react-modal in React</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Installation"><span class="nav-number">4.1.</span> <span class="nav-text">Installation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Example-Code"><span class="nav-number">4.2.</span> <span class="nav-text">Example Code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Styling-and-Positioning-the-Modal"><span class="nav-number">5.</span> <span class="nav-text">4. Styling and Positioning the Modal</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Custom-Styles"><span class="nav-number">5.1.</span> <span class="nav-text">a. Custom Styles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Centering-the-Modal"><span class="nav-number">5.2.</span> <span class="nav-text">b. Centering the Modal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Responsive-Design"><span class="nav-number">5.3.</span> <span class="nav-text">c. Responsive Design</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Ensuring-Proper-Z-Index"><span class="nav-number">6.</span> <span class="nav-text">5. Ensuring Proper Z-Index</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Set-a-High-Z-Index-for-the-Modal"><span class="nav-number">6.1.</span> <span class="nav-text">a. Set a High Z-Index for the Modal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Ensure-Parent-Components-Have-Lower-Z-Index"><span class="nav-number">6.2.</span> <span class="nav-text">b. Ensure Parent Components Have Lower Z-Index</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Testing-Modal-Dialogs"><span class="nav-number">7.</span> <span class="nav-text">6. Testing Modal Dialogs</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Installation-1"><span class="nav-number">7.1.</span> <span class="nav-text">Installation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Testing-Code"><span class="nav-number">7.2.</span> <span class="nav-text">Testing Code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Conclusion"><span class="nav-number">8.</span> <span class="nav-text">7. Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Additional-Resources"><span class="nav-number">9.</span> <span class="nav-text">Additional Resources</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/20/Deep-Dive-Modal-Dialog-Mechanism-in-React-Applications/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive: Modal Dialog Mechanism in React Applications | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive: Modal Dialog Mechanism in React Applications
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-12-20 11:28:22" itemprop="dateCreated datePublished" datetime="2024-12-20T11:28:22-05:00">2024-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Modal dialogs are a common UI pattern used to display important information, collect user input, or confirm actions. In React applications, implementing a modal dialog involves managing state, rendering the dialog conditionally, and ensuring proper styling and positioning. This article explores the modal dialog mechanism in React, using the popular <code>react-modal</code> library as an example. We’ll also provide a complete testing setup to ensure the modal works as expected.</p>
+<hr>
+<h3 id="Table-of-Contents"><a href="#Table-of-Contents" class="headerlink" title="Table of Contents"></a>Table of Contents</h3><ol>
+<li><strong>Introduction to Modal Dialogs</strong></li>
+<li><strong>Key Concepts in Modal Dialogs</strong></li>
+<li><strong>Using <code>react-modal</code> in React</strong></li>
+<li><strong>Styling and Positioning the Modal</strong></li>
+<li><strong>Ensuring Proper Z-Index</strong></li>
+<li><strong>Testing Modal Dialogs</strong></li>
+<li><strong>Conclusion</strong></li>
+</ol>
+<hr>
+<h3 id="1-Introduction-to-Modal-Dialogs"><a href="#1-Introduction-to-Modal-Dialogs" class="headerlink" title="1. Introduction to Modal Dialogs"></a>1. Introduction to Modal Dialogs</h3><p>A modal dialog is a UI component that overlays the main application content, forcing the user to interact with it before continuing. Modal dialogs are commonly used for:</p>
+<ul>
+<li>Alerts and confirmations</li>
+<li>Form inputs</li>
+<li>Loading indicators</li>
+<li>Error messages</li>
+</ul>
+<p>In React, modal dialogs are typically implemented using state to control their visibility and lifecycle.</p>
+<hr>
+<h3 id="2-Key-Concepts-in-Modal-Dialogs"><a href="#2-Key-Concepts-in-Modal-Dialogs" class="headerlink" title="2. Key Concepts in Modal Dialogs"></a>2. Key Concepts in Modal Dialogs</h3><h4 id="a-State-Management"><a href="#a-State-Management" class="headerlink" title="a. State Management"></a>a. <strong>State Management</strong></h4><p>The visibility of a modal dialog is controlled by a boolean state variable (e.g., <code>isOpen</code>). When <code>isOpen</code> is <code>true</code>, the modal is rendered; otherwise, it is hidden.</p>
+<h4 id="b-Conditional-Rendering"><a href="#b-Conditional-Rendering" class="headerlink" title="b. Conditional Rendering"></a>b. <strong>Conditional Rendering</strong></h4><p>The modal is rendered conditionally based on the state variable. This ensures that the modal is only added to the DOM when needed.</p>
+<h4 id="c-Focus-Management"><a href="#c-Focus-Management" class="headerlink" title="c. Focus Management"></a>c. <strong>Focus Management</strong></h4><p>Modals should trap focus within their content to ensure accessibility. This prevents users from interacting with the background content while the modal is open.</p>
+<h4 id="d-Z-Index"><a href="#d-Z-Index" class="headerlink" title="d. Z-Index"></a>d. <strong>Z-Index</strong></h4><p>The modal’s <code>z-index</code> must be higher than the parent component’s <code>z-index</code> to ensure it appears on top of other elements.</p>
+<h4 id="e-Escape-Key-Handling"><a href="#e-Escape-Key-Handling" class="headerlink" title="e. Escape Key Handling"></a>e. <strong>Escape Key Handling</strong></h4><p>Users should be able to close the modal by pressing the <code>Escape</code> key.</p>
+<hr>
+<h3 id="3-Using-react-modal-in-React"><a href="#3-Using-react-modal-in-React" class="headerlink" title="3. Using react-modal in React"></a>3. Using <code>react-modal</code> in React</h3><p><code>react-modal</code> is a popular library for creating accessible and customizable modal dialogs in React. Below is an example of how to use it:</p>
+<h4 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install react-modal</span><br></pre></td></tr></table></figure>
+
+<h4 id="Example-Code"><a href="#Example-Code" class="headerlink" title="Example Code"></a>Example Code</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Modal</span> <span class="keyword">from</span> <span class="string">&quot;react-modal&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Set the app element for accessibility (required by react-modal)</span></span><br><span class="line"><span class="title class_">Modal</span>.<span class="title function_">setAppElement</span>(<span class="string">&quot;#root&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">App</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> [isOpen, setIsOpen] = <span class="title function_">useState</span>(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">openModal</span> = (<span class="params"></span>) =&gt; <span class="title function_">setIsOpen</span>(<span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">closeModal</span> = (<span class="params"></span>) =&gt; <span class="title function_">setIsOpen</span>(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;openModal&#125;</span>&gt;</span>Open Modal<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;<span class="name">Modal</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">isOpen</span>=<span class="string">&#123;isOpen&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">onRequestClose</span>=<span class="string">&#123;closeModal&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">contentLabel</span>=<span class="string">&quot;Example Modal&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                <span class="attr">style</span>=<span class="string">&#123;&#123;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                    <span class="attr">overlay:</span> &#123;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">backgroundColor:</span> &quot;<span class="attr">rgba</span>(<span class="attr">0</span>, <span class="attr">0</span>, <span class="attr">0</span>, <span class="attr">0.5</span>)&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">zIndex:</span> <span class="attr">1000</span>, // <span class="attr">Ensure</span> <span class="attr">the</span> <span class="attr">modal</span> <span class="attr">is</span> <span class="attr">on</span> <span class="attr">top</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                    &#125;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                    <span class="attr">content:</span> &#123;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">width:</span> &quot;<span class="attr">400px</span>&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">height:</span> &quot;<span class="attr">200px</span>&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">margin:</span> &quot;<span class="attr">auto</span>&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">padding:</span> &quot;<span class="attr">20px</span>&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">borderRadius:</span> &quot;<span class="attr">8px</span>&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                        <span class="attr">boxShadow:</span> &quot;<span class="attr">0</span> <span class="attr">4px</span> <span class="attr">6px</span> <span class="attr">rgba</span>(<span class="attr">0</span>, <span class="attr">0</span>, <span class="attr">0</span>, <span class="attr">0.1</span>)&quot;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                    &#125;,</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">                &#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">            &gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>Modal Title<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>This is the modal content.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;closeModal&#125;</span>&gt;</span>Close<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">Modal</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-Styling-and-Positioning-the-Modal"><a href="#4-Styling-and-Positioning-the-Modal" class="headerlink" title="4. Styling and Positioning the Modal"></a>4. Styling and Positioning the Modal</h3><h4 id="a-Custom-Styles"><a href="#a-Custom-Styles" class="headerlink" title="a. Custom Styles"></a>a. <strong>Custom Styles</strong></h4><p><code>react-modal</code> allows you to customize the modal’s appearance using the <code>style</code> prop. The <code>overlay</code> style controls the background overlay, while the <code>content</code> style controls the modal’s content.</p>
+<h4 id="b-Centering-the-Modal"><a href="#b-Centering-the-Modal" class="headerlink" title="b. Centering the Modal"></a>b. <strong>Centering the Modal</strong></h4><p>To center the modal, set the <code>margin</code> property of the <code>content</code> style to <code>auto</code>.</p>
+<h4 id="c-Responsive-Design"><a href="#c-Responsive-Design" class="headerlink" title="c. Responsive Design"></a>c. <strong>Responsive Design</strong></h4><p>Use CSS media queries to adjust the modal’s size and position for different screen sizes.</p>
+<hr>
+<h3 id="5-Ensuring-Proper-Z-Index"><a href="#5-Ensuring-Proper-Z-Index" class="headerlink" title="5. Ensuring Proper Z-Index"></a>5. Ensuring Proper Z-Index</h3><p>The <code>z-index</code> property is crucial for ensuring the modal appears on top of other elements. Here’s how to handle it:</p>
+<h4 id="a-Set-a-High-Z-Index-for-the-Modal"><a href="#a-Set-a-High-Z-Index-for-the-Modal" class="headerlink" title="a. Set a High Z-Index for the Modal"></a>a. <strong>Set a High Z-Index for the Modal</strong></h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="title class_">Modal</span></span><br><span class="line">    isOpen=&#123;isOpen&#125;</span><br><span class="line">    style=&#123;&#123;</span><br><span class="line">        <span class="attr">overlay</span>: &#123;</span><br><span class="line">            <span class="attr">zIndex</span>: <span class="number">1000</span>, <span class="comment">// Higher than other elements</span></span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="b-Ensure-Parent-Components-Have-Lower-Z-Index"><a href="#b-Ensure-Parent-Components-Have-Lower-Z-Index" class="headerlink" title="b. Ensure Parent Components Have Lower Z-Index"></a>b. <strong>Ensure Parent Components Have Lower Z-Index</strong></h4><p>If the parent component has a high <code>z-index</code>, the modal will not appear on top. For example:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.parent-component</span> &#123;</span><br><span class="line">    <span class="attribute">z-index</span>: <span class="number">10</span>; <span class="comment">/* Lower than the modal&#x27;s z-index */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-Testing-Modal-Dialogs"><a href="#6-Testing-Modal-Dialogs" class="headerlink" title="6. Testing Modal Dialogs"></a>6. Testing Modal Dialogs</h3><p>Testing modal dialogs ensures they work as expected in different scenarios. Below is an example of testing a modal dialog using <code>react-testing-library</code>.</p>
+<h4 id="Installation-1"><a href="#Installation-1" class="headerlink" title="Installation"></a>Installation</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @testing-library/react @testing-library/jest-dom</span><br></pre></td></tr></table></figure>
+
+<h4 id="Testing-Code"><a href="#Testing-Code" class="headerlink" title="Testing Code"></a>Testing Code</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; render, screen, fireEvent &#125; <span class="keyword">from</span> <span class="string">&quot;@testing-library/react&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Modal</span> <span class="keyword">from</span> <span class="string">&quot;react-modal&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&quot;./App&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Mock react-modal</span></span><br><span class="line">jest.<span class="title function_">mock</span>(<span class="string">&quot;react-modal&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">Modal</span> = (<span class="params">&#123; isOpen, children &#125;</span>) =&gt; (isOpen ? <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;children&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span> : <span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Modal</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="title function_">describe</span>(<span class="string">&quot;Modal Dialog&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">it</span>(<span class="string">&quot;opens and closes the modal&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">App</span> /&gt;</span></span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Modal should not be visible initially</span></span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">queryByText</span>(<span class="string">&quot;Modal Title&quot;</span>)).<span class="property">not</span>.<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Open the modal</span></span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="string">&quot;Open Modal&quot;</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">getByText</span>(<span class="string">&quot;Modal Title&quot;</span>)).<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Close the modal</span></span><br><span class="line">        fireEvent.<span class="title function_">click</span>(screen.<span class="title function_">getByText</span>(<span class="string">&quot;Close&quot;</span>));</span><br><span class="line">        <span class="title function_">expect</span>(screen.<span class="title function_">queryByText</span>(<span class="string">&quot;Modal Title&quot;</span>)).<span class="property">not</span>.<span class="title function_">toBeInTheDocument</span>();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h3><p>Modal dialogs are a powerful tool for enhancing user interaction in React applications. By understanding key concepts like state management, conditional rendering, focus trapping, and <code>z-index</code>, you can create accessible and user-friendly modals. The <code>react-modal</code> library simplifies the process, and proper testing ensures your modals work as expected in all scenarios.</p>
+<hr>
+<h3 id="Additional-Resources"><a href="#Additional-Resources" class="headerlink" title="Additional Resources"></a>Additional Resources</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://reactcommunity.org/react-modal/">React Modal Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index">Z-Index and Stacking Contexts</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ReactJS/" rel="tag"><i class="fa fa-tag"></i> ReactJS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/19/Run-a-Proxy-Server-with-cors-anywhere/" rel="prev" title="Run a Proxy Server with cors-anywhere">
+                  <i class="fa fa-angle-left"></i> Run a Proxy Server with cors-anywhere
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/27/Deep-Dive-into-Local-Storage-Usage-in-React-with-TypeScript/" rel="next" title="Deep Dive into Local Storage Usage in React with TypeScript">
+                  Deep Dive into Local Storage Usage in React with TypeScript <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

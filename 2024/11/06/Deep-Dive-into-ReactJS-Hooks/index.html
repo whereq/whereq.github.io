@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="A Deep Dive into React Hooks for Senior DevelopersReact Hooks, introduced in React 16.8, revolutionized functional components by adding state and lifecycle capabilities, enabling a simpler, more power">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into ReactJS Hooks">
+<meta property="og:url" content="https://www.whereq.com/2024/11/06/Deep-Dive-into-ReactJS-Hooks/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="A Deep Dive into React Hooks for Senior DevelopersReact Hooks, introduced in React 16.8, revolutionized functional components by adding state and lifecycle capabilities, enabling a simpler, more power">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-06T22:44:46.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="ReactJS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/11/06/Deep-Dive-into-ReactJS-Hooks/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/11/06/Deep-Dive-into-ReactJS-Hooks/","path":"2024/11/06/Deep-Dive-into-ReactJS-Hooks/","title":"Deep Dive into ReactJS Hooks"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into ReactJS Hooks | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#A-Deep-Dive-into-React-Hooks-for-Senior-Developers"><span class="nav-number">1.</span> <span class="nav-text">A Deep Dive into React Hooks for Senior Developers</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-to-Hooks"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction to Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Hooks"><span class="nav-number">1.1.1.</span> <span class="nav-text">Why Hooks?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-Hooks"><span class="nav-number">1.2.</span> <span class="nav-text">Basic Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#useState-Managing-State-in-Functional-Components"><span class="nav-number">1.2.1.</span> <span class="nav-text">useState: Managing State in Functional Components</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-Toggling-a-Modal"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">Practical Scenario: Toggling a Modal</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useEffect-Side-Effects-and-Lifecycle-Events"><span class="nav-number">1.2.2.</span> <span class="nav-text">useEffect: Side Effects and Lifecycle Events</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax-1"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-Fetching-Data-on-Component-Load"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Practical Scenario: Fetching Data on Component Load</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tips"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">Tips:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Hooks"><span class="nav-number">1.3.</span> <span class="nav-text">Advanced Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#useContext-Accessing-Context-Values"><span class="nav-number">1.3.1.</span> <span class="nav-text">useContext: Accessing Context Values</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax-2"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-Global-Theme-Management"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">Practical Scenario: Global Theme Management</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Additional-Hooks"><span class="nav-number">1.4.</span> <span class="nav-text">Additional Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#useReducer-Managing-Complex-State"><span class="nav-number">1.4.1.</span> <span class="nav-text">useReducer: Managing Complex State</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax-3"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-A-Counter-with-Increment-Decrement"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">Practical Scenario: A Counter with Increment&#x2F;Decrement</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useRef-Persistent-Mutable-References"><span class="nav-number">1.4.2.</span> <span class="nav-text">useRef: Persistent Mutable References</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax-4"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-Focusing-an-Input-Element"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">Practical Scenario: Focusing an Input Element</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useMemo-Memoizing-Expensive-Calculations"><span class="nav-number">1.4.3.</span> <span class="nav-text">useMemo: Memoizing Expensive Calculations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Syntax-5"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">Syntax:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Practical-Scenario-Filtering-a-Large-List"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">Practical Scenario: Filtering a Large List</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Custom-Hooks"><span class="nav-number">1.5.</span> <span class="nav-text">Custom Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Practical-Scenario-A-useFetch-Hook-for-Data-Fetching"><span class="nav-number">1.5.1.</span> <span class="nav-text">Practical Scenario: A useFetch Hook for Data Fetching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-useFetch-in-a-Component"><span class="nav-number">1.5.2.</span> <span class="nav-text">Using useFetch in a Component</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Handling-and-Best-Practices"><span class="nav-number">1.6.</span> <span class="nav-text">Error Handling and Best Practices</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Error-Handling-in-Hooks"><span class="nav-number">1.6.1.</span> <span class="nav-text">Error Handling in Hooks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Best-Practices"><span class="nav-number">1.6.2.</span> <span class="nav-text">Best Practices</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.7.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/11/06/Deep-Dive-into-ReactJS-Hooks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into ReactJS Hooks | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into ReactJS Hooks
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-06 17:44:46" itemprop="dateCreated datePublished" datetime="2024-11-06T17:44:46-05:00">2024-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="A-Deep-Dive-into-React-Hooks-for-Senior-Developers"><a href="#A-Deep-Dive-into-React-Hooks-for-Senior-Developers" class="headerlink" title="A Deep Dive into React Hooks for Senior Developers"></a>A Deep Dive into React Hooks for Senior Developers</h1><p>React Hooks, introduced in React 16.8, revolutionized functional components by adding state and lifecycle capabilities, enabling a simpler, more powerful way to manage logic within components. This guide will provide a deep dive into React’s core hooks, detailing how they work, the scenarios in which they shine, and best practices for leveraging them effectively. </p>
+<hr>
+<p><a name="introduction-to-hooks"></a></p>
+<h2 id="Introduction-to-Hooks"><a href="#Introduction-to-Hooks" class="headerlink" title="Introduction to Hooks"></a>Introduction to Hooks</h2><p>Hooks allow you to use state, lifecycle methods, and other React features without writing a class. They provide a way to reuse logic across components in a more composable and understandable way, helping developers avoid the complex nesting and lifecycle clutter often encountered with higher-order components and render props.</p>
+<h3 id="Why-Hooks"><a href="#Why-Hooks" class="headerlink" title="Why Hooks?"></a>Why Hooks?</h3><ul>
+<li>Simplify state and side effect management in functional components.</li>
+<li>Enhance code reuse with custom hooks.</li>
+<li>Make components cleaner and more readable.</li>
+</ul>
+<hr>
+<p><a name="basic-hooks"></a></p>
+<h2 id="Basic-Hooks"><a href="#Basic-Hooks" class="headerlink" title="Basic Hooks"></a>Basic Hooks</h2><p>React offers several core hooks that cover common needs such as state, effects, and references.</p>
+<h3 id="useState-Managing-State-in-Functional-Components"><a href="#useState-Managing-State-in-Functional-Components" class="headerlink" title="useState: Managing State in Functional Components"></a><a name="useState"></a><code>useState</code>: Managing State in Functional Components</h3><p><code>useState</code> is used to declare state within functional components. It returns an array with two values: the current state and a function to update it.</p>
+<h4 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, setState] = <span class="title function_">useState</span>(initialValue);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-Toggling-a-Modal"><a href="#Practical-Scenario-Toggling-a-Modal" class="headerlink" title="Practical Scenario: Toggling a Modal"></a>Practical Scenario: Toggling a Modal</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">ModalToggle</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [isOpen, setIsOpen] = <span class="title function_">useState</span>(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">toggleModal</span> = (<span class="params"></span>) =&gt; <span class="title function_">setIsOpen</span>(!isOpen);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;toggleModal&#125;</span>&gt;</span>Toggle Modal<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      &#123;isOpen &amp;&amp; <span class="tag">&lt;<span class="name">Modal</span> /&gt;</span>&#125;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="useEffect"></a></p>
+<h3 id="useEffect-Side-Effects-and-Lifecycle-Events"><a href="#useEffect-Side-Effects-and-Lifecycle-Events" class="headerlink" title="useEffect: Side Effects and Lifecycle Events"></a><code>useEffect</code>: Side Effects and Lifecycle Events</h3><p><code>useEffect</code> manages side effects (such as data fetching, subscriptions, or DOM manipulation). It runs after the component renders and accepts a dependency array that controls when it should re-run.</p>
+<h4 id="Syntax-1"><a href="#Syntax-1" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// effect code here</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// cleanup code here</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [dependencies]);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-Fetching-Data-on-Component-Load"><a href="#Practical-Scenario-Fetching-Data-on-Component-Load" class="headerlink" title="Practical Scenario: Fetching Data on Component Load"></a>Practical Scenario: Fetching Data on Component Load</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useEffect &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">UserList</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [users, setUsers] = <span class="title function_">useState</span>([]);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">fetchUsers</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;/api/users&#x27;</span>);</span><br><span class="line">      <span class="keyword">const</span> data = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line">      <span class="title function_">setUsers</span>(data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">fetchUsers</span>();</span><br><span class="line">  &#125;, []); <span class="comment">// Empty array means this runs only once, similar to componentDidMount</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      &#123;users.map(user =&gt; <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&#123;user.id&#125;</span>&gt;</span>&#123;user.name&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)&#125;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Tips"><a href="#Tips" class="headerlink" title="Tips:"></a>Tips:</h4><ul>
+<li><strong>Cleanup</strong>: Return a cleanup function to avoid memory leaks (e.g., unsubscribing from a WebSocket).</li>
+<li><strong>Dependencies</strong>: Use the dependency array to specify when the effect should re-run.</li>
+</ul>
+<hr>
+<p><a name="advanced-hooks"></a></p>
+<h2 id="Advanced-Hooks"><a href="#Advanced-Hooks" class="headerlink" title="Advanced Hooks"></a>Advanced Hooks</h2><p>Beyond the basic hooks, React provides additional hooks for managing more specialized situations.</p>
+<h3 id="useContext-Accessing-Context-Values"><a href="#useContext-Accessing-Context-Values" class="headerlink" title="useContext: Accessing Context Values"></a><a name="useContext"></a><code>useContext</code>: Accessing Context Values</h3><p><code>useContext</code> allows components to access and consume context values directly without needing to wrap them in a <code>Consumer</code>.</p>
+<h4 id="Syntax-2"><a href="#Syntax-2" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> contextValue = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-Global-Theme-Management"><a href="#Practical-Scenario-Global-Theme-Management" class="headerlink" title="Practical Scenario: Global Theme Management"></a>Practical Scenario: Global Theme Management</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useContext &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ThemeContext</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./ThemeContext&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">ThemedButton</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> theme = <span class="title function_">useContext</span>(<span class="title class_">ThemeContext</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">background:</span> <span class="attr">theme.background</span>, <span class="attr">color:</span> <span class="attr">theme.foreground</span> &#125;&#125;&gt;</span></span></span><br><span class="line"><span class="language-xml">      I am styled by theme context!</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="additional-hooks"></a></p>
+<h2 id="Additional-Hooks"><a href="#Additional-Hooks" class="headerlink" title="Additional Hooks"></a>Additional Hooks</h2><h3 id="useReducer-Managing-Complex-State"><a href="#useReducer-Managing-Complex-State" class="headerlink" title="useReducer: Managing Complex State"></a><a name="useReducer"></a><code>useReducer</code>: Managing Complex State</h3><p><code>useReducer</code> is an alternative to <code>useState</code> for managing complex state transitions, typically in situations where you would use Redux or other state management libraries.</p>
+<h4 id="Syntax-3"><a href="#Syntax-3" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, dispatch] = <span class="title function_">useReducer</span>(reducer, initialState);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-A-Counter-with-Increment-Decrement"><a href="#Practical-Scenario-A-Counter-with-Increment-Decrement" class="headerlink" title="Practical Scenario: A Counter with Increment&#x2F;Decrement"></a>Practical Scenario: A Counter with Increment&#x2F;Decrement</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">reducer</span>(<span class="params">state, action</span>) &#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.<span class="property">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;increment&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123; <span class="attr">count</span>: state.<span class="property">count</span> + <span class="number">1</span> &#125;;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;decrement&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123; <span class="attr">count</span>: state.<span class="property">count</span> - <span class="number">1</span> &#125;;</span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Counter</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [state, dispatch] = <span class="title function_">useReducer</span>(reducer, &#123; <span class="attr">count</span>: <span class="number">0</span> &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123; type: &#x27;decrement&#x27; &#125;)&#125;&gt;-<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;state.count&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123; type: &#x27;increment&#x27; &#125;)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="useRef-Persistent-Mutable-References"><a href="#useRef-Persistent-Mutable-References" class="headerlink" title="useRef: Persistent Mutable References"></a><a name="useRef"></a><code>useRef</code>: Persistent Mutable References</h3><p><code>useRef</code> creates a persistent reference that doesn’t cause re-renders, making it ideal for storing mutable values like DOM elements.</p>
+<h4 id="Syntax-4"><a href="#Syntax-4" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ref = <span class="title function_">useRef</span>(initialValue);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-Focusing-an-Input-Element"><a href="#Practical-Scenario-Focusing-an-Input-Element" class="headerlink" title="Practical Scenario: Focusing an Input Element"></a>Practical Scenario: Focusing an Input Element</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useRef &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">TextInputWithFocus</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> inputRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">handleClick</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    inputRef.<span class="property">current</span>.<span class="title function_">focus</span>();</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">&#123;inputRef&#125;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;handleClick&#125;</span>&gt;</span>Focus the input<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="useMemo-Memoizing-Expensive-Calculations"><a href="#useMemo-Memoizing-Expensive-Calculations" class="headerlink" title="useMemo: Memoizing Expensive Calculations"></a><a name="useMemo"></a><code>useMemo</code>: Memoizing Expensive Calculations</h3><p><code>useMemo</code> optimizes performance by memoizing expensive calculations, only recomputing them when dependencies change.</p>
+<h4 id="Syntax-5"><a href="#Syntax-5" class="headerlink" title="Syntax:"></a>Syntax:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memoizedValue = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> <span class="title function_">computeExpensiveValue</span>(a, b), [a, b]);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Practical-Scenario-Filtering-a-Large-List"><a href="#Practical-Scenario-Filtering-a-Large-List" class="headerlink" title="Practical Scenario: Filtering a Large List"></a>Practical Scenario: Filtering a Large List</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useMemo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">FilterableList</span>(<span class="params">&#123; items &#125;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [query, setQuery] = <span class="title function_">useState</span>(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> filteredItems = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> items.<span class="title function_">filter</span>(<span class="function"><span class="params">item</span> =&gt;</span> item.<span class="title function_">toLowerCase</span>().<span class="title function_">includes</span>(query.<span class="title function_">toLowerCase</span>()));</span><br><span class="line">  &#125;, [items, query]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">&#123;query&#125;</span> <span class="attr">onChange</span>=<span class="string">&#123;e</span> =&gt;</span> setQuery(e.target.value)&#125; placeholder=&quot;Filter items&quot; /&gt;</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        &#123;filteredItems.map(item =&gt; <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&#123;item&#125;</span>&gt;</span>&#123;item&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)&#125;</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="custom-hooks"></a></p>
+<h2 id="Custom-Hooks"><a href="#Custom-Hooks" class="headerlink" title="Custom Hooks"></a>Custom Hooks</h2><p>Custom hooks are functions that allow you to extract and reuse stateful logic across components. They enable you to abstract complex logic in a cleaner, more maintainable way.</p>
+<h3 id="Practical-Scenario-A-useFetch-Hook-for-Data-Fetching"><a href="#Practical-Scenario-A-useFetch-Hook-for-Data-Fetching" class="headerlink" title="Practical Scenario: A useFetch Hook for Data Fetching"></a>Practical Scenario: A <code>useFetch</code> Hook for Data Fetching</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useState, useEffect &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">useFetch</span>(<span class="params">url</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [data, setData] = <span class="title function_">useState</span>(<span class="literal">null</span>);</span><br><span class="line">  <span class="keyword">const</span> [loading, setLoading] = <span class="title function_">useState</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">fetchData</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="title function_">setLoading</span>(<span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(url);</span><br><span class="line">      <span class="keyword">const</span> result = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line">      <span class="title function_">setData</span>(result);</span><br><span class="line">      <span class="title function_">setLoading</span>(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">fetchData</span>();</span><br><span class="line">  &#125;, [url]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123; data, loading &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> useFetch;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-useFetch-in-a-Component"><a href="#Using-useFetch-in-a-Component" class="headerlink" title="Using useFetch in a Component"></a>Using <code>useFetch</code> in a Component</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span> <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> useFetch <span class="keyword">from</span> <span class="string">&#x27;./useFetch&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Users</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; data, loading &#125; = <span class="title function_">useFetch</span>(<span class="string">&#x27;/api/users&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (loading) <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span>;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      &#123;data.map(user =&gt; <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&#123;user.id&#125;</span>&gt;</span>&#123;user.name&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)&#125;</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="error-handling-and-best-practices"></a></p>
+<h2 id="Error-Handling-and-Best-Practices"><a href="#Error-Handling-and-Best-Practices" class="headerlink" title="Error Handling and Best Practices"></a>Error Handling and Best Practices</h2><h3 id="Error-Handling-in-Hooks"><a href="#Error-Handling-in-Hooks" class="headerlink" title="Error Handling in Hooks"></a>Error Handling in Hooks</h3><ol>
+<li><strong>Wrap async operations</strong> with a try-catch to handle errors gracefully.</li>
+<li><strong>Global error boundaries</strong> for handling errors in effects or custom hooks (using libraries like <code>react-error-boundary</code>).</li>
+</ol>
+<h3 id="Best-Practices"><a href="#Best-Practices" class="headerlink" title="Best Practices"></a>Best Practices</h3><ul>
+<li><strong>Dependency Arrays</strong>: Always add dependencies in <code>useEffect</code> and <code>useMemo</code> dependency arrays to avoid stale closures.</li>
+<li><strong>Avoid Side Effects in Render</strong>: Avoid triggering side effects inside render methods to prevent unexpected behavior.</li>
+</ul>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>React Hooks provide powerful, flexible solutions for managing state, effects, and other logic in functional components. Mastering these core hooks, along with custom hooks, enables you to write cleaner, more maintainable code.</p>
+<p>With practical examples, error handling tips, and performance optimizations, you’re now equipped to build complex React applications that harness the full power of hooks.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/ReactJS/" rel="tag"><i class="fa fa-tag"></i> ReactJS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/06/Best-Practices-of-jhipster/" rel="prev" title="Best Practices of jhipster">
+                  <i class="fa fa-angle-left"></i> Best Practices of jhipster
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/07/Plain-Language-Explaination-of-LLMs/" rel="next" title="Plain Language Explanation of Large Models">
+                  Plain Language Explanation of Large Models <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

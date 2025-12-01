@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Overview of Thread Pool Scaling Strategies 2. FixedThreadPool - Predictable Task Loads 3. CachedThreadPool - Unpredictable, Short-Lived Tasks 4. Dynamic Scaling with Flexible Configuration Detaile">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Executors and ThreadPoolExecutor">
+<meta property="og:url" content="https://www.whereq.com/2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. Overview of Thread Pool Scaling Strategies 2. FixedThreadPool - Predictable Task Loads 3. CachedThreadPool - Unpredictable, Short-Lived Tasks 4. Dynamic Scaling with Flexible Configuration Detaile">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-29T15:08:29.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Java Core">
+<meta property="article:tag" content="Multi-Threading">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/","path":"2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/","title":"Deep Dive into Executors and ThreadPoolExecutor"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Executors and ThreadPoolExecutor | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Overview-of-Thread-Pool-Scaling-Strategies"><span class="nav-number">1.</span> <span class="nav-text">1. Overview of Thread Pool Scaling Strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-FixedThreadPool-Predictable-Task-Loads"><span class="nav-number">2.</span> <span class="nav-text">2. FixedThreadPool - Predictable Task Loads</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-CachedThreadPool-Unpredictable-Short-Lived-Tasks"><span class="nav-number">3.</span> <span class="nav-text">3. CachedThreadPool - Unpredictable, Short-Lived Tasks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Dynamic-Scaling-with-Flexible-Configuration"><span class="nav-number">4.</span> <span class="nav-text">4. Dynamic Scaling with Flexible Configuration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Detailed-Steps"><span class="nav-number">5.</span> <span class="nav-text">Detailed Steps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Thread-Pool-Strategy-Decision"><span class="nav-number">6.</span> <span class="nav-text">5. Thread Pool Strategy Decision</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Drawbacks-of-Using-Executors-to-Create-Thread-Pools"><span class="nav-number">7.</span> <span class="nav-text">6. Drawbacks of Using Executors to Create Thread Pools</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Best-Practices-Solution-Using-ThreadPoolExecutor-Directly"><span class="nav-number">8.</span> <span class="nav-text">7. Best Practices Solution: Using ThreadPoolExecutor Directly</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-ThreadPoolExecutor-with-Best-Practice-Configurations"><span class="nav-number">9.</span> <span class="nav-text">8. ThreadPoolExecutor with Best Practice Configurations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-Summary"><span class="nav-number">10.</span> <span class="nav-text">9. Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/29/Deep-Dive-into-Executors-and-ThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Executors and ThreadPoolExecutor | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Executors and ThreadPoolExecutor
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-29 11:08:29" itemprop="dateCreated datePublished" datetime="2024-10-29T11:08:29-04:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#1-overview-of-thread-pool-scaling-strategies">1. Overview of Thread Pool Scaling Strategies</a></li>
+<li><a href="#2-fixedthreadpool---predictable-task-loads">2. FixedThreadPool - Predictable Task Loads</a></li>
+<li><a href="#3-cachedthreadpool---unpredictable-short-lived-tasks">3. CachedThreadPool - Unpredictable, Short-Lived Tasks</a></li>
+<li><a href="#4-dynamic-scaling-with-flexible-configuration">4. Dynamic Scaling with Flexible Configuration</a></li>
+<li><a href="#detailed-steps">Detailed Steps</a></li>
+<li><a href="#5-thread-pool-strategy-decision">5. Thread Pool Strategy Decision</a></li>
+<li><a href="#6-drawbacks-of-using-executors-to-create-thread-pools">6. Drawbacks of Using <code>Executors</code> to Create Thread Pools</a></li>
+<li><a href="#7-best-practices-solution-using-threadpoolexecutor-directly">7. Best Practices Solution: Using <code>ThreadPoolExecutor</code> Directly</a></li>
+<li><a href="#8-threadpoolexecutor-with-best-practice-configurations">8. <code>ThreadPoolExecutor</code> with Best Practice Configurations</a></li>
+<li><a href="#9-summary">9. Summary</a></li>
+</ul>
+<hr>
+<p>Scaling a <strong>thread pool</strong> efficiently is essential to balance resource usage with workload demands, ensuring performance without over-provisioning or exhausting system resources. Below are common scaling strategies, including scenarios for using each and detailed production code examples with comments.</p>
+<p><a name="1-overview-thread-pool-scaling-strategies"></a></p>
+<h3 id="1-Overview-of-Thread-Pool-Scaling-Strategies"><a href="#1-Overview-of-Thread-Pool-Scaling-Strategies" class="headerlink" title="1. Overview of Thread Pool Scaling Strategies"></a>1. Overview of Thread Pool Scaling Strategies</h3><p>In thread pool management, the primary goal is to allocate <strong>just enough threads</strong> to handle tasks effectively without overloading the CPU or running into resource constraints. The <strong>Executor framework</strong> in Java provides tools for <strong>dynamic scaling</strong> via multiple built-in pool types and strategies, such as <code>FixedThreadPool</code> for predictable workloads and <code>CachedThreadPool</code> for on-demand scaling.</p>
+<hr>
+<p><a name="2-fixedthreadpool---predictable-task-loads"></a></p>
+<h3 id="2-FixedThreadPool-Predictable-Task-Loads"><a href="#2-FixedThreadPool-Predictable-Task-Loads" class="headerlink" title="2. FixedThreadPool - Predictable Task Loads"></a>2. FixedThreadPool - Predictable Task Loads</h3><p>For workloads where the number of concurrent tasks is consistent or predictable, using a <code>FixedThreadPool</code> is efficient. The pool is created with a predefined number of threads, ensuring no new threads are added or removed during runtime. This strategy is suitable for <strong>batch processing</strong> or tasks with <strong>steady arrival rates</strong>.</p>
+<p><strong>Sample Code</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FixedThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="comment">// Define a pool with a fixed number of threads for predictable task load</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">THREAD_POOL_SIZE</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(THREAD_POOL_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Simulate task submission to the fixed thread pool</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            executorService.submit(() -&gt; processTask(taskId));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown the executor service to release resources after processing</span></span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">processTask</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Processing Task ID: &quot;</span> + taskId + <span class="string">&quot; with thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulating task processing duration</span></span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Output</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Processing Task ID: 0 with thread pool-1-thread-1</span><br><span class="line">Processing Task ID: 1 with thread pool-1-thread-2</span><br><span class="line">Processing Task ID: 2 with thread pool-1-thread-3</span><br><span class="line">Processing Task ID: 3 with thread pool-1-thread-4</span><br><span class="line">Processing Task ID: 4 with thread pool-1-thread-5</span><br><span class="line">Processing Task ID: 5 with thread pool-1-thread-1</span><br><span class="line">Processing Task ID: 6 with thread pool-1-thread-2</span><br><span class="line">Processing Task ID: 7 with thread pool-1-thread-3</span><br><span class="line">Processing Task ID: 8 with thread pool-1-thread-4</span><br><span class="line">Processing Task ID: 9 with thread pool-1-thread-5</span><br></pre></td></tr></table></figure>
+
+<p><strong>Explanation</strong>:</p>
+<ol>
+<li><p><strong>Thread Pool Initialization</strong>:</p>
+<ul>
+<li>A <strong>fixed number of threads</strong> (5) handle the tasks sequentially.</li>
+<li>The thread pool is initialized with 5 threads, named <code>pool-1-thread-1</code> to <code>pool-1-thread-5</code>.</li>
+</ul>
+</li>
+<li><p><strong>Task Submission</strong>:</p>
+<ul>
+<li>The <code>for</code> loop submits 10 tasks to the thread pool.</li>
+<li>Each task is assigned a unique <code>taskId</code> from 0 to 9.</li>
+</ul>
+</li>
+<li><p><strong>Task Execution</strong>:</p>
+<ul>
+<li>The tasks are executed by the available threads in the thread pool.</li>
+<li>Since there are 5 threads, the first 5 tasks (0 to 4) are executed concurrently by the 5 threads.</li>
+<li>After the first 5 tasks are completed, the next 5 tasks (5 to 9) are executed by the same threads, but the order of execution may vary.</li>
+</ul>
+</li>
+<li><p><strong>Thread Reuse</strong>:</p>
+<ul>
+<li>The executor will <strong>reuse threads</strong>, limiting thread creation overhead.</li>
+<li>The threads in the thread pool are reused to execute subsequent tasks. For example, <code>pool-1-thread-1</code> might execute task 0 and then task 5.</li>
+</ul>
+</li>
+<li><p>The <strong><code>shutdown</code> method</strong> releases resources once all tasks complete.</p>
+</li>
+</ol>
+<p><strong>Advantages:</strong> Predictable memory usage and better <strong>performance control</strong> for tasks with a steady rate.</p>
+<hr>
+<p><a name="cachedthreadpool---unpredictable-short-lived-tasks"></a></p>
+<h3 id="3-CachedThreadPool-Unpredictable-Short-Lived-Tasks"><a href="#3-CachedThreadPool-Unpredictable-Short-Lived-Tasks" class="headerlink" title="3. CachedThreadPool - Unpredictable, Short-Lived Tasks"></a>3. CachedThreadPool - Unpredictable, Short-Lived Tasks</h3><p>A <code>CachedThreadPool</code> dynamically adjusts the pool size depending on task demand. This pool is ideal for handling <strong>bursty</strong> or <strong>sporadic loads</strong>. Threads are created as needed and, if idle, removed after a timeout period, allowing the system to scale back.</p>
+<p><strong>Sample Code</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CachedThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="comment">// Using CachedThreadPool for sporadic and short-lived tasks</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newCachedThreadPool();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Simulate submitting bursty tasks</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            executorService.submit(() -&gt; handleBurstTask(taskId));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown executor once all tasks are completed</span></span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">handleBurstTask</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Handling Burst Task ID: &quot;</span> + taskId + <span class="string">&quot; with thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Simulating brief processing</span></span><br><span class="line">            Thread.sleep(<span class="number">500</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Output</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Handling Burst Task ID: 0 with thread pool-1-thread-1</span><br><span class="line">Handling Burst Task ID: 1 with thread pool-1-thread-2</span><br><span class="line">Handling Burst Task ID: 2 with thread pool-1-thread-3</span><br><span class="line">Handling Burst Task ID: 3 with thread pool-1-thread-4</span><br><span class="line">Handling Burst Task ID: 4 with thread pool-1-thread-5</span><br><span class="line">Handling Burst Task ID: 5 with thread pool-1-thread-6</span><br><span class="line">Handling Burst Task ID: 6 with thread pool-1-thread-7</span><br><span class="line">Handling Burst Task ID: 7 with thread pool-1-thread-8</span><br><span class="line">Handling Burst Task ID: 8 with thread pool-1-thread-9</span><br><span class="line">Handling Burst Task ID: 9 with thread pool-1-thread-10</span><br></pre></td></tr></table></figure>
+
+<p><strong>Explanation:</strong></p>
+<ol>
+<li><p><strong>Thread Pool Initialization</strong>:</p>
+<ul>
+<li>The <code>CachedThreadPool</code> <strong>adds threads on demand</strong> up to <code>Integer.MAX_VALUE</code>, suitable for short-lived tasks.</li>
+<li>The <code>CachedThreadPool</code> dynamically creates new threads as needed and reuses previously constructed threads when they are available.</li>
+</ul>
+</li>
+<li><p><strong>Task Submission</strong>:</p>
+<ul>
+<li>The <code>for</code> loop submits 10 tasks to the thread pool.</li>
+<li>Each task is assigned a unique <code>taskId</code> from 0 to 9.</li>
+</ul>
+</li>
+<li><p><strong>Task Execution</strong>:</p>
+<ul>
+<li>The tasks are executed by the available threads in the thread pool.</li>
+<li>Since the <code>CachedThreadPool</code> creates new threads as needed, it will create up to 10 threads to handle the 10 tasks.</li>
+</ul>
+</li>
+<li><p><strong>Thread Creation and Reuse</strong>:</p>
+<ul>
+<li>Threads that are <strong>idle for 60 seconds</strong> are removed, preventing memory buildup.</li>
+<li>Ideal for systems that handle <strong>irregular spikes</strong> without knowing task demand in advance.</li>
+<li>The <code>CachedThreadPool</code> creates new threads for each task initially because no threads are available.</li>
+<li>The threads are named <code>pool-1-thread-1</code> to <code>pool-1-thread-10</code>.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Advantages:</strong> Scalability and flexibility for <strong>dynamic task arrival rates</strong>.</p>
+<hr>
+<p><a name="4-dynamic-scaling-with-flexible-configuration"></a></p>
+<h3 id="4-Dynamic-Scaling-with-Flexible-Configuration"><a href="#4-Dynamic-Scaling-with-Flexible-Configuration" class="headerlink" title="4. Dynamic Scaling with Flexible Configuration"></a>4. Dynamic Scaling with Flexible Configuration</h3><p>In a production environment, scaling thread pools dynamically may involve using the <code>ThreadPoolExecutor</code> with customized parameters, such as adjustable core pool size and task queue types. This allows for <strong>on-the-fly adjustments</strong> based on real-time performance metrics.</p>
+<p><strong>Sample Code</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DynamicThreadPoolScaling</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Custom ThreadPoolExecutor with flexible parameters for dynamic scaling</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">            <span class="number">2</span>, <span class="comment">// corePoolSize</span></span><br><span class="line">            <span class="number">10</span>, <span class="comment">// maximumPoolSize</span></span><br><span class="line">            <span class="number">60L</span>, <span class="comment">// keepAliveTime</span></span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;&gt;(<span class="number">5</span>), <span class="comment">// workQueue</span></span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">// Rejection policy</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            executor.submit(() -&gt; performDynamicTask(taskId));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shut down the executor after tasks completion</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">performDynamicTask</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Performing Dynamic Task ID: &quot;</span> + taskId + <span class="string">&quot; with thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Explanation of Parameters:</strong></p>
+<ul>
+<li><code>corePoolSize</code>: Defines the <strong>minimum</strong> number of threads.</li>
+<li><code>maximumPoolSize</code>: Sets a <strong>scalable limit</strong> for threads.</li>
+<li><code>LinkedBlockingQueue</code>: Limits task queue to prevent memory overflows.</li>
+<li><code>CallerRunsPolicy</code>: Ensures tasks run in the caller’s thread if limits are reached, providing <strong>backpressure control</strong>.</li>
+</ul>
+<p><strong>Output</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Performing Dynamic Task ID: 0 with thread pool-1-thread-1</span><br><span class="line">Performing Dynamic Task ID: 1 with thread pool-1-thread-2</span><br><span class="line">Performing Dynamic Task ID: 2 with thread pool-1-thread-1</span><br><span class="line">Performing Dynamic Task ID: 3 with thread pool-1-thread-2</span><br><span class="line">Performing Dynamic Task ID: 4 with thread pool-1-thread-1</span><br><span class="line">Performing Dynamic Task ID: 5 with thread pool-1-thread-2</span><br><span class="line">Performing Dynamic Task ID: 6 with thread pool-1-thread-1</span><br><span class="line">Performing Dynamic Task ID: 7 with thread pool-1-thread-2</span><br><span class="line">Performing Dynamic Task ID: 8 with thread pool-1-thread-1</span><br><span class="line">Performing Dynamic Task ID: 9 with thread pool-1-thread-2</span><br><span class="line">Performing Dynamic Task ID: 10 with thread pool-1-thread-3</span><br><span class="line">Performing Dynamic Task ID: 11 with thread pool-1-thread-4</span><br><span class="line">Performing Dynamic Task ID: 12 with thread pool-1-thread-5</span><br><span class="line">Performing Dynamic Task ID: 13 with thread pool-1-thread-6</span><br><span class="line">Performing Dynamic Task ID: 14 with thread pool-1-thread-7</span><br><span class="line">Performing Dynamic Task ID: 15 with thread pool-1-thread-8</span><br><span class="line">Performing Dynamic Task ID: 16 with thread pool-1-thread-9</span><br><span class="line">Performing Dynamic Task ID: 17 with thread pool-1-thread-10</span><br><span class="line">Performing Dynamic Task ID: 18 with thread main</span><br><span class="line">Performing Dynamic Task ID: 19 with thread main</span><br></pre></td></tr></table></figure>
+
+<p><strong>Explaination of Output</strong>:</p>
+<ol>
+<li><p><strong>ThreadPoolExecutor Initialization</strong>:</p>
+<ul>
+<li>The <code>ThreadPoolExecutor</code> is initialized with:<ul>
+<li><code>corePoolSize</code>: 2</li>
+<li><code>maximumPoolSize</code>: 10</li>
+<li><code>keepAliveTime</code>: 60 seconds</li>
+<li><code>workQueue</code>: <code>LinkedBlockingQueue</code> with a capacity of 5</li>
+<li><code>threadFactory</code>: Default thread factory</li>
+<li><code>rejectionPolicy</code>: <code>CallerRunsPolicy</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Task Submission</strong>:</p>
+<ul>
+<li>The <code>for</code> loop submits 20 tasks to the thread pool.</li>
+<li>Each task is assigned a unique <code>taskId</code> from 0 to 19.</li>
+</ul>
+</li>
+<li><p><strong>Task Execution</strong>:</p>
+<ul>
+<li>Initially, the core threads (<code>pool-1-thread-1</code> and <code>pool-1-thread-2</code>) handle the first 2 tasks.</li>
+<li>The next 5 tasks are queued in the <code>LinkedBlockingQueue</code>.</li>
+<li>As the core threads finish their tasks, they pick up tasks from the queue.</li>
+<li>When the queue is full (5 tasks), new threads are created up to the <code>maximumPoolSize</code> (10 threads) to handle the remaining tasks.</li>
+<li>When all 10 threads are busy and the queue is full, the <code>CallerRunsPolicy</code> kicks in, and the remaining tasks are executed by the main thread (<code>main</code>).</li>
+</ul>
+</li>
+</ol>
+<h3 id="Detailed-Steps"><a href="#Detailed-Steps" class="headerlink" title="Detailed Steps"></a>Detailed Steps</h3><ol>
+<li><p><strong>Task 0 to 1 Execution</strong>:</p>
+<ul>
+<li>Task 0 is executed by <code>pool-1-thread-1</code>.</li>
+<li>Task 1 is executed by <code>pool-1-thread-2</code>.</li>
+</ul>
+</li>
+<li><p><strong>Task 2 to 6 Queued</strong>:</p>
+<ul>
+<li>Tasks 2 to 6 are queued in the <code>LinkedBlockingQueue</code>.</li>
+</ul>
+</li>
+<li><p><strong>Task 2 to 6 Execution</strong>:</p>
+<ul>
+<li>Tasks 2 to 6 are executed by <code>pool-1-thread-1</code> and <code>pool-1-thread-2</code> as they finish their initial tasks.</li>
+</ul>
+</li>
+<li><p><strong>Task 7 to 11 Queued</strong>:</p>
+<ul>
+<li>Tasks 7 to 11 are queued in the <code>LinkedBlockingQueue</code>.</li>
+</ul>
+</li>
+<li><p><strong>Task 7 to 11 Execution</strong>:</p>
+<ul>
+<li>Tasks 7 to 11 are executed by <code>pool-1-thread-1</code> and <code>pool-1-thread-2</code> as they finish their previous tasks.</li>
+</ul>
+</li>
+<li><p><strong>Task 12 to 16 Execution</strong>:</p>
+<ul>
+<li>New threads (<code>pool-1-thread-3</code> to <code>pool-1-thread-7</code>) are created to handle tasks 12 to 16.</li>
+</ul>
+</li>
+<li><p><strong>Task 17 to 19 Execution</strong>:</p>
+<ul>
+<li>New threads (<code>pool-1-thread-8</code> to <code>pool-1-thread-10</code>) are created to handle tasks 17 to 19.</li>
+</ul>
+</li>
+<li><p><strong>Task 18 and 19 Execution by Main Thread</strong>:</p>
+<ul>
+<li>Since all threads are busy and the queue is full, the <code>CallerRunsPolicy</code> causes the main thread to execute tasks 18 and 19.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p><a name="5-thread-pool-strategy-decision"></a></p>
+<h3 id="5-Thread-Pool-Strategy-Decision"><a href="#5-Thread-Pool-Strategy-Decision" class="headerlink" title="5. Thread Pool Strategy Decision"></a>5. Thread Pool Strategy Decision</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">        +-------------------------+</span><br><span class="line">        |  Task Load Predictable? |</span><br><span class="line">        +-----------+-------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">           Yes      |       No</span><br><span class="line">         +----------+------------+</span><br><span class="line">         |                       |</span><br><span class="line"> +-------v----------+     +------v------------+</span><br><span class="line"> |  FixedThreadPool |     |  CachedThreadPool |</span><br><span class="line"> +-------+----------+     +-----+-------------+</span><br><span class="line">         |                      |</span><br><span class="line">         |                      |</span><br><span class="line">Use if tasks are steady    Use if tasks are bursty or</span><br><span class="line">and concurrent             unpredictable</span><br></pre></td></tr></table></figure>
+
+<p>Using <code>Executors</code> to create thread pools (e.g., via <code>Executors.newFixedThreadPool()</code> or <code>Executors.newCachedThreadPool()</code>) is convenient but introduces hidden risks and drawbacks in certain production scenarios. Let’s look at the specific drawbacks and explore best practices for mitigating these issues.</p>
+<hr>
+<p><a name="6-drawbacks-of-using-executors-to-create-thread-pools"></a></p>
+<h3 id="6-Drawbacks-of-Using-Executors-to-Create-Thread-Pools"><a href="#6-Drawbacks-of-Using-Executors-to-Create-Thread-Pools" class="headerlink" title="6. Drawbacks of Using Executors to Create Thread Pools"></a>6. Drawbacks of Using <code>Executors</code> to Create Thread Pools</h3><ol>
+<li><p><strong>Unbounded Queue with <code>newFixedThreadPool</code></strong>:</p>
+<ul>
+<li>The <code>newFixedThreadPool(int nThreads)</code> method uses a <strong><code>LinkedBlockingQueue</code></strong> without a maximum size limit for its task queue. This <strong>unbounded queue</strong> can lead to <strong>memory exhaustion</strong> if tasks are submitted faster than they can be processed.</li>
+<li>When a large number of tasks are added, the queue will keep growing, which can lead to <strong>OutOfMemoryError</strong> and system instability.</li>
+</ul>
+</li>
+<li><p><strong>Unbounded Thread Creation in <code>newCachedThreadPool</code></strong>:</p>
+<ul>
+<li>The <code>newCachedThreadPool()</code> uses a <strong><code>SynchronousQueue</code></strong> that directly hands off tasks to threads. If no threads are idle to handle new tasks, it <strong>creates new threads</strong> up to <code>Integer.MAX_VALUE</code>.</li>
+<li>With a high load, this pool may create excessive threads, leading to <strong>CPU saturation</strong> and potential <strong>memory exhaustion</strong>, especially in long-running applications.</li>
+</ul>
+</li>
+<li><p><strong>Lack of Control Over Rejection Policy</strong>:</p>
+<ul>
+<li>The methods in <code>Executors</code> do not allow explicit configuration of <strong>rejection policies</strong> for when tasks exceed pool capacity. Default policies can fail to handle high-load scenarios gracefully, often leading to performance degradation and unhandled task rejections.</li>
+</ul>
+</li>
+<li><p><strong>Harder to Manage Idle Threads</strong>:</p>
+<ul>
+<li>For pools like <code>newCachedThreadPool</code>, idle threads remain for a default <strong>60 seconds</strong> before being terminated. While this may be appropriate for some workloads, it can lead to inefficiencies in scenarios where <strong>shorter idle times</strong> would conserve resources.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p><a name="7-best-practices-solution-using-threadpoolexecutor-directly"></a></p>
+<h3 id="7-Best-Practices-Solution-Using-ThreadPoolExecutor-Directly"><a href="#7-Best-Practices-Solution-Using-ThreadPoolExecutor-Directly" class="headerlink" title="7. Best Practices Solution: Using ThreadPoolExecutor Directly"></a>7. Best Practices Solution: Using <code>ThreadPoolExecutor</code> Directly</h3><p>To avoid these pitfalls, it’s best to directly instantiate a <code>ThreadPoolExecutor</code> where you can <strong>explicitly configure</strong> the task queue size, rejection policies, and timeout values. Here’s how to address each issue with recommended configurations:</p>
+<p>A. <strong>Configure Bounded Queues to Prevent Memory Leaks</strong>:</p>
+<ul>
+<li>Use a bounded task queue, like <code>ArrayBlockingQueue</code> or a sized <code>LinkedBlockingQueue</code>, to <strong>control the number of waiting tasks</strong> and prevent out-of-memory errors.</li>
+<li>This limits the number of tasks waiting in the queue, ensuring system stability by capping memory use.</li>
+</ul>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    corePoolSize,</span><br><span class="line">    maxPoolSize,</span><br><span class="line">    keepAliveTime,</span><br><span class="line">    TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(queueSize)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>B. <strong>Limit Thread Growth to Prevent Resource Exhaustion</strong>:</p>
+<ul>
+<li><p>Use a capped <code>maximumPoolSize</code> when tasks can surge unexpectedly. Setting a limit, e.g., based on the number of available CPU cores, helps prevent CPU saturation.</p>
+<p>When tasks can surge unexpectedly, it’s crucial to set a capped <code>maximumPoolSize</code> to prevent the thread pool from creating an excessive number of threads. An unbounded <code>maximumPoolSize</code> can lead to CPU saturation, excessive memory usage, and degraded performance due to excessive context switching.</p>
+<p><strong>CPU Saturation</strong><br>CPU saturation occurs when the CPU is overwhelmed with too many threads, leading to:</p>
+<ul>
+<li><strong>High CPU Utilization</strong>: The CPU spends most of its time executing threads, leaving little time for other system processes.</li>
+<li><strong>Context Switching Overhead</strong>: Frequent context switching between threads consumes CPU cycles, reducing overall efficiency.</li>
+<li><strong>Memory Pressure</strong>: Each thread consumes memory, and a large number of threads can lead to memory exhaustion.</li>
+</ul>
+<p>To prevent CPU saturation, it’s recommended to set a <code>maximumPoolSize</code> based on the number of available CPU cores. This ensures that the thread pool can handle a reasonable number of concurrent tasks without overwhelming the CPU.</p>
+<p>A common approach is to set the <code>maximumPoolSize</code> to a value slightly higher than the number of CPU cores to account for both CPU-bound and I&#x2F;O-bound tasks. A simple formula is <code>maximumPoolSize = N * U</code></p>
+<p>Where:</p>
+<ul>
+<li><strong>N</strong>: Number of available CPU cores.</li>
+<li><strong>U</strong>: Utilization factor (typically between 1.0 and 2.0).<ul>
+<li><strong>U &#x3D; 1.0</strong>: For CPU-bound tasks where each thread is expected to fully utilize a CPU core.</li>
+<li><strong>U &#x3D; 1.5 to 2.0</strong>: For mixed CPU-bound and I&#x2F;O-bound tasks, where some threads may be waiting on I&#x2F;O operations.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example Calculation</strong><br>Suppose you have a system with 8 CPU cores and you expect a mix of CPU-bound and I&#x2F;O-bound tasks. You can set the <code>maximumPoolSize</code> as follows <code>maximumPoolSize = 8 * 1.5 = 12</code></p>
+</li>
+<li><p>For highly concurrent applications, you can use dynamic sizing strategies with <strong>monitoring metrics</strong> (like CPU and memory usage) to inform adjustments to pool parameters.</p>
+</li>
+</ul>
+<p>C. <strong>Explicitly Set Rejection Policies</strong>:</p>
+<ul>
+<li>When tasks exceed the pool’s capacity, control the pool’s behavior with rejection policies. <code>ThreadPoolExecutor</code> provides options like <code>CallerRunsPolicy</code>, <code>DiscardPolicy</code>, and <code>DiscardOldestPolicy</code>:<ul>
+<li><strong>CallerRunsPolicy</strong>: Executes tasks in the caller thread, which helps slow down task submissions under heavy load.</li>
+<li><strong>DiscardOldestPolicy</strong>: Removes the oldest queued task, making room for newer, high-priority tasks.</li>
+</ul>
+</li>
+<li>This choice depends on your application’s tolerance for unprocessed tasks.</li>
+</ul>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    corePoolSize,</span><br><span class="line">    maxPoolSize,</span><br><span class="line">    keepAliveTime,</span><br><span class="line">    TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;&gt;(queueSize),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>   <strong>Adjust Idle Timeout for Cached Threads</strong>:</p>
+<ul>
+<li>For pools similar to <code>CachedThreadPool</code>, customize the <strong>idle timeout</strong> to conserve resources by releasing threads sooner when they are not needed. <code>ThreadPoolExecutor</code> allows control over idle time with <code>setKeepAliveTime</code>.</li>
+</ul>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadPoolExecutor</span> <span class="variable">cachedPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    <span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">    <span class="number">30L</span>, TimeUnit.SECONDS, <span class="comment">// Reduced keep-alive time</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">SynchronousQueue</span>&lt;&gt;(),</span><br><span class="line">    Executors.defaultThreadFactory()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="8-threadpoolexecutor-with-best-practice-configurations"></a></p>
+<h3 id="8-ThreadPoolExecutor-with-Best-Practice-Configurations"><a href="#8-ThreadPoolExecutor-with-Best-Practice-Configurations" class="headerlink" title="8. ThreadPoolExecutor with Best Practice Configurations"></a>8. <code>ThreadPoolExecutor</code> with Best Practice Configurations</h3><p>Below is a best practice setup using <code>ThreadPoolExecutor</code> that incorporates bounded queues, a limited thread count, a suitable rejection policy, and a controlled idle timeout:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BestPracticeThreadPool</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">createThreadPool</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">corePoolSize</span> <span class="operator">=</span> <span class="number">4</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">maxPoolSize</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">        <span class="type">long</span> <span class="variable">keepAliveTime</span> <span class="operator">=</span> <span class="number">30L</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">queueCapacity</span> <span class="operator">=</span> <span class="number">50</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">                corePoolSize,</span><br><span class="line">                maxPoolSize,</span><br><span class="line">                keepAliveTime,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(queueCapacity),</span><br><span class="line">                Executors.defaultThreadFactory(),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">// Rejection policy to handle overloads</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">threadPool</span> <span class="operator">=</span> createThreadPool();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submitting example tasks</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            threadPool.submit(() -&gt; processTask(taskId));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Properly shutdown to free resources</span></span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">processTask</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Processing Task ID: &quot;</span> + taskId + <span class="string">&quot; with thread &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">500</span>); <span class="comment">// Simulate work</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Explanation of Configurations:</strong></p>
+<ul>
+<li><code>ArrayBlockingQueue</code> limits queue size to 50, managing memory consumption.</li>
+<li><code>CallerRunsPolicy</code> applies backpressure to slow down submissions.</li>
+<li><code>corePoolSize</code> and <code>maxPoolSize</code> control CPU utilization.</li>
+<li><code>keepAliveTime</code> of 30 seconds clears idle threads efficiently.</li>
+</ul>
+<hr>
+<p><a name="9-summary"></a></p>
+<h3 id="9-Summary"><a href="#9-Summary" class="headerlink" title="9. Summary"></a>9. Summary</h3><p>Using <code>ThreadPoolExecutor</code> directly provides complete control over pool configurations:</p>
+<ul>
+<li><strong>Bounded queues</strong> prevent memory overflows.</li>
+<li><strong>Limited threads</strong> avoid CPU exhaustion.</li>
+<li><strong>Rejection policies</strong> ensure controlled behavior under load.</li>
+<li><strong>Idle timeouts</strong> conserve system resources.</li>
+</ul>
+<p>These adjustments create a resilient and scalable thread pool setup suitable for high-performance, resource-intensive applications.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Java-Core/" rel="tag"><i class="fa fa-tag"></i> Java Core</a>
+              <a href="/tags/Multi-Threading/" rel="tag"><i class="fa fa-tag"></i> Multi-Threading</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/29/Programming-Standards-of-Java-Concurrency/" rel="prev" title="Programming Standards of Java Concurrency">
+                  <i class="fa fa-angle-left"></i> Programming Standards of Java Concurrency
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/29/Microservice-meet-with-Spring-Cloud-and-Kubernetes/" rel="next" title="Microservice meet with Spring Cloud and Kubernetes">
+                  Microservice meet with Spring Cloud and Kubernetes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

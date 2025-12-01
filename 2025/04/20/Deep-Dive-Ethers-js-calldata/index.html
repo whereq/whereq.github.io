@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Ethers.js 中的 Calldata 详解及使用场景calldata 是以太坊智能合约交互中的核心概念，它包含了调用合约函数时发送的所有数据。在 ethers.js 中，理解和使用 calldata 对于高级合约交互至关重要。 什么是 Calldata？Calldata 是发送到以太坊合约的特殊数据格式，包含：  函数选择器（4字节的函数签名哈希） 编码后的参数数据  Calldata 的特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive --- Ethers.js calldata">
+<meta property="og:url" content="https://www.whereq.com/2025/04/20/Deep-Dive-Ethers-js-calldata/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Ethers.js 中的 Calldata 详解及使用场景calldata 是以太坊智能合约交互中的核心概念，它包含了调用合约函数时发送的所有数据。在 ethers.js 中，理解和使用 calldata 对于高级合约交互至关重要。 什么是 Calldata？Calldata 是发送到以太坊合约的特殊数据格式，包含：  函数选择器（4字节的函数签名哈希） 编码后的参数数据  Calldata 的特">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-04-20T22:42:59.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.858Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Cypto Currency">
+<meta property="article:tag" content="Ethereum">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/04/20/Deep-Dive-Ethers-js-calldata/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/04/20/Deep-Dive-Ethers-js-calldata/","path":"2025/04/20/Deep-Dive-Ethers-js-calldata/","title":"Deep Dive --- Ethers.js calldata"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive --- Ethers.js calldata | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ethers-js-%E4%B8%AD%E7%9A%84-Calldata-%E8%AF%A6%E8%A7%A3%E5%8F%8A%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">Ethers.js 中的 Calldata 详解及使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Calldata%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是 Calldata？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Calldata-%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">Calldata 的特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80-Calldata-%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">基础 Calldata 操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%9F%E6%88%90-Calldata"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 生成 Calldata</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%A7%A3%E6%9E%90-Calldata"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 解析 Calldata</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.</span> <span class="nav-text">核心使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF1-%E6%89%B9%E9%87%8F%E4%BA%A4%E6%98%93-Multicall"><span class="nav-number">1.3.1.</span> <span class="nav-text">场景1: 批量交易 (Multicall)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF2-%E7%A6%BB%E7%BA%BF%E7%AD%BE%E5%90%8D%E4%BA%A4%E6%98%93"><span class="nav-number">1.3.2.</span> <span class="nav-text">场景2: 离线签名交易</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF3-%E4%BC%B0%E7%AE%97Gas%E8%B4%B9%E7%94%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">场景3: 估算Gas费用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF4-%E4%BB%A3%E7%90%86%E5%90%88%E7%BA%A6%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">场景4: 代理合约调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF5-%E4%BA%8B%E4%BB%B6%E6%97%A5%E5%BF%97%E8%A7%A3%E6%9E%90"><span class="nav-number">1.3.5.</span> <span class="nav-text">场景5: 事件日志解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="nav-number">1.4.</span> <span class="nav-text">高级使用技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8A%A8%E6%80%81%E5%8F%82%E6%95%B0%E7%BC%96%E7%A0%81"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 动态参数编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%87%AA%E5%AE%9A%E4%B9%89%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 自定义错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Gas%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. Gas优化技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.5.</span> <span class="nav-text">安全注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/04/20/Deep-Dive-Ethers-js-calldata/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive --- Ethers.js calldata | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive --- Ethers.js calldata
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-04-20 18:42:59" itemprop="dateCreated datePublished" datetime="2025-04-20T18:42:59-04:00">2025-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/" itemprop="url" rel="index"><span itemprop="name">Cypto Currency</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/Ethereum/" itemprop="url" rel="index"><span itemprop="name">Ethereum</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Ethers-js-中的-Calldata-详解及使用场景"><a href="#Ethers-js-中的-Calldata-详解及使用场景" class="headerlink" title="Ethers.js 中的 Calldata 详解及使用场景"></a>Ethers.js 中的 Calldata 详解及使用场景</h1><p><code>calldata</code> 是以太坊智能合约交互中的核心概念，它包含了调用合约函数时发送的所有数据。在 ethers.js 中，理解和使用 calldata 对于高级合约交互至关重要。</p>
+<h2 id="什么是-Calldata？"><a href="#什么是-Calldata？" class="headerlink" title="什么是 Calldata？"></a>什么是 Calldata？</h2><p>Calldata 是发送到以太坊合约的特殊数据格式，包含：</p>
+<ul>
+<li>函数选择器（4字节的函数签名哈希）</li>
+<li>编码后的参数数据</li>
+</ul>
+<h3 id="Calldata-的特点"><a href="#Calldata-的特点" class="headerlink" title="Calldata 的特点"></a>Calldata 的特点</h3><ol>
+<li>只读 - 合约不能修改 calldata</li>
+<li>临时存储 - 执行结束后不保存在区块链上</li>
+<li>外部调用专用 - 用于合约间通信</li>
+<li>比 memory 更便宜 - 使用 calldata 可以节省 gas</li>
+</ol>
+<h2 id="基础-Calldata-操作"><a href="#基础-Calldata-操作" class="headerlink" title="基础 Calldata 操作"></a>基础 Calldata 操作</h2><h3 id="1-生成-Calldata"><a href="#1-生成-Calldata" class="headerlink" title="1. 生成 Calldata"></a>1. 生成 Calldata</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ethers &#125; = <span class="built_in">require</span>(<span class="string">&quot;ethers&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 合约ABI</span></span><br><span class="line"><span class="keyword">const</span> erc20Abi = [</span><br><span class="line">  <span class="string">&quot;function transfer(address to, uint amount)&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建接口</span></span><br><span class="line"><span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>(erc20Abi);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编码calldata</span></span><br><span class="line"><span class="keyword">const</span> calldata = iface.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [</span><br><span class="line">  <span class="string">&quot;0xRecipientAddressHere&quot;</span>,</span><br><span class="line">  ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;1.0&quot;</span>)</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Calldata:&quot;</span>, calldata);</span><br><span class="line"><span class="comment">// 输出示例: 0xa9059cbb000000000000000000000000recipientaddress0000000000000000000000000000000000000000000000000de0b6b3a7640000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-解析-Calldata"><a href="#2-解析-Calldata" class="headerlink" title="2. 解析 Calldata"></a>2. 解析 Calldata</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用相同的接口解析calldata</span></span><br><span class="line"><span class="keyword">const</span> parsed = iface.<span class="title function_">parseTransaction</span>(&#123; <span class="attr">data</span>: calldata &#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Parsed:&quot;</span>, &#123;</span><br><span class="line">  <span class="attr">name</span>: parsed.<span class="property">name</span>,</span><br><span class="line">  <span class="attr">args</span>: parsed.<span class="property">args</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="核心使用场景"><a href="#核心使用场景" class="headerlink" title="核心使用场景"></a>核心使用场景</h2><h3 id="场景1-批量交易-Multicall"><a href="#场景1-批量交易-Multicall" class="headerlink" title="场景1: 批量交易 (Multicall)"></a>场景1: 批量交易 (Multicall)</h3><p><strong>需求</strong>：在一次交易中执行多个合约调用，节省gas费用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> multiCallAbi = [</span><br><span class="line">  <span class="string">&quot;function multicall(bytes[] calldata data) external returns (bytes[] memory results)&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">batchTransfer</span>(<span class="params">token, recipients, amounts</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>([</span><br><span class="line">    <span class="string">&quot;function transfer(address to, uint amount)&quot;</span></span><br><span class="line">  ]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 为每个转账生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> calls = recipients.<span class="title function_">map</span>(<span class="function">(<span class="params">to, i</span>) =&gt;</span> </span><br><span class="line">    token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amounts[i]])</span><br><span class="line">  );</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 创建Multicall合约实例</span></span><br><span class="line">  <span class="keyword">const</span> multicall = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(</span><br><span class="line">    <span class="string">&quot;0x5ba1e12693dc8f9c48aad8770482f4739beed696&quot;</span>, <span class="comment">// Ethereum主网Multicall地址</span></span><br><span class="line">    multiCallAbi,</span><br><span class="line">    signer</span><br><span class="line">  );</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 执行批量调用</span></span><br><span class="line">  <span class="keyword">const</span> tx = <span class="keyword">await</span> multicall.<span class="title function_">multicall</span>(calls);</span><br><span class="line">  <span class="keyword">await</span> tx.<span class="title function_">wait</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;批量转账完成&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景2-离线签名交易"><a href="#场景2-离线签名交易" class="headerlink" title="场景2: 离线签名交易"></a>场景2: 离线签名交易</h3><p><strong>需求</strong>：在不暴露私钥的情况下生成可广播的交易数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createSignedTransfer</span>(<span class="params">tokenAddress, to, amount, signer</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, signer);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 1. 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [</span><br><span class="line">    to,</span><br><span class="line">    amount</span><br><span class="line">  ]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 构建原始交易</span></span><br><span class="line">  <span class="keyword">const</span> tx = &#123;</span><br><span class="line">    <span class="attr">to</span>: tokenAddress,</span><br><span class="line">    <span class="attr">data</span>: data,</span><br><span class="line">    <span class="attr">value</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">gasLimit</span>: <span class="number">100000</span>,</span><br><span class="line">    <span class="attr">nonce</span>: <span class="keyword">await</span> signer.<span class="title function_">getTransactionCount</span>(),</span><br><span class="line">    <span class="attr">chainId</span>: <span class="number">1</span> <span class="comment">// Ethereum主网</span></span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 3. 签名交易（不广播）</span></span><br><span class="line">  <span class="keyword">const</span> signedTx = <span class="keyword">await</span> signer.<span class="title function_">signTransaction</span>(tx);</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;签名后的交易:&quot;</span>, signedTx);</span><br><span class="line">  <span class="comment">// 可以将其保存或发送给其他节点广播</span></span><br><span class="line">  <span class="keyword">return</span> signedTx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景3-估算Gas费用"><a href="#场景3-估算Gas费用" class="headerlink" title="场景3: 估算Gas费用"></a>场景3: 估算Gas费用</h3><p><strong>需求</strong>：在执行交易前准确估算所需的gas。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">estimateTransferGas</span>(<span class="params">tokenAddress, <span class="keyword">from</span>, to, amount, provider</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, provider);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 估算gas</span></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> gasEstimate = <span class="keyword">await</span> provider.<span class="title function_">estimateGas</span>(&#123;</span><br><span class="line">      <span class="attr">from</span>: <span class="keyword">from</span>,</span><br><span class="line">      <span class="attr">to</span>: tokenAddress,</span><br><span class="line">      <span class="attr">data</span>: data</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`转账预估Gas: <span class="subst">$&#123;gasEstimate.toString()&#125;</span>`</span>);</span><br><span class="line">    <span class="keyword">return</span> gasEstimate;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Gas估算失败:&quot;</span>, error.<span class="property">reason</span>);</span><br><span class="line">    <span class="keyword">throw</span> error;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景4-代理合约调用"><a href="#场景4-代理合约调用" class="headerlink" title="场景4: 代理合约调用"></a>场景4: 代理合约调用</h3><p><strong>需求</strong>：通过代理合约调用逻辑合约的函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> proxyAbi = [</span><br><span class="line">  <span class="string">&quot;function delegatecall(address target, bytes memory data) public payable&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">proxyTransfer</span>(<span class="params">proxyAddress, tokenAddress, to, amount, signer</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, signer);</span><br><span class="line">  <span class="keyword">const</span> proxy = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(proxyAddress, proxyAbi, signer);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 1. 生成token transfer的calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 通过代理合约的delegatecall执行</span></span><br><span class="line">  <span class="keyword">const</span> tx = <span class="keyword">await</span> proxy.<span class="title function_">delegatecall</span>(tokenAddress, data);</span><br><span class="line">  <span class="keyword">await</span> tx.<span class="title function_">wait</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;通过代理合约转账完成&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景5-事件日志解析"><a href="#场景5-事件日志解析" class="headerlink" title="场景5: 事件日志解析"></a>场景5: 事件日志解析</h3><p><strong>需求</strong>：从交易收据中解析原始事件日志。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">parseTransferEvents</span>(<span class="params">txHash, provider</span>) &#123;</span><br><span class="line">  <span class="comment">// 获取交易收据</span></span><br><span class="line">  <span class="keyword">const</span> receipt = <span class="keyword">await</span> provider.<span class="title function_">getTransactionReceipt</span>(txHash);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 创建ERC20接口用于解析日志</span></span><br><span class="line">  <span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>(erc20Abi);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 解析所有日志</span></span><br><span class="line">  <span class="keyword">const</span> events = receipt.<span class="property">logs</span></span><br><span class="line">    .<span class="title function_">map</span>(<span class="function"><span class="params">log</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> iface.<span class="title function_">parseLog</span>(log);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>; <span class="comment">// 忽略非ERC20事件</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">filter</span>(<span class="function"><span class="params">event</span> =&gt;</span> event !== <span class="literal">null</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 筛选Transfer事件</span></span><br><span class="line">  <span class="keyword">const</span> transfers = events.<span class="title function_">filter</span>(<span class="function"><span class="params">e</span> =&gt;</span> e.<span class="property">name</span> === <span class="string">&quot;Transfer&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;交易中的转账事件:&quot;</span>, transfers);</span><br><span class="line">  <span class="keyword">return</span> transfers;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="高级使用技巧"><a href="#高级使用技巧" class="headerlink" title="高级使用技巧"></a>高级使用技巧</h2><h3 id="1-动态参数编码"><a href="#1-动态参数编码" class="headerlink" title="1. 动态参数编码"></a>1. 动态参数编码</h3><p>当参数类型不确定时，可以手动编码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">encodeDynamicParams</span>(<span class="params">types, values</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> ethers.<span class="property">utils</span>.<span class="property">defaultAbiCoder</span>.<span class="title function_">encode</span>(types, values);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：编码动态数组</span></span><br><span class="line"><span class="keyword">const</span> dynamicData = <span class="title function_">encodeDynamicParams</span>(</span><br><span class="line">  [<span class="string">&quot;address[]&quot;</span>, <span class="string">&quot;uint256[]&quot;</span>],</span><br><span class="line">  [</span><br><span class="line">    [<span class="string">&quot;0x123...&quot;</span>, <span class="string">&quot;0x456...&quot;</span>],</span><br><span class="line">    [ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;1&quot;</span>), ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;2&quot;</span>)]</span><br><span class="line">  ]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-自定义错误处理"><a href="#2-自定义错误处理" class="headerlink" title="2. 自定义错误处理"></a>2. 自定义错误处理</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">safeCall</span>(<span class="params">contract, method, args</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> calldata = contract.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(method, args);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 使用callStatic模拟调用</span></span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> contract.<span class="property">callStatic</span>[method](...args);</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">success</span>: <span class="literal">true</span>, <span class="attr">data</span>: result &#125;;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="comment">// 解析revert原因</span></span><br><span class="line">    <span class="keyword">let</span> reason = <span class="string">&quot;未知错误&quot;</span>;</span><br><span class="line">    <span class="keyword">if</span> (error.<span class="property">data</span>) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        reason = contract.<span class="property">interface</span>.<span class="title function_">parseError</span>(error.<span class="property">data</span>).<span class="property">name</span>;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        reason = error.<span class="property">data</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">success</span>: <span class="literal">false</span>, <span class="attr">error</span>: reason &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Gas优化技巧"><a href="#3-Gas优化技巧" class="headerlink" title="3. Gas优化技巧"></a>3. Gas优化技巧</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">optimizedTransfer</span>(<span class="params">token, to, amount</span>) &#123;</span><br><span class="line">  <span class="comment">// 1. 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 获取当前gas价格</span></span><br><span class="line">  <span class="keyword">const</span> gasPrice = <span class="keyword">await</span> token.<span class="property">provider</span>.<span class="title function_">getGasPrice</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 3. 估算gas</span></span><br><span class="line">  <span class="keyword">const</span> gasLimit = <span class="keyword">await</span> token.<span class="property">estimateGas</span>.<span class="title function_">transfer</span>(to, amount)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">est</span> =&gt;</span> est.<span class="title function_">mul</span>(<span class="number">12</span>).<span class="title function_">div</span>(<span class="number">10</span>)) <span class="comment">// 增加20%缓冲</span></span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function">() =&gt;</span> ethers.<span class="property">BigNumber</span>.<span class="title function_">from</span>(<span class="number">100000</span>)); <span class="comment">// 默认值</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 4. 构建原始交易</span></span><br><span class="line">  <span class="keyword">const</span> tx = &#123;</span><br><span class="line">    <span class="attr">to</span>: token.<span class="property">address</span>,</span><br><span class="line">    <span class="attr">data</span>: data,</span><br><span class="line">    <span class="attr">gasPrice</span>: gasPrice,</span><br><span class="line">    <span class="attr">gasLimit</span>: gasLimit</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 5. 发送交易</span></span><br><span class="line">  <span class="keyword">return</span> token.<span class="property">signer</span>.<span class="title function_">sendTransaction</span>(tx);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="安全注意事项"><a href="#安全注意事项" class="headerlink" title="安全注意事项"></a>安全注意事项</h2><ol>
+<li><strong>Calldata验证</strong>：始终验证外部传入的calldata，防止恶意调用</li>
+<li><strong>Gas限制</strong>：为未知calldata设置合理的gas限制</li>
+<li><strong>重放攻击</strong>：签名后的calldata可以被重放，包含chainId和nonce</li>
+<li><strong>参数清洗</strong>：在解码前检查calldata长度和格式</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Calldata 在以太坊开发中扮演着核心角色，通过 ethers.js 提供的工具可以：</p>
+<ol>
+<li>高效编码和解码函数调用</li>
+<li>实现复杂的批量交易模式</li>
+<li>构建安全的离线签名系统</li>
+<li>优化gas使用成本</li>
+<li>与代理合约和高级模式交互</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cypto-Currency/" rel="tag"><i class="fa fa-tag"></i> Cypto Currency</a>
+              <a href="/tags/Ethereum/" rel="tag"><i class="fa fa-tag"></i> Ethereum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/11/Build-a-wechat-app-from-scratch/" rel="prev" title="Build a wechat app from scratch">
+                  <i class="fa fa-angle-left"></i> Build a wechat app from scratch
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/04/21/Merkle-Tree/" rel="next" title="Merkle Tree">
+                  Merkle Tree <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

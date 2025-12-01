@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction to Regression AlgorithmsRegression is a type of analysis used to understand relationships between variables. In machine learning, regression algorithms predict continuous outcomes based o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Regression Algorithms">
+<meta property="og:url" content="https://www.whereq.com/2024/10/22/Introduction-to-Regression-Algorithms/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction to Regression AlgorithmsRegression is a type of analysis used to understand relationships between variables. In machine learning, regression algorithms predict continuous outcomes based o">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/Linear_regression.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/sigmoid_graph.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/Decision_Tree_1.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/Random_forest_explain.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/SVM_margin.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/KnnClassification.png">
+<meta property="og:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/Artificial_neural_network.png">
+<meta property="article:published_time" content="2024-10-22T20:47:07.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.866Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.whereq.com/images/Introduction-to-Regression-Algorithms/Linear_regression.png">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/22/Introduction-to-Regression-Algorithms/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/22/Introduction-to-Regression-Algorithms/","path":"2024/10/22/Introduction-to-Regression-Algorithms/","title":"Introduction to Regression Algorithms"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to Regression Algorithms | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction-to-Regression-Algorithms"><span class="nav-number">1.</span> <span class="nav-text">Introduction to Regression Algorithms</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Index"><span class="nav-number">1.1.</span> <span class="nav-text">Index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Linear-Regression"><span class="nav-number">1.2.</span> <span class="nav-text">1. Linear Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram"><span class="nav-number">1.2.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example"><span class="nav-number">1.2.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Logistic-Regression"><span class="nav-number">1.3.</span> <span class="nav-text">2. Logistic Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Decision-Tree-Regression"><span class="nav-number">1.4.</span> <span class="nav-text">3. Decision Tree Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-2"><span class="nav-number">1.4.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Random-Forest-Regression"><span class="nav-number">1.5.</span> <span class="nav-text">4. Random Forest Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-3"><span class="nav-number">1.5.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-3"><span class="nav-number">1.5.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Support-Vector-Regression-SVR"><span class="nav-number">1.6.</span> <span class="nav-text">5. Support Vector Regression (SVR)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-4"><span class="nav-number">1.6.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-4"><span class="nav-number">1.6.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-K-Nearest-Neighbors-KNN-Regression"><span class="nav-number">1.7.</span> <span class="nav-text">6. K-Nearest Neighbors (KNN) Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-5"><span class="nav-number">1.7.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-5"><span class="nav-number">1.7.2.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Bayesian-Linear-Regression"><span class="nav-number">1.8.</span> <span class="nav-text">7. Bayesian Linear Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-6"><span class="nav-number">1.8.1.</span> <span class="nav-text">Python Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Lasso-and-Ridge-Regression"><span class="nav-number">1.9.</span> <span class="nav-text">8. Lasso and Ridge Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lasso-Regression-Code-Example"><span class="nav-number">1.9.1.</span> <span class="nav-text">Lasso Regression Code Example:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ridge-Regression-Code-Example"><span class="nav-number">1.9.2.</span> <span class="nav-text">Ridge Regression Code Example:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Regression-Analysis"><span class="nav-number">1.10.</span> <span class="nav-text">9. Regression Analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Neural-Networks-with-Regression"><span class="nav-number">1.11.</span> <span class="nav-text">10. Neural Networks with Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Diagram-6"><span class="nav-number">1.11.1.</span> <span class="nav-text">Example Diagram:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Code-Example-Using-Keras"><span class="nav-number">1.11.2.</span> <span class="nav-text">Python Code Example (Using Keras):</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">1.12.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/22/Introduction-to-Regression-Algorithms/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to Regression Algorithms | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Regression Algorithms
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-22 16:47:07" itemprop="dateCreated datePublished" datetime="2024-10-22T16:47:07-04:00">2024-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Introduction-to-Regression-Algorithms"><a href="#Introduction-to-Regression-Algorithms" class="headerlink" title="Introduction to Regression Algorithms"></a>Introduction to Regression Algorithms</h1><p>Regression is a type of analysis used to understand relationships between variables. In machine learning, regression algorithms predict continuous outcomes based on input data. In this article, we will cover several common regression algorithms with sample Python code snippets and visual aids to help you understand how they work. Let’s dive in!</p>
+<hr>
+<h2 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h2><ul>
+<li><a href="#introduction-to-regression-algorithms">Introduction to Regression Algorithms</a><ul>
+<li><a href="#index">Index</a></li>
+<li><a href="#1-linear-regression">1. Linear Regression</a><ul>
+<li><a href="#example-diagram">Example Diagram:</a></li>
+<li><a href="#python-code-example">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#2-logistic-regression">2. Logistic Regression</a><ul>
+<li><a href="#example-diagram-1">Example Diagram:</a></li>
+<li><a href="#python-code-example-1">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#3-decision-tree-regression">3. Decision Tree Regression</a><ul>
+<li><a href="#example-diagram-2">Example Diagram:</a></li>
+<li><a href="#python-code-example-2">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#4-random-forest-regression">4. Random Forest Regression</a><ul>
+<li><a href="#example-diagram-3">Example Diagram:</a></li>
+<li><a href="#python-code-example-3">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#5-support-vector-regression-svr">5. Support Vector Regression (SVR)</a><ul>
+<li><a href="#example-diagram-4">Example Diagram:</a></li>
+<li><a href="#python-code-example-4">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#6-k-nearest-neighbors-knn-regression">6. K-Nearest Neighbors (KNN) Regression</a><ul>
+<li><a href="#example-diagram-5">Example Diagram:</a></li>
+<li><a href="#python-code-example-5">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#7-bayesian-linear-regression">7. Bayesian Linear Regression</a><ul>
+<li><a href="#python-code-example-6">Python Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#8-lasso-and-ridge-regression">8. Lasso and Ridge Regression</a><ul>
+<li><a href="#lasso-regression-code-example">Lasso Regression Code Example:</a></li>
+<li><a href="#ridge-regression-code-example">Ridge Regression Code Example:</a></li>
+</ul>
+</li>
+<li><a href="#9-regression-analysis">9. Regression Analysis</a></li>
+<li><a href="#10-neural-networks-with-regression">10. Neural Networks with Regression</a><ul>
+<li><a href="#example-diagram-6">Example Diagram:</a></li>
+<li><a href="#python-code-example-using-keras">Python Code Example (Using Keras):</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="1-Linear-Regression"><a href="#1-Linear-Regression" class="headerlink" title="1. Linear Regression"></a>1. Linear Regression</h2><p><strong>Linear Regression</strong> models the relationship between input (x) and output (y) as a straight line. It tries to minimize the difference between the predicted and actual values.</p>
+<h3 id="Example-Diagram"><a href="#Example-Diagram" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Linear_regression.png" alt="Linear Regression"></p>
+<h3 id="Python-Code-Example"><a href="#Python-Code-Example" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = LinearRegression()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new values</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-Logistic-Regression"><a href="#2-Logistic-Regression" class="headerlink" title="2. Logistic Regression"></a>2. Logistic Regression</h2><p><strong>Logistic Regression</strong> is used for binary classification, predicting probabilities that the input belongs to one of two classes (e.g., “yes” or “no”).</p>
+<h3 id="Example-Diagram-1"><a href="#Example-Diagram-1" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/sigmoid_graph.png" alt="Logistic Regression"></p>
+<h3 id="Python-Code-Example-1"><a href="#Python-Code-Example-1" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data (1 or 0 outcome)</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = LogisticRegression()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">3.5</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=3.5: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-Decision-Tree-Regression"><a href="#3-Decision-Tree-Regression" class="headerlink" title="3. Decision Tree Regression"></a>3. Decision Tree Regression</h2><p><strong>Decision Tree Regression</strong> splits the data into different regions based on decisions and forms a tree structure. Each leaf node represents a prediction.</p>
+<h3 id="Example-Diagram-2"><a href="#Example-Diagram-2" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Decision_Tree_1.png" alt="Decision Tree"></p>
+<h3 id="Python-Code-Example-2"><a href="#Python-Code-Example-2" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1.5</span>, <span class="number">2.5</span>, <span class="number">3.0</span>, <span class="number">3.5</span>, <span class="number">4.0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = DecisionTreeRegressor()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new values</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-Random-Forest-Regression"><a href="#4-Random-Forest-Regression" class="headerlink" title="4. Random Forest Regression"></a>4. Random Forest Regression</h2><p><strong>Random Forest Regression</strong> is an ensemble of multiple decision trees that makes predictions by averaging the results of the trees.</p>
+<h3 id="Example-Diagram-3"><a href="#Example-Diagram-3" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Random_forest_explain.png" alt="Random Forest"></p>
+<h3 id="Python-Code-Example-3"><a href="#Python-Code-Example-3" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = RandomForestRegressor(n_estimators=<span class="number">100</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-Support-Vector-Regression-SVR"><a href="#5-Support-Vector-Regression-SVR" class="headerlink" title="5. Support Vector Regression (SVR)"></a>5. Support Vector Regression (SVR)</h2><p><strong>Support Vector Regression (SVR)</strong> fits the best line within a margin of error, known as the <strong>epsilon tube</strong>, focusing on points within this margin.</p>
+<h3 id="Example-Diagram-4"><a href="#Example-Diagram-4" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/SVM_margin.png" alt="SVR"></p>
+<h3 id="Python-Code-Example-4"><a href="#Python-Code-Example-4" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVR</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = SVR(kernel=<span class="string">&#x27;linear&#x27;</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-K-Nearest-Neighbors-KNN-Regression"><a href="#6-K-Nearest-Neighbors-KNN-Regression" class="headerlink" title="6. K-Nearest Neighbors (KNN) Regression"></a>6. K-Nearest Neighbors (KNN) Regression</h2><p><strong>KNN Regression</strong> finds the k-nearest data points to the input and predicts the value based on their average.</p>
+<h3 id="Example-Diagram-5"><a href="#Example-Diagram-5" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/KnnClassification.png" alt="KNN"></p>
+<h3 id="Python-Code-Example-5"><a href="#Python-Code-Example-5" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">1.5</span>, <span class="number">3.5</span>, <span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = KNeighborsRegressor(n_neighbors=<span class="number">2</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-Bayesian-Linear-Regression"><a href="#7-Bayesian-Linear-Regression" class="headerlink" title="7. Bayesian Linear Regression"></a>7. Bayesian Linear Regression</h2><p><strong>Bayesian Linear Regression</strong> adds probability to the linear regression model, providing a measure of uncertainty in predictions.</p>
+<h3 id="Python-Code-Example-6"><a href="#Python-Code-Example-6" class="headerlink" title="Python Code Example:"></a>Python Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> BayesianRidge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1.2</span>, <span class="number">2.3</span>, <span class="number">3.1</span>, <span class="number">4.8</span>, <span class="number">5.5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = BayesianRidge()</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-Lasso-and-Ridge-Regression"><a href="#8-Lasso-and-Ridge-Regression" class="headerlink" title="8. Lasso and Ridge Regression"></a>8. Lasso and Ridge Regression</h2><p><strong>Lasso Regression</strong> and <strong>Ridge Regression</strong> add regularization to reduce overfitting in linear regression. Lasso uses L1 regularization (shrinking coefficients to zero), while Ridge uses L2 regularization.</p>
+<h3 id="Lasso-Regression-Code-Example"><a href="#Lasso-Regression-Code-Example" class="headerlink" title="Lasso Regression Code Example:"></a>Lasso Regression Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Lasso</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = Lasso(alpha=<span class="number">0.1</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ridge-Regression-Code-Example"><a href="#Ridge-Regression-Code-Example" class="headerlink" title="Ridge Regression Code Example:"></a>Ridge Regression Code Example:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and train model</span></span><br><span class="line">model = Ridge(alpha=<span class="number">1.0</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-Regression-Analysis"><a href="#9-Regression-Analysis" class="headerlink" title="9. Regression Analysis"></a>9. Regression Analysis</h2><p><strong>Regression Analysis</strong> helps understand the relationships between variables, often used in fields such as economics and biology.</p>
+<hr>
+<h2 id="10-Neural-Networks-with-Regression"><a href="#10-Neural-Networks-with-Regression" class="headerlink" title="10. Neural Networks with Regression"></a>10. Neural Networks with Regression</h2><p><strong>Neural Networks</strong> can capture complex relationships between variables. For regression, the output layer of the network predicts continuous values.</p>
+<h3 id="Example-Diagram-6"><a href="#Example-Diagram-6" class="headerlink" title="Example Diagram:"></a>Example Diagram:</h3><p><img src="/images/Introduction-to-Regression-Algorithms/Artificial_neural_network.png" alt="Neural Networks"></p>
+<h3 id="Python-Code-Example-Using-Keras"><a href="#Python-Code-Example-Using-Keras" class="headerlink" title="Python Code Example (Using Keras):"></a>Python Code Example (Using Keras):</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> Dense</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample data</span></span><br><span class="line">X = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>], [<span class="number">4</span>], [<span class="number">5</span>]])</span><br><span class="line">y = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create neural network model</span></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Dense(<span class="number">10</span>, input_dim=<span class="number">1</span>, activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(Dense(<span class="number">1</span>))  <span class="comment"># Output layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile and train model</span></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;mean_squared_error&#x27;</span>)</span><br><span class="line">model.fit(X, y, epochs=<span class="number">100</span>, verbose=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict new value</span></span><br><span class="line">y_pred = model.predict(np</span><br><span class="line"></span><br><span class="line">.array([[<span class="number">6</span>]]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Prediction for X=6: <span class="subst">&#123;y_pred[<span class="number">0</span>][<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Each regression algorithm has its strengths and is suited for different tasks. <strong>Linear regression</strong> works well for simple data, while <strong>Random Forests</strong> and <strong>Neural Networks</strong> are ideal for more complex datasets. Learning and experimenting with these algorithms will help you solve a variety of predictive problems.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/22/Introduction-to-5-AI-Generation-Models/" rel="prev" title="Introduction to 5 AI Generation Models">
+                  <i class="fa fa-angle-left"></i> Introduction to 5 AI Generation Models
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/22/Restman/" rel="next" title="Restman">
+                  Restman <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

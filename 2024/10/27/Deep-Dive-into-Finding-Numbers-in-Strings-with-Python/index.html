@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction Why Find Numbers in Strings? Using String’s isnumeric() Method Using Regular Expressions to Find Numbers Example: Using Regular Expressions   Finding Numbers with Decimal Points Using Li">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Finding Numbers in Strings with Python">
+<meta property="og:url" content="https://www.whereq.com/2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Introduction Why Find Numbers in Strings? Using String’s isnumeric() Method Using Regular Expressions to Find Numbers Example: Using Regular Expressions   Finding Numbers with Decimal Points Using Li">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-27T23:22:12.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.862Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Deep Dive">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/","path":"2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/","title":"Deep Dive into Finding Numbers in Strings with Python"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Finding Numbers in Strings with Python | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Find-Numbers-in-Strings"><span class="nav-number">2.</span> <span class="nav-text">Why Find Numbers in Strings?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-String%E2%80%99s-isnumeric-Method"><span class="nav-number">3.</span> <span class="nav-text">Using String’s isnumeric() Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-Regular-Expressions-to-Find-Numbers"><span class="nav-number">4.</span> <span class="nav-text">Using Regular Expressions to Find Numbers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Using-Regular-Expressions"><span class="nav-number">4.1.</span> <span class="nav-text">Example: Using Regular Expressions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Finding-Numbers-with-Decimal-Points"><span class="nav-number">5.</span> <span class="nav-text">Finding Numbers with Decimal Points</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-List-Comprehension-to-Extract-Numbers"><span class="nav-number">6.</span> <span class="nav-text">Using List Comprehension to Extract Numbers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Using-List-Comprehension"><span class="nav-number">6.1.</span> <span class="nav-text">Example: Using List Comprehension</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filtering-Numbers-with-filter-Function"><span class="nav-number">7.</span> <span class="nav-text">Filtering Numbers with filter() Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Using-filter-Function"><span class="nav-number">7.1.</span> <span class="nav-text">Example: Using filter() Function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Splitting-Strings-to-Extract-Numbers"><span class="nav-number">8.</span> <span class="nav-text">Splitting Strings to Extract Numbers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Using-split-Method"><span class="nav-number">8.1.</span> <span class="nav-text">Example: Using split() Method</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-ast-literal-eval-to-Parse-Numbers"><span class="nav-number">9.</span> <span class="nav-text">Using ast.literal_eval to Parse Numbers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example-Using-ast-literal-eval"><span class="nav-number">9.1.</span> <span class="nav-text">Example: Using ast.literal_eval</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">10.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Finding-Numbers-in-Strings-with-Python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Finding Numbers in Strings with Python | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Finding Numbers in Strings with Python
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 19:22:12" itemprop="dateCreated datePublished" datetime="2024-10-27T19:22:12-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#why-find-numbers-in-strings">Why Find Numbers in Strings?</a></li>
+<li><a href="#using-strings-isnumeric-method">Using String’s <code>isnumeric()</code> Method</a></li>
+<li><a href="#using-regular-expressions-to-find-numbers">Using Regular Expressions to Find Numbers</a><ul>
+<li><a href="#example-using-regular-expressions">Example: Using Regular Expressions</a></li>
+</ul>
+</li>
+<li><a href="#finding-numbers-with-decimal-points">Finding Numbers with Decimal Points</a></li>
+<li><a href="#using-list-comprehension-to-extract-numbers">Using List Comprehension to Extract Numbers</a><ul>
+<li><a href="#example-using-list-comprehension">Example: Using List Comprehension</a></li>
+</ul>
+</li>
+<li><a href="#filtering-numbers-with-filter-function">Filtering Numbers with <code>filter()</code> Function</a><ul>
+<li><a href="#example-using-filter-function">Example: Using <code>filter()</code> Function</a></li>
+</ul>
+</li>
+<li><a href="#splitting-strings-to-extract-numbers">Splitting Strings to Extract Numbers</a><ul>
+<li><a href="#example-using-split-method">Example: Using <code>split()</code> Method</a></li>
+</ul>
+</li>
+<li><a href="#using-astliteral_eval-to-parse-numbers">Using <code>ast.literal_eval</code> to Parse Numbers</a><ul>
+<li><a href="#example-using-astliteral_eval">Example: Using <code>ast.literal_eval</code></a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Handling strings that contain a mix of numbers and text is a common task in everyday programming. For example, you might need to extract numbers from complex text or identify whether certain strings contain numbers. In Python, there are various ways to tackle this problem, depending on your specific needs. This article will detail how to find numbers in strings using Python, providing concrete example code to help developers quickly master these techniques.</p>
+<hr>
+<p><a name="why-find-numbers-in-strings"></a></p>
+<h2 id="Why-Find-Numbers-in-Strings"><a href="#Why-Find-Numbers-in-Strings" class="headerlink" title="Why Find Numbers in Strings?"></a>Why Find Numbers in Strings?</h2><ul>
+<li><strong>Data Processing and Cleaning</strong>: Extract useful numeric information from web crawlers or log files, such as order numbers, timestamps, amounts, etc.</li>
+<li><strong>Input Validation</strong>: Detect whether user input strings contain numbers to ensure the validity of the input content.</li>
+<li><strong>Text Analysis</strong>: Extract numbers from text data for further data analysis or statistics.</li>
+</ul>
+<hr>
+<p><a name="using-strings-isnumeric-method"></a></p>
+<h2 id="Using-String’s-isnumeric-Method"><a href="#Using-String’s-isnumeric-Method" class="headerlink" title="Using String’s isnumeric() Method"></a>Using String’s <code>isnumeric()</code> Method</h2><p>Python’s string type (<code>str</code>) provides several methods to determine character types, one of which is <code>isnumeric()</code>. The <code>isnumeric()</code> method checks whether a string contains only numeric characters. If all characters in the string are numeric, the method returns <code>True</code>; otherwise, it returns <code>False</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">string = <span class="string">&quot;12345&quot;</span></span><br><span class="line"><span class="keyword">if</span> string.isnumeric():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;&#x27;<span class="subst">&#123;string&#125;</span>&#x27; contains only numbers&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;&#x27;<span class="subst">&#123;string&#125;</span>&#x27; contains more than just numbers&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>isnumeric()</code> checks if the string “12345” consists entirely of numeric characters. Although this method can determine if a string is entirely numeric, it cannot extract numbers from mixed strings.</p>
+<hr>
+<p><a name="using-regular-expressions-to-find-numbers"></a></p>
+<h2 id="Using-Regular-Expressions-to-Find-Numbers"><a href="#Using-Regular-Expressions-to-Find-Numbers" class="headerlink" title="Using Regular Expressions to Find Numbers"></a>Using Regular Expressions to Find Numbers</h2><p>Regular expressions (regex) are a powerful tool for text processing, ideal for finding and extracting numbers from strings. Python’s <code>re</code> module provides comprehensive regex support, making it easy to match numbers in strings.</p>
+<h3 id="Example-Using-Regular-Expressions"><a href="#Example-Using-Regular-Expressions" class="headerlink" title="Example: Using Regular Expressions"></a>Example: Using Regular Expressions</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="comment"># Define a string containing numbers</span></span><br><span class="line">text = <span class="string">&quot;Order number is 12345, amount is 678.90 dollar&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use regex to find all numbers</span></span><br><span class="line">numbers = re.findall(<span class="string">r&#x27;\d+&#x27;</span>, text)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Numbers found in the string: <span class="subst">&#123;numbers&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>re.findall()</code> uses the regex <code>\d+</code>, which matches one or more consecutive digits. <code>re.findall()</code> returns a list containing all matched numbers in the string. The output is: <code>[&#39;12345&#39;, &#39;678&#39;]</code>.</p>
+<hr>
+<p><a name="finding-numbers-with-decimal-points"></a></p>
+<h2 id="Finding-Numbers-with-Decimal-Points"><a href="#Finding-Numbers-with-Decimal-Points" class="headerlink" title="Finding Numbers with Decimal Points"></a>Finding Numbers with Decimal Points</h2><p>If you need to find numbers with decimal points in a string, you can use the following regex:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;Order number is 12345, amount is 678.90 dollar&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Find integers and decimals</span></span><br><span class="line">numbers = re.findall(<span class="string">r&#x27;\d+\.?\d*&#x27;</span>, text)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Numbers found in the string: <span class="subst">&#123;numbers&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this regex, <code>\d+</code> matches one or more digits, <code>\.</code> matches the decimal point, and <code>\d*</code> matches zero or more digits following the decimal point. The result is: <code>[&#39;12345&#39;, &#39;678.90&#39;]</code>.</p>
+<hr>
+<p><a name="using-list-comprehension-to-extract-numbers"></a></p>
+<h2 id="Using-List-Comprehension-to-Extract-Numbers"><a href="#Using-List-Comprehension-to-Extract-Numbers" class="headerlink" title="Using List Comprehension to Extract Numbers"></a>Using List Comprehension to Extract Numbers</h2><p>For simple scenarios, you can use Python’s list comprehension to quickly extract numbers from a string. By checking each character in the string to see if it is a digit, you can extract them.</p>
+<h3 id="Example-Using-List-Comprehension"><a href="#Example-Using-List-Comprehension" class="headerlink" title="Example: Using List Comprehension"></a>Example: Using List Comprehension</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">text = <span class="string">&quot;Order number 12345, amount 678.90 dollar&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Extract digit characters</span></span><br><span class="line">digits = [char <span class="keyword">for</span> char <span class="keyword">in</span> text <span class="keyword">if</span> char.isdigit()]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Extracted digit characters: <span class="subst">&#123;digits&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>isdigit()</code> is used to check each character in the string, resulting in a list of all digit characters: <code>[&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;, &#39;0&#39;]</code>. If you need to combine the extracted digits into a complete numeric string, you can use the <code>join()</code> method:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Combine extracted digit characters into a complete numeric string</span></span><br><span class="line">number_str = <span class="string">&#x27;&#x27;</span>.join(digits)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Complete numeric string: <span class="subst">&#123;number_str&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>The output is: <code>&quot;1234567890&quot;</code>.</p>
+<hr>
+<p><a name="filtering-numbers-with-filter-function"></a></p>
+<h2 id="Filtering-Numbers-with-filter-Function"><a href="#Filtering-Numbers-with-filter-Function" class="headerlink" title="Filtering Numbers with filter() Function"></a>Filtering Numbers with <code>filter()</code> Function</h2><p>Python’s built-in <code>filter()</code> function can be used to filter out non-numeric characters from a string, thereby extracting numeric characters. The <code>filter()</code> function works similarly to list comprehension but is more functional in style.</p>
+<h3 id="Example-Using-filter-Function"><a href="#Example-Using-filter-Function" class="headerlink" title="Example: Using filter() Function"></a>Example: Using <code>filter()</code> Function</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">text = <span class="string">&quot;Order number 12345, amount 678.90 dollar&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use the filter function to extract numbers</span></span><br><span class="line">numbers = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">filter</span>(<span class="built_in">str</span>.isdigit, text))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Extracted numbers: <span class="subst">&#123;numbers&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, the <code>filter()</code> function checks each character in the string, keeping only those that satisfy <code>isdigit()</code>, and then joins the extracted numeric characters into a complete string.</p>
+<hr>
+<p><a name="splitting-strings-to-extract-numbers"></a></p>
+<h2 id="Splitting-Strings-to-Extract-Numbers"><a href="#Splitting-Strings-to-Extract-Numbers" class="headerlink" title="Splitting Strings to Extract Numbers"></a>Splitting Strings to Extract Numbers</h2><p>In some scenarios, you can split the string first and then process each segment to extract numbers. The <code>split()</code> method can split a string into multiple parts based on a specified delimiter, suitable for handling structured text.</p>
+<h3 id="Example-Using-split-Method"><a href="#Example-Using-split-Method" class="headerlink" title="Example: Using split() Method"></a>Example: Using <code>split()</code> Method</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;Order number: 12345, amount: 678.90&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Split the string by spaces or punctuation</span></span><br><span class="line">parts = re.split(<span class="string">r&#x27;[，：: ]+&#x27;</span>, text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Extract numeric parts</span></span><br><span class="line">numbers = [part <span class="keyword">for</span> part <span class="keyword">in</span> parts <span class="keyword">if</span> part.replace(<span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="number">1</span>).isdigit()]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Extracted numbers: <span class="subst">&#123;numbers&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, <code>re.split()</code> is used to split the string, and then list comprehension extracts all numeric parts. <code>replace(&#39;.&#39;, &#39;&#39;, 1)</code> ensures that decimal points are handled correctly.</p>
+<hr>
+<p><a name="using-astliteral_eval-to-parse-numbers"></a></p>
+<h2 id="Using-ast-literal-eval-to-Parse-Numbers"><a href="#Using-ast-literal-eval-to-Parse-Numbers" class="headerlink" title="Using ast.literal_eval to Parse Numbers"></a>Using <code>ast.literal_eval</code> to Parse Numbers</h2><p>In some applications, you may need to extract numeric values from complex strings and parse them into numeric types (integers or floats). Python’s <code>ast.literal_eval()</code> method can safely parse a string into a Python data type.</p>
+<h3 id="Example-Using-ast-literal-eval"><a href="#Example-Using-ast-literal-eval" class="headerlink" title="Example: Using ast.literal_eval"></a>Example: Using <code>ast.literal_eval</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ast</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;Amount: 678.90&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Extract the numeric part of the string</span></span><br><span class="line">number_str = re.search(<span class="string">r&#x27;\d+\.?\d*&#x27;</span>, text).group()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Parse the string into a number</span></span><br><span class="line">number = ast.literal_eval(number_str)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Parsed number: <span class="subst">&#123;number&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In this example, the regex extracts the numeric part, and <code>ast.literal_eval()</code> converts it into the actual numeric type (float). This method is useful for extracting and converting numbers from text.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Finding and extracting numbers from strings is a common task in Python programming, whether for data cleaning, user input validation, or text analysis. This article has introduced various methods to find numbers in Python, including using string methods, regular expressions, list comprehension, the <code>filter()</code> function, and <code>ast.literal_eval()</code>. Each method has its strengths and can be chosen based on different application scenarios. With these tools, developers can quickly and efficiently extract and process numeric data from strings, enhancing code flexibility and processing capabilities.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/27/One-Real-Production-Issue-Fix-About-Race-Condition-in-Adobe-LiveCycle/" rel="prev" title="One Real Production Issue Fix About Race Condition in Adobe LiveCycle">
+                  <i class="fa fa-angle-left"></i> One Real Production Issue Fix About Race Condition in Adobe LiveCycle
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/" rel="next" title="Analyzing High Memory Usage in Kubernetes">
+                  Analyzing High Memory Usage in Kubernetes <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

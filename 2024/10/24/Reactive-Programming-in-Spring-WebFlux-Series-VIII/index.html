@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Security Introduction Why Security is Necessary Integrating Spring Security with WebFlux 1. Adding Dependencies 2. Configuring Security Policies 3. Customizing User Details Service   Preventing Commo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactive Programming in Spring WebFlux Series - VIII">
+<meta property="og:url" content="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Security Introduction Why Security is Necessary Integrating Spring Security with WebFlux 1. Adding Dependencies 2. Configuring Security Policies 3. Customizing User Details Service   Preventing Commo">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-24T18:06:50.000Z">
+<meta property="article:modified_time" content="2025-11-21T21:23:35.870Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/","path":"2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/","title":"Reactive Programming in Spring WebFlux Series - VIII"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reactive Programming in Spring WebFlux Series - VIII | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Security"><span class="nav-number">1.</span> <span class="nav-text">Security</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Security-is-Necessary"><span class="nav-number">2.1.</span> <span class="nav-text">Why Security is Necessary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Integrating-Spring-Security-with-WebFlux"><span class="nav-number">2.2.</span> <span class="nav-text">Integrating Spring Security with WebFlux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Adding-Dependencies"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. Adding Dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Configuring-Security-Policies"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. Configuring Security Policies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Customizing-User-Details-Service"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. Customizing User Details Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Preventing-Common-Security-Threats"><span class="nav-number">2.3.</span> <span class="nav-text">Preventing Common Security Threats</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-CSRF-Cross-Site-Request-Forgery"><span class="nav-number">2.3.1.</span> <span class="nav-text">1. CSRF (Cross-Site Request Forgery)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-XSS-Cross-Site-Scripting"><span class="nav-number">2.3.2.</span> <span class="nav-text">2. XSS (Cross-Site Scripting)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Security-Best-Practices"><span class="nav-number">2.4.</span> <span class="nav-text">Security Best Practices</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF-and-XSS-Attacks"><span class="nav-number">2.5.</span> <span class="nav-text">CSRF and XSS Attacks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-CSRF"><span class="nav-number">2.5.1.</span> <span class="nav-text">What is CSRF?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mitigating-CSRF"><span class="nav-number">2.5.1.1.</span> <span class="nav-text">Mitigating CSRF</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-XSS"><span class="nav-number">2.5.2.</span> <span class="nav-text">What is XSS?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mitigating-XSS"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">Mitigating XSS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">2.6.</span> <span class="nav-text">Conclusion</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VIII/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reactive Programming in Spring WebFlux Series - VIII | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reactive Programming in Spring WebFlux Series - VIII
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:06:50" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:50-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a href="#security">Security</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#why-security-is-necessary">Why Security is Necessary</a></li>
+<li><a href="#integrating-spring-security-with-webflux">Integrating Spring Security with WebFlux</a><ul>
+<li><a href="#1-adding-dependencies">1. Adding Dependencies</a></li>
+<li><a href="#2-configuring-security-policies">2. Configuring Security Policies</a></li>
+<li><a href="#3-customizing-user-details-service">3. Customizing User Details Service</a></li>
+</ul>
+</li>
+<li><a href="#preventing-common-security-threats">Preventing Common Security Threats</a><ul>
+<li><a href="#1-csrf-cross-site-request-forgery">1. CSRF (Cross-Site Request Forgery)</a></li>
+<li><a href="#2-xss-cross-site-scripting">2. XSS (Cross-Site Scripting)</a></li>
+</ul>
+</li>
+<li><a href="#security-best-practices">Security Best Practices</a></li>
+<li><a href="#csrf-and-xss-attacks">CSRF and XSS Attacks</a><ul>
+<li><a href="#what-is-csrf">What is CSRF?</a><ul>
+<li><a href="#mitigating-csrf">Mitigating CSRF</a></li>
+</ul>
+</li>
+<li><a href="#what-is-xss">What is XSS?</a><ul>
+<li><a href="#mitigating-xss">Mitigating XSS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h1><hr>
+<p><a name="introduction"></a></p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we discussed the foundational concepts of Spring WebFlux, Reactor, error handling, data flow transformation, reactive database access, performance optimization, and applying these concepts in complex scenarios. This article will dive into how to implement security in Spring WebFlux to ensure that our applications run safely in high-concurrency environments.</p>
+<p><a name="why-security-is-necessary"></a></p>
+<h2 id="Why-Security-is-Necessary"><a href="#Why-Security-is-Necessary" class="headerlink" title="Why Security is Necessary"></a>Why Security is Necessary</h2><p>In any web application, security is crucial. It protects user data from unauthorized access and modifications while preventing common security threats such as Cross-Site Scripting (XSS), SQL Injection, and Cross-Site Request Forgery (CSRF). In Spring WebFlux, security must be carefully considered and implemented to ensure a secure reactive environment.</p>
+<p><a name="integrating-spring-security-with-webflux"></a></p>
+<h2 id="Integrating-Spring-Security-with-WebFlux"><a href="#Integrating-Spring-Security-with-WebFlux" class="headerlink" title="Integrating Spring Security with WebFlux"></a>Integrating Spring Security with WebFlux</h2><p>Spring Security is a powerful framework within the Spring ecosystem, designed to secure Spring applications. It supports integration with Spring WebFlux, providing comprehensive security for reactive applications.</p>
+<p><a name="adding-dependencies"></a></p>
+<h3 id="1-Adding-Dependencies"><a href="#1-Adding-Dependencies" class="headerlink" title="1. Adding Dependencies"></a>1. Adding Dependencies</h3><p>First, add the necessary Spring Security dependencies to your project:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="configuring-security-policies"></a></p>
+<h3 id="2-Configuring-Security-Policies"><a href="#2-Configuring-Security-Policies" class="headerlink" title="2. Configuring Security Policies"></a>2. Configuring Security Policies</h3><p>Next, create a configuration class to define your security policies:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.web.server.ServerHttpSecurity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.web.server.SecurityWebFilterChain;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebFluxSecurity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> SecurityWebFilterChain <span class="title function_">securityWebFilterChain</span><span class="params">(ServerHttpSecurity http)</span> &#123;</span><br><span class="line">        http</span><br><span class="line">            .authorizeExchange(exchanges -&gt; exchanges</span><br><span class="line">                .pathMatchers(<span class="string">&quot;/login&quot;</span>, <span class="string">&quot;/public/**&quot;</span>).permitAll()</span><br><span class="line">                .anyExchange().authenticated()</span><br><span class="line">            )</span><br><span class="line">            .httpBasic().and()</span><br><span class="line">            .formLogin().and()</span><br><span class="line">            .csrf().disable();  <span class="comment">// CSRF is disabled for this example but should be enabled in production</span></span><br><span class="line">        <span class="keyword">return</span> http.build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this configuration, we define basic security rules: allowing unauthenticated users to access the login page and public resources while requiring authentication for other requests. We’ve enabled basic authentication and form login.</p>
+<p><a name="customizing-user-details-service"></a></p>
+<h3 id="3-Customizing-User-Details-Service"><a href="#3-Customizing-User-Details-Service" class="headerlink" title="3. Customizing User Details Service"></a>3. Customizing User Details Service</h3><p>To handle user authentication, you can customize the user details service:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.core.userdetails.MapReactiveUserDetailsService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.core.userdetails.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.core.userdetails.UserDetails;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDetailsServiceConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> MapReactiveUserDetailsService <span class="title function_">userDetailsService</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">UserDetails</span> <span class="variable">user</span> <span class="operator">=</span> User.withDefaultPasswordEncoder()</span><br><span class="line">            .username(<span class="string">&quot;user&quot;</span>)</span><br><span class="line">            .password(<span class="string">&quot;password&quot;</span>)</span><br><span class="line">            .roles(<span class="string">&quot;USER&quot;</span>)</span><br><span class="line">            .build();</span><br><span class="line">        <span class="type">UserDetails</span> <span class="variable">admin</span> <span class="operator">=</span> User.withDefaultPasswordEncoder()</span><br><span class="line">            .username(<span class="string">&quot;admin&quot;</span>)</span><br><span class="line">            .password(<span class="string">&quot;password&quot;</span>)</span><br><span class="line">            .roles(<span class="string">&quot;ADMIN&quot;</span>)</span><br><span class="line">            .build();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">MapReactiveUserDetailsService</span>(user, admin);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="preventing-common-security-threats"></a></p>
+<h2 id="Preventing-Common-Security-Threats"><a href="#Preventing-Common-Security-Threats" class="headerlink" title="Preventing Common Security Threats"></a>Preventing Common Security Threats</h2><p>In this section, we will cover some common security threats and how to prevent them in Spring WebFlux.</p>
+<p><a name="csrf-cross-site-request-forgery"></a></p>
+<h3 id="1-CSRF-Cross-Site-Request-Forgery"><a href="#1-CSRF-Cross-Site-Request-Forgery" class="headerlink" title="1. CSRF (Cross-Site Request Forgery)"></a>1. CSRF (Cross-Site Request Forgery)</h3><p>In production environments, it is recommended to enable CSRF protection to prevent CSRF attacks:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http</span><br><span class="line">    .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse());</span><br></pre></td></tr></table></figure>
+
+<p><a name="xss-cross-site-scripting"></a></p>
+<h3 id="2-XSS-Cross-Site-Scripting"><a href="#2-XSS-Cross-Site-Scripting" class="headerlink" title="2. XSS (Cross-Site Scripting)"></a>2. XSS (Cross-Site Scripting)</h3><p>To prevent XSS attacks, ensure that user input is properly encoded when rendered. Spring Security provides built-in mechanisms to handle encoding in most cases.</p>
+<p><a name="security-best-practices"></a></p>
+<h2 id="Security-Best-Practices"><a href="#Security-Best-Practices" class="headerlink" title="Security Best Practices"></a>Security Best Practices</h2><ol>
+<li><strong>Use Strong Passwords</strong>: Ensure users create strong passwords and update them regularly.</li>
+<li><strong>Principle of Least Privilege</strong>: Grant users only the minimum privileges necessary to perform their tasks.</li>
+<li><strong>Enable HTTPS</strong>: Use HTTPS to encrypt data transmission, preventing data interception or tampering.</li>
+<li><strong>Regularly Update Dependencies</strong>: Keep Spring Security and other dependencies up-to-date to include the latest security patches.</li>
+<li><strong>Implement Multi-Factor Authentication (MFA)</strong>: Enhance authentication security by adding an extra layer of verification.</li>
+</ol>
+<p><a name="csrf-and-xss-attacks"></a></p>
+<h2 id="CSRF-and-XSS-Attacks"><a href="#CSRF-and-XSS-Attacks" class="headerlink" title="CSRF and XSS Attacks"></a>CSRF and XSS Attacks</h2><h3 id="What-is-CSRF"><a href="#What-is-CSRF" class="headerlink" title="What is CSRF?"></a>What is CSRF?</h3><p><strong>Cross-Site Request Forgery (CSRF)</strong> is an attack where a malicious website tricks a user into executing actions on another website where they are authenticated. For example, if a user is logged into their banking website, a malicious website could make unauthorized money transfers on behalf of the user.</p>
+<h4 id="Mitigating-CSRF"><a href="#Mitigating-CSRF" class="headerlink" title="Mitigating CSRF"></a>Mitigating CSRF</h4><ul>
+<li>Use <strong>CSRF tokens</strong>: These tokens ensure that requests made to sensitive endpoints are genuine by embedding a unique token in each form or API request, which the server validates.</li>
+<li><strong>SameSite cookies</strong>: Restricting cookies with the <code>SameSite</code> attribute can reduce the risk of CSRF by ensuring cookies are sent only for same-site requests.</li>
+</ul>
+<h3 id="What-is-XSS"><a href="#What-is-XSS" class="headerlink" title="What is XSS?"></a>What is XSS?</h3><p><strong>Cross-Site Scripting (XSS)</strong> is an attack where malicious scripts are injected into websites and executed in users’ browsers. This can be used to steal sensitive information like cookies, session tokens, or passwords.</p>
+<h4 id="Mitigating-XSS"><a href="#Mitigating-XSS" class="headerlink" title="Mitigating XSS"></a>Mitigating XSS</h4><ul>
+<li><strong>Input validation and output encoding</strong>: Always validate user inputs and encode any untrusted data before displaying it in a browser. This ensures that malicious scripts cannot be injected into the HTML.</li>
+<li><strong>Content Security Policy (CSP)</strong>: Use CSP headers to restrict the types of content that can be executed on your web pages, preventing the browser from executing malicious scripts.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to implement security in Spring WebFlux applications. By leveraging Spring Security, we can provide comprehensive security for reactive applications, ensuring protection against common threats like CSRF and XSS. Adopting best practices such as HTTPS, strong passwords, and least privilege can further strengthen your application’s security.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VII/" rel="prev" title="Reactive Programming in Spring WebFlux Series - VII">
+                  <i class="fa fa-angle-left"></i> Reactive Programming in Spring WebFlux Series - VII
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-IX/" rel="next" title="Reactive Programming in Spring WebFlux Series - IX">
+                  Reactive Programming in Spring WebFlux Series - IX <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
