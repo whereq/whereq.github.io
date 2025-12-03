@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Start with a simple piece of code snippet12345kafkaReceiver.receive()    .concatMap(message -&gt; process(message)           &#x2F;&#x2F; Step 1        .subscribeOn(Schedulers.boundedElastic()))  &#x2F;&#x2F; Step 2    .">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive Schedulers.boundedElastic()">
+<meta property="og:url" content="https://www.whereq.com/2025/12/02/Deep-Dive-Schedulers-boundedElastic/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Start with a simple piece of code snippet12345kafkaReceiver.receive()    .concatMap(message -&gt; process(message)           &#x2F;&#x2F; Step 1        .subscribeOn(Schedulers.boundedElastic()))  &#x2F;&#x2F; Step 2    .">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-03T01:24:20.000Z">
+<meta property="article:modified_time" content="2025-12-03T04:20:13.824Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="WebFlux">
+<meta property="article:tag" content="Reactive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/12/02/Deep-Dive-Schedulers-boundedElastic/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/12/02/Deep-Dive-Schedulers-boundedElastic/","path":"2025/12/02/Deep-Dive-Schedulers-boundedElastic/","title":"Deep Dive Schedulers.boundedElastic()"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive Schedulers.boundedElastic() | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Start-with-a-simple-piece-of-code-snippet"><span class="nav-number">1.</span> <span class="nav-text">Start with a simple piece of code snippet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-by-Step-Execution-Flow"><span class="nav-number">1.1.</span> <span class="nav-text">Step-by-Step Execution Flow</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-Is-Schedulers-boundedElastic-Exactly"><span class="nav-number">2.</span> <span class="nav-text">What Is Schedulers.boundedElastic() Exactly?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Comparison-with-Other-Schedulers"><span class="nav-number">2.1.</span> <span class="nav-text">Comparison with Other Schedulers</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Life-Example-%E2%80%93-What-Happens-with-10-000-Messages-sec"><span class="nav-number">3.</span> <span class="nav-text">Real-Life Example – What Happens with 10,000 Messages&#x2F;sec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Best-Practices-2025"><span class="nav-number">4.</span> <span class="nav-text">Best Practices (2025)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary"><span class="nav-number">5.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-exactly-happens-under-the-hood-when-you-write-this-line"><span class="nav-number">6.</span> <span class="nav-text">What exactly happens under the hood when you write this line:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-by-Step-Execution-Thread-View"><span class="nav-number">7.</span> <span class="nav-text">Step-by-Step Execution (Thread View)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Visual-Thread-Timeline"><span class="nav-number">8.</span> <span class="nav-text">Visual Thread Timeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#boundedElastic-Thread-Pool-Details-2025-defaults"><span class="nav-number">9.</span> <span class="nav-text">boundedElastic Thread Pool Details (2025 defaults)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Example-from-Production-Thread-Dump"><span class="nav-number">10.</span> <span class="nav-text">Real Example from Production Thread Dump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary-Again"><span class="nav-number">11.</span> <span class="nav-text">Summary Again</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-Exactly-Happens-Inside-Schedulers-boundedElastic-Reactor-3-5-Spring-Boot-3-x-%E2%80%93-2025"><span class="nav-number">12.</span> <span class="nav-text">What Exactly Happens Inside Schedulers.boundedElastic() (Reactor 3.5+ &#x2F; Spring Boot 3.x – 2025)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exact-Thread-Pool-Configuration-2025-defaults"><span class="nav-number">13.</span> <span class="nav-text">Exact Thread Pool Configuration (2025 defaults)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Execution-Strategy-%E2%80%93-Visualized"><span class="nav-number">14.</span> <span class="nav-text">Execution Strategy – Visualized</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#How-to-Change-the-Limits-Production-Tuning"><span class="nav-number">15.</span> <span class="nav-text">How to Change the Limits (Production Tuning)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-21-Bonus-Virtual-Threads-2024%E2%80%932025-reality"><span class="nav-number">16.</span> <span class="nav-text">Java 21+ Bonus: Virtual Threads (2024–2025 reality)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary-One-More-Time"><span class="nav-number">17.</span> <span class="nav-text">Summary One More Time</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Production-Code-Patterns"><span class="nav-number">18.</span> <span class="nav-text">Real Production Code Patterns</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Production-Tuning-Examples"><span class="nav-number">18.1.</span> <span class="nav-text">5. Production Tuning Examples</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-What-Happens-If-You-Forget-It-Real-Outage-Stories"><span class="nav-number">18.2.</span> <span class="nav-text">6. What Happens If You Forget It? (Real Outage Stories)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Must-Remember"><span class="nav-number">18.3.</span> <span class="nav-text">Must Remember!!!</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Can-Schedulers-boundedElastic-be-pre-configured"><span class="nav-number">19.</span> <span class="nav-text">Can Schedulers.boundedElastic() be pre-configured?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Can-I-Pre-create-Threads"><span class="nav-number">20.</span> <span class="nav-text">Can I Pre-create Threads?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Workaround-1-%E2%80%93-Force-virtual-threads-JDK-21-%E2%86%92-problem-disappears"><span class="nav-number">20.1.</span> <span class="nav-text">Workaround 1 – Force virtual threads (JDK 21+) → problem disappears</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Workaround-2-%E2%80%93-Custom-pre-warmed-scheduler-rare-but-possible"><span class="nav-number">20.2.</span> <span class="nav-text">Workaround 2 – Custom pre-warmed scheduler (rare, but possible)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Workaround-3-%E2%80%93-Eager-initialization-at-startup-hacky-but-works"><span class="nav-number">20.3.</span> <span class="nav-text">Workaround 3 – Eager initialization at startup (hacky but works)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2025-Production-Recommendation"><span class="nav-number">21.</span> <span class="nav-text">2025 Production Recommendation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono-fromCallable-%E2%80%93-The-Ultimate-2025-Explanation"><span class="nav-number">22.</span> <span class="nav-text">Mono.fromCallable(...) – The Ultimate 2025 Explanation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exact-Contract-Behavior"><span class="nav-number">23.</span> <span class="nav-text">Exact Contract &amp; Behavior</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-Two-Correct-Ways-to-Use-It-in-2025"><span class="nav-number">24.</span> <span class="nav-text">The Two Correct Ways to Use It in 2025</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Classic-way-Java-17%E2%80%9320-%E2%80%93-must-offload"><span class="nav-number">24.1.</span> <span class="nav-text">1. Classic way (Java 17–20) – must offload</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2025-way-Java-21-virtual-threads-%E2%80%93-offload-optional"><span class="nav-number">24.2.</span> <span class="nav-text">2. 2025 way (Java 21 + virtual threads) – offload optional</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-World-Examples-Copy-Paste-Ready"><span class="nav-number">25.</span> <span class="nav-text">Real-World Examples (Copy-Paste Ready)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Common-Mistakes-Seniors-Still-Make"><span class="nav-number">26.</span> <span class="nav-text">Common Mistakes Seniors Still Make</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono-fromCallable-vs-Alternatives-2025-Decision-Table"><span class="nav-number">27.</span> <span class="nav-text">Mono.fromCallable vs Alternatives (2025 Decision Table)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-One-Rule-Every-Senior-Lives-By"><span class="nav-number">28.</span> <span class="nav-text">The One Rule Every Senior Lives By</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/12/02/Deep-Dive-Schedulers-boundedElastic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive Schedulers.boundedElastic() | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive Schedulers.boundedElastic()
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-12-02 20:24:20 / Modified: 23:20:13" itemprop="dateCreated datePublished" datetime="2025-12-02T20:24:20-05:00">2025-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Reactive/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="Start-with-a-simple-piece-of-code-snippet"><a href="#Start-with-a-simple-piece-of-code-snippet" class="headerlink" title="Start with a simple piece of code snippet"></a>Start with a simple piece of code snippet</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kafkaReceiver.receive()</span><br><span class="line">    .concatMap(message -&gt; process(message)           <span class="comment">// Step 1</span></span><br><span class="line">        .subscribeOn(Schedulers.boundedElastic()))  <span class="comment">// Step 2</span></span><br><span class="line">    .doOnNext(msg -&gt; msg.receiverOffset().acknowledge()) <span class="comment">// Step 3</span></span><br><span class="line">    .subscribe();                                           <span class="comment">// Step 4</span></span><br></pre></td></tr></table></figure>
+
+<p>This is the <strong>gold-standard pattern</strong> in 2025 for consuming Kafka with <strong>Spring WebFlux + Project Reactor + Reactor Kafka</strong> when <code>process(message)</code> contains <strong>blocking code</strong> (JDBC, Redis sync driver, REST call with RestTemplate, file I&#x2F;O, etc.).</p>
+<h4 id="Step-by-Step-Execution-Flow"><a href="#Step-by-Step-Execution-Flow" class="headerlink" title="Step-by-Step Execution Flow"></a>Step-by-Step Execution Flow</h4><table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What Happens</th>
+<th>Which Thread Pool?</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>kafkaReceiver.receive()</code> returns a <code>Flux&lt;ReceiverRecord&gt;</code></td>
+<td>Runs on <strong>Netty event-loop</strong> threads (non-blocking I&#x2F;O)</td>
+<td>This thread <strong>must never block</strong> or the whole reactor Netty server will starve</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>concatMap</code> waits for the **previous <code>process()</code> to finish before taking the next message → preserves Kafka order per partition</td>
+<td>Still on Netty thread until…</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>subscribeOn(Schedulers.boundedElastic())</code> <strong>moves the entire upstream work</strong> (i.e. <code>process(message)</code>) to a <strong>boundedElastic</strong> thread</td>
+<td>→ jumps to <strong>boundedElastic thread pool</strong></td>
+<td>This is the <strong>only safe place</strong> to do blocking work</td>
+</tr>
+<tr>
+<td>3</td>
+<td>After <code>process()</code> completes successfully, we come back to the <strong>original Netty thread</strong> to call <code>acknowledge()</code></td>
+<td>Back on Netty event-loop</td>
+<td>Commit must happen on the same thread that received the record (Reactor Kafka requirement)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>.subscribe()</code> starts the whole chain</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="What-Is-Schedulers-boundedElastic-Exactly"><a href="#What-Is-Schedulers-boundedElastic-Exactly" class="headerlink" title="What Is Schedulers.boundedElastic() Exactly?"></a>What Is <code>Schedulers.boundedElastic()</code> Exactly?</h3><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value (Reactor 3.6+)</th>
+<th>What It Means in Practice</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Thread pool type</td>
+<td>Thread-per-task + <strong>bounded queue</strong></td>
+<td>Creates new threads on demand</td>
+</tr>
+<tr>
+<td>Max threads</td>
+<td><code>Math.max(10, CPU × 10)</code> → usually <strong>100–200</strong></td>
+<td>Will never create thousands of threads</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>Bounded (default 100,000 tasks)</td>
+<td>If queue full → <code>onError</code> with <code>QueueFullException</code></td>
+</tr>
+<tr>
+<td>Thread name prefix</td>
+<td><code>boundedElastic-x</code></td>
+<td>Easy to spot in thread dumps</td>
+</tr>
+<tr>
+<td>Designed for</td>
+<td><strong>Blocking I&#x2F;O</strong> (JDBC, blocking Redis, file, external sync API)</td>
+<td>This is the <strong>only</strong> scheduler you are allowed to block on</td>
+</tr>
+</tbody></table>
+<h4 id="Comparison-with-Other-Schedulers"><a href="#Comparison-with-Other-Schedulers" class="headerlink" title="Comparison with Other Schedulers"></a>Comparison with Other Schedulers</h4><table>
+<thead>
+<tr>
+<th>Scheduler</th>
+<th>Use Case</th>
+<th>Can I block here?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Schedulers.parallel()</code></td>
+<td>CPU-intensive (encryption, image processing)</td>
+<td>No – will starve CPU workers</td>
+</tr>
+<tr>
+<td><code>Schedulers.boundedElastic()</code></td>
+<td><strong>Blocking I&#x2F;O</strong> ← <strong>this is the one</strong></td>
+<td>Yes – made for this</td>
+</tr>
+<tr>
+<td><code>Schedulers.single()</code> &#x2F; <code>immediate()</code></td>
+<td>Rare, very specific cases</td>
+<td>Never block</td>
+</tr>
+</tbody></table>
+<h3 id="Real-Life-Example-–-What-Happens-with-10-000-Messages-sec"><a href="#Real-Life-Example-–-What-Happens-with-10-000-Messages-sec" class="headerlink" title="Real-Life Example – What Happens with 10,000 Messages&#x2F;sec"></a>Real-Life Example – What Happens with 10,000 Messages&#x2F;sec</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BAD – blocks Netty thread → entire WebFlux app dies in seconds</span></span><br><span class="line">.concatMap(msg -&gt; blockingJdbc.save(msg))</span><br><span class="line"></span><br><span class="line"><span class="comment">// GOOD – this code you posted</span></span><br><span class="line">.concatMap(message -&gt; process(message)           <span class="comment">// contains JdbcTemplate, RestTemplate, etc.</span></span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic()))</span><br></pre></td></tr></table></figure>
+
+<p>Without <code>subscribeOn(boundedElastic())</code> → Netty event-loop threads block → TCP backlog → all WebSocket clients disconnect → outage.</p>
+<p>With it → 150 boundedElastic threads happily do JDBC work, Netty stays responsive, throughput 10k+&#x2F;sec easily.</p>
+<h3 id="Best-Practices-2025"><a href="#Best-Practices-2025" class="headerlink" title="Best Practices (2025)"></a>Best Practices (2025)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Most common production pattern</span></span><br><span class="line">kafkaReceiver.receive()</span><br><span class="line">    .concatMap(record -&gt; </span><br><span class="line">        process(record.value())                              <span class="comment">// may block</span></span><br><span class="line">            .subscribeOn(Schedulers.boundedElastic())       <span class="comment">// ← mandatory</span></span><br><span class="line">            .doOnError(ex -&gt; log.error(<span class="string">&quot;...&quot;</span>, ex))</span><br><span class="line">            .onErrorReturn fallbackValue)                    <span class="comment">// don&#x27;t stop the consumer</span></span><br><span class="line">    .doOnNext(ReceiverRecord::receiverOffset.acknowledge)       <span class="comment">// commit</span></span><br><span class="line">    .retryWhen(Retry.backoff(<span class="number">10</span>, Duration.ofSeconds(<span class="number">1</span>)))        <span class="comment">// survive Kafka blips</span></span><br><span class="line">    .subscribe();</span><br></pre></td></tr></table></figure>
+
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p><code>Schedulers.boundedElastic()</code> is the <strong>only safe place</strong> to run blocking code in a WebFlux&#x2F;Reactive application.<br>Without it, you will kill your Netty event-loop and take down the entire service.<br>With it, you get safe, scalable, ordered Kafka consumption even when <code>process()</code> talks to JDBC, Redis sync, or any legacy blocking library.</p>
+<p>That one line <code>.subscribeOn(Schedulers.boundedElastic())</code> is literally the difference between a stable 50k RPS service and a total outage.</p>
+<h3 id="What-exactly-happens-under-the-hood-when-you-write-this-line"><a href="#What-exactly-happens-under-the-hood-when-you-write-this-line" class="headerlink" title="What exactly happens under the hood when you write this line:"></a>What exactly happens under the hood when you write this line:</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">process(record.value())</span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic())</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-by-Step-Execution-Thread-View"><a href="#Step-by-Step-Execution-Thread-View" class="headerlink" title="Step-by-Step Execution (Thread View)"></a>Step-by-Step Execution (Thread View)</h3><table>
+<thead>
+<tr>
+<th>Time</th>
+<th>What happens</th>
+<th>Which thread does the work?</th>
+<th>Thread pool name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Kafka record arrives on Netty event-loop thread</td>
+<td><code>reactor-http-nio-3</code> (or similar)</td>
+<td>Netty event-loop</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>concatMap</code> sees the <code>subscribeOn(boundedElastic())</code> operator</td>
+<td>Still on Netty thread</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Reactor <strong>immediately hands the entire <code>process(...)</code> chain</strong> to the <strong>boundedElastic scheduler</strong></td>
+<td>→ jumps to a thread from the <strong>boundedElastic thread pool</strong></td>
+<td><code>boundedElastic-1</code>, <code>boundedElastic-2</code>, …</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Your <code>process(record.value())</code> code runs <strong>completely on that boundedElastic thread</strong></td>
+<td>Yes – this thread can safely block (JDBC, RestTemplate, File I&#x2F;O, etc.)</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>When <code>process()</code> finishes (success or error), Reactor schedules the downstream operators (<code>.doOnNext(acknowledge)</code>) back on the <strong>original Netty thread</strong> (because of how Reactor Kafka is designed)</td>
+<td>Back to <code>reactor-http-nio-3</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="Visual-Thread-Timeline"><a href="#Visual-Thread-Timeline" class="headerlink" title="Visual Thread Timeline"></a>Visual Thread Timeline</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Netty thread (reactor-http-nio-3)          boundedElastic thread pool</span><br><span class="line">──────────────────────────────             ───────────────────────────────</span><br><span class="line">receive() → concatMap → subscribeOn() ──→  boundedElastic-7 runs process()</span><br><span class="line">                                           ← process() completes</span><br><span class="line">                                           → acknowledge() runs back on Netty thread</span><br></pre></td></tr></table></figure>
+
+<h3 id="boundedElastic-Thread-Pool-Details-2025-defaults"><a href="#boundedElastic-Thread-Pool-Details-2025-defaults" class="headerlink" title="boundedElastic Thread Pool Details (2025 defaults)"></a>boundedElastic Thread Pool Details (2025 defaults)</h3><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value (Reactor 3.6+)</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core threads</td>
+<td>10 (minimum)</td>
+<td>Always alive</td>
+</tr>
+<tr>
+<td>Maximum threads</td>
+<td><code>CPU cores × 10</code> → usually <strong>100–200</strong></td>
+<td>Grows only when queue is full</td>
+</tr>
+<tr>
+<td>Queue size</td>
+<td>100,000 tasks (configurable)</td>
+<td>If full → rejects with exception</td>
+</tr>
+<tr>
+<td>Thread keep-alive</td>
+<td>60 seconds (idle threads die)</td>
+<td>Saves memory</td>
+</tr>
+<tr>
+<td>Thread name prefix</td>
+<td><code>boundedElastic-1</code>, <code>boundedElastic-2</code>, …</td>
+<td>Easy to spot in <code>jstack</code> &#x2F; Grafana</td>
+</tr>
+</tbody></table>
+<h3 id="Real-Example-from-Production-Thread-Dump"><a href="#Real-Example-from-Production-Thread-Dump" class="headerlink" title="Real Example from Production Thread Dump"></a>Real Example from Production Thread Dump</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&quot;boundedElastic-27&quot; #124 daemon prio=5 os_prio=0 tid=0x... nid=0x4b2c runnable</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line">    at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(...)</span><br><span class="line"></span><br><span class="line">&quot;boundedElastic-28&quot; #125 daemon prio=5 os_prio=0 tid=0x... nid=0x4b2d waiting on condition</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">    at jdk.internal.misc.Unsafe.park(Native Method)</span><br><span class="line">    - parking to wait for &lt;0x...&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br></pre></td></tr></table></figure>
+
+<p>You can see 27 threads doing MySQL queries, 28 waiting for more work – <strong>exactly</strong> what we want.</p>
+<h3 id="Summary-Again"><a href="#Summary-Again" class="headerlink" title="Summary Again"></a>Summary Again</h3><blockquote>
+<p><code>subscribeOn(Schedulers.boundedElastic())</code> &#x3D;<br>“Take this whole piece of work (<code>process(...)</code>) and run it on a dedicated thread pool that is <strong>designed and allowed to block</strong>.<br>The Netty event-loop stays completely free and responsive.”</p>
+</blockquote>
+<p>That single operator is the #1 reason reactive Spring Boot + Kafka applications survive real production traffic without melting down.</p>
+<h3 id="What-Exactly-Happens-Inside-Schedulers-boundedElastic-Reactor-3-5-Spring-Boot-3-x-–-2025"><a href="#What-Exactly-Happens-Inside-Schedulers-boundedElastic-Reactor-3-5-Spring-Boot-3-x-–-2025" class="headerlink" title="What Exactly Happens Inside Schedulers.boundedElastic() (Reactor 3.5+ &#x2F; Spring Boot 3.x – 2025)"></a>What <strong>Exactly</strong> Happens Inside <code>Schedulers.boundedElastic()</code> (Reactor 3.5+ &#x2F; Spring Boot 3.x – 2025)</h3><table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Exact Answer (Source Code Level)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Which ThreadPoolExecutor is used under the hood?</strong></td>
+<td><code>BoundedElasticScheduler</code> → wraps a custom <strong><code>java.util.concurrent.ThreadPoolExecutor</code></strong> with a <strong>very special configuration</strong></td>
+</tr>
+<tr>
+<td><strong>Executor type</strong></td>
+<td><strong>Unbounded core + bounded maximum + bounded queue</strong> (the only one in the JDK that behaves like this)</td>
+</tr>
+<tr>
+<td><strong>JDK class</strong></td>
+<td><code>reactor.core.scheduler.BoundedElasticScheduler.BoundedScheduledExecutorService</code> → extends <code>ThreadPoolExecutor</code></td>
+</tr>
+<tr>
+<td><strong>Queue used</strong></td>
+<td><code>LinkedBlockingQueue&lt;Runnable&gt;</code> with <strong>configurable capacity</strong> (default 100,000)</td>
+</tr>
+<tr>
+<td><strong>Thread factory</strong></td>
+<td><code>reactor.core.scheduler.SchedulerThreadFactory</code> → names threads <code>boundedElastic-1</code>, <code>boundedElastic-2</code>, …</td>
+</tr>
+</tbody></table>
+<h3 id="Exact-Thread-Pool-Configuration-2025-defaults"><a href="#Exact-Thread-Pool-Configuration-2025-defaults" class="headerlink" title="Exact Thread Pool Configuration (2025 defaults)"></a>Exact Thread Pool Configuration (2025 defaults)</h3><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value (Reactor 3.6+)</th>
+<th>Formula &#x2F; Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>corePoolSize</strong></td>
+<td><code>0</code> (zero!)</td>
+<td>No threads kept alive when idle</td>
+</tr>
+<tr>
+<td><strong>maximumPoolSize</strong></td>
+<td><code>CPU × 10</code> (e.g. 8-core → 80, 16-core → 160, capped at ~200)</td>
+<td><code>Math.min(Runtime.getRuntime().availableProcessors() * 10, 100_000)</code></td>
+</tr>
+<tr>
+<td><strong>keepAliveTime</strong></td>
+<td><strong>60 seconds</strong></td>
+<td>Idle threads above core (i.e. all) die after 60s</td>
+</tr>
+<tr>
+<td><strong>Queue capacity</strong></td>
+<td><strong>100,000</strong> tasks by default</td>
+<td>Configurable via <code>-Dreactor.schedulers.boundedElastic.queueCapacity=500000</code></td>
+</tr>
+<tr>
+<td><strong>RejectedExecutionHandler</strong></td>
+<td><code>AbortPolicy</code> → throws <code>RejectedExecutionException</code> when queue full</td>
+<td>You’ll see <code>QueueFullException</code> in logs if overloaded</td>
+</tr>
+</tbody></table>
+<h3 id="Execution-Strategy-–-Visualized"><a href="#Execution-Strategy-–-Visualized" class="headerlink" title="Execution Strategy – Visualized"></a>Execution Strategy – Visualized</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">corePoolSize = 0  →  No threads at startup</span><br><span class="line">│</span><br><span class="line">└─ Task arrives → create new thread (up to maxPoolSize)</span><br><span class="line">        │</span><br><span class="line">        ├─ Queue has space → enqueue task</span><br><span class="line">        │       (even if threads &lt; maxPoolSize)</span><br><span class="line">        │</span><br><span class="line">        └─ Queue full + threads == maxPoolSize → REJECT</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Task arrives</span><br><span class="line">│</span><br><span class="line">├─ threads &lt; maxPoolSize → create new thread immediately</span><br><span class="line">│</span><br><span class="line">├─ threads == maxPoolSize → enqueue in 100k queue</span><br><span class="line">│</span><br><span class="line">└─ queue full + max threads → RejectedExecutionException → your Flux errors</span><br></pre></td></tr></table></figure>
+
+<p>This is <strong>NOT</strong> the classic “fixed + bounded queue” model.<br>It’s a <strong>hybrid</strong> designed specifically for blocking I&#x2F;O:</p>
+<ul>
+<li>Grow very aggressively (up to CPU×10) to handle bursty blocking calls</li>
+<li>Shrink back to zero when idle → saves memory in microservices</li>
+<li>Huge queue (100k) prevents rejection in normal spikes</li>
+</ul>
+<h3 id="How-to-Change-the-Limits-Production-Tuning"><a href="#How-to-Change-the-Limits-Production-Tuning" class="headerlink" title="How to Change the Limits (Production Tuning)"></a>How to Change the Limits (Production Tuning)</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml (Spring Boot)</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span>                    <span class="comment"># Java 21+ → switches to virtual threads automatically!</span></span><br></pre></td></tr></table></figure>
+
+<p>Or JVM flags:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Increase queue to 500k</span></span><br><span class="line">-Dreactor.schedulers.boundedElastic.queueCapacity=500000</span><br><span class="line"></span><br><span class="line"><span class="comment"># Force max 200 threads even on 32-core machines</span></span><br><span class="line">-Dreactor.schedulers.boundedElastic.maxThreads=200</span><br></pre></td></tr></table></figure>
+
+<h3 id="Java-21-Bonus-Virtual-Threads-2024–2025-reality"><a href="#Java-21-Bonus-Virtual-Threads-2024–2025-reality" class="headerlink" title="Java 21+ Bonus: Virtual Threads (2024–2025 reality)"></a>Java 21+ Bonus: Virtual Threads (2024–2025 reality)</h3><p>Since Java 21 + Reactor 3.6 + Spring Boot 3.2:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Schedulers.boundedElastic()   <span class="comment">// automatically uses virtual threads</span></span><br></pre></td></tr></table></figure>
+
+<p>→ Each task gets its own <strong>virtual thread</strong> instead of platform thread<br>→ maximumPoolSize becomes <strong>practically unlimited</strong> (hundreds of thousands)<br>→ Memory per thread drops from ~1–2 MB → ~100 KB<br>→ You can safely process 100k+ blocking JDBC calls concurrently</p>
+<h3 id="Summary-One-More-Time"><a href="#Summary-One-More-Time" class="headerlink" title="Summary One More Time"></a>Summary One More Time</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Schedulers.boundedElastic() </span><br><span class="line">   = ThreadPoolExecutor(</span><br><span class="line">        corePoolSize = <span class="number">0</span>,</span><br><span class="line">        maximumPoolSize = CPU × <span class="number">10</span>,</span><br><span class="line">        keepAlive = 60s,</span><br><span class="line">        queue = LinkedBlockingQueue(<span class="number">100_000</span>),</span><br><span class="line">        policy = AbortPolicy</span><br><span class="line">     )</span><br><span class="line">   + (since Java <span class="number">21</span>) automatically uses virtual threads → effectively unlimited</span><br></pre></td></tr></table></figure>
+
+<p>That’s why it’s the <strong>only safe</strong> place to call JDBC, RestTemplate, blocking Redis, etc. in a WebFlux&#x2F;Reactive application — and why it scales beautifully in real production systems handling 10k–100k RPS.</p>
+<h3 id="Real-Production-Code-Patterns"><a href="#Real-Production-Code-Patterns" class="headerlink" title="Real Production Code Patterns"></a>Real Production Code Patterns</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. Classic blocking Kafka consumer (most common)</span></span><br><span class="line">kafkaReceiver.receive()</span><br><span class="line">    .concatMap(record -&gt;</span><br><span class="line">        processBlocking(record.value())                    <span class="comment">// JDBC, RestTemplate, etc.</span></span><br><span class="line">            .subscribeOn(Schedulers.boundedElastic())     <span class="comment">// ← THIS SAVES YOUR APP</span></span><br><span class="line">            .doOnError(ex -&gt; log.error(<span class="string">&quot;Failed &#123;&#125;&quot;</span>, record, ex))</span><br><span class="line">            .onErrorResume(ex -&gt; Mono.empty())             <span class="comment">// don&#x27;t kill the stream</span></span><br><span class="line">    )</span><br><span class="line">    .doOnNext(ReceiverRecord::receiverOffset.acknowledge)</span><br><span class="line">    .subscribe();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. WebFlux controller calling legacy blocking service</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/legacy-report&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Mono&lt;Report&gt; <span class="title function_">getReport</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Mono.fromCallable(() -&gt; legacyBlockingService.generatePdf())</span><br><span class="line">               .subscribeOn(Schedulers.boundedElastic())   <span class="comment">// safe!</span></span><br><span class="line">               .timeout(Duration.ofSeconds(<span class="number">30</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. Parallel batch processing (e.g. 1000 files)</span></span><br><span class="line">Flux)</span><br><span class="line">filesFlux</span><br><span class="line">    .flatMap(file -&gt;</span><br><span class="line">        processFile(file)                                  <span class="comment">// heavy CPU + blocking I/O</span></span><br><span class="line">            .subscribeOn(Schedulers.boundedElastic()),</span><br><span class="line">        <span class="number">50</span>                                                    <span class="comment">// max 50 concurrent</span></span><br><span class="line">    )</span><br><span class="line">    .collectList()</span><br><span class="line">    .block();</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-Production-Tuning-Examples"><a href="#5-Production-Tuning-Examples" class="headerlink" title="5. Production Tuning Examples"></a>5. Production Tuning Examples</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Recommended JVM flags for high-throughput services (2025)</span></span><br><span class="line">-Dreactor.schedulers.boundedElastic.maxThreads=500</span><br><span class="line">-Dreactor.schedulers.boundedElastic.queueCapacity=200000</span><br><span class="line">-Dreactor.schedulers.defaultBoundedElasticOnVirtualThreads=<span class="literal">true</span>   <span class="comment"># force virtual threads even on JDK 21+</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Or in application.yml (Spring Boot 3.2+)</span></span><br><span class="line">spring:</span><br><span class="line">  threads:</span><br><span class="line">    virtual:</span><br><span class="line">      enabled: <span class="literal">true</span>   <span class="comment"># ← turns boundedElastic into virtual-thread heaven</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-What-Happens-If-You-Forget-It-Real-Outage-Stories"><a href="#6-What-Happens-If-You-Forget-It-Real-Outage-Stories" class="headerlink" title="6. What Happens If You Forget It? (Real Outage Stories)"></a>6. What Happens If You Forget It? (Real Outage Stories)</h4><table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Time to Total Outage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Call <code>JdbcTemplate</code> directly in WebFlux</td>
+<td>Netty threads block → TCP backlog → all WebSockets disconnect</td>
+<td>10–60 seconds</td>
+</tr>
+<tr>
+<td>Use <code>Schedulers.parallel()</code> for JDBC</td>
+<td>CPU workers starve → GC thrashing → OOM</td>
+<td>2–10 minutes</td>
+</tr>
+<tr>
+<td>Use <code>subscribeOn(boundedElastic())</code></td>
+<td>System stays alive at 50k+ RPS</td>
+<td>Never</td>
+</tr>
+</tbody></table>
+<h4 id="Must-Remember"><a href="#Must-Remember" class="headerlink" title="Must Remember!!!"></a>Must Remember!!!</h4><blockquote>
+<p><code>Schedulers.boundedElastic()</code> is the <strong>only thread pool specifically created so you can safely call blocking code (JDBC, RestTemplate, Redis sync, file I&#x2F;O, etc.) inside a fully reactive Spring WebFlux application without blowing up your Netty event loop.</strong></p>
+</blockquote>
+<h3 id="Can-Schedulers-boundedElastic-be-pre-configured"><a href="#Can-Schedulers-boundedElastic-be-pre-configured" class="headerlink" title="Can Schedulers.boundedElastic() be pre-configured?"></a><strong>Can</strong> <code>Schedulers.boundedElastic()</code> <strong>be pre-configured</strong>?</h3><p>Yes but <strong>only via system properties</strong> (JVM flags) or Spring Boot properties — <strong>not</strong> via code like <code>new BoundedElasticScheduler(...)</code> in normal applications.</p>
+<p>Here is the <strong>complete list of everything you can pre-configure</strong> in 2025 (Reactor 3.6+ &#x2F; Spring Boot 3.2+):</p>
+<table>
+<thead>
+<tr>
+<th>What you want to change</th>
+<th>How to do it (JVM flag)</th>
+<th>Spring Boot 3.2+ equivalent (application.yml)</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Maximum threads (JDK ≤20)</td>
+<td><code>-Dreactor.schedulers.boundedElastic.maxThreads=500</code></td>
+<td><code>spring.threads.virtual.enabled=false</code> + JVM flag</td>
+<td>CPU × 10</td>
+</tr>
+<tr>
+<td>Queue capacity</td>
+<td><code>-Dreactor.schedulers.boundedElastic.queueCapacity=500000</code></td>
+<td>—</td>
+<td>100,000</td>
+</tr>
+<tr>
+<td>Thread name prefix</td>
+<td><code>-Dreactor.schedulers.boundedElastic.threadPrefix=myapp-be</code></td>
+<td>—</td>
+<td><code>boundedElastic</code></td>
+</tr>
+<tr>
+<td>TTL of cached schedulers</td>
+<td><code>-Dreactor.schedulers.boundedElastic.cachedSchedulerExpireAfter=300s</code></td>
+<td>—</td>
+<td>60s</td>
+</tr>
+<tr>
+<td>Force virtual threads (JDK 21+)</td>
+<td><code>-Dreactor.schedulers.boundedElasticOnVirtualThreads=true</code></td>
+<td><code>spring.threads.virtual.enabled=true</code> ← <strong>recommended</strong></td>
+<td>auto-detect</td>
+</tr>
+<tr>
+<td><strong>Pre-warm &#x2F; init threads</strong></td>
+<td><strong>Not directly possible</strong></td>
+<td>—</td>
+<td>starts at 0</td>
+</tr>
+</tbody></table>
+<h3 id="Can-I-Pre-create-Threads"><a href="#Can-I-Pre-create-Threads" class="headerlink" title="Can I Pre-create Threads?"></a>Can I Pre-create Threads?</h3><p><strong>No</strong><br><code>boundedElastic</code> is intentionally designed with <code>corePoolSize = 0</code>.<br>There is <strong>no official way</strong> to pre-warm threads (create 10 threads at startup).</p>
+<p>But here are <strong>three real-world workarounds</strong> senior teams actually use**:</p>
+<h4 id="Workaround-1-–-Force-virtual-threads-JDK-21-→-problem-disappears"><a href="#Workaround-1-–-Force-virtual-threads-JDK-21-→-problem-disappears" class="headerlink" title="Workaround 1 – Force virtual threads (JDK 21+) → problem disappears"></a>Workaround 1 – Force virtual threads (JDK 21+) → problem disappears</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml – this is the 2025 gold standard</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span>        <span class="comment"># ← makes boundedElastic use virtual threads</span></span><br></pre></td></tr></table></figure>
+<p>→ Each task gets its own virtual thread instantly<br>→ No thread creation latency<br>→ No need to pre-warm anything<br>→ This is what Netflix, Uber, Alibaba, and most new Spring Boot 3 apps do.</p>
+<h4 id="Workaround-2-–-Custom-pre-warmed-scheduler-rare-but-possible"><a href="#Workaround-2-–-Custom-pre-warmed-scheduler-rare-but-possible" class="headerlink" title="Workaround 2 – Custom pre-warmed scheduler (rare, but possible)"></a>Workaround 2 – Custom pre-warmed scheduler (rare, but possible)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReactorConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Scheduler</span> <span class="variable">PREWARMED_BLOCKING</span> <span class="operator">=</span> Schedulers.newBoundedElastic(</span><br><span class="line">        <span class="number">20</span>,          <span class="comment">// core size (pre-created)</span></span><br><span class="line">        <span class="number">200</span>,         <span class="comment">// max size</span></span><br><span class="line">        <span class="string">&quot;myapp-blocking&quot;</span>, </span><br><span class="line">        <span class="number">60</span>           <span class="comment">// keep-alive seconds</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PreDestroy</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cleanup</span><span class="params">()</span> &#123;</span><br><span class="line">        PREWARMED_BLOCKING.dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Then use it instead:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.subscribeOn(ReactorConfig.PREWARMED_BLOCKING)</span><br></pre></td></tr></table></figure>
+
+<h4 id="Workaround-3-–-Eager-initialization-at-startup-hacky-but-works"><a href="#Workaround-3-–-Eager-initialization-at-startup-hacky-but-works" class="headerlink" title="Workaround 3 – Eager initialization at startup (hacky but works)"></a>Workaround 3 – Eager initialization at startup (hacky but works)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostConstruct</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">warmupBoundedElastic</span><span class="params">()</span> &#123;</span><br><span class="line">    IntStream.range(<span class="number">0</span>, <span class="number">20</span>).parallel().forEach(i -&gt;</span><br><span class="line">        Schedulers.boundedElastic().schedule(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">10</span>); &#125; <span class="keyword">catch</span> (Exception ignored) &#123;&#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>→ Forces the default <code>boundedElastic</code> to create 20 threads immediately.</p>
+<h3 id="2025-Production-Recommendation"><a href="#2025-Production-Recommendation" class="headerlink" title="2025 Production Recommendation"></a>2025 Production Recommendation</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml – copy-paste this and forget about thread pools forever</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span>                 <span class="comment"># ← turns boundedElastic into infinite virtual threads</span></span><br><span class="line">  <span class="attr">task:</span></span><br><span class="line">    <span class="attr">scheduling:</span></span><br><span class="line">      <span class="attr">pool:</span></span><br><span class="line">        <span class="attr">size:</span> <span class="number">50</span>                    <span class="comment"># for @Scheduled tasks</span></span><br></pre></td></tr></table></figure>
+
+<p>With Java 21 + Spring Boot 3.2 + this config:</p>
+<ul>
+<li><code>Schedulers.boundedElastic()</code> becomes <strong>effectively infinite</strong></li>
+<li>Thread creation latency ≈ 0</li>
+<li>Memory per blocking call ≈ 100 KB instead of 2 MB</li>
+<li>You never have to pre-warm or tune anything again</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Solution in 2025</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pre-warm threads</td>
+<td>Not possible with default scheduler</td>
+</tr>
+<tr>
+<td>Make it fast + infinite</td>
+<td><code>spring.threads.virtual.enabled=true</code> (JDK 21+) ← <strong>use this</strong></td>
+</tr>
+<tr>
+<td>Full control</td>
+<td>Create your own with <code>Schedulers.newBoundedElastic(...)</code></td>
+</tr>
+</tbody></table>
+<p>99 % of teams in 2025 just enable virtual threads and never think about <code>boundedElastic</code> configuration again.  </p>
+<h3 id="Mono-fromCallable-–-The-Ultimate-2025-Explanation"><a href="#Mono-fromCallable-–-The-Ultimate-2025-Explanation" class="headerlink" title="Mono.fromCallable(...) – The Ultimate 2025 Explanation"></a><code>Mono.fromCallable(...)</code> – The Ultimate 2025 Explanation</h3><p>(What every senior Java&#x2F;Reactive engineer must know inside-out)</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer (Real Production Truth)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>What is it?</strong></td>
+<td>A factory method that creates a <code>Mono&lt;T&gt;</code> from a <strong>blocking, callable piece of code</strong> (<code>Callable&lt;T&gt;</code> or lambda that returns <code>T</code>).</td>
+</tr>
+<tr>
+<td><strong>When do you use it?</strong></td>
+<td><strong>Every time you have to call legacy blocking code</strong> (JDBC, RestTemplate, Redis sync, file I&#x2F;O, external API, etc.) inside a reactive chain.</td>
+</tr>
+<tr>
+<td><strong>Is it blocking?</strong></td>
+<td>Yes — the code inside runs <strong>synchronously and blocks the calling thread</strong>.</td>
+</tr>
+<tr>
+<td><strong>Is it safe to call directly in WebFlux?</strong></td>
+<td><strong>Only safe if you offload it</strong> (via <code>.subscribeOn(...)</code>) — otherwise you block Netty event-loop → outage.</td>
+</tr>
+</tbody></table>
+<h3 id="Exact-Contract-Behavior"><a href="#Exact-Contract-Behavior" class="headerlink" title="Exact Contract &amp; Behavior"></a>Exact Contract &amp; Behavior</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Mono&lt;T&gt; <span class="title function_">fromCallable</span><span class="params">(Callable&lt;? extends T&gt; supplier)</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>What actually happens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>supplier</code> returns a value</td>
+<td><code>Mono</code> emits that value → <code>onNext</code> → <code>onComplete</code></td>
+</tr>
+<tr>
+<td><code>supplier</code> throws exception</td>
+<td><code>Mono</code> emits <code>onError</code> with that exception</td>
+</tr>
+<tr>
+<td><code>supplier</code> returns <code>null</code></td>
+<td><code>Mono</code> emits <code>onNext(null)</code> → <code>onComplete</code> (yes, null is allowed)</td>
+</tr>
+<tr>
+<td>You call it on Netty thread</td>
+<td>Blocks the carrier thread → <strong>bad</strong> unless you offload</td>
+</tr>
+</tbody></table>
+<h3 id="The-Two-Correct-Ways-to-Use-It-in-2025"><a href="#The-Two-Correct-Ways-to-Use-It-in-2025" class="headerlink" title="The Two Correct Ways to Use It in 2025"></a>The Two Correct Ways to Use It in 2025</h3><h4 id="1-Classic-way-Java-17–20-–-must-offload"><a href="#1-Classic-way-Java-17–20-–-must-offload" class="headerlink" title="1. Classic way (Java 17–20) – must offload"></a>1. Classic way (Java 17–20) – must offload</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mono.fromCallable(() -&gt; jdbcTemplate.queryForObject(sql, Long.class))</span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic())   <span class="comment">// ← mandatory pre-Java 21</span></span><br><span class="line">    .timeout(Duration.ofSeconds(<span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2025-way-Java-21-virtual-threads-–-offload-optional"><a href="#2-2025-way-Java-21-virtual-threads-–-offload-optional" class="headerlink" title="2. 2025 way (Java 21 + virtual threads) – offload optional"></a>2. 2025 way (Java 21 + virtual threads) – offload optional</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span>        <span class="comment"># ← turns boundedElastic into virtual threads</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Now perfectly safe without subscribeOn!</span></span><br><span class="line">Mono.fromCallable(() -&gt; jdbcTemplate.queryForObject(sql, Long.class))</span><br><span class="line">    .timeout(Duration.ofSeconds(<span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="Real-World-Examples-Copy-Paste-Ready"><a href="#Real-World-Examples-Copy-Paste-Ready" class="headerlink" title="Real-World Examples (Copy-Paste Ready)"></a>Real-World Examples (Copy-Paste Ready)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. Legacy JDBC call</span></span><br><span class="line">Mono.fromCallable(() -&gt; userRepository.findById(id))   <span class="comment">// blocking</span></span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic())</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. External blocking HTTP client</span></span><br><span class="line">Mono.fromCallable(() -&gt; restTemplate.postForEntity(url, request, String.class))</span><br><span class="line">    .map(HttpEntity::getBody)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. File I/O</span></span><br><span class="line">Mono.fromCallable(() -&gt; Files.readString(Path.of(<span class="string">&quot;/tmp/config.json&quot;</span>)))</span><br><span class="line">    .map(Json::parse)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. CPU-heavy calculation (WRONG scheduler!)</span></span><br><span class="line">Mono.fromCallable(() -&gt; complexEncryption(data))      <span class="comment">// CPU bound → use parallel!</span></span><br><span class="line">    .subscribeOn(Schedulers.parallel())               <span class="comment">// ← correct</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 5. With error handling + fallback</span></span><br><span class="line">Mono.fromCallable(() -&gt; legacyService.getUser(id))</span><br><span class="line">    .onErrorResume(ex -&gt; &#123;</span><br><span class="line">        log.warn(<span class="string">&quot;Legacy failed, using cache&quot;</span>, ex);</span><br><span class="line">        <span class="keyword">return</span> Mono.just(cachedUser);</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Common-Mistakes-Seniors-Still-Make"><a href="#Common-Mistakes-Seniors-Still-Make" class="headerlink" title="Common Mistakes Seniors Still Make"></a>Common Mistakes Seniors Still Make</h3><table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Consequence</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Forgetting <code>.subscribeOn(boundedElastic())</code></td>
+<td>Blocks Netty → all WebSockets disconnect</td>
+<td>Add it (or enable virtual threads)</td>
+</tr>
+<tr>
+<td>Using it for CPU work</td>
+<td>Starves parallel scheduler</td>
+<td>Use <code>Mono.fromSupplier</code> + <code>Schedulers.parallel()</code></td>
+</tr>
+<tr>
+<td>Chaining many <code>fromCallable</code> without limit</td>
+<td>Thread explosion (one thread per call)</td>
+<td>Use <code>.publishOn(...)</code> or limit concurrency</td>
+</tr>
+</tbody></table>
+<h3 id="Mono-fromCallable-vs-Alternatives-2025-Decision-Table"><a href="#Mono-fromCallable-vs-Alternatives-2025-Decision-Table" class="headerlink" title="Mono.fromCallable vs Alternatives (2025 Decision Table)"></a><code>Mono.fromCallable</code> vs Alternatives (2025 Decision Table)</h3><table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Best Choice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Simple blocking call (DB, HTTP, file)</td>
+<td><code>Mono.fromCallable(...).subscribeOn(boundedElastic())</code></td>
+<td>Cleanest</td>
+</tr>
+<tr>
+<td>You already have a <code>Supplier&lt;T&gt;</code></td>
+<td><code>Mono.fromSupplier(...)</code></td>
+<td>Same as fromCallable but no checked exception</td>
+</tr>
+<tr>
+<td>You want lazy execution only on subscribe</td>
+<td><code>Mono.defer(() -&gt; Mono.fromCallable(...))</code></td>
+<td>Prevents execution on cold publishers</td>
+</tr>
+<tr>
+<td>Async but blocking driver</td>
+<td>Prefer true async driver (R2DBC, reactive Redis)</td>
+<td>Zero blocking</td>
+</tr>
+</tbody></table>
+<h3 id="The-One-Rule-Every-Senior-Lives-By"><a href="#The-One-Rule-Every-Senior-Lives-By" class="headerlink" title="The One Rule Every Senior Lives By"></a>The One Rule Every Senior Lives By</h3><blockquote>
+<p><code>Mono.fromCallable &#123; blocking code &#125;</code><br>→ <strong>Always</strong> pair with <code>.subscribeOn(Schedulers.boundedElastic())</code><br>→ <strong>Or</strong> run on Java 21+ with <code>spring.threads.virtual.enabled=true</code> and delete the <code>subscribeOn</code> forever.</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/WebFlux/" rel="tag"><i class="fa fa-tag"></i> WebFlux</a>
+              <a href="/tags/Reactive/" rel="tag"><i class="fa fa-tag"></i> Reactive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/02/Keyclock-Revocation-Mechanism/" rel="prev" title="Keyclock Revocation Mechanism">
+                  <i class="fa fa-angle-left"></i> Keyclock Revocation Mechanism
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/" rel="next" title="The Complete Guide to Java Virtual Threads">
+                  The Complete Guide to Java Virtual Threads <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

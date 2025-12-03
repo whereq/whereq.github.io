@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Below is a clean, concise React Best Practices document that covers:✔ Avoiding unnecessary re-renders✔ Comparing Redux vs React built-in state vs Zustand✔ When to use useMemo and useCallback✔ Real-wor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Best Practices Guide - 2025">
+<meta property="og:url" content="https://www.whereq.com/2025/12/02/React-Best-Practices-Guide-2025/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Below is a clean, concise React Best Practices document that covers:✔ Avoiding unnecessary re-renders✔ Comparing Redux vs React built-in state vs Zustand✔ When to use useMemo and useCallback✔ Real-wor">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-03T03:41:40.000Z">
+<meta property="article:modified_time" content="2025-12-03T04:04:46.931Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="ReactJS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/12/02/React-Best-Practices-Guide-2025/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/12/02/React-Best-Practices-Guide-2025/","path":"2025/12/02/React-Best-Practices-Guide-2025/","title":"React Best Practices Guide - 2025"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>React Best Practices Guide - 2025 | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#React-Best-Practices-Guide-Rendering-State-Management-and-Memoization"><span class="nav-number">1.</span> <span class="nav-text">React Best Practices Guide (Rendering, State Management, and Memoization)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Avoiding-Unnecessary-Re-renders"><span class="nav-number">1.1.</span> <span class="nav-text">1. Avoiding Unnecessary Re-renders</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Keep-State-Local-and-Minimal"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 Keep State Local and Minimal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Break-Components-into-Smaller-Memoized-Pieces"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 Break Components into Smaller Memoized Pieces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Avoid-Recreating-Objects-Arrays-in-Props"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 Avoid Recreating Objects&#x2F;Arrays in Props</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-Avoid-Inline-Functions-When-Passing-to-Children"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 Avoid Inline Functions When Passing to Children</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-State-Management-Comparison"><span class="nav-number">2.</span> <span class="nav-text">2. State Management Comparison</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-React-Built-in-State-useState-useReducer-context"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 React Built-in State (useState, useReducer, context)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Best-for"><span class="nav-number">2.1.1.</span> <span class="nav-text">✔ Best for:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Pros"><span class="nav-number">2.1.2.</span> <span class="nav-text">✔ Pros:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%98-Cons"><span class="nav-number">2.1.3.</span> <span class="nav-text">✘ Cons:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Redux-Toolkit-RTK"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Redux Toolkit (RTK)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Best-for-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">✔ Best for:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Pros-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">✔ Pros:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%98-Cons-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">✘ Cons:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Zustand"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Zustand</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Best-for-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">✔ Best for:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Pros-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">✔ Pros:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%98-Cons-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">✘ Cons:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary-Table"><span class="nav-number">2.3.4.</span> <span class="nav-text">Summary Table</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-useMemo-and-useCallback-%E2%80%94-When-and-Why"><span class="nav-number">3.</span> <span class="nav-text">3. useMemo and useCallback — When and Why</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-useMemo"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 useMemo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Use-when"><span class="nav-number">3.1.1.</span> <span class="nav-text">✔ Use when:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-useCallback"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 useCallback</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%94-Use-when-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">✔ Use when:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Real-World-Example-Combining-Both"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Real-World Example Combining Both</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#When-NOT-to-use-them"><span class="nav-number">3.3.1.</span> <span class="nav-text">When NOT to use them</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Real-World-Scenarios-and-Patterns"><span class="nav-number">4.</span> <span class="nav-text">4. Real-World Scenarios and Patterns</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-Optimizing-a-Large-Table"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Optimizing a Large Table</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-Using-Zustand-for-Real-Time-WebSocket-Updates"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Using Zustand for Real-Time WebSocket Updates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-Redux-for-Multi-page-Enterprise-UI"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 Redux for Multi-page Enterprise UI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-Heavy-Calculation-Memoization"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 Heavy Calculation Memoization</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Final-Recommendations"><span class="nav-number">5.</span> <span class="nav-text">5. Final Recommendations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#If-you-want-simplicity-and-speed-%E2%86%92-Zustand"><span class="nav-number">5.0.1.</span> <span class="nav-text">If you want simplicity and speed → Zustand</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#If-you-have-huge-global-state-and-need-devtools-%E2%86%92-Redux-Toolkit"><span class="nav-number">5.0.2.</span> <span class="nav-text">If you have huge global state and need devtools → Redux Toolkit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#If-state-is-mostly-local-%E2%86%92-React-built-in-hooks"><span class="nav-number">5.0.3.</span> <span class="nav-text">If state is mostly local → React built-in hooks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#For-performance-tuning"><span class="nav-number">5.0.4.</span> <span class="nav-text">For performance tuning:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%9A%80-React-Best-Practices-for-Performance-State-Management"><span class="nav-number">6.</span> <span class="nav-text">🚀 React Best Practices for Performance &amp; State Management</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Minimizing-Unnecessary-Re-Renders"><span class="nav-number">6.1.</span> <span class="nav-text">1. Minimizing Unnecessary Re-Renders</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-The-Golden-Rule-Use-React-memo-Strategically"><span class="nav-number">6.1.1.</span> <span class="nav-text">A. The Golden Rule: Use React.memo Strategically</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-State-Colocation-The-%E2%80%9CLift-State-Down%E2%80%9D-Rule"><span class="nav-number">6.1.2.</span> <span class="nav-text">B. State Colocation (The “Lift State Down” Rule)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-Destructure-Props-Carefully"><span class="nav-number">6.1.3.</span> <span class="nav-text">C. Destructure Props Carefully</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-State-Management-Comparison-1"><span class="nav-number">6.2.</span> <span class="nav-text">2. State Management Comparison</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Architectural-Recommendation-The-Hybrid-Approach"><span class="nav-number">6.2.1.</span> <span class="nav-text">Architectural Recommendation: The Hybrid Approach</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Deep-Dive-into-Memoization-Hooks"><span class="nav-number">6.3.</span> <span class="nav-text">3. Deep Dive into Memoization Hooks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-useMemo"><span class="nav-number">6.3.1.</span> <span class="nav-text">A. useMemo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-useCallback"><span class="nav-number">6.3.2.</span> <span class="nav-text">B. useCallback</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-The-Relationship-The-Memoization-Cascade"><span class="nav-number">6.3.3.</span> <span class="nav-text">C. The Relationship: The Memoization Cascade</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#A-fundamental-question-in-optimizing-React-performance-The-difference-%E2%80%9Cbefore%E2%80%9D-and-%E2%80%9Cafter%E2%80%9D-using-React-memo-useMemo-and-useCallback-is-about-control-over-the-rendering-lifecycle-and-preventing-unnecessary-work"><span class="nav-number">7.</span> <span class="nav-text">A fundamental question in optimizing React performance! The difference “before” and “after” using React.memo, useMemo, and useCallback is about control over the rendering lifecycle and preventing unnecessary work.</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%92%A1-The-Core-Concept-Referential-Equality"><span class="nav-number">7.1.</span> <span class="nav-text">💡 The Core Concept: Referential Equality</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-React-memo-Component-Optimization"><span class="nav-number">7.2.</span> <span class="nav-text">1. React.memo (Component Optimization)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">7.2.1.</span> <span class="nav-text">Example</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-useMemo-Value-Optimization"><span class="nav-number">7.3.</span> <span class="nav-text">2. useMemo (Value Optimization)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-World-Scenario"><span class="nav-number">7.3.1.</span> <span class="nav-text">Real-World Scenario</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-useCallback-Function-Optimization"><span class="nav-number">7.4.</span> <span class="nav-text">3. useCallback (Function Optimization)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-World-Scenario-1"><span class="nav-number">7.4.1.</span> <span class="nav-text">Real-World Scenario</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/12/02/React-Best-Practices-Guide-2025/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="React Best Practices Guide - 2025 | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          React Best Practices Guide - 2025
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-12-02 22:41:40 / Modified: 23:04:46" itemprop="dateCreated datePublished" datetime="2025-12-02T22:41:40-05:00">2025-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Below is a clean, concise <strong>React Best Practices</strong> document that covers:<br>✔ Avoiding unnecessary re-renders<br>✔ Comparing Redux vs React built-in state vs Zustand<br>✔ When to use <code>useMemo</code> and <code>useCallback</code><br>✔ Real-world examples and patterns</p>
+<hr>
+<h1 id="React-Best-Practices-Guide-Rendering-State-Management-and-Memoization"><a href="#React-Best-Practices-Guide-Rendering-State-Management-and-Memoization" class="headerlink" title="React Best Practices Guide (Rendering, State Management, and Memoization)"></a><strong>React Best Practices Guide (Rendering, State Management, and Memoization)</strong></h1><h2 id="1-Avoiding-Unnecessary-Re-renders"><a href="#1-Avoiding-Unnecessary-Re-renders" class="headerlink" title="1. Avoiding Unnecessary Re-renders"></a><strong>1. Avoiding Unnecessary Re-renders</strong></h2><p>Unnecessary re-renders slow down your UI and degrade performance. The core rules to prevent them:</p>
+<h3 id="1-1-Keep-State-Local-and-Minimal"><a href="#1-1-Keep-State-Local-and-Minimal" class="headerlink" title="1.1 Keep State Local and Minimal"></a><strong>1.1 Keep State Local and Minimal</strong></h3><ul>
+<li>Only store what the component <em>needs</em> to render.</li>
+<li>Don’t store derived data in state (compute when needed).</li>
+<li>Lift state <em>only when necessary</em>.</li>
+</ul>
+<p>✔ Good:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [count, setCount] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>✘ Bad:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [double, setDouble] = <span class="title function_">useState</span>(count * <span class="number">2</span>);  <span class="comment">// derived → no need</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="1-2-Break-Components-into-Smaller-Memoized-Pieces"><a href="#1-2-Break-Components-into-Smaller-Memoized-Pieces" class="headerlink" title="1.2 Break Components into Smaller Memoized Pieces"></a><strong>1.2 Break Components into Smaller Memoized Pieces</strong></h3><ul>
+<li>Smaller components re-render less often.</li>
+<li>Apply <code>React.memo()</code> to memoize pure components.</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">UserRow</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(<span class="function">(<span class="params">&#123; user &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;user.name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="1-3-Avoid-Recreating-Objects-Arrays-in-Props"><a href="#1-3-Avoid-Recreating-Objects-Arrays-in-Props" class="headerlink" title="1.3 Avoid Recreating Objects&#x2F;Arrays in Props"></a><strong>1.3 Avoid Recreating Objects&#x2F;Arrays in Props</strong></h3><p>Passing a <em>new object reference</em> triggers re-renders.</p>
+<p>✘ Bad:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="title class_">UserList</span> filters=&#123;&#123; <span class="attr">active</span>: <span class="literal">true</span> &#125;&#125; /&gt;  <span class="comment">// new object every time</span></span><br></pre></td></tr></table></figure>
+
+<p>✔ Good:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> filters = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> (&#123; <span class="attr">active</span>: <span class="literal">true</span> &#125;), []);</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">UserList</span> <span class="attr">filters</span>=<span class="string">&#123;filters&#125;</span> /&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="1-4-Avoid-Inline-Functions-When-Passing-to-Children"><a href="#1-4-Avoid-Inline-Functions-When-Passing-to-Children" class="headerlink" title="1.4 Avoid Inline Functions When Passing to Children"></a><strong>1.4 Avoid Inline Functions When Passing to Children</strong></h3><p>Inline functions cause new references → re-render.</p>
+<p>✔ Solve with <code>useCallback</code><br>(see section 4)</p>
+<hr>
+<hr>
+<h1 id="2-State-Management-Comparison"><a href="#2-State-Management-Comparison" class="headerlink" title="2. State Management Comparison"></a><strong>2. State Management Comparison</strong></h1><h2 id="2-1-React-Built-in-State-useState-useReducer-context"><a href="#2-1-React-Built-in-State-useState-useReducer-context" class="headerlink" title="2.1 React Built-in State (useState, useReducer, context)"></a><strong>2.1 React Built-in State (useState, useReducer, context)</strong></h2><h3 id="✔-Best-for"><a href="#✔-Best-for" class="headerlink" title="✔ Best for:"></a>✔ Best for:</h3><ul>
+<li>Local UI state</li>
+<li>Small&#x2F;medium apps</li>
+<li>Component-specific logic</li>
+</ul>
+<h3 id="✔-Pros"><a href="#✔-Pros" class="headerlink" title="✔ Pros:"></a>✔ Pros:</h3><ul>
+<li>Simple</li>
+<li>No external dependency</li>
+<li>Fast, minimal overhead</li>
+</ul>
+<h3 id="✘-Cons"><a href="#✘-Cons" class="headerlink" title="✘ Cons:"></a>✘ Cons:</h3><ul>
+<li>Context re-renders entire subtree</li>
+<li>Harder for large global state</li>
+<li>Not ideal for complex async logic</li>
+</ul>
+<hr>
+<h2 id="2-2-Redux-Toolkit-RTK"><a href="#2-2-Redux-Toolkit-RTK" class="headerlink" title="2.2 Redux Toolkit (RTK)"></a><strong>2.2 Redux Toolkit (RTK)</strong></h2><h3 id="✔-Best-for-1"><a href="#✔-Best-for-1" class="headerlink" title="✔ Best for:"></a>✔ Best for:</h3><ul>
+<li>Large applications</li>
+<li>Complex global state workflows</li>
+<li>Predictable state transitions</li>
+<li>Time travel debugging</li>
+<li>Strict immutability, stable dev tooling</li>
+</ul>
+<h3 id="✔-Pros-1"><a href="#✔-Pros-1" class="headerlink" title="✔ Pros:"></a>✔ Pros:</h3><ul>
+<li>Centralized, predictable state</li>
+<li>Excellent debugging&#x2F;devtools</li>
+<li>Built-in async support (RTK Query)</li>
+</ul>
+<h3 id="✘-Cons-1"><a href="#✘-Cons-1" class="headerlink" title="✘ Cons:"></a>✘ Cons:</h3><ul>
+<li>More boilerplate than alternatives (though RTK solved most)</li>
+<li>Heavy for small apps</li>
+<li>Requires good understanding of reducers, actions</li>
+</ul>
+<hr>
+<h2 id="2-3-Zustand"><a href="#2-3-Zustand" class="headerlink" title="2.3 Zustand"></a><strong>2.3 Zustand</strong></h2><p>A lightweight state manager that avoids context re-rendering.</p>
+<h3 id="✔-Best-for-2"><a href="#✔-Best-for-2" class="headerlink" title="✔ Best for:"></a>✔ Best for:</h3><ul>
+<li>Medium&#x2F;large apps needing global state</li>
+<li>Performance-sensitive apps</li>
+<li>Real-time or frequently updated data (e.g., WebGL apps, dashboards)</li>
+</ul>
+<h3 id="✔-Pros-2"><a href="#✔-Pros-2" class="headerlink" title="✔ Pros:"></a>✔ Pros:</h3><ul>
+<li>Extremely simple API (<code>useStore</code>)</li>
+<li>No provider required</li>
+<li>Selectors prevent unnecessary re-renders</li>
+<li>Small footprint</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> useStore = <span class="title function_">create</span>(<span class="function">(<span class="params">set</span>) =&gt;</span> (&#123;</span><br><span class="line">  <span class="attr">count</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="attr">increment</span>: <span class="function">() =&gt;</span> <span class="title function_">set</span>(<span class="function">(<span class="params">s</span>) =&gt;</span> (&#123; <span class="attr">count</span>: s.<span class="property">count</span> + <span class="number">1</span> &#125;)),</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>✔ Component re-renders only when the selected part changes:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> count = <span class="title function_">useStore</span>(<span class="function">(<span class="params">s</span>) =&gt;</span> s.<span class="property">count</span>); <span class="comment">// selector = optimized re-render</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="✘-Cons-2"><a href="#✘-Cons-2" class="headerlink" title="✘ Cons:"></a>✘ Cons:</h3><ul>
+<li>No built-in time travel&#x2F;debugging like Redux</li>
+<li>Fewer guardrails for large teams</li>
+</ul>
+<hr>
+<h3 id="Summary-Table"><a href="#Summary-Table" class="headerlink" title="Summary Table"></a><strong>Summary Table</strong></h3><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>React Built-in</th>
+<th>Redux Toolkit</th>
+<th>Zustand</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>App size</td>
+<td>Small–Medium</td>
+<td>Medium–Large</td>
+<td>Small–Large</td>
+</tr>
+<tr>
+<td>Global state</td>
+<td>Limited (Context)</td>
+<td>Excellent</td>
+<td>Excellent</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Good</td>
+<td>Good</td>
+<td>Best</td>
+</tr>
+<tr>
+<td>Boilerplate</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Very Low</td>
+</tr>
+<tr>
+<td>Devtools</td>
+<td>Basic</td>
+<td>Excellent</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Re-render control</td>
+<td>Weak</td>
+<td>Medium</td>
+<td>Strong</td>
+</tr>
+</tbody></table>
+<hr>
+<hr>
+<h1 id="3-useMemo-and-useCallback-—-When-and-Why"><a href="#3-useMemo-and-useCallback-—-When-and-Why" class="headerlink" title="3. useMemo and useCallback — When and Why"></a><strong>3. <code>useMemo</code> and <code>useCallback</code> — When and Why</strong></h1><h2 id="3-1-useMemo"><a href="#3-1-useMemo" class="headerlink" title="3.1 useMemo"></a><strong>3.1 <code>useMemo</code></strong></h2><p>Memoizes a <strong>computed value</strong>.</p>
+<h3 id="✔-Use-when"><a href="#✔-Use-when" class="headerlink" title="✔ Use when:"></a>✔ Use when:</h3><ul>
+<li>Expensive calculations</li>
+<li>Stable object&#x2F;array references needed</li>
+<li>Props require referential equality to avoid re-render</li>
+</ul>
+<p>Example:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sortedUsers = <span class="title function_">useMemo</span>(</span><br><span class="line">  <span class="function">() =&gt;</span> users.<span class="title function_">sort</span>(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a.<span class="property">name</span>.<span class="title function_">localeCompare</span>(b.<span class="property">name</span>)),</span><br><span class="line">  [users]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-2-useCallback"><a href="#3-2-useCallback" class="headerlink" title="3.2 useCallback"></a><strong>3.2 <code>useCallback</code></strong></h2><p>Memoizes a <strong>function reference</strong>.</p>
+<h3 id="✔-Use-when-1"><a href="#✔-Use-when-1" class="headerlink" title="✔ Use when:"></a>✔ Use when:</h3><ul>
+<li>Passing callbacks to memoized children</li>
+<li>Functions used in dependencies that should not change</li>
+<li>Avoiding new function reference on each render</li>
+</ul>
+<p>Example:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleClick = <span class="title function_">useCallback</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">doSomething</span>(value);</span><br><span class="line">&#125;, [value]);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-3-Real-World-Example-Combining-Both"><a href="#3-3-Real-World-Example-Combining-Both" class="headerlink" title="3.3 Real-World Example Combining Both"></a><strong>3.3 Real-World Example Combining Both</strong></h2><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> filters = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> (&#123; <span class="attr">active</span>: <span class="literal">true</span> &#125;), []);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> onSelect = <span class="title function_">useCallback</span>(<span class="function">(<span class="params">id</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">setSelected</span>(id);</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="When-NOT-to-use-them"><a href="#When-NOT-to-use-them" class="headerlink" title="When NOT to use them"></a><strong>When NOT to use them</strong></h3><p>Overuse causes more harm than good.</p>
+<p>❌ Don’t use them on trivial values&#x2F;functions.<br>❌ Only optimize where profiling shows need.</p>
+<hr>
+<hr>
+<h1 id="4-Real-World-Scenarios-and-Patterns"><a href="#4-Real-World-Scenarios-and-Patterns" class="headerlink" title="4. Real-World Scenarios and Patterns"></a><strong>4. Real-World Scenarios and Patterns</strong></h1><h2 id="4-1-Optimizing-a-Large-Table"><a href="#4-1-Optimizing-a-Large-Table" class="headerlink" title="4.1 Optimizing a Large Table"></a><strong>4.1 Optimizing a Large Table</strong></h2><p><strong>Use memoized rows + stable props</strong></p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Row</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(<span class="function">(<span class="params">&#123; item, onSelect &#125;</span>) =&gt;</span> &#123; … &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> onSelect = <span class="title function_">useCallback</span>(<span class="function">(<span class="params">id</span>) =&gt;</span> &#123; … &#125;, []);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-2-Using-Zustand-for-Real-Time-WebSocket-Updates"><a href="#4-2-Using-Zustand-for-Real-Time-WebSocket-Updates" class="headerlink" title="4.2 Using Zustand for Real-Time WebSocket Updates"></a><strong>4.2 Using Zustand for Real-Time WebSocket Updates</strong></h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> useStore = <span class="title function_">create</span>(<span class="function">(<span class="params">set</span>) =&gt;</span> (&#123;</span><br><span class="line">  <span class="attr">messages</span>: [],</span><br><span class="line">  <span class="attr">addMessage</span>: <span class="function">(<span class="params">m</span>) =&gt;</span> <span class="title function_">set</span>(<span class="function">(<span class="params">s</span>) =&gt;</span> (&#123; <span class="attr">messages</span>: [...s.<span class="property">messages</span>, m] &#125;)),</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>React components subscribe to slices:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messages = <span class="title function_">useStore</span>(<span class="function">(<span class="params">s</span>) =&gt;</span> s.<span class="property">messages</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Only re-renders on message changes—ideal for chat&#x2F;dashboards.</p>
+<hr>
+<h2 id="4-3-Redux-for-Multi-page-Enterprise-UI"><a href="#4-3-Redux-for-Multi-page-Enterprise-UI" class="headerlink" title="4.3 Redux for Multi-page Enterprise UI"></a><strong>4.3 Redux for Multi-page Enterprise UI</strong></h2><ul>
+<li>Form wizards</li>
+<li>Multi-step state</li>
+<li>Async API flows</li>
+<li>Devtools for debugging complex workflows</li>
+</ul>
+<hr>
+<h2 id="4-4-Heavy-Calculation-Memoization"><a href="#4-4-Heavy-Calculation-Memoization" class="headerlink" title="4.4 Heavy Calculation Memoization"></a><strong>4.4 Heavy Calculation Memoization</strong></h2><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> processed = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> <span class="title function_">expensiveWork</span>(data), [data]);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<hr>
+<h1 id="5-Final-Recommendations"><a href="#5-Final-Recommendations" class="headerlink" title="5. Final Recommendations"></a><strong>5. Final Recommendations</strong></h1><h3 id="If-you-want-simplicity-and-speed-→-Zustand"><a href="#If-you-want-simplicity-and-speed-→-Zustand" class="headerlink" title="If you want simplicity and speed → Zustand"></a><strong>If you want simplicity and speed</strong> → <strong>Zustand</strong></h3><h3 id="If-you-have-huge-global-state-and-need-devtools-→-Redux-Toolkit"><a href="#If-you-have-huge-global-state-and-need-devtools-→-Redux-Toolkit" class="headerlink" title="If you have huge global state and need devtools → Redux Toolkit"></a><strong>If you have huge global state and need devtools</strong> → <strong>Redux Toolkit</strong></h3><h3 id="If-state-is-mostly-local-→-React-built-in-hooks"><a href="#If-state-is-mostly-local-→-React-built-in-hooks" class="headerlink" title="If state is mostly local → React built-in hooks"></a><strong>If state is mostly local</strong> → <strong>React built-in hooks</strong></h3><h3 id="For-performance-tuning"><a href="#For-performance-tuning" class="headerlink" title="For performance tuning:"></a><strong>For performance tuning:</strong></h3><ul>
+<li>Split components</li>
+<li>Use memoization selectively</li>
+<li>Stabilize references with <code>useMemo</code> and <code>useCallback</code></li>
+<li>Prefer selectors in Zustand or RTK Query</li>
+</ul>
+<hr>
+<p>That’s a great request. As a senior architect, here is a best practices document focusing on performance, state management, and memoization in React, designed for intermediate to expert developers.</p>
+<hr>
+<h1 id="🚀-React-Best-Practices-for-Performance-State-Management"><a href="#🚀-React-Best-Practices-for-Performance-State-Management" class="headerlink" title="🚀 React Best Practices for Performance &amp; State Management"></a>🚀 React Best Practices for Performance &amp; State Management</h1><p>This document outlines key strategies and architectural decisions for building highly performant and scalable React applications, focusing on avoiding unnecessary re-renders and selecting the optimal state management tool.</p>
+<h2 id="1-Minimizing-Unnecessary-Re-Renders"><a href="#1-Minimizing-Unnecessary-Re-Renders" class="headerlink" title="1. Minimizing Unnecessary Re-Renders"></a>1. Minimizing Unnecessary Re-Renders</h2><p>The primary goal of React performance optimization is ensuring that components only render when their necessary inputs (props or state) actually change.</p>
+<h3 id="A-The-Golden-Rule-Use-React-memo-Strategically"><a href="#A-The-Golden-Rule-Use-React-memo-Strategically" class="headerlink" title="A. The Golden Rule: Use React.memo Strategically"></a>A. The Golden Rule: Use <code>React.memo</code> Strategically</h3><ul>
+<li><strong>Practice:</strong> Always wrap presentational (or “dumb”) components that receive props and do not manage their own state in <strong><code>React.memo</code></strong>.</li>
+<li><strong>Mechanism:</strong> <code>React.memo</code> is a <strong>Higher-Order Component (HOC)</strong> that performs a shallow comparison of the component’s previous props and its new props. If the props are shallowly equal, React skips rendering the component.</li>
+<li><strong>Caveat:</strong> If a parent component passes a new <strong>object</strong> or <strong>function reference</strong> on every render, <code>React.memo</code> will fail the shallow comparison and the child component will still re-render. This leads directly to the need for memoization hooks (see Section 3).</li>
+</ul>
+<h3 id="B-State-Colocation-The-“Lift-State-Down”-Rule"><a href="#B-State-Colocation-The-“Lift-State-Down”-Rule" class="headerlink" title="B. State Colocation (The “Lift State Down” Rule)"></a>B. State Colocation (The “Lift State Down” Rule)</h3><ul>
+<li><strong>Practice:</strong> Manage state at the <strong>lowest possible level</strong> in the component tree.</li>
+<li><strong>Rationale:</strong> When state is defined using <code>useState</code> in a parent component, every time that state changes, the parent <strong>and all its children</strong> re-render. By moving state down to the component that actually uses it, you isolate the re-render scope, preventing large sections of the application from updating needlessly.</li>
+</ul>
+<h3 id="C-Destructure-Props-Carefully"><a href="#C-Destructure-Props-Carefully" class="headerlink" title="C. Destructure Props Carefully"></a>C. Destructure Props Carefully</h3><ul>
+<li><strong>Practice:</strong> When passing large objects or arrays as props, only pass the specific properties the child component needs.</li>
+<li><strong>Example:</strong><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ Bad: Causes Re-render if any user property changes</span></span><br><span class="line">&lt;<span class="title class_">UserAvatar</span> user=&#123;largeUserObject&#125; /&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ Good: Only causes Re-render if the name changes</span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">UserAvatar</span> <span class="attr">userName</span>=<span class="string">&#123;largeUserObject.name&#125;</span> /&gt;</span></span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="2-State-Management-Comparison-1"><a href="#2-State-Management-Comparison-1" class="headerlink" title="2. State Management Comparison"></a>2. State Management Comparison</h2><p>Choosing the right state management tool depends on the <strong>complexity</strong> and <strong>frequency</strong> of your application’s state updates.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">React Context + <code>useReducer</code></th>
+<th align="left">Redux &#x2F; Redux Toolkit (RTK)</th>
+<th align="left">Zustand &#x2F; Jotai &#x2F; Recoil</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Philosophy</strong></td>
+<td align="left">Built-in, simple state sharing for medium-sized apps.</td>
+<td align="left">Centralized, predictable state container.</td>
+<td align="left">Decentralized, atomic, and minimal global state.</td>
+</tr>
+<tr>
+<td align="left"><strong>Re-render Scope</strong></td>
+<td align="left"><strong>Propagates broadly.</strong> Any component subscribing to the Context <strong>re-renders</strong> when <em>any</em> part of the Context value changes.</td>
+<td align="left"><strong>Optimized.</strong> Uses selectors and middleware (<code>reselect</code>) to ensure components only re-render when the <em>specific data</em> they select changes.</td>
+<td align="left"><strong>Optimized.</strong> Components only re-render when the specific <strong>slice of state</strong> they subscribe to changes, even if it’s deeply nested.</td>
+</tr>
+<tr>
+<td align="left"><strong>Boilerplate</strong></td>
+<td align="left">Low (only context provider&#x2F;consumer needed).</td>
+<td align="left">High (actions, reducers, constants, thunks, store config). <strong>RTK reduces this significantly.</strong></td>
+<td align="left"><strong>Very Low.</strong> Minimal boilerplate; functions like a global <code>useState</code>.</td>
+</tr>
+<tr>
+<td align="left"><strong>Ideal Scenario</strong></td>
+<td align="left">Theming, internationalization, or infrequent global state (e.g., current user ID).</td>
+<td align="left">Large, complex applications requiring <strong>data normalization</strong>, middleware, complex debugging, and persistent history (time-travel debugging).</td>
+<td align="left">Micro-frontends, small&#x2F;medium applications, or managing <strong>high-frequency</strong> state updates with maximum efficiency.</td>
+</tr>
+</tbody></table>
+<h3 id="Architectural-Recommendation-The-Hybrid-Approach"><a href="#Architectural-Recommendation-The-Hybrid-Approach" class="headerlink" title="Architectural Recommendation: The Hybrid Approach"></a>Architectural Recommendation: The Hybrid Approach</h3><ul>
+<li>Use <strong>Zustand</strong> or <strong>Jotai</strong> for <strong>High-Frequency Global State</strong> (e.g., streaming chat data, animation state, or modal control) due to its minimal rendering overhead.</li>
+<li>Use <strong>React Context</strong> for <strong>Infrequent UI State</strong> (e.g., theme, language settings).</li>
+<li>Avoid a single massive <strong>Redux</strong> store unless the application’s complexity explicitly requires centralized data normalization and persistence.</li>
+</ul>
+<hr>
+<h2 id="3-Deep-Dive-into-Memoization-Hooks"><a href="#3-Deep-Dive-into-Memoization-Hooks" class="headerlink" title="3. Deep Dive into Memoization Hooks"></a>3. Deep Dive into Memoization Hooks</h2><p>The following hooks are necessary to prevent the issues created by passing non-primitive values (objects, arrays, or functions) down to components wrapped in <code>React.memo</code>.</p>
+<h3 id="A-useMemo"><a href="#A-useMemo" class="headerlink" title="A. useMemo"></a>A. <code>useMemo</code></h3><table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Purpose</strong></td>
+<td align="left"><strong>Memoizes a computed value.</strong> It caches the result of a function and only re-runs the function when one of its dependencies changes.</td>
+</tr>
+<tr>
+<td align="left"><strong>Syntax</strong></td>
+<td align="left"><code>const memoizedValue = useMemo(() =&gt; expensiveFunction(a, b), [a, b]);</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Real-World Scenario</strong></td>
+<td align="left"><strong>Heavy Computation:</strong> Calculating a user’s filtered transaction history, complex charting data, or deep filtering&#x2F;sorting of a large list that takes time.</td>
+</tr>
+<tr>
+<td align="left"><strong>Anti-Pattern</strong></td>
+<td align="left">Do not use <code>useMemo</code> to memoize simple operations (e.g., <code>a + b</code>). The overhead of the hook itself often outweighs the cost of the simple calculation.</td>
+</tr>
+</tbody></table>
+<h3 id="B-useCallback"><a href="#B-useCallback" class="headerlink" title="B. useCallback"></a>B. <code>useCallback</code></h3><table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Purpose</strong></td>
+<td align="left"><strong>Memoizes a function instance.</strong> It returns the same function reference across renders unless one of its dependencies changes.</td>
+</tr>
+<tr>
+<td align="left"><strong>Syntax</strong></td>
+<td align="left"><code>const memoizedHandler = useCallback((e) =&gt; handler(e, a), [a]);</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Real-World Scenario</strong></td>
+<td align="left"><strong>Passing functions to <code>React.memo</code> Children:</strong> Use this hook when passing event handlers (like <code>onClick</code>, <code>onChange</code>) down to child components that are wrapped in <code>React.memo</code>. This ensures the child component recognizes the handler as the <em>same</em> prop and avoids re-rendering.</td>
+</tr>
+<tr>
+<td align="left"><strong>Anti-Pattern</strong></td>
+<td align="left">Do not use <code>useCallback</code> unless the function is being passed as a prop to a component that uses <code>React.memo</code> or is a dependency of another hook (like <code>useEffect</code>).</td>
+</tr>
+</tbody></table>
+<h3 id="C-The-Relationship-The-Memoization-Cascade"><a href="#C-The-Relationship-The-Memoization-Cascade" class="headerlink" title="C. The Relationship: The Memoization Cascade"></a>C. <strong>The Relationship: The Memoization Cascade</strong></h3><p>The three tools work together to manage the rendering cascade :</p>
+<ol>
+<li>The <strong>Parent Component</strong> renders.</li>
+<li><strong><code>useMemo</code></strong> ensures complex objects&#x2F;values remain the same.</li>
+<li><strong><code>useCallback</code></strong> ensures function references remain the same.</li>
+<li>The child component, wrapped in <strong><code>React.memo</code></strong>, receives the <em>same</em> prop references as the last render.</li>
+<li><code>React.memo</code> performs the shallow comparison and successfully <strong>skips the re-render</strong>.</li>
+</ol>
+<h1 id="A-fundamental-question-in-optimizing-React-performance-The-difference-“before”-and-“after”-using-React-memo-useMemo-and-useCallback-is-about-control-over-the-rendering-lifecycle-and-preventing-unnecessary-work"><a href="#A-fundamental-question-in-optimizing-React-performance-The-difference-“before”-and-“after”-using-React-memo-useMemo-and-useCallback-is-about-control-over-the-rendering-lifecycle-and-preventing-unnecessary-work" class="headerlink" title="A fundamental question in optimizing React performance! The difference “before” and “after” using React.memo, useMemo, and useCallback is about control over the rendering lifecycle and preventing unnecessary work."></a>A fundamental question in optimizing React performance! The difference “before” and “after” using <strong><code>React.memo</code></strong>, <strong><code>useMemo</code></strong>, and <strong><code>useCallback</code></strong> is about <strong>control over the rendering lifecycle</strong> and preventing unnecessary work.</h1><h2 id="💡-The-Core-Concept-Referential-Equality"><a href="#💡-The-Core-Concept-Referential-Equality" class="headerlink" title="💡 The Core Concept: Referential Equality"></a>💡 The Core Concept: Referential Equality</h2><p>Before diving into the hooks, it’s essential to understand the underlying problem: In JavaScript, objects, arrays, and functions are <strong>reference types</strong>.</p>
+<ul>
+<li>When a parent component re-renders, any object or function created inside it (even if logically identical) is given a <strong>new memory address</strong> (a new reference).</li>
+<li>If this new reference is passed down as a prop to a child component, React perceives it as a <strong>change</strong>, forcing the child to re-render, even if the content hasn’t changed.</li>
+</ul>
+<p>The three memoization tools work to preserve those references, giving React the signal to skip unnecessary updates.</p>
+<hr>
+<h2 id="1-React-memo-Component-Optimization"><a href="#1-React-memo-Component-Optimization" class="headerlink" title="1. React.memo (Component Optimization)"></a>1. <code>React.memo</code> (Component Optimization)</h2><p><code>React.memo</code> is a Higher-Order Component (HOC) used to optimize <strong>function components</strong>.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Before <code>React.memo</code></th>
+<th align="left">After <code>React.memo</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Rendering</strong></td>
+<td align="left">The component renders <strong>every time</strong> its parent renders, regardless of whether its props change.</td>
+<td align="left">The component performs a <strong>shallow comparison</strong> of the new props against the previous props. If the props are shallowly equal (same values for primitives, same references for objects&#x2F;functions), the render is <strong>skipped</strong>.</td>
+</tr>
+<tr>
+<td align="left"><strong>Use Case</strong></td>
+<td align="left">Component is simple or props change frequently.</td>
+<td align="left">Component is <strong>“pure”</strong> (output depends only on props) and the render logic is <strong>expensive</strong> or the component is <strong>deeply nested</strong> in the tree.</td>
+</tr>
+<tr>
+<td align="left"><strong>Result</strong></td>
+<td align="left">Wasted CPU cycles, slow user interface (especially if there are many instances).</td>
+<td align="left">Reduced rendering cycles, faster updates, lower CPU usage.</td>
+</tr>
+</tbody></table>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><p>A child component wrapped in <code>React.memo</code> will <em>only</em> re-render if its props (e.g., <code>title</code>, <code>count</code>) are different from the last render.</p>
+<hr>
+<h2 id="2-useMemo-Value-Optimization"><a href="#2-useMemo-Value-Optimization" class="headerlink" title="2. useMemo (Value Optimization)"></a>2. <code>useMemo</code> (Value Optimization)</h2><p><code>useMemo</code> is a Hook used to cache the <strong>result of an expensive computation</strong> or a <strong>reference-type value</strong> (object&#x2F;array).</p>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Before <code>useMemo</code></th>
+<th align="left">After <code>useMemo</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Value Creation</strong></td>
+<td align="left">The expensive function runs <strong>on every render</strong>. The array or object it returns is created with a <strong>new reference</strong> on every render.</td>
+<td align="left">The function runs <strong>only when its dependency array changes</strong>. The computed value and its reference are cached and reused on subsequent renders.</td>
+</tr>
+<tr>
+<td align="left"><strong>Dependencies</strong></td>
+<td align="left">Not applicable; computation always runs.</td>
+<td align="left">The function is dependent on the values listed in the dependency array (<code>[a, b]</code>).</td>
+</tr>
+<tr>
+<td align="left"><strong>Result</strong></td>
+<td align="left">High CPU usage and, more importantly, causes unnecessary re-renders in child components that receive the new object&#x2F;array reference.</td>
+<td align="left"><strong>Performance gain</strong> (by skipping computation) and <strong>stability</strong> (by providing a consistent reference to children wrapped in <code>React.memo</code>).</td>
+</tr>
+</tbody></table>
+<h3 id="Real-World-Scenario"><a href="#Real-World-Scenario" class="headerlink" title="Real-World Scenario"></a>Real-World Scenario</h3><p>Calculating a complex derivative or filtering a list of 5,000 items. If the filtering criteria haven’t changed, the list doesn’t need to be re-filtered.</p>
+<hr>
+<h2 id="3-useCallback-Function-Optimization"><a href="#3-useCallback-Function-Optimization" class="headerlink" title="3. useCallback (Function Optimization)"></a>3. <code>useCallback</code> (Function Optimization)</h2><p><code>useCallback</code> is a Hook used to cache the <strong>function instance itself</strong>.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Before <code>useCallback</code></th>
+<th align="left">After <code>useCallback</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Function Reference</strong></td>
+<td align="left">The function is redefined, generating a <strong>new reference</strong> on every render.</td>
+<td align="left">The same function instance and its memory address are returned on every render unless its dependency array changes.</td>
+</tr>
+<tr>
+<td align="left"><strong>Dependencies</strong></td>
+<td align="left">Not applicable; function is always new.</td>
+<td align="left">The function is dependent on the values listed in the dependency array (<code>[c, d]</code>).</td>
+</tr>
+<tr>
+<td align="left"><strong>Result</strong></td>
+<td align="left">Causes unnecessary re-renders in children wrapped in <code>React.memo</code> because the child sees a “new” function prop.</td>
+<td align="left"><strong>Stability</strong> by providing a consistent reference, allowing <strong><code>React.memo</code></strong> in the child component to work correctly.</td>
+</tr>
+</tbody></table>
+<h3 id="Real-World-Scenario-1"><a href="#Real-World-Scenario-1" class="headerlink" title="Real-World Scenario"></a>Real-World Scenario</h3><p>Passing an <code>onClick</code> or <code>onChange</code> handler to a highly optimized child button component. If the handler is wrapped in <code>useCallback</code>, the button component will not re-render unnecessarily when the parent renders.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ReactJS/" rel="tag"><i class="fa fa-tag"></i> ReactJS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/" rel="prev" title="The Complete Guide to Java Virtual Threads">
+                  <i class="fa fa-angle-left"></i> The Complete Guide to Java Virtual Threads
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/02/Spring-WebFlux-Guide-2025/" rel="next" title="Spring WebFlux Guide - 2025">
+                  Spring WebFlux Guide - 2025 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
