@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. What is the difference between OAuth2 and OpenID Connect (OIDC)?Answer:OAuth2 is an authorization framework — it gives applications access to protected resources via access tokens.OIDC is an authen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Dive into Keycloak II">
+<meta property="og:url" content="https://www.whereq.com/2025/12/02/Deep-Dive-into-Keycloak-II/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="1. What is the difference between OAuth2 and OpenID Connect (OIDC)?Answer:OAuth2 is an authorization framework — it gives applications access to protected resources via access tokens.OIDC is an authen">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-03T01:05:40.000Z">
+<meta property="article:modified_time" content="2025-12-03T01:19:54.073Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="Keycloak">
+<meta property="article:tag" content="Deep Dive">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/12/02/Deep-Dive-into-Keycloak-II/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/12/02/Deep-Dive-into-Keycloak-II/","path":"2025/12/02/Deep-Dive-into-Keycloak-II/","title":"Deep Dive into Keycloak II"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Deep Dive into Keycloak II | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-What-is-the-difference-between-OAuth2-and-OpenID-Connect-OIDC"><span class="nav-number">1.</span> <span class="nav-text">1. What is the difference between OAuth2 and OpenID Connect (OIDC)?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer"><span class="nav-number">1.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-How-does-Keycloak-handle-session-management-compared-to-stateless-JWT-systems"><span class="nav-number">2.</span> <span class="nav-text">2. How does Keycloak handle session management compared to stateless JWT systems?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-1"><span class="nav-number">2.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-What%E2%80%99s-the-purpose-of-a-Keycloak-Realm"><span class="nav-number">3.</span> <span class="nav-text">3. What’s the purpose of a Keycloak Realm?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-2"><span class="nav-number">3.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Explain-the-OAuth2-Authorization-Code-Flow-with-PKCE"><span class="nav-number">4.</span> <span class="nav-text">4. Explain the OAuth2 Authorization Code Flow with PKCE.</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-3"><span class="nav-number">4.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-What-Keycloak-feature-would-you-use-for-Single-Sign-On-across-multiple-apps"><span class="nav-number">5.</span> <span class="nav-text">5. What Keycloak feature would you use for Single Sign-On across multiple apps?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-4"><span class="nav-number">5.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-How-do-you-configure-role-based-access-control-in-Keycloak"><span class="nav-number">6.</span> <span class="nav-text">6. How do you configure role-based access control in Keycloak?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-5"><span class="nav-number">6.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-What-is-the-difference-between-Realm-Roles-and-Client-Roles"><span class="nav-number">7.</span> <span class="nav-text">7. What is the difference between Realm Roles and Client Roles?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-6"><span class="nav-number">7.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-How-do-you-secure-a-Spring-Boot-REST-API-using-Keycloak"><span class="nav-number">8.</span> <span class="nav-text">8. How do you secure a Spring Boot REST API using Keycloak?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-7"><span class="nav-number">8.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-What-are-Keycloak-Identity-Providers"><span class="nav-number">9.</span> <span class="nav-text">9. What are Keycloak Identity Providers?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-8"><span class="nav-number">9.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-How-does-token-revocation-work-in-Keycloak"><span class="nav-number">10.</span> <span class="nav-text">10. How does token revocation work in Keycloak?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-9"><span class="nav-number">10.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11-What-is-Offline-Session-and-Offline-Token"><span class="nav-number">11.</span> <span class="nav-text">11. What is Offline Session and Offline Token?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-10"><span class="nav-number">11.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12-How-do-you-integrate-Keycloak-with-an-API-Gateway-e-g-Kong-Nginx-Spring-Cloud-Gateway"><span class="nav-number">12.</span> <span class="nav-text">12. How do you integrate Keycloak with an API Gateway (e.g., Kong, Nginx, Spring Cloud Gateway)?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-11"><span class="nav-number">12.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13-What-is-the-Keycloak-Admin-API-used-for"><span class="nav-number">13.</span> <span class="nav-text">13. What is the Keycloak Admin API used for?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-12"><span class="nav-number">13.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#14-How-would-you-scale-Keycloak-for-production"><span class="nav-number">14.</span> <span class="nav-text">14. How would you scale Keycloak for production?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-13"><span class="nav-number">14.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#15-What-are-the-common-pitfalls-when-integrating-SPAs-React-with-Keycloak"><span class="nav-number">15.</span> <span class="nav-text">15. What are the common pitfalls when integrating SPAs (React) with Keycloak?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-14"><span class="nav-number">15.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-How-do-service-to-service-calls-work-with-Keycloak"><span class="nav-number">16.</span> <span class="nav-text">16. How do service-to-service calls work with Keycloak?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-15"><span class="nav-number">16.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#17-What%E2%80%99s-the-difference-between-Access-Token-and-ID-Token"><span class="nav-number">17.</span> <span class="nav-text">17. What’s the difference between Access Token and ID Token?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-16"><span class="nav-number">17.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#18-How-do-you-restrict-which-scopes-a-client-may-request"><span class="nav-number">18.</span> <span class="nav-text">18. How do you restrict which scopes a client may request?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-17"><span class="nav-number">18.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#19-What-is-the-Keycloak-Token-Exchange"><span class="nav-number">19.</span> <span class="nav-text">19. What is the Keycloak Token Exchange?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Answer-18"><span class="nav-number">19.0.1.</span> <span class="nav-text">Answer:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#20-How-do-you-debug-token-validation-issues"><span class="nav-number">20.</span> <span class="nav-text">20. How do you debug token validation issues?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Steps-to-answer"><span class="nav-number">20.0.1.</span> <span class="nav-text">Steps to answer:</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/12/02/Deep-Dive-into-Keycloak-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Deep Dive into Keycloak II | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Deep Dive into Keycloak II
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-12-02 20:05:40 / Modified: 20:19:54" itemprop="dateCreated datePublished" datetime="2025-12-02T20:05:40-05:00">2025-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Keycloak/" itemprop="url" rel="index"><span itemprop="name">Keycloak</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="1-What-is-the-difference-between-OAuth2-and-OpenID-Connect-OIDC"><a href="#1-What-is-the-difference-between-OAuth2-and-OpenID-Connect-OIDC" class="headerlink" title="1. What is the difference between OAuth2 and OpenID Connect (OIDC)?"></a><strong>1. What is the difference between OAuth2 and OpenID Connect (OIDC)?</strong></h1><h3 id="Answer"><a href="#Answer" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>OAuth2 is an <strong>authorization</strong> framework — it gives applications access to protected resources via access tokens.<br>OIDC is an <strong>authentication</strong> layer built on top of OAuth2 — it provides identity information by adding <strong>ID tokens</strong>, user info endpoint, and standardized flows.</p>
+<p>You use OAuth2 when an app needs <em>permissions</em><br>You use OIDC when an app needs <em>login + identity</em>.</p>
+<hr>
+<h1 id="2-How-does-Keycloak-handle-session-management-compared-to-stateless-JWT-systems"><a href="#2-How-does-Keycloak-handle-session-management-compared-to-stateless-JWT-systems" class="headerlink" title="2. How does Keycloak handle session management compared to stateless JWT systems?"></a><strong>2. How does Keycloak handle session management compared to stateless JWT systems?</strong></h1><h3 id="Answer-1"><a href="#Answer-1" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Keycloak maintains a <strong>server-side session</strong> for each authenticated user.<br>Even though it issues JWTs, it “peeks” into the token’s session ID to enforce logout and token invalidation.<br>This means:</p>
+<ul>
+<li>Keycloak can force logout of any user</li>
+<li>Admin can revoke access tokens instantly</li>
+<li>Tokens are short-lived; refresh tokens renew them</li>
+</ul>
+<p>Stateless JWT-only systems <em>cannot</em> revoke tokens without additional infrastructure.</p>
+<hr>
+<h1 id="3-What’s-the-purpose-of-a-Keycloak-Realm"><a href="#3-What’s-the-purpose-of-a-Keycloak-Realm" class="headerlink" title="3. What’s the purpose of a Keycloak Realm?"></a><strong>3. What’s the purpose of a Keycloak Realm?</strong></h1><h3 id="Answer-2"><a href="#Answer-2" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>A Realm is an isolated authentication domain.<br>Each realm has:</p>
+<ul>
+<li>its own clients</li>
+<li>identity providers</li>
+<li>users</li>
+<li>roles</li>
+<li>token settings</li>
+</ul>
+<p>Realms do not share users.<br>This isolates tenants for multi-tenant apps.</p>
+<hr>
+<h1 id="4-Explain-the-OAuth2-Authorization-Code-Flow-with-PKCE"><a href="#4-Explain-the-OAuth2-Authorization-Code-Flow-with-PKCE" class="headerlink" title="4. Explain the OAuth2 Authorization Code Flow with PKCE."></a><strong>4. Explain the OAuth2 Authorization Code Flow with PKCE.</strong></h1><h3 id="Answer-3"><a href="#Answer-3" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Used by public clients (SPA, mobile).<br>Steps:</p>
+<ol>
+<li>Client generates a <strong>code verifier</strong> and <strong>challenge</strong></li>
+<li>User is redirected to Keycloak login</li>
+<li>After successful login, Keycloak returns an <strong>authorization code</strong></li>
+<li>Client exchanges the code for tokens including the <strong>code verifier</strong></li>
+<li>Keycloak recomputes the challenge to verify request integrity</li>
+</ol>
+<p>PKCE prevents code interception attacks.</p>
+<hr>
+<h1 id="5-What-Keycloak-feature-would-you-use-for-Single-Sign-On-across-multiple-apps"><a href="#5-What-Keycloak-feature-would-you-use-for-Single-Sign-On-across-multiple-apps" class="headerlink" title="5. What Keycloak feature would you use for Single Sign-On across multiple apps?"></a><strong>5. What Keycloak feature would you use for Single Sign-On across multiple apps?</strong></h1><h3 id="Answer-4"><a href="#Answer-4" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p><strong>SSO session + OIDC Authorization Code Flow.</strong><br>Apps use the same Keycloak realm; once the user is logged into one app, Keycloak issues tokens to others without re-authentication.</p>
+<hr>
+<h1 id="6-How-do-you-configure-role-based-access-control-in-Keycloak"><a href="#6-How-do-you-configure-role-based-access-control-in-Keycloak" class="headerlink" title="6. How do you configure role-based access control in Keycloak?"></a><strong>6. How do you configure role-based access control in Keycloak?</strong></h1><h3 id="Answer-5"><a href="#Answer-5" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><ul>
+<li>Create <strong>realm roles</strong> or <strong>client roles</strong></li>
+<li>Map roles to users or groups</li>
+<li>Configure clients to include roles in tokens (scope + mappers)</li>
+<li>Your service enforces authorization based on the roles claim in JWT</li>
+</ul>
+<hr>
+<h1 id="7-What-is-the-difference-between-Realm-Roles-and-Client-Roles"><a href="#7-What-is-the-difference-between-Realm-Roles-and-Client-Roles" class="headerlink" title="7. What is the difference between Realm Roles and Client Roles?"></a><strong>7. What is the difference between Realm Roles and Client Roles?</strong></h1><h3 id="Answer-6"><a href="#Answer-6" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><ul>
+<li>Realm roles are global across the entire realm</li>
+<li>Client roles belong to a specific client (service)</li>
+</ul>
+<p>Client roles prevent namespace collisions and support service-specific authorization.</p>
+<hr>
+<h1 id="8-How-do-you-secure-a-Spring-Boot-REST-API-using-Keycloak"><a href="#8-How-do-you-secure-a-Spring-Boot-REST-API-using-Keycloak" class="headerlink" title="8. How do you secure a Spring Boot REST API using Keycloak?"></a><strong>8. How do you secure a Spring Boot REST API using Keycloak?</strong></h1><h3 id="Answer-7"><a href="#Answer-7" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>For Spring Security 6 &#x2F; Boot 3:</p>
+<ol>
+<li>Use the OAuth2 Resource Server starter</li>
+<li>Configure <code>issuer-uri</code> pointed to Keycloak realm</li>
+<li>Enable JWT validation</li>
+<li>Add authorization rules based on roles in JWT</li>
+</ol>
+<p>Resource server verifies tokens by fetching Keycloak’s public keys (JWKS).</p>
+<hr>
+<h1 id="9-What-are-Keycloak-Identity-Providers"><a href="#9-What-are-Keycloak-Identity-Providers" class="headerlink" title="9. What are Keycloak Identity Providers?"></a><strong>9. What are Keycloak Identity Providers?</strong></h1><h3 id="Answer-8"><a href="#Answer-8" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Identity Providers allow Keycloak to delegate login to external systems like:</p>
+<ul>
+<li>Google</li>
+<li>GitHub</li>
+<li>Azure AD</li>
+<li>Another Keycloak realm</li>
+</ul>
+<p>Keycloak becomes an identity broker.</p>
+<hr>
+<h1 id="10-How-does-token-revocation-work-in-Keycloak"><a href="#10-How-does-token-revocation-work-in-Keycloak" class="headerlink" title="10. How does token revocation work in Keycloak?"></a><strong>10. How does token revocation work in Keycloak?</strong></h1><h3 id="Answer-9"><a href="#Answer-9" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Keycloak stores sessions server-side.<br>When an admin revokes tokens or logs a user out:</p>
+<ul>
+<li>Active tokens become invalid</li>
+<li>Refresh token rotation prevents re-use</li>
+<li>Next request with old token fails with 401</li>
+</ul>
+<p>This is a major advantage over purely stateless JWT systems.</p>
+<hr>
+<h1 id="11-What-is-Offline-Session-and-Offline-Token"><a href="#11-What-is-Offline-Session-and-Offline-Token" class="headerlink" title="11. What is Offline Session and Offline Token?"></a><strong>11. What is Offline Session and Offline Token?</strong></h1><h3 id="Answer-10"><a href="#Answer-10" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Offline tokens are long-lived refresh tokens not tied to active user sessions.<br>Useful for background jobs or CLI tools.<br>Users do not need to stay logged in.</p>
+<hr>
+<h1 id="12-How-do-you-integrate-Keycloak-with-an-API-Gateway-e-g-Kong-Nginx-Spring-Cloud-Gateway"><a href="#12-How-do-you-integrate-Keycloak-with-an-API-Gateway-e-g-Kong-Nginx-Spring-Cloud-Gateway" class="headerlink" title="12. How do you integrate Keycloak with an API Gateway (e.g., Kong, Nginx, Spring Cloud Gateway)?"></a><strong>12. How do you integrate Keycloak with an API Gateway (e.g., Kong, Nginx, Spring Cloud Gateway)?</strong></h1><h3 id="Answer-11"><a href="#Answer-11" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Use the gateway as an <strong>OAuth2 resource server</strong>.<br>It:</p>
+<ul>
+<li>validates JWTs from Keycloak</li>
+<li>checks scopes&#x2F;roles</li>
+<li>forwards authorized requests to microservices</li>
+<li>optionally strips sensitive headers</li>
+</ul>
+<p>Microservices behind the gateway become stateless and do not validate tokens directly.</p>
+<hr>
+<h1 id="13-What-is-the-Keycloak-Admin-API-used-for"><a href="#13-What-is-the-Keycloak-Admin-API-used-for" class="headerlink" title="13. What is the Keycloak Admin API used for?"></a><strong>13. What is the Keycloak Admin API used for?</strong></h1><h3 id="Answer-12"><a href="#Answer-12" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Automating user and client management:</p>
+<ul>
+<li>create&#x2F;update users</li>
+<li>reset passwords</li>
+<li>assign roles</li>
+<li>manage groups</li>
+<li>manage clients</li>
+<li>trigger impersonation</li>
+</ul>
+<p>Often used in CI&#x2F;CD or multi-tenant systems.</p>
+<hr>
+<h1 id="14-How-would-you-scale-Keycloak-for-production"><a href="#14-How-would-you-scale-Keycloak-for-production" class="headerlink" title="14. How would you scale Keycloak for production?"></a><strong>14. How would you scale Keycloak for production?</strong></h1><h3 id="Answer-13"><a href="#Answer-13" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><ul>
+<li>Run multiple Keycloak nodes behind a load balancer</li>
+<li>Use a shared database (PostgreSQL recommended)</li>
+<li>Use sticky sessions only if needed (usually not needed post-Keycloak 17+)</li>
+<li>Enable cross-node session cache with Infinispan</li>
+<li>Offload static content via reverse proxy</li>
+</ul>
+<p>Keycloak 21+ with Quarkus has much lower memory footprint and better clustering.</p>
+<hr>
+<h1 id="15-What-are-the-common-pitfalls-when-integrating-SPAs-React-with-Keycloak"><a href="#15-What-are-the-common-pitfalls-when-integrating-SPAs-React-with-Keycloak" class="headerlink" title="15. What are the common pitfalls when integrating SPAs (React) with Keycloak?"></a><strong>15. What are the common pitfalls when integrating SPAs (React) with Keycloak?</strong></h1><h3 id="Answer-14"><a href="#Answer-14" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><ol>
+<li>Storing tokens insecurely (never use localStorage → use memory with silent refresh).</li>
+<li>Using Implicit Flow (deprecated).</li>
+<li>Not handling token refresh properly.</li>
+<li>Not using PKCE.</li>
+<li>Not validating roles on backend.</li>
+</ol>
+<p>Best practice: React &#x3D; public client using Authorization Code + PKCE.</p>
+<hr>
+<h1 id="16-How-do-service-to-service-calls-work-with-Keycloak"><a href="#16-How-do-service-to-service-calls-work-with-Keycloak" class="headerlink" title="16. How do service-to-service calls work with Keycloak?"></a><strong>16. How do service-to-service calls work with Keycloak?</strong></h1><h3 id="Answer-15"><a href="#Answer-15" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Use <strong>Client Credentials Flow</strong>:</p>
+<ul>
+<li>No user involved</li>
+<li>The client authenticates with client secret</li>
+<li>Keycloak returns an access token</li>
+<li>Service uses token to call downstream service</li>
+</ul>
+<p>This is machine-to-machine authentication.</p>
+<hr>
+<h1 id="17-What’s-the-difference-between-Access-Token-and-ID-Token"><a href="#17-What’s-the-difference-between-Access-Token-and-ID-Token" class="headerlink" title="17. What’s the difference between Access Token and ID Token?"></a><strong>17. What’s the difference between Access Token and ID Token?</strong></h1><h3 id="Answer-16"><a href="#Answer-16" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><ul>
+<li>Access token &#x3D; permissions for APIs (authorization)</li>
+<li>ID token &#x3D; identity info about the user (authentication)</li>
+</ul>
+<p>APIs should ignore ID tokens.</p>
+<hr>
+<h1 id="18-How-do-you-restrict-which-scopes-a-client-may-request"><a href="#18-How-do-you-restrict-which-scopes-a-client-may-request" class="headerlink" title="18. How do you restrict which scopes a client may request?"></a><strong>18. How do you restrict which scopes a client may request?</strong></h1><h3 id="Answer-17"><a href="#Answer-17" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Use <strong>Client Scopes</strong>:</p>
+<ul>
+<li>Default client scopes</li>
+<li>Optional client scopes</li>
+<li>Protocol mappers to include additional claims</li>
+<li>Scope parameter to control token content</li>
+</ul>
+<p>This prevents over-privileged tokens.</p>
+<hr>
+<h1 id="19-What-is-the-Keycloak-Token-Exchange"><a href="#19-What-is-the-Keycloak-Token-Exchange" class="headerlink" title="19. What is the Keycloak Token Exchange?"></a><strong>19. What is the Keycloak Token Exchange?</strong></h1><h3 id="Answer-18"><a href="#Answer-18" class="headerlink" title="Answer:"></a><strong>Answer:</strong></h3><p>Allows exchanging one token for another.<br>Use cases:</p>
+<ul>
+<li>service-to-service delegation</li>
+<li>switching realms</li>
+<li>getting a token for another client</li>
+<li>impersonation workflows</li>
+</ul>
+<p>Powerful in microservice architectures.</p>
+<hr>
+<h1 id="20-How-do-you-debug-token-validation-issues"><a href="#20-How-do-you-debug-token-validation-issues" class="headerlink" title="20. How do you debug token validation issues?"></a><strong>20. How do you debug token validation issues?</strong></h1><h3 id="Steps-to-answer"><a href="#Steps-to-answer" class="headerlink" title="Steps to answer:"></a><strong>Steps to answer:</strong></h3><ol>
+<li>Decode token using JWT.io</li>
+<li>Verify issuer (iss) matches realm</li>
+<li>Confirm audience (aud) includes client ID</li>
+<li>Check signature using JWKS</li>
+<li>Check token expiration</li>
+<li>Check scope&#x2F;roles included</li>
+</ol>
+<p>Most validation failures come from misconfigured <code>issuer-uri</code> or missing mappers.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Keycloak/" rel="tag"><i class="fa fa-tag"></i> Keycloak</a>
+              <a href="/tags/Deep-Dive/" rel="tag"><i class="fa fa-tag"></i> Deep Dive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/01/Full-Fine-Tuning-vs-LoRA/" rel="prev" title="Full Fine-Tuning vs LoRA">
+                  <i class="fa fa-angle-left"></i> Full Fine-Tuning vs LoRA
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/02/Keyclock-Revocation-Mechanism/" rel="next" title="Keyclock Revocation Mechanism">
+                  Keyclock Revocation Mechanism <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

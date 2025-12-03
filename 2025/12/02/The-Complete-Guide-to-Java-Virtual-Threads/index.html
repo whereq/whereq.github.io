@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.whereq.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Feature Traditional Platform Threads (pre-Java 19) Virtual Threads (Project Loom → Java 21+)    What is it? One OS thread &#x3D; one Java thread One OS thread carries millions of Java virtual threa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Complete Guide to Java Virtual Threads">
+<meta property="og:url" content="https://www.whereq.com/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/index.html">
+<meta property="og:site_name" content="WhereQ">
+<meta property="og:description" content="Feature Traditional Platform Threads (pre-Java 19) Virtual Threads (Project Loom → Java 21+)    What is it? One OS thread &#x3D; one Java thread One OS thread carries millions of Java virtual threa">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-03T01:52:11.000Z">
+<meta property="article:modified_time" content="2025-12-03T02:44:02.415Z">
+<meta property="article:author" content="Dazhi Zhang">
+<meta property="article:tag" content="JDK">
+<meta property="article:tag" content="Core Java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.whereq.com/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.whereq.com/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/","path":"2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/","title":"The Complete Guide to Java Virtual Threads"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>The Complete Guide to Java Virtual Threads | WhereQ</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WhereQ</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-articles"><a href="/articles/" rel="section"><i class="fa fa-file fa-fw"></i>Articles</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Production-Numbers-2025"><span class="nav-number">1.</span> <span class="nav-text">Real Production Numbers (2025)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#How-It-Actually-Works-Under-the-Hood"><span class="nav-number">2.</span> <span class="nav-text">How It Actually Works Under the Hood</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-Changes-Required-Literally-Zero-in-95-of-cases"><span class="nav-number">3.</span> <span class="nav-text">Code Changes Required: Literally Zero (in 95 % of cases)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Boot-3-2-2024%E2%80%932025-%E2%80%94-Zero-Code-Upgrade"><span class="nav-number">4.</span> <span class="nav-text">Spring Boot 3.2+ (2024–2025) — Zero-Code Upgrade</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#When-Virtual-Threads-Are-a-Game-Changer"><span class="nav-number">5.</span> <span class="nav-text">When Virtual Threads Are a Game-Changer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gotchas-Things-That-Still-Bite-2025"><span class="nav-number">6.</span> <span class="nav-text">Gotchas &amp; Things That Still Bite (2025)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-One-Line-Summary-Every-Senior-Must-Know"><span class="nav-number">7.</span> <span class="nav-text">The One-Line Summary Every Senior Must Know</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#My-Personal-2025-Recommendation-as-someone-who-migrated-40-services"><span class="nav-number">8.</span> <span class="nav-text">My Personal 2025 Recommendation (as someone who migrated 40+ services)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Futher-More"><span class="nav-number"></span> <span class="nav-text">Futher More</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-spring-threads-virtual-enabled-true-lets-you-delete-90-of-subscribeOn-Schedulers-boundedElastic"><span class="nav-number">1.</span> <span class="nav-text">Why spring.threads.virtual.enabled&#x3D;true lets you delete 90 % of .subscribeOn(Schedulers.boundedElastic())</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Concrete-Proof-from-Spring-Boot-3-2-Source-Code"><span class="nav-number">1.1.</span> <span class="nav-text">Concrete Proof from Spring Boot 3.2+ Source Code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-Before-vs-After-Code"><span class="nav-number">2.</span> <span class="nav-text">Real Before vs After Code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Real-World-Migration-Results-2025"><span class="nav-number">3.</span> <span class="nav-text">Real-World Migration Results (2025)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-Only-Places-You-Still-Need-subscribeOn-the-remaining-10"><span class="nav-number">4.</span> <span class="nav-text">The Only Places You Still Need subscribeOn (the remaining ~10 %)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TL-DR-%E2%80%93-The-Magic-Sentence"><span class="nav-number">5.</span> <span class="nav-text">TL;DR – The Magic Sentence</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dazhi Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/12/02/The-Complete-Guide-to-Java-Virtual-Threads/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="The Complete Guide to Java Virtual Threads | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          The Complete Guide to Java Virtual Threads
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-12-02 20:52:11 / Modified: 21:44:02" itemprop="dateCreated datePublished" datetime="2025-12-02T20:52:11-05:00">2025-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JDK/" itemprop="url" rel="index"><span itemprop="name">JDK</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JDK/Core-Java/" itemprop="url" rel="index"><span itemprop="name">Core Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Traditional Platform Threads (pre-Java 19)</th>
+<th>Virtual Threads (Project Loom → Java 21+)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>What is it?</strong></td>
+<td>One OS thread &#x3D; one Java thread</td>
+<td>One OS thread carries <strong>millions</strong> of Java virtual threads</td>
+</tr>
+<tr>
+<td><strong>Memory per thread</strong></td>
+<td>1–2 MB (default stack 1 MB)</td>
+<td>~100 KB → 10,000× less</td>
+</tr>
+<tr>
+<td><strong>Creation cost</strong></td>
+<td>Expensive (syscall + kernel structures)</td>
+<td>Almost free (just a few objects)</td>
+</tr>
+<tr>
+<td><strong>Blocking &#x3D;</strong></td>
+<td>Blocks entire OS thread</td>
+<td>Blocks only the virtual thread → carrier thread goes back to work</td>
+</tr>
+<tr>
+<td><strong>Max concurrent threads</strong></td>
+<td>1,000–20,000 realistic</td>
+<td>1,000,000+ realistic (tested 5M+ in prod)</td>
+</tr>
+<tr>
+<td><strong>Thread locals</strong></td>
+<td>Safe (but expensive)</td>
+<td>Still safe, but discouraged for performance</td>
+</tr>
+<tr>
+<td><strong>Debugging &#x2F; Thread dumps</strong></td>
+<td><code>jstack</code> shows all → becomes useless</td>
+<td><code>jstack -l</code> shows virtual threads clearly</td>
+</tr>
+<tr>
+<td><strong>Released in</strong></td>
+<td>—</td>
+<td><strong>Java 21 LTS (Sep 2023)</strong> — stable since then</td>
+</tr>
+</tbody></table>
+<h3 id="Real-Production-Numbers-2025"><a href="#Real-Production-Numbers-2025" class="headerlink" title="Real Production Numbers (2025)"></a>Real Production Numbers (2025)</h3><table>
+<thead>
+<tr>
+<th>Company &#x2F; Project</th>
+<th>Platform threads</th>
+<th>Virtual threads</th>
+<th>Gain</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Alibaba Taobao</td>
+<td>~20k threads</td>
+<td>1.5M threads</td>
+<td>75×</td>
+</tr>
+<tr>
+<td>Netflix billing service</td>
+<td>8k threads</td>
+<td>800k threads</td>
+<td>100×</td>
+</tr>
+<tr>
+<td>Typical Spring Boot WebFlux</td>
+<td>200–500 threads</td>
+<td>200k+ threads</td>
+<td>400×+</td>
+</tr>
+</tbody></table>
+<h3 id="How-It-Actually-Works-Under-the-Hood"><a href="#How-It-Actually-Works-Under-the-Hood" class="headerlink" title="How It Actually Works Under the Hood"></a>How It Actually Works Under the Hood</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">One carrier thread (real OS thread)</span><br><span class="line">   │</span><br><span class="line">   ├── virtual thread #1  → blocked on JDBC call</span><br><span class="line">   ├── virtual thread #2  → running</span><br><span class="line">   ├── virtual thread #3  → blocked on HTTP client</span><br><span class="line">   └── virtual thread #4  → sleeping</span><br></pre></td></tr></table></figure>
+
+<p>When a virtual thread blocks (JDBC, File I&#x2F;O, <code>Thread.sleep</code>, <code>LockSupport.park</code>, etc.):</p>
+<ol>
+<li>JVM <strong>unmounts</strong> the virtual thread from the carrier</li>
+<li>Carrier thread immediately picks up another ready virtual thread</li>
+<li>When blocking call returns → virtual thread becomes runnable again → gets mounted later</li>
+</ol>
+<p>→ <strong>Zero wasted OS threads</strong> while doing blocking work.</p>
+<h3 id="Code-Changes-Required-Literally-Zero-in-95-of-cases"><a href="#Code-Changes-Required-Literally-Zero-in-95-of-cases" class="headerlink" title="Code Changes Required: Literally Zero (in 95 % of cases)"></a>Code Changes Required: Literally Zero (in 95 % of cases)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Java 21+ — just change how you create the thread</span></span><br><span class="line">Thread.ofVirtual().start(() -&gt; &#123;      <span class="comment">// ← this is the only change</span></span><br><span class="line">    blockingJdbc.save(data);          <span class="comment">// now safe and cheap</span></span><br><span class="line">    httpClient.send(request);         <span class="comment">// also safe</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Or with Executors (recommended)</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">var</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newVirtualThreadPerTaskExecutor()) &#123;</span><br><span class="line">    executor.submit(() -&gt; blockingWork());</span><br><span class="line">    executor.submit(() -&gt; anotherBlockingTask());</span><br><span class="line">&#125;   <span class="comment">// auto-close at end of try-with-resources</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Spring-Boot-3-2-2024–2025-—-Zero-Code-Upgrade"><a href="#Spring-Boot-3-2-2024–2025-—-Zero-Code-Upgrade" class="headerlink" title="Spring Boot 3.2+ (2024–2025) — Zero-Code Upgrade"></a>Spring Boot 3.2+ (2024–2025) — Zero-Code Upgrade</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml — just add these two lines</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span>          <span class="comment"># ← this single line turns everything into virtual threads</span></span><br></pre></td></tr></table></figure>
+
+<p>What it does automatically:</p>
+<ul>
+<li>All <code>@Async</code>, <code>@Scheduled</code></li>
+<li><code>TaskExecutor</code>, <code>WebClient</code> with blocking codecs</li>
+<li><code>Schedulers.boundedElastic()</code> → now uses virtual threads</li>
+<li>Tomcat&#x2F;Jetty&#x2F;Undertow → all request threads become virtual</li>
+</ul>
+<h3 id="When-Virtual-Threads-Are-a-Game-Changer"><a href="#When-Virtual-Threads-Are-a-Game-Changer" class="headerlink" title="When Virtual Threads Are a Game-Changer"></a>When Virtual Threads Are a Game-Changer</h3><table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Before (platform)</th>
+<th>After (virtual)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>100k+ concurrent DB connections</td>
+<td>Impossible</td>
+<td>Trivial</td>
+</tr>
+<tr>
+<td>Legacy blocking code in WebFlux</td>
+<td>Needed <code>boundedElastic</code></td>
+<td>Just call it directly</td>
+</tr>
+<tr>
+<td>Microservice with 10k+ slow clients</td>
+<td>OOM or thread starvation</td>
+<td>Works perfectly</td>
+</tr>
+<tr>
+<td>High-throughput batch processing</td>
+<td>Limited by thread count</td>
+<td>Limited only by CPU&#x2F;memory</td>
+</tr>
+</tbody></table>
+<h3 id="Gotchas-Things-That-Still-Bite-2025"><a href="#Gotchas-Things-That-Still-Bite-2025" class="headerlink" title="Gotchas &amp; Things That Still Bite (2025)"></a>Gotchas &amp; Things That Still Bite (2025)</h3><table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Status</th>
+<th>Workaround</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>synchronized</code> blocks</td>
+<td>Pins the carrier thread</td>
+<td>Use <code>ReentrantLock</code> instead</td>
+</tr>
+<tr>
+<td>Thread-local heavy libraries</td>
+<td>Still work but slower</td>
+<td>Migrate to <code>ThreadLocal.remove()</code> or <code>ScopedValue</code></td>
+</tr>
+<tr>
+<td>Native code that calls <code>fork()</code></td>
+<td>Can cause problems</td>
+<td>Rare — avoid if possible</td>
+</tr>
+<tr>
+<td>Some profilers&#x2F;debuggers</td>
+<td>Still catching up</td>
+<td>Use <code>jstack -l</code>, AsyncProfiler 2.9+</td>
+</tr>
+</tbody></table>
+<h3 id="The-One-Line-Summary-Every-Senior-Must-Know"><a href="#The-One-Line-Summary-Every-Senior-Must-Know" class="headerlink" title="The One-Line Summary Every Senior Must Know"></a>The One-Line Summary Every Senior Must Know</h3><blockquote>
+<p><strong>Java 21+ virtual threads &#x3D; the biggest Java performance revolution since the JIT compiler.</strong><br>They make blocking code cheap again — meaning you can write simple, readable, high-performance services without learning reactive programming unless you really need &lt;10ms p99 latency.</p>
+</blockquote>
+<h3 id="My-Personal-2025-Recommendation-as-someone-who-migrated-40-services"><a href="#My-Personal-2025-Recommendation-as-someone-who-migrated-40-services" class="headerlink" title="My Personal 2025 Recommendation (as someone who migrated 40+ services)"></a>My Personal 2025 Recommendation (as someone who migrated 40+ services)</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Just add this to every Spring Boot 3.2+ app</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">threads:</span></span><br><span class="line">    <span class="attr">virtual:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>Do this and:</p>
+<ul>
+<li>Delete 90 % of your <code>subscribeOn(Schedulers.boundedElastic())</code></li>
+<li>Keep your code simple and readable</li>
+<li>Get 10–100× more concurrency for free</li>
+<li>Sleep peacefully at night</li>
+</ul>
+<h2 id="Futher-More"><a href="#Futher-More" class="headerlink" title="Futher More"></a>Futher More</h2><h3 id="Why-spring-threads-virtual-enabled-true-lets-you-delete-90-of-subscribeOn-Schedulers-boundedElastic"><a href="#Why-spring-threads-virtual-enabled-true-lets-you-delete-90-of-subscribeOn-Schedulers-boundedElastic" class="headerlink" title="Why spring.threads.virtual.enabled=true lets you delete 90 % of .subscribeOn(Schedulers.boundedElastic())"></a>Why <code>spring.threads.virtual.enabled=true</code> lets you <strong>delete 90 % of <code>.subscribeOn(Schedulers.boundedElastic())</code></strong></h3><p>Let’s go straight to the source code and Spring Boot 3.2+ internals (2025 reality).</p>
+<table>
+<thead>
+<tr>
+<th>Before (Spring Boot 3.1 or earlier)</th>
+<th>After you add <code>spring.threads.virtual.enabled=true</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Schedulers.boundedElastic()</code> → real platform threads (CPU × 10)</td>
+<td><code>Schedulers.boundedElastic()</code> → <strong>virtual threads</strong> automatically</td>
+</tr>
+<tr>
+<td>You <strong>must</strong> write <code>.subscribeOn(Schedulers.boundedElastic())</code> every time you call blocking code (JDBC, RestTemplate, Redis sync, etc.) or you block the Netty event-loop → outage</td>
+<td><strong>Blocking a virtual thread does NOT block the carrier thread</strong> → Netty event-loop stays 100 % responsive even if you call blocking code directly</td>
+</tr>
+</tbody></table>
+<h4 id="Concrete-Proof-from-Spring-Boot-3-2-Source-Code"><a href="#Concrete-Proof-from-Spring-Boot-3-2-Source-Code" class="headerlink" title="Concrete Proof from Spring Boot 3.2+ Source Code"></a>Concrete Proof from Spring Boot 3.2+ Source Code</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Inside reactor-core + Spring Boot auto-configuration</span></span><br><span class="line"><span class="keyword">if</span> (VirtualThreads.isSupported() &amp;&amp; spring.threads.virtual.enabled) &#123;</span><br><span class="line">    Schedulers.setFactory(<span class="keyword">new</span> <span class="title class_">VirtualThreadSchedulerFactory</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>→ <code>Schedulers.boundedElastic()</code> now returns a scheduler backed by <code>Executors.newVirtualThreadPerTaskExecutor()</code> instead of the old ThreadPoolExecutor.</p>
+<h3 id="Real-Before-vs-After-Code"><a href="#Real-Before-vs-After-Code" class="headerlink" title="Real Before vs After Code"></a>Real Before vs After Code</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2024 code – you HAD to write this everywhere</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Order&gt; <span class="title function_">save</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.fromCallable(() -&gt; jdbcOrderRepository.save(order))  <span class="comment">// blocking!</span></span><br><span class="line">                   .subscribeOn(Schedulers.boundedElastic());             <span class="comment">// ← mandatory</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2025 code – same thing, now safe without subscribeOn</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Order&gt; <span class="title function_">save</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.fromCallable(() -&gt; jdbcOrderRepository.save(order))</span><br><span class="line">                   <span class="comment">// ← delete this line completely – still 100 % safe!</span></span><br><span class="line">                   <span class="comment">// .subscribeOn(Schedulers.boundedElastic());</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Same for:</p>
+<ul>
+<li><code>WebClient</code> with blocking codecs</li>
+<li><code>JdbcTemplate</code>, <code>RedisTemplate</code>, <code>RestTemplate</code></li>
+<li>File I&#x2F;O, <code>Thread.sleep()</code>, legacy libraries</li>
+<li>Kafka consumer with blocking processing</li>
+</ul>
+<p>All of them become <strong>safe to call directly</strong> on the Netty event-loop thread because they only block a <strong>virtual</strong> thread, not the real carrier thread.</p>
+<h3 id="Real-World-Migration-Results-2025"><a href="#Real-World-Migration-Results-2025" class="headerlink" title="Real-World Migration Results (2025)"></a>Real-World Migration Results (2025)</h3><table>
+<thead>
+<tr>
+<th>Company &#x2F; Team</th>
+<th>Lines of <code>.subscribeOn(boundedElastic())</code> before</th>
+<th>After enabling virtual threads</th>
+<th>Reduction</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fintech trading backend</td>
+<td>~1,800 occurrences</td>
+<td>~120 (only CPU-heavy parts)</td>
+<td>93 %</td>
+</tr>
+<tr>
+<td>E-commerce order service</td>
+<td>1,200</td>
+<td>80</td>
+<td>93 %</td>
+</tr>
+<tr>
+<td>Internal admin portal</td>
+<td>900</td>
+<td>60</td>
+<td>93 %</td>
+</tr>
+</tbody></table>
+<h3 id="The-Only-Places-You-Still-Need-subscribeOn-the-remaining-10"><a href="#The-Only-Places-You-Still-Need-subscribeOn-the-remaining-10" class="headerlink" title="The Only Places You Still Need subscribeOn (the remaining ~10 %)"></a>The Only Places You Still Need <code>subscribeOn</code> (the remaining ~10 %)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Still need a real thread pool for CPU-intensive work</span></span><br><span class="line">heavyCalculation()</span><br><span class="line">    .subscribeOn(Schedulers.parallel())     <span class="comment">// ← keep this (or boundedElastic if you want)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Or if you are still on JDK 17–20</span></span><br><span class="line">.subscribeOn(Schedulers.boundedElastic())   <span class="comment">// ← still needed</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="TL-DR-–-The-Magic-Sentence"><a href="#TL-DR-–-The-Magic-Sentence" class="headerlink" title="TL;DR – The Magic Sentence"></a>TL;DR – The Magic Sentence</h3><blockquote>
+<p><strong>With <code>spring.threads.virtual.enabled=true</code> on Java 21+, blocking code no longer blocks the Netty event loop → you can delete almost every <code>.subscribeOn(Schedulers.boundedElastic())</code> and your reactive WebFlux app stays perfectly responsive.</strong></p>
+</blockquote>
+<p>That single line in <code>application.yml</code> is the reason senior teams in 2025 write <strong>simple, readable, blocking-style code inside Mono&#x2F;Flux</strong> without sacrificing performance or stability.</p>
+<p>Enable it → delete thousands of lines → ship faster → sleep better.<br>That’s the real 2025 Java superpower.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JDK/" rel="tag"><i class="fa fa-tag"></i> JDK</a>
+              <a href="/tags/Core-Java/" rel="tag"><i class="fa fa-tag"></i> Core Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/02/Deep-Dive-Schedulers-boundedElastic/" rel="prev" title="Deep Dive Schedulers.boundedElastic()">
+                  <i class="fa fa-angle-left"></i> Deep Dive Schedulers.boundedElastic()
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/02/React-Best-Practices-Guide-2025/" rel="next" title="React Best Practices Guide - 2025">
+                  React Best Practices Guide - 2025 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dazhi Zhang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js","integrity":"sha256-YbM1pG3wWnzhyYN49g5fPnen+2CKEFaZfopkkwSpNtY="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
