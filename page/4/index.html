@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-count">147</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">132</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-count">87</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,191 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/01/24/Deep-Dive-into-the-Hook-in-React/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/01/24/Deep-Dive-into-the-Hook-in-React/" class="post-title-link" itemprop="url">Deep Dive into the  Hook in React</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-24 12:22:32" itemprop="dateCreated datePublished" datetime="2025-01-24T12:22:32-05:00">2025-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="What-is-useRef"><a href="#What-is-useRef" class="headerlink" title="What is useRef?"></a>What is <code>useRef</code>?</h2><p><code>useRef</code> is a hook provided by React that allows you to:</p>
+<ol>
+<li><strong>Persist a mutable value across renders without triggering re-renders.</strong></li>
+<li><strong>Access a DOM element directly.</strong></li>
+<li><strong>Store values similar to an instance variable in class components.</strong></li>
+</ol>
+<h3 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> refContainer = <span class="title function_">useRef</span>(initialValue);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>refContainer</code> is an object with a <code>current</code> property.</li>
+<li><code>initialValue</code> is the initial value assigned to <code>current</code>.</li>
+</ul>
+<p>Textual diagram of a <code>useRef</code> object:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">useRef</span><br><span class="line">   |</span><br><span class="line">   |--- current: &lt;initialValue&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Scenarios-and-Use-Cases"><a href="#Scenarios-and-Use-Cases" class="headerlink" title="Scenarios and Use Cases"></a>Scenarios and Use Cases</h2><h3 id="1-Accessing-DOM-Elements"><a href="#1-Accessing-DOM-Elements" class="headerlink" title="1. Accessing DOM Elements"></a>1. <strong>Accessing DOM Elements</strong></h3><p><code>useRef</code> is commonly used to directly access DOM elements. In class components, this was done using <code>React.createRef()</code>.</p>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useRef &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">FocusInput</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> inputRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">handleFocus</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (inputRef.<span class="property">current</span>) &#123;</span><br><span class="line">      inputRef.<span class="property">current</span>.<span class="title function_">focus</span>(); <span class="comment">// Directly focus the input element</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">&#123;inputRef&#125;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;Click the button to focus&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;handleFocus&#125;</span>&gt;</span>Focus Input<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">FocusInput</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Sequence Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User clicks the &quot;Focus Input&quot; button</span><br><span class="line">|</span><br><span class="line">|--- `handleFocus` is invoked</span><br><span class="line">     |</span><br><span class="line">     |--- `inputRef.current.focus()` focuses the input element</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Persisting-Values-Without-Re-Renders"><a href="#2-Persisting-Values-Without-Re-Renders" class="headerlink" title="2. Persisting Values Without Re-Renders"></a>2. <strong>Persisting Values Without Re-Renders</strong></h3><p>Unlike <code>useState</code>, updating a <code>useRef</code> value does not trigger a re-render.</p>
+<h4 id="Example-1"><a href="#Example-1" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useRef, useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">Counter</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> renderCount = <span class="title function_">useRef</span>(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">increment</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="title function_">setCount</span>(count + <span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  renderCount.<span class="property">current</span> += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>Count: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>Component rendered &#123;renderCount.current&#125; times<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;increment&#125;</span>&gt;</span>Increment<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Counter</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Textual Diagram of State vs Ref:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">useState (Triggers Re-render):</span><br><span class="line">   state = count: 0 -&gt; render -&gt; state = count: 1 -&gt; render</span><br><span class="line"></span><br><span class="line">useRef (No Re-render):</span><br><span class="line">   ref = renderCount: 1 -&gt; render -&gt; ref = renderCount: 2 -&gt; no re-render</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Storing-Mutable-Values"><a href="#3-Storing-Mutable-Values" class="headerlink" title="3. Storing Mutable Values"></a>3. <strong>Storing Mutable Values</strong></h3><p>When working with mutable values, <code>useRef</code> can store data that changes over time without impacting the component lifecycle.</p>
+<h4 id="Example-2"><a href="#Example-2" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useRef &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">Stopwatch</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> timerId = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line">  <span class="keyword">const</span> startTime = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">startTimer</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    startTime.<span class="property">current</span> = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">    timerId.<span class="property">current</span> = <span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Elapsed time:&quot;</span>, <span class="title class_">Date</span>.<span class="title function_">now</span>() - startTime.<span class="property">current</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">stopTimer</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="built_in">clearInterval</span>(timerId.<span class="property">current</span>);</span><br><span class="line">    timerId.<span class="property">current</span> = <span class="literal">null</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;startTimer&#125;</span>&gt;</span>Start<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;stopTimer&#125;</span>&gt;</span>Stop<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Stopwatch</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Sequence Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">User clicks &quot;Start&quot;</span><br><span class="line">|</span><br><span class="line">|--- `startTimer` invoked</span><br><span class="line">     |</span><br><span class="line">     |--- `startTime.current` set to current timestamp</span><br><span class="line">     |--- `timerId.current` stores interval ID</span><br><span class="line"></span><br><span class="line">User clicks &quot;Stop&quot;</span><br><span class="line">|</span><br><span class="line">|--- `stopTimer` invoked</span><br><span class="line">     |</span><br><span class="line">     |--- `clearInterval(timerId.current)` stops the timer</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-Avoiding-Closure-Pitfalls"><a href="#4-Avoiding-Closure-Pitfalls" class="headerlink" title="4. Avoiding Closure Pitfalls"></a>4. <strong>Avoiding Closure Pitfalls</strong></h3><p>In functional components, closures can lead to stale values being captured. <code>useRef</code> can prevent this by providing a mutable reference.</p>
+<h4 id="Example-3"><a href="#Example-3" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useRef &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">CounterWithRef</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> countRef = <span class="title function_">useRef</span>(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">increment</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    countRef.<span class="property">current</span> += <span class="number">1</span>; <span class="comment">// Updates ref value</span></span><br><span class="line">    <span class="title function_">setCount</span>(countRef.<span class="property">current</span>); <span class="comment">// Updates state</span></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>Count: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;increment&#125;</span>&gt;</span>Increment<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">CounterWithRef</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="When-to-Use-useRef"><a href="#When-to-Use-useRef" class="headerlink" title="When to Use useRef"></a>When to Use <code>useRef</code></h2><ul>
+<li>Accessing DOM elements.</li>
+<li>Storing mutable values that persist across renders.</li>
+<li>Avoiding re-renders caused by state updates.</li>
+<li>Managing timers, intervals, or external libraries.</li>
+</ul>
+<hr>
+<h2 id="Common-Pitfalls"><a href="#Common-Pitfalls" class="headerlink" title="Common Pitfalls"></a>Common Pitfalls</h2><h3 id="1-Overusing-useRef"><a href="#1-Overusing-useRef" class="headerlink" title="1. Overusing useRef"></a>1. <strong>Overusing <code>useRef</code></strong></h3><p>Avoid using <code>useRef</code> for state that should trigger a re-render. Use <code>useState</code> or <code>useReducer</code> instead.</p>
+<h3 id="2-Directly-Manipulating-DOM"><a href="#2-Directly-Manipulating-DOM" class="headerlink" title="2. Directly Manipulating DOM"></a>2. <strong>Directly Manipulating DOM</strong></h3><p>While <code>useRef</code> can access DOM elements, it’s generally better to rely on React’s declarative approach.</p>
+<hr>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The <code>useRef</code> hook is versatile and indispensable for managing references and mutable values. By understanding its use cases and limitations, you can write cleaner, more efficient React components.</p>
+<hr>
+<p>Here’s an updated article snippet that includes the scenario where <code>useRef</code> is used with <code>useEffect</code> to ensure that changes to the referenced value do not trigger <code>useEffect</code>, but the effect can still access the latest value of the reference.</p>
+<hr>
+<h3 id="Using-useRef-with-useEffect-to-Access-the-Latest-Value-Without-Re-triggering"><a href="#Using-useRef-with-useEffect-to-Access-the-Latest-Value-Without-Re-triggering" class="headerlink" title="Using useRef with useEffect to Access the Latest Value Without Re-triggering"></a>Using <code>useRef</code> with <code>useEffect</code> to Access the Latest Value Without Re-triggering</h3><p>One of the powerful features of <code>useRef</code> is that it provides a mutable object that does <strong>not trigger re-renders</strong> when its value changes. This characteristic makes it an excellent tool for scenarios where you need to access the latest value inside a <code>useEffect</code> but do not want the <code>useEffect</code> to re-run whenever the value changes.</p>
+<h4 id="Why-Use-useRef-in-This-Scenario"><a href="#Why-Use-useRef-in-This-Scenario" class="headerlink" title="Why Use useRef in This Scenario?"></a>Why Use <code>useRef</code> in This Scenario?</h4><p>When a state variable is updated, it triggers a re-render, and the <code>useEffect</code> with that state as a dependency is re-executed. However, in some cases, you may want to:</p>
+<ol>
+<li>Access the latest value inside the <code>useEffect</code>.</li>
+<li>Avoid re-triggering the <code>useEffect</code> when the value changes.</li>
+</ol>
+<p>This is where <code>useRef</code> comes in handy.</p>
+<hr>
+<h4 id="Code-Example-Accessing-the-Latest-Value-Without-Re-triggering-useEffect"><a href="#Code-Example-Accessing-the-Latest-Value-Without-Re-triggering-useEffect" class="headerlink" title="Code Example: Accessing the Latest Value Without Re-triggering useEffect"></a>Code Example: Accessing the Latest Value Without Re-triggering <code>useEffect</code></h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; useState, useEffect, useRef &#125; <span class="keyword">from</span> <span class="string">&quot;react&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">TimerComponent</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> [isRunning, setIsRunning] = <span class="title function_">useState</span>(<span class="literal">false</span>); <span class="comment">// Controls if the timer is running</span></span><br><span class="line">  <span class="keyword">const</span> countRef = <span class="title function_">useRef</span>(<span class="number">0</span>); <span class="comment">// Tracks the count value</span></span><br><span class="line">  <span class="keyword">const</span> intervalRef = useRef&lt;<span class="title class_">NodeJS</span>.<span class="property">Timer</span> | <span class="literal">null</span>&gt;(<span class="literal">null</span>); <span class="comment">// Tracks the interval ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Start the timer</span></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">startTimer</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (!intervalRef.<span class="property">current</span>) &#123;</span><br><span class="line">      intervalRef.<span class="property">current</span> = <span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        countRef.<span class="property">current</span> += <span class="number">1</span>; <span class="comment">// Update the countRef without causing a re-render</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Current count:&quot;</span>, countRef.<span class="property">current</span>); <span class="comment">// Always prints the latest count</span></span><br><span class="line">      &#125;, <span class="number">1000</span>);</span><br><span class="line">      <span class="title function_">setIsRunning</span>(<span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Stop the timer</span></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">stopTimer</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (intervalRef.<span class="property">current</span>) &#123;</span><br><span class="line">      <span class="built_in">clearInterval</span>(intervalRef.<span class="property">current</span>);</span><br><span class="line">      intervalRef.<span class="property">current</span> = <span class="literal">null</span>;</span><br><span class="line">      <span class="title function_">setIsRunning</span>(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Example: Access the latest value inside useEffect without adding dependencies</span></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">logLatestCount</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Timer stopped. Latest count value:&quot;</span>, countRef.<span class="property">current</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isRunning) &#123;</span><br><span class="line">      <span class="title function_">logLatestCount</span>(); <span class="comment">// Logs the latest count value without needing countRef as a dependency</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (intervalRef.<span class="property">current</span>) <span class="built_in">clearInterval</span>(intervalRef.<span class="property">current</span>); <span class="comment">// Cleanup</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;, [isRunning]); <span class="comment">// Dependency only on isRunning, but we can still access countRef.current</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Count: &#123;countRef.current&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span> &#123;/* Ref does not trigger re-renders */&#125;</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;startTimer&#125;</span> <span class="attr">disabled</span>=<span class="string">&#123;isRunning&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        Start</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;stopTimer&#125;</span> <span class="attr">disabled</span>=<span class="string">&#123;!isRunning&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        Stop</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">TimerComponent</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="Sequence-Breakdown"><a href="#Sequence-Breakdown" class="headerlink" title="Sequence Breakdown"></a>Sequence Breakdown</h4><ol>
+<li><p><strong>Initial Render:</strong></p>
+<ul>
+<li>The <code>countRef</code> is initialized to <code>0</code>, and the <code>intervalRef</code> is <code>null</code>.</li>
+</ul>
+</li>
+<li><p><strong>Start Timer (<code>startTimer</code>):</strong></p>
+<ul>
+<li>Sets up a timer with <code>setInterval</code>.</li>
+<li>Updates <code>countRef.current</code> every second without causing re-renders.</li>
+<li><code>isRunning</code> is updated, which triggers a re-render to disable the “Start” button.</li>
+</ul>
+</li>
+<li><p><strong>Stop Timer (<code>stopTimer</code>):</strong></p>
+<ul>
+<li>Clears the interval and resets <code>intervalRef</code> to <code>null</code>.</li>
+<li>Logs the latest value of <code>countRef.current</code> using <code>useEffect</code> because <code>isRunning</code> changes.</li>
+</ul>
+</li>
+<li><p><strong>Access Latest Value in <code>useEffect</code>:</strong></p>
+<ul>
+<li>Even though <code>countRef</code> is not a dependency, <code>useEffect</code> can access its latest value because <code>useRef</code> does not reinitialize between renders.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="Advantages-of-Using-useRef-in-This-Scenario"><a href="#Advantages-of-Using-useRef-in-This-Scenario" class="headerlink" title="Advantages of Using useRef in This Scenario"></a>Advantages of Using <code>useRef</code> in This Scenario</h4><ul>
+<li><strong>Avoiding Re-renders:</strong> Unlike <code>useState</code>, updates to <code>useRef</code> do not trigger re-renders, making it perfect for frequently updated values like a timer count.</li>
+<li><strong>Accessing Latest Value in Effects:</strong> The latest value in <code>useRef</code> is always accessible, even in effects, without adding it as a dependency.</li>
+</ul>
+<hr>
+<h4 id="Textual-Diagram-How-useRef-and-useEffect-Work-Together"><a href="#Textual-Diagram-How-useRef-and-useEffect-Work-Together" class="headerlink" title="Textual Diagram: How useRef and useEffect Work Together"></a>Textual Diagram: How <code>useRef</code> and <code>useEffect</code> Work Together</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[Initial Render]</span><br><span class="line">  |</span><br><span class="line">  |--&gt; useRef initialized: countRef = &#123; current: 0 &#125;</span><br><span class="line">  |</span><br><span class="line">[Timer Starts (setInterval)]</span><br><span class="line">  |</span><br><span class="line">  |--&gt; countRef.current updated every second</span><br><span class="line">  |    (NO re-renders triggered)</span><br><span class="line">  |</span><br><span class="line">[useEffect Triggered on isRunning Change]</span><br><span class="line">  |</span><br><span class="line">  |--&gt; Access countRef.current to log the latest value</span><br><span class="line">  |    (No dependency needed for countRef)</span><br><span class="line">  |</span><br><span class="line">[Timer Stops]</span><br><span class="line">  |</span><br><span class="line">  |--&gt; useEffect logs latest countRef.current value</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1620,222 +1805,6 @@
 </li>
 </ol>
 <h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a><strong>Conclusion</strong></h3><p>Although the <code>print()</code> function is widely used as a basic debugging tool in Python, it has obvious limitations in complex development scenarios. The IceCream library effectively addresses the shortcomings of traditional debugging methods by providing more professional debugging tools. Its rich features, flexible configuration options, and clear output format can significantly enhance the debugging efficiency of Python programs. In practical development, using the <code>ic()</code> function properly not only helps developers locate and solve problems faster but also improves code maintainability.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/09/Typescript-interface-vs-class-vs-type/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/12/09/Typescript-interface-vs-class-vs-type/" class="post-title-link" itemprop="url">TypeScript interface vs class vs type</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-12-09 10:23:53" itemprop="dateCreated datePublished" datetime="2024-12-09T10:23:53-05:00">2024-12-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>In TypeScript, <code>interface</code>, <code>class</code>, and <code>type</code> are all used to define the shape of objects, but they serve different purposes and have different use cases. Let’s delve into each of them in detail, including real-world scenarios with sample code, and discuss their pros and cons.</p>
-<h3 id="1-Interface"><a href="#1-Interface" class="headerlink" title="1. Interface"></a>1. <strong>Interface</strong></h3><p>An <code>interface</code> is a way to define a contract for the shape of an object. It can describe the structure of an object, including properties and methods, but it cannot contain implementation details.</p>
-<h4 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code:"></a><strong>Sample Code:</strong></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Defining an interface</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">number</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">email</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">isActive</span>: <span class="built_in">boolean</span>;</span><br><span class="line">    <span class="title function_">getDetails</span>(): <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Implementing the interface in a class</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RegisteredUser</span> <span class="keyword">implements</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">number</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">email</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">isActive</span>: <span class="built_in">boolean</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"><span class="attr">id</span>: <span class="built_in">number</span>, <span class="attr">name</span>: <span class="built_in">string</span>, <span class="attr">email</span>: <span class="built_in">string</span>, <span class="attr">isActive</span>: <span class="built_in">boolean</span></span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">id</span> = id;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">email</span> = email;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">isActive</span> = isActive;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">getDetails</span>(): <span class="built_in">string</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`ID: <span class="subst">$&#123;<span class="variable language_">this</span>.id&#125;</span>, Name: <span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span>, Email: <span class="subst">$&#123;<span class="variable language_">this</span>.email&#125;</span>, Active: <span class="subst">$&#123;<span class="variable language_">this</span>.isActive&#125;</span>`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using the class</span></span><br><span class="line"><span class="keyword">const</span> user = <span class="keyword">new</span> <span class="title class_">RegisteredUser</span>(<span class="number">1</span>, <span class="string">&quot;John Doe&quot;</span>, <span class="string">&quot;john@example.com&quot;</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user.<span class="title function_">getDetails</span>()); <span class="comment">// Output: ID: 1, Name: John Doe, Email: john@example.com, Active: true</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Pros"><a href="#Pros" class="headerlink" title="Pros:"></a><strong>Pros:</strong></h4><ul>
-<li><strong>Contract Definition:</strong> Interfaces are great for defining contracts that classes or objects must adhere to.</li>
-<li><strong>Extensibility:</strong> You can extend interfaces using the <code>extends</code> keyword, which allows for composition of types.</li>
-<li><strong>Readability:</strong> Interfaces are often more readable and easier to understand than type aliases, especially for complex object shapes.</li>
-</ul>
-<h4 id="Cons"><a href="#Cons" class="headerlink" title="Cons:"></a><strong>Cons:</strong></h4><ul>
-<li><strong>No Implementation:</strong> Interfaces cannot contain implementation details, so they are limited to defining the shape of objects.</li>
-<li><strong>Cannot Be Used for Primitive Types:</strong> Interfaces cannot be used to define types for primitive values (e.g., <code>string</code>, <code>number</code>).</li>
-</ul>
-<h3 id="2-Class"><a href="#2-Class" class="headerlink" title="2. Class"></a>2. <strong>Class</strong></h3><p>A <code>class</code> in TypeScript is a blueprint for creating objects. It can define both the structure and the behavior of objects. Classes can implement interfaces and can also be extended.</p>
-<h4 id="Sample-Code-1"><a href="#Sample-Code-1" class="headerlink" title="Sample Code:"></a><strong>Sample Code:</strong></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Defining a class</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Product</span> &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">number</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">price</span>: <span class="built_in">number</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"><span class="attr">id</span>: <span class="built_in">number</span>, <span class="attr">name</span>: <span class="built_in">string</span>, <span class="attr">price</span>: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">id</span> = id;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">price</span> = price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">getDiscountedPrice</span>(<span class="attr">discount</span>: <span class="built_in">number</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">price</span> * (<span class="number">1</span> - discount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Extending a class</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Electronics</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Product</span> &#123;</span><br><span class="line">    <span class="attr">warrantyPeriod</span>: <span class="built_in">number</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"><span class="attr">id</span>: <span class="built_in">number</span>, <span class="attr">name</span>: <span class="built_in">string</span>, <span class="attr">price</span>: <span class="built_in">number</span>, <span class="attr">warrantyPeriod</span>: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="variable language_">super</span>(id, name, price);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">warrantyPeriod</span> = warrantyPeriod;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">getWarrantyDetails</span>(): <span class="built_in">string</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`Warranty Period: <span class="subst">$&#123;<span class="variable language_">this</span>.warrantyPeriod&#125;</span> years`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using the class</span></span><br><span class="line"><span class="keyword">const</span> laptop = <span class="keyword">new</span> <span class="title class_">Electronics</span>(<span class="number">1</span>, <span class="string">&quot;Laptop&quot;</span>, <span class="number">1000</span>, <span class="number">2</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(laptop.<span class="title function_">getDiscountedPrice</span>(<span class="number">0.1</span>)); <span class="comment">// Output: 900</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(laptop.<span class="title function_">getWarrantyDetails</span>()); <span class="comment">// Output: Warranty Period: 2 years</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Pros-1"><a href="#Pros-1" class="headerlink" title="Pros:"></a><strong>Pros:</strong></h4><ul>
-<li><strong>Implementation:</strong> Classes can contain both properties and methods, allowing for full implementation of behavior.</li>
-<li><strong>Inheritance:</strong> Classes can be extended, allowing for code reuse and hierarchical relationships.</li>
-<li><strong>Encapsulation:</strong> Classes support encapsulation through access modifiers like <code>private</code>, <code>protected</code>, and <code>public</code>.</li>
-</ul>
-<h4 id="Cons-1"><a href="#Cons-1" class="headerlink" title="Cons:"></a><strong>Cons:</strong></h4><ul>
-<li><strong>Complexity:</strong> Classes can become complex, especially when dealing with inheritance and polymorphism.</li>
-<li><strong>Performance:</strong> Classes can introduce some overhead compared to plain objects, especially in scenarios where you don’t need the full OOP features.</li>
-</ul>
-<h3 id="3-Type"><a href="#3-Type" class="headerlink" title="3. Type"></a>3. <strong>Type</strong></h3><p>A <code>type</code> in TypeScript is a way to create a new name for a type. It can be used to alias existing types, combine types, or create complex types. Unlike interfaces, types can represent primitive types, union types, and intersection types.</p>
-<h4 id="Sample-Code-2"><a href="#Sample-Code-2" class="headerlink" title="Sample Code:"></a><strong>Sample Code:</strong></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Defining a type alias</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Point</span> = &#123;</span><br><span class="line">    <span class="attr">x</span>: <span class="built_in">number</span>;</span><br><span class="line">    <span class="attr">y</span>: <span class="built_in">number</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using the type alias</span></span><br><span class="line"><span class="keyword">const</span> <span class="attr">origin</span>: <span class="title class_">Point</span> = &#123; <span class="attr">x</span>: <span class="number">0</span>, <span class="attr">y</span>: <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Defining a union type</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Status</span> = <span class="string">&quot;active&quot;</span> | <span class="string">&quot;inactive&quot;</span> | <span class="string">&quot;pending&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using the union type</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">userStatus</span>: <span class="title class_">Status</span> = <span class="string">&quot;active&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Defining an intersection type</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">User</span> = &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">number</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Admin</span> = &#123;</span><br><span class="line">    <span class="attr">permissions</span>: <span class="built_in">string</span>[];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">AdminUser</span> = <span class="title class_">User</span> &amp; <span class="title class_">Admin</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using the intersection type</span></span><br><span class="line"><span class="keyword">const</span> <span class="attr">admin</span>: <span class="title class_">AdminUser</span> = &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;Admin&quot;</span>,</span><br><span class="line">    <span class="attr">permissions</span>: [<span class="string">&quot;read&quot;</span>, <span class="string">&quot;write&quot;</span>],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Pros-2"><a href="#Pros-2" class="headerlink" title="Pros:"></a><strong>Pros:</strong></h4><ul>
-<li><strong>Flexibility:</strong> Types are very flexible and can be used to create complex types, including unions, intersections, and primitive types.</li>
-<li><strong>Alias Existing Types:</strong> Types can be used to alias existing types, making code more readable and maintainable.</li>
-<li><strong>No Declaration Merging:</strong> Unlike interfaces, types do not support declaration merging, which can be a pro in scenarios where you want to avoid accidental type extensions.</li>
-</ul>
-<h4 id="Cons-2"><a href="#Cons-2" class="headerlink" title="Cons:"></a><strong>Cons:</strong></h4><ul>
-<li><strong>No Extensibility:</strong> Types cannot be extended or merged like interfaces. If you need to extend a type, you need to create a new type that includes the original type.</li>
-<li><strong>Less Readable for Complex Objects:</strong> For complex object shapes, interfaces are often more readable and easier to understand than types.</li>
-</ul>
-<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h3><ul>
-<li><strong>Interface:</strong> Best for defining contracts for object shapes, especially when you want to enforce a structure across multiple classes or objects.</li>
-<li><strong>Class:</strong> Best for defining both the structure and behavior of objects, especially when you need inheritance, encapsulation, and polymorphism.</li>
-<li><strong>Type:</strong> Best for creating complex types, including unions, intersections, and aliases for existing types.</li>
-</ul>
-<p>Each of these constructs has its own strengths and weaknesses, and the choice between them depends on the specific requirements of your project.</p>
-<h3 id="Comparison-interface-type-and-class"><a href="#Comparison-interface-type-and-class" class="headerlink" title="Comparison: interface, type, and class"></a><strong>Comparison: <code>interface</code>, <code>type</code>, and <code>class</code></strong></h3><table>
-<thead>
-<tr>
-<th><strong>Feature</strong></th>
-<th><strong>interface</strong></th>
-<th><strong>type</strong></th>
-<th><strong>class</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Object shapes</strong></td>
-<td>✅ Yes</td>
-<td>✅ Yes</td>
-<td>✅ Yes</td>
-</tr>
-<tr>
-<td><strong>Unions&#x2F;Intersections</strong></td>
-<td>❌ Limited</td>
-<td>✅ Fully supported</td>
-<td>❌ Limited</td>
-</tr>
-<tr>
-<td><strong>Extending existing types</strong></td>
-<td>✅ Can extend multiple interfaces</td>
-<td>✅ Supports unions and intersections for combining types</td>
-<td>✅ Can extend other classes and implement interfaces</td>
-</tr>
-<tr>
-<td><strong>Declaration merging</strong></td>
-<td>✅ Yes (interfaces with the same name merge automatically)</td>
-<td>❌ No</td>
-<td>❌ No</td>
-</tr>
-<tr>
-<td><strong>Runtime presence</strong></td>
-<td>❌ Does not exist in runtime</td>
-<td>❌ Does not exist in runtime</td>
-<td>✅ Yes (exists in runtime as JavaScript classes)</td>
-</tr>
-<tr>
-<td><strong>Instantiable (e.g., via <code>new</code>)</strong></td>
-<td>❌ No</td>
-<td>❌ No</td>
-<td>✅ Yes</td>
-</tr>
-<tr>
-<td><strong>Implementation</strong></td>
-<td>❌ Cannot contain implementation details</td>
-<td>❌ Cannot contain implementation details</td>
-<td>✅ Can contain implementation details (methods, properties, etc.)</td>
-</tr>
-<tr>
-<td><strong>Inheritance</strong></td>
-<td>❌ No</td>
-<td>❌ No</td>
-<td>✅ Supports inheritance using <code>extends</code></td>
-</tr>
-<tr>
-<td><strong>Encapsulation</strong></td>
-<td>❌ No</td>
-<td>❌ No</td>
-<td>✅ Supports encapsulation through access modifiers (<code>private</code>, <code>protected</code>, <code>public</code>)</td>
-</tr>
-<tr>
-<td><strong>Polymorphism</strong></td>
-<td>❌ No</td>
-<td>❌ No</td>
-<td>✅ Supports polymorphism through method overriding and interface implementation</td>
-</tr>
-<tr>
-<td><strong>Performance</strong></td>
-<td>✅ Lightweight (only type checking)</td>
-<td>✅ Lightweight (only type checking)</td>
-<td>❌ Slightly heavier due to runtime presence and additional features (inheritance, encapsulation)</td>
-</tr>
-<tr>
-<td><strong>Readability</strong></td>
-<td>✅ Often more readable for complex object shapes</td>
-<td>❌ Can become less readable for complex object shapes</td>
-<td>✅ Often more readable for complex object shapes with behavior</td>
-</tr>
-<tr>
-<td><strong>Use Case</strong></td>
-<td>Best for defining contracts for object shapes, especially when enforcing structure across multiple classes&#x2F;objects</td>
-<td>Best for creating complex types, including unions, intersections, and aliases for existing types</td>
-<td>Best for defining both the structure and behavior of objects, especially when you need inheritance, encapsulation, and polymorphism</td>
-</tr>
-</tbody></table>
-<hr>
 
       
     </div>
