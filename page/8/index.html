@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-count">147</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">132</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-count">87</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,144 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/30/Understanding-Kubernetes-Pods-and-Services/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/30/Understanding-Kubernetes-Pods-and-Services/" class="post-title-link" itemprop="url">Understanding Kubernetes Pods and Services</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-30 23:24:27" itemprop="dateCreated datePublished" datetime="2024-10-30T23:24:27-04:00">2024-10-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>In Kubernetes, <strong>Pods</strong> and <strong>Services</strong> are fundamental components, each with distinct responsibilities that work together to provide scalable, resilient applications. Here’s an in-depth look into how these units interact, their roles, and how they communicate.</p>
+<h2 id="1-Kubernetes-Pod-The-Basic-Unit-of-Deployment"><a href="#1-Kubernetes-Pod-The-Basic-Unit-of-Deployment" class="headerlink" title="1. Kubernetes Pod: The Basic Unit of Deployment"></a>1. Kubernetes Pod: The Basic Unit of Deployment</h2><p>A <strong>Pod</strong> is the smallest deployable unit in Kubernetes, representing one or more containers. Containers within the same Pod:</p>
+<ul>
+<li><strong>Share resources</strong>: Same IP address, storage volumes, and network namespace.</li>
+<li><strong>Enable inter-container communication</strong>: Containers in a Pod can access each other on <code>localhost</code>.</li>
+<li><strong>Are ephemeral</strong>: When a Pod fails, it is replaced by a new Pod instance, often with a new IP address.</li>
+</ul>
+<h3 id="Pod-Architecture"><a href="#Pod-Architecture" class="headerlink" title="Pod Architecture"></a>Pod Architecture</h3><p>Each Pod contains one or more containers with shared resources. Below is a textual representation of a typical Pod structure:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------+</span><br><span class="line">|        Pod            |</span><br><span class="line">|  IP: 10.244.1.5       |</span><br><span class="line">|                       |</span><br><span class="line">| +------------------+  |</span><br><span class="line">| | Container A      |  |</span><br><span class="line">| | - Application    |  |</span><br><span class="line">| +------------------+  |</span><br><span class="line">|                       |</span><br><span class="line">| +------------------+  |</span><br><span class="line">| | Container B      |  |</span><br><span class="line">| | - Sidecar Proxy  |  |</span><br><span class="line">| +------------------+  |</span><br><span class="line">+-----------------------+</span><br></pre></td></tr></table></figure>
+
+<p>In this structure, <code>Container A</code> might run the main application, while <code>Container B</code> is a helper (e.g., proxy or logging container). These containers share an IP address and can communicate directly.</p>
+<h2 id="2-Real-Scenario-Explaination"><a href="#2-Real-Scenario-Explaination" class="headerlink" title="2. Real Scenario Explaination"></a>2. Real Scenario Explaination</h2><p>In this setup, the sidecar container collects logs from the PostgreSQL container by sharing a directory between them. Here’s a breakdown of how it works:</p>
+<ol>
+<li><p><strong>Shared Volume</strong>: A shared <code>emptyDir</code> volume, <code>postgres-logs</code>, is mounted in both the PostgreSQL and sidecar containers. PostgreSQL is configured to output logs to <code>/var/log/postgresql</code> within its filesystem, which maps to the shared volume.</p>
+</li>
+<li><p><strong>Log Collector Configuration</strong>: The sidecar container, running Fluent Bit, is configured to read from <code>/var/log/postgresql</code> (also mapped to the shared volume). Fluent Bit’s configuration specifies the <code>tail</code> input plugin to read new entries as they are appended.</p>
+</li>
+<li><p><strong>Log Processing and Output</strong>: Fluent Bit processes the logs, then sends them to Elasticsearch through its output configuration, allowing centralized log analysis and monitoring.</p>
+</li>
+</ol>
+<p>This method ensures that logs are constantly accessible to the sidecar without modifying the PostgreSQL container directly.</p>
+<h3 id="Example-Fluent-Bit-Configuration-in-configmap-yaml"><a href="#Example-Fluent-Bit-Configuration-in-configmap-yaml" class="headerlink" title="Example Fluent Bit Configuration in configmap.yaml"></a>Example Fluent Bit Configuration in <code>configmap.yaml</code></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql-log-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">fluent-bit.conf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [SERVICE]</span></span><br><span class="line"><span class="string">        Flush 1</span></span><br><span class="line"><span class="string">        Log_Level info</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    [<span class="string">INPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">tail</span></span><br><span class="line">        <span class="string">Path</span> <span class="string">/var/log/postgresql/postgresql.log</span></span><br><span class="line">        <span class="string">Tag</span> <span class="string">postgresql</span></span><br><span class="line"></span><br><span class="line">    [<span class="string">OUTPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">es</span></span><br><span class="line">        <span class="string">Match</span> <span class="string">*</span></span><br><span class="line">        <span class="string">Host</span> &#123;&#123; <span class="string">.Values.elasticsearch.host</span> &#125;&#125;</span><br><span class="line">        <span class="string">Port</span> <span class="number">9200</span></span><br><span class="line">        <span class="string">Index</span> &#123;&#123; <span class="string">.Values.elasticsearch.index</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This setup allows the sidecar to monitor log updates efficiently, pushing each entry to Elasticsearch as it appears in the log file.</p>
+<h2 id="2-Kubernetes-Service-Stable-Networking-for-Dynamic-Pods"><a href="#2-Kubernetes-Service-Stable-Networking-for-Dynamic-Pods" class="headerlink" title="2. Kubernetes Service: Stable Networking for Dynamic Pods"></a>2. Kubernetes Service: Stable Networking for Dynamic Pods</h2><p>A <strong>Service</strong> is an abstraction that provides a stable, permanent network interface for a set of Pods. Since Pod IP addresses are temporary, a Service routes requests to Pods and handles the load balancing across them.</p>
+<h3 id="Key-Service-Types"><a href="#Key-Service-Types" class="headerlink" title="Key Service Types"></a>Key Service Types</h3><ul>
+<li><strong>ClusterIP</strong>: Exposes the Service only within the cluster.</li>
+<li><strong>NodePort</strong>: Exposes the Service on each node’s IP at a specific port.</li>
+<li><strong>LoadBalancer</strong>: Exposes the Service externally, often through a cloud provider’s load balancer.</li>
+<li><strong>Headless Service</strong>: Exposes each Pod individually, without load balancing, often used for direct client-to-Pod connections.</li>
+</ul>
+<h3 id="Example-Service-Architecture"><a href="#Example-Service-Architecture" class="headerlink" title="Example Service Architecture"></a>Example Service Architecture</h3><p>The Service selects Pods with specific labels and routes traffic to them dynamically. Here’s a simplified text diagram for a Service:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+             +------------------+</span><br><span class="line">|  Client Request   |------------&gt;|  Service         |</span><br><span class="line">+-------------------+             |  (ClusterIP)     |</span><br><span class="line">                                  +--------+---------+</span><br><span class="line">                                           |</span><br><span class="line">                                           |</span><br><span class="line">                              +------------+-----------+</span><br><span class="line">                              |                        |</span><br><span class="line">                              |                        |</span><br><span class="line">                      +-------v------+       +---------v------+</span><br><span class="line">                      |    Pod       |       |    Pod         |</span><br><span class="line">                      |  IP: Dynamic |       |  IP: Dynamic   |</span><br><span class="line">                      +--------------+       +----------------+</span><br></pre></td></tr></table></figure>
+
+<p>The Service maintains a list of Pods based on matching labels and routes incoming requests to any healthy Pod in the group, providing an abstraction layer for easy access.</p>
+<h2 id="3-Communication-Between-Pods-and-Services"><a href="#3-Communication-Between-Pods-and-Services" class="headerlink" title="3. Communication Between Pods and Services"></a>3. Communication Between Pods and Services</h2><p>Kubernetes manages Pod-to-Service and Service-to-Pod communication using:</p>
+<ol>
+<li><strong>Labels and Selectors</strong>: Services target Pods by their labels.</li>
+<li><strong>Cluster DNS</strong>: Each Service receives a unique hostname, which can be used within the cluster to resolve the Service IP.</li>
+<li><strong>Load Balancing</strong>: Services distribute requests across Pods, using internal load balancing mechanisms (IP tables, kube-proxy).</li>
+</ol>
+<p>When a client inside the cluster calls a Service, Kubernetes DNS resolves the Service name to a virtual IP, and the Service routes the request to one of the associated Pods.</p>
+<h3 id="Dynamic-Pod-Communication-Example"><a href="#Dynamic-Pod-Communication-Example" class="headerlink" title="Dynamic Pod Communication Example"></a>Dynamic Pod Communication Example</h3><p>The following diagram illustrates how a Service enables stable access to multiple Pods, even if the Pods are added or removed over time:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+                  +-----------------+</span><br><span class="line">|    Client         |-----------------&gt;| Service: my-app |</span><br><span class="line">+-------------------+                  |  IP: 10.96.0.1  |</span><br><span class="line">                                       +-------+---------+</span><br><span class="line">                                               |</span><br><span class="line">                           +-------------------+-------------------+</span><br><span class="line">                           |                                       |</span><br><span class="line">                  +--------v-----------+                  +--------v------------+</span><br><span class="line">                  |      Pod           |                  |       Pod           |</span><br><span class="line">                  |  Label: app=my-app |                  |   Label: app=my-app |</span><br><span class="line">                  +--------------------+                  +---------------------+</span><br></pre></td></tr></table></figure>
+
+<p>Here, the client accesses <code>my-app</code>, and the Service dynamically routes the request to an available Pod with the matching label.</p>
+<h2 id="4-Summary"><a href="#4-Summary" class="headerlink" title="4. Summary"></a>4. Summary</h2><ul>
+<li><strong>Pods</strong>: Contain containers, share IP addresses, ephemeral in nature.</li>
+<li><strong>Services</strong>: Provide stable, permanent access to a group of Pods with specific labels, enable load balancing, and ensure that applications can consistently reach the backend Pods, even with dynamic scaling.</li>
+</ul>
+<p>By decoupling Pod IP addresses from the client-facing endpoint, Services ensure reliable, scalable, and high-availability communication within Kubernetes applications.</p>
+<h3 id="Example-Fluent-Bit-Configuration-in-configmap-yaml-1"><a href="#Example-Fluent-Bit-Configuration-in-configmap-yaml-1" class="headerlink" title="Example Fluent Bit Configuration in configmap.yaml"></a>Example Fluent Bit Configuration in <code>configmap.yaml</code></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql-log-config</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">fluent-bit.conf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [SERVICE]</span></span><br><span class="line"><span class="string">        Flush 1</span></span><br><span class="line"><span class="string">        Log_Level info</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    [<span class="string">INPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">tail</span></span><br><span class="line">        <span class="string">Path</span> <span class="string">/var/log/postgresql/postgresql.log</span></span><br><span class="line">        <span class="string">Tag</span> <span class="string">postgresql</span></span><br><span class="line"></span><br><span class="line">    [<span class="string">OUTPUT</span>]</span><br><span class="line">        <span class="string">Name</span> <span class="string">es</span></span><br><span class="line">        <span class="string">Match</span> <span class="string">*</span></span><br><span class="line">        <span class="string">Host</span> &#123;&#123; <span class="string">.Values.elasticsearch.host</span> &#125;&#125;</span><br><span class="line">        <span class="string">Port</span> <span class="number">9200</span></span><br><span class="line">        <span class="string">Index</span> &#123;&#123; <span class="string">.Values.elasticsearch.index</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This setup allows the sidecar to monitor log updates efficiently, pushing each entry to Elasticsearch as it appears in the log file.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2661,224 +2799,6 @@
 <li><a target="_blank" rel="noopener" href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/package-summary.html">Concurrent Collections</a></li>
 </ol>
 <p>By mastering these concepts and practices, you can build robust, high-performance Java applications that leverage the full potential of multi-threading.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading-Concepts/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading-Concepts/" class="post-title-link" itemprop="url">Deep Dive into Java Core Multi-Threading Concepts</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-28 22:04:14" itemprop="dateCreated datePublished" datetime="2024-10-28T22:04:14-04:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#1-java-thread-model">1. Java Thread Model</a></li>
-<li><a href="#2-java-memory-model-jmm">2. Java Memory Model (JMM)</a><ul>
-<li><a href="#java-thread-memory-model-diagram">Java Thread Memory Model Diagram</a></li>
-<li><a href="#jmm-key-concepts">JMM Key Concepts:</a></li>
-</ul>
-</li>
-<li><a href="#3-thread-lifecycle-and-state-machine">3. Thread Lifecycle and State Machine</a><ul>
-<li><a href="#thread-state-machine-diagram">Thread State Machine Diagram</a></li>
-</ul>
-</li>
-<li><a href="#4-key-threading-classes-in-java">4. Key Threading Classes in Java</a><ul>
-<li><a href="#41-thread-class">4.1 Thread Class</a></li>
-<li><a href="#42-runnable-interface">4.2 Runnable Interface</a></li>
-<li><a href="#43-callable-and-future">4.3 Callable and Future</a></li>
-<li><a href="#44-executors-framework">4.4 Executors Framework</a></li>
-</ul>
-</li>
-<li><a href="#5-synchronization-and-locks">5. Synchronization and Locks</a><ul>
-<li><a href="#synchronized">Synchronized</a></li>
-<li><a href="#reentrantlock">ReentrantLock</a></li>
-</ul>
-</li>
-<li><a href="#6-real-life-production-example">6. Real-Life Production Example</a><ul>
-<li><a href="#explanation">Explanation</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<p>Java multithreading is a fundamental part of the language that allows concurrent execution of multiple parts of a program to achieve greater efficiency and responsiveness. This article explores the latest Java version’s core multithreading concepts, the Java Memory Model (JMM), thread lifecycle, key classes, and real-life examples.</p>
-<p><a name="java-thread-model"></a></p>
-<h2 id="1-Java-Thread-Model"><a href="#1-Java-Thread-Model" class="headerlink" title="1. Java Thread Model"></a>1. Java Thread Model</h2><p>Java’s thread model is based on the OS thread model, providing abstraction to manage and create threads directly. Java threads allow programs to perform multiple tasks concurrently, improving resource utilization. Thread priorities help in determining the order of thread execution, though scheduling ultimately depends on the underlying OS.</p>
-<p><a name="java-memory-model"></a></p>
-<h2 id="2-Java-Memory-Model-JMM"><a href="#2-Java-Memory-Model-JMM" class="headerlink" title="2. Java Memory Model (JMM)"></a>2. Java Memory Model (JMM)</h2><p><a name="java-memory-model-diagram"></a></p>
-<h3 id="Java-Thread-Memory-Model-Diagram"><a href="#Java-Thread-Memory-Model-Diagram" class="headerlink" title="Java Thread Memory Model Diagram"></a>Java Thread Memory Model Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+</span><br><span class="line">|                   |       |                   |</span><br><span class="line">|    Main Memory    |&lt;-----&gt;|    Thread 1       |</span><br><span class="line">|                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">        |                           |</span><br><span class="line">        |                           |</span><br><span class="line">        v                           v</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">|                   |       |                   |</span><br><span class="line">|    Thread 2       |&lt;-----&gt;|    Thread 3       |</span><br><span class="line">|                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<p>The Java Memory Model (JMM) defines how threads interact through memory and what values can be read or written by threads. The JMM provides:</p>
-<ol>
-<li><strong>Visibility</strong>: Changes made by one thread are visible to other threads.</li>
-<li><strong>Atomicity</strong>: Certain actions are indivisible or atomic.</li>
-<li><strong>Ordering</strong>: The sequence in which instructions are executed.</li>
-</ol>
-<h3 id="JMM-Key-Concepts"><a href="#JMM-Key-Concepts" class="headerlink" title="JMM Key Concepts:"></a>JMM Key Concepts:</h3><ul>
-<li><strong>Happens-Before Relationship</strong>: Ensures that memory writes by one specific action are visible to another specific action.</li>
-<li><strong>Volatile Keyword</strong>: Variables declared as <code>volatile</code> ensure visibility of changes across threads.</li>
-<li><strong>Synchronized Blocks</strong>: Using <code>synchronized</code> enforces an order of access to variables between threads.</li>
-</ul>
-<p><a name="thread-lifecycle-and-state-machine"></a></p>
-<h2 id="3-Thread-Lifecycle-and-State-Machine"><a href="#3-Thread-Lifecycle-and-State-Machine" class="headerlink" title="3. Thread Lifecycle and State Machine"></a>3. Thread Lifecycle and State Machine</h2><p>Java threads go through several states:</p>
-<table>
-<thead>
-<tr>
-<th>State</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>New</td>
-<td>The thread is created but not yet started.</td>
-</tr>
-<tr>
-<td>Runnable</td>
-<td>The thread is eligible to run but may be waiting for a CPU cycle.</td>
-</tr>
-<tr>
-<td>Blocked</td>
-<td>The thread is waiting to acquire a lock to enter a <code>synchronized</code> block.</td>
-</tr>
-<tr>
-<td>Waiting</td>
-<td>The thread is waiting indefinitely for another thread to perform an action.</td>
-</tr>
-<tr>
-<td>Timed Waiting</td>
-<td>The thread is waiting for another thread for a specified period.</td>
-</tr>
-<tr>
-<td>Terminated</td>
-<td>The thread has completed execution.</td>
-</tr>
-</tbody></table>
-<p><a name="java-state-machine-diagram"></a></p>
-<h3 id="Thread-State-Machine-Diagram"><a href="#Thread-State-Machine-Diagram" class="headerlink" title="Thread State Machine Diagram"></a>Thread State Machine Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NEW -&gt; Runnable -&gt; BLOCKED -&gt; WAITING &lt;-&gt; TIMED_WAITING -&gt; TERMINATED</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+</span><br><span class="line">|                   |       |                   |</span><br><span class="line">|    NEW            |------&gt;|    RUNNABLE       |</span><br><span class="line">|                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">        |                           |</span><br><span class="line">        |                           |</span><br><span class="line">        v                           v</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">|                   |       |                   |</span><br><span class="line">|    BLOCKED        |&lt;-----&gt;|    WAITING        |</span><br><span class="line">|                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">        |                           |</span><br><span class="line">        |                           |</span><br><span class="line">        v                           v</span><br><span class="line">+-------------------+       +-------------------+</span><br><span class="line">|                   |       |                   |</span><br><span class="line">|    TIMED_WAITING  |&lt;-----&gt;|    TERMINATED     |</span><br><span class="line">|                   |       |                   |</span><br><span class="line">+-------------------+       +-------------------+</span><br></pre></td></tr></table></figure>
-
-<p><a name="key-threading-classes"></a></p>
-<h2 id="4-Key-Threading-Classes-in-Java"><a href="#4-Key-Threading-Classes-in-Java" class="headerlink" title="4. Key Threading Classes in Java"></a>4. Key Threading Classes in Java</h2><p><a name="thread-class"></a></p>
-<h3 id="4-1-Thread-Class"><a href="#4-1-Thread-Class" class="headerlink" title="4.1 Thread Class"></a>4.1 Thread Class</h3><p>The <code>Thread</code> class provides methods to create, start, and manage threads. You can define a custom thread by extending the <code>Thread</code> class and overriding its <code>run()</code> method.</p>
-<p>Example:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Thread is running&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">MyThread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">thread.start();</span><br></pre></td></tr></table></figure>
-
-<p><a name="runnable-interface"></a></p>
-<h3 id="4-2-Runnable-Interface"><a href="#4-2-Runnable-Interface" class="headerlink" title="4.2 Runnable Interface"></a>4.2 Runnable Interface</h3><p>The <code>Runnable</code> interface is a functional interface representing a task to be executed on a thread. It separates the task from the thread itself, allowing reusability and flexibility.</p>
-<p>Example:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyRunnable</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Runnable is running&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="keyword">new</span> <span class="title class_">MyRunnable</span>());</span><br><span class="line">thread.start();</span><br></pre></td></tr></table></figure>
-
-<p><a name="callable-and-future"></a></p>
-<h3 id="4-3-Callable-and-Future"><a href="#4-3-Callable-and-Future" class="headerlink" title="4.3 Callable and Future"></a>4.3 Callable and Future</h3><p><code>Callable</code> allows tasks to return results or throw checked exceptions, while <code>Future</code> represents the result of an asynchronous computation.</p>
-<p>Example:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Callable&lt;Integer&gt; task = () -&gt; &#123;</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">Future&lt;Integer&gt; future = executor.submit(task);</span><br><span class="line"></span><br><span class="line"><span class="type">Integer</span> <span class="variable">result</span> <span class="operator">=</span> future.get();  <span class="comment">// blocks until the result is available</span></span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
-
-<p><a name="executors-framework"></a></p>
-<h3 id="4-4-Executors-Framework"><a href="#4-4-Executors-Framework" class="headerlink" title="4.4 Executors Framework"></a>4.4 Executors Framework</h3><p>The Executors framework provides a higher-level API for thread management, thread pooling, and scheduling, abstracting the creation and management of threads.</p>
-<p>Example:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    executor.submit(() -&gt; &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task running&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
-
-<p><a name="synchronization-and-locks"></a></p>
-<h2 id="5-Synchronization-and-Locks"><a href="#5-Synchronization-and-Locks" class="headerlink" title="5. Synchronization and Locks"></a>5. Synchronization and Locks</h2><p>Java provides several ways to control access to shared resources, including synchronized methods and blocks, the <code>ReentrantLock</code> class, and the <code>ReadWriteLock</code>.</p>
-<h3 id="Synchronized"><a href="#Synchronized" class="headerlink" title="Synchronized"></a>Synchronized</h3><p>The <code>synchronized</code> keyword ensures that only one thread can access a method or block at a time.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">increment</span><span class="params">()</span> &#123;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p><code>ReentrantLock</code> provides explicit lock mechanisms, giving more control over thread coordination.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line">lock.lock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="real-life-production-example"></a></p>
-<h2 id="6-Real-Life-Production-Example"><a href="#6-Real-Life-Production-Example" class="headerlink" title="6. Real-Life Production Example"></a>6. Real-Life Production Example</h2><p>Consider a production scenario where we have multiple tasks needing parallel execution but require control over access to shared resources. Here’s a multithreaded solution using a <code>ScheduledExecutorService</code> in a banking transaction processing system.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TransactionProcessor</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ScheduledExecutorService</span> <span class="variable">scheduler</span> <span class="operator">=</span> Executors.newScheduledThreadPool(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">startProcessing</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Runnable</span> <span class="variable">task</span> <span class="operator">=</span> () -&gt; &#123;</span><br><span class="line">            <span class="comment">// Simulate fetching and processing a transaction</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Processing transaction: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);  <span class="comment">// Simulating a transaction processing delay</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                Thread.currentThread().interrupt();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Schedule at fixed rate</span></span><br><span class="line">        scheduler.scheduleAtFixedRate(task, <span class="number">0</span>, <span class="number">5</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">TransactionProcessor</span> <span class="variable">processor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionProcessor</span>();</span><br><span class="line">        processor.startProcessing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ul>
-<li>We use <code>ScheduledExecutorService</code> for periodic transaction processing.</li>
-<li>The thread pool’s <code>scheduleAtFixedRate</code> method ensures that the task runs every 5 seconds, enabling controlled execution with set intervals.</li>
-<li>This design is beneficial in systems where tasks need continuous or scheduled processing but must prevent overloading resources.</li>
-</ul>
-<hr>
-<p>This article provides an overview of multithreading concepts, memory models, core classes, and real-world examples. Java’s concurrency mechanisms offer flexibility and control, making it essential to use these constructs carefully to manage resources efficiently and avoid pitfalls such as deadlocks and race conditions.</p>
 
       
     </div>
