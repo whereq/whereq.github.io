@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,146 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/04/20/Deep-Dive-Ethers-js-calldata/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/20/Deep-Dive-Ethers-js-calldata/" class="post-title-link" itemprop="url">Deep Dive --- Ethers.js calldata</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-04-20 18:42:59" itemprop="dateCreated datePublished" datetime="2025-04-20T18:42:59-04:00">2025-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/" itemprop="url" rel="index"><span itemprop="name">Cypto Currency</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Cypto-Currency/Ethereum/" itemprop="url" rel="index"><span itemprop="name">Ethereum</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Ethers-js-中的-Calldata-详解及使用场景"><a href="#Ethers-js-中的-Calldata-详解及使用场景" class="headerlink" title="Ethers.js 中的 Calldata 详解及使用场景"></a>Ethers.js 中的 Calldata 详解及使用场景</h1><p><code>calldata</code> 是以太坊智能合约交互中的核心概念，它包含了调用合约函数时发送的所有数据。在 ethers.js 中，理解和使用 calldata 对于高级合约交互至关重要。</p>
+<h2 id="什么是-Calldata？"><a href="#什么是-Calldata？" class="headerlink" title="什么是 Calldata？"></a>什么是 Calldata？</h2><p>Calldata 是发送到以太坊合约的特殊数据格式，包含：</p>
+<ul>
+<li>函数选择器（4字节的函数签名哈希）</li>
+<li>编码后的参数数据</li>
+</ul>
+<h3 id="Calldata-的特点"><a href="#Calldata-的特点" class="headerlink" title="Calldata 的特点"></a>Calldata 的特点</h3><ol>
+<li>只读 - 合约不能修改 calldata</li>
+<li>临时存储 - 执行结束后不保存在区块链上</li>
+<li>外部调用专用 - 用于合约间通信</li>
+<li>比 memory 更便宜 - 使用 calldata 可以节省 gas</li>
+</ol>
+<h2 id="基础-Calldata-操作"><a href="#基础-Calldata-操作" class="headerlink" title="基础 Calldata 操作"></a>基础 Calldata 操作</h2><h3 id="1-生成-Calldata"><a href="#1-生成-Calldata" class="headerlink" title="1. 生成 Calldata"></a>1. 生成 Calldata</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ethers &#125; = <span class="built_in">require</span>(<span class="string">&quot;ethers&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 合约ABI</span></span><br><span class="line"><span class="keyword">const</span> erc20Abi = [</span><br><span class="line">  <span class="string">&quot;function transfer(address to, uint amount)&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建接口</span></span><br><span class="line"><span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>(erc20Abi);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编码calldata</span></span><br><span class="line"><span class="keyword">const</span> calldata = iface.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [</span><br><span class="line">  <span class="string">&quot;0xRecipientAddressHere&quot;</span>,</span><br><span class="line">  ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;1.0&quot;</span>)</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Calldata:&quot;</span>, calldata);</span><br><span class="line"><span class="comment">// 输出示例: 0xa9059cbb000000000000000000000000recipientaddress0000000000000000000000000000000000000000000000000de0b6b3a7640000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-解析-Calldata"><a href="#2-解析-Calldata" class="headerlink" title="2. 解析 Calldata"></a>2. 解析 Calldata</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用相同的接口解析calldata</span></span><br><span class="line"><span class="keyword">const</span> parsed = iface.<span class="title function_">parseTransaction</span>(&#123; <span class="attr">data</span>: calldata &#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Parsed:&quot;</span>, &#123;</span><br><span class="line">  <span class="attr">name</span>: parsed.<span class="property">name</span>,</span><br><span class="line">  <span class="attr">args</span>: parsed.<span class="property">args</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="核心使用场景"><a href="#核心使用场景" class="headerlink" title="核心使用场景"></a>核心使用场景</h2><h3 id="场景1-批量交易-Multicall"><a href="#场景1-批量交易-Multicall" class="headerlink" title="场景1: 批量交易 (Multicall)"></a>场景1: 批量交易 (Multicall)</h3><p><strong>需求</strong>：在一次交易中执行多个合约调用，节省gas费用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> multiCallAbi = [</span><br><span class="line">  <span class="string">&quot;function multicall(bytes[] calldata data) external returns (bytes[] memory results)&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">batchTransfer</span>(<span class="params">token, recipients, amounts</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>([</span><br><span class="line">    <span class="string">&quot;function transfer(address to, uint amount)&quot;</span></span><br><span class="line">  ]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 为每个转账生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> calls = recipients.<span class="title function_">map</span>(<span class="function">(<span class="params">to, i</span>) =&gt;</span> </span><br><span class="line">    token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amounts[i]])</span><br><span class="line">  );</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 创建Multicall合约实例</span></span><br><span class="line">  <span class="keyword">const</span> multicall = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(</span><br><span class="line">    <span class="string">&quot;0x5ba1e12693dc8f9c48aad8770482f4739beed696&quot;</span>, <span class="comment">// Ethereum主网Multicall地址</span></span><br><span class="line">    multiCallAbi,</span><br><span class="line">    signer</span><br><span class="line">  );</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 执行批量调用</span></span><br><span class="line">  <span class="keyword">const</span> tx = <span class="keyword">await</span> multicall.<span class="title function_">multicall</span>(calls);</span><br><span class="line">  <span class="keyword">await</span> tx.<span class="title function_">wait</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;批量转账完成&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景2-离线签名交易"><a href="#场景2-离线签名交易" class="headerlink" title="场景2: 离线签名交易"></a>场景2: 离线签名交易</h3><p><strong>需求</strong>：在不暴露私钥的情况下生成可广播的交易数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createSignedTransfer</span>(<span class="params">tokenAddress, to, amount, signer</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, signer);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 1. 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [</span><br><span class="line">    to,</span><br><span class="line">    amount</span><br><span class="line">  ]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 构建原始交易</span></span><br><span class="line">  <span class="keyword">const</span> tx = &#123;</span><br><span class="line">    <span class="attr">to</span>: tokenAddress,</span><br><span class="line">    <span class="attr">data</span>: data,</span><br><span class="line">    <span class="attr">value</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">gasLimit</span>: <span class="number">100000</span>,</span><br><span class="line">    <span class="attr">nonce</span>: <span class="keyword">await</span> signer.<span class="title function_">getTransactionCount</span>(),</span><br><span class="line">    <span class="attr">chainId</span>: <span class="number">1</span> <span class="comment">// Ethereum主网</span></span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 3. 签名交易（不广播）</span></span><br><span class="line">  <span class="keyword">const</span> signedTx = <span class="keyword">await</span> signer.<span class="title function_">signTransaction</span>(tx);</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;签名后的交易:&quot;</span>, signedTx);</span><br><span class="line">  <span class="comment">// 可以将其保存或发送给其他节点广播</span></span><br><span class="line">  <span class="keyword">return</span> signedTx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景3-估算Gas费用"><a href="#场景3-估算Gas费用" class="headerlink" title="场景3: 估算Gas费用"></a>场景3: 估算Gas费用</h3><p><strong>需求</strong>：在执行交易前准确估算所需的gas。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">estimateTransferGas</span>(<span class="params">tokenAddress, <span class="keyword">from</span>, to, amount, provider</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, provider);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 估算gas</span></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> gasEstimate = <span class="keyword">await</span> provider.<span class="title function_">estimateGas</span>(&#123;</span><br><span class="line">      <span class="attr">from</span>: <span class="keyword">from</span>,</span><br><span class="line">      <span class="attr">to</span>: tokenAddress,</span><br><span class="line">      <span class="attr">data</span>: data</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`转账预估Gas: <span class="subst">$&#123;gasEstimate.toString()&#125;</span>`</span>);</span><br><span class="line">    <span class="keyword">return</span> gasEstimate;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Gas估算失败:&quot;</span>, error.<span class="property">reason</span>);</span><br><span class="line">    <span class="keyword">throw</span> error;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景4-代理合约调用"><a href="#场景4-代理合约调用" class="headerlink" title="场景4: 代理合约调用"></a>场景4: 代理合约调用</h3><p><strong>需求</strong>：通过代理合约调用逻辑合约的函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> proxyAbi = [</span><br><span class="line">  <span class="string">&quot;function delegatecall(address target, bytes memory data) public payable&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">proxyTransfer</span>(<span class="params">proxyAddress, tokenAddress, to, amount, signer</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> token = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(tokenAddress, erc20Abi, signer);</span><br><span class="line">  <span class="keyword">const</span> proxy = <span class="keyword">new</span> ethers.<span class="title class_">Contract</span>(proxyAddress, proxyAbi, signer);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 1. 生成token transfer的calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 通过代理合约的delegatecall执行</span></span><br><span class="line">  <span class="keyword">const</span> tx = <span class="keyword">await</span> proxy.<span class="title function_">delegatecall</span>(tokenAddress, data);</span><br><span class="line">  <span class="keyword">await</span> tx.<span class="title function_">wait</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;通过代理合约转账完成&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景5-事件日志解析"><a href="#场景5-事件日志解析" class="headerlink" title="场景5: 事件日志解析"></a>场景5: 事件日志解析</h3><p><strong>需求</strong>：从交易收据中解析原始事件日志。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">parseTransferEvents</span>(<span class="params">txHash, provider</span>) &#123;</span><br><span class="line">  <span class="comment">// 获取交易收据</span></span><br><span class="line">  <span class="keyword">const</span> receipt = <span class="keyword">await</span> provider.<span class="title function_">getTransactionReceipt</span>(txHash);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 创建ERC20接口用于解析日志</span></span><br><span class="line">  <span class="keyword">const</span> iface = <span class="keyword">new</span> ethers.<span class="property">utils</span>.<span class="title class_">Interface</span>(erc20Abi);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 解析所有日志</span></span><br><span class="line">  <span class="keyword">const</span> events = receipt.<span class="property">logs</span></span><br><span class="line">    .<span class="title function_">map</span>(<span class="function"><span class="params">log</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> iface.<span class="title function_">parseLog</span>(log);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>; <span class="comment">// 忽略非ERC20事件</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">filter</span>(<span class="function"><span class="params">event</span> =&gt;</span> event !== <span class="literal">null</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 筛选Transfer事件</span></span><br><span class="line">  <span class="keyword">const</span> transfers = events.<span class="title function_">filter</span>(<span class="function"><span class="params">e</span> =&gt;</span> e.<span class="property">name</span> === <span class="string">&quot;Transfer&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;交易中的转账事件:&quot;</span>, transfers);</span><br><span class="line">  <span class="keyword">return</span> transfers;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="高级使用技巧"><a href="#高级使用技巧" class="headerlink" title="高级使用技巧"></a>高级使用技巧</h2><h3 id="1-动态参数编码"><a href="#1-动态参数编码" class="headerlink" title="1. 动态参数编码"></a>1. 动态参数编码</h3><p>当参数类型不确定时，可以手动编码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">encodeDynamicParams</span>(<span class="params">types, values</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> ethers.<span class="property">utils</span>.<span class="property">defaultAbiCoder</span>.<span class="title function_">encode</span>(types, values);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：编码动态数组</span></span><br><span class="line"><span class="keyword">const</span> dynamicData = <span class="title function_">encodeDynamicParams</span>(</span><br><span class="line">  [<span class="string">&quot;address[]&quot;</span>, <span class="string">&quot;uint256[]&quot;</span>],</span><br><span class="line">  [</span><br><span class="line">    [<span class="string">&quot;0x123...&quot;</span>, <span class="string">&quot;0x456...&quot;</span>],</span><br><span class="line">    [ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;1&quot;</span>), ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&quot;2&quot;</span>)]</span><br><span class="line">  ]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-自定义错误处理"><a href="#2-自定义错误处理" class="headerlink" title="2. 自定义错误处理"></a>2. 自定义错误处理</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">safeCall</span>(<span class="params">contract, method, args</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> calldata = contract.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(method, args);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 使用callStatic模拟调用</span></span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> contract.<span class="property">callStatic</span>[method](...args);</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">success</span>: <span class="literal">true</span>, <span class="attr">data</span>: result &#125;;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="comment">// 解析revert原因</span></span><br><span class="line">    <span class="keyword">let</span> reason = <span class="string">&quot;未知错误&quot;</span>;</span><br><span class="line">    <span class="keyword">if</span> (error.<span class="property">data</span>) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        reason = contract.<span class="property">interface</span>.<span class="title function_">parseError</span>(error.<span class="property">data</span>).<span class="property">name</span>;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        reason = error.<span class="property">data</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">success</span>: <span class="literal">false</span>, <span class="attr">error</span>: reason &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Gas优化技巧"><a href="#3-Gas优化技巧" class="headerlink" title="3. Gas优化技巧"></a>3. Gas优化技巧</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">optimizedTransfer</span>(<span class="params">token, to, amount</span>) &#123;</span><br><span class="line">  <span class="comment">// 1. 生成calldata</span></span><br><span class="line">  <span class="keyword">const</span> data = token.<span class="property">interface</span>.<span class="title function_">encodeFunctionData</span>(<span class="string">&quot;transfer&quot;</span>, [to, amount]);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 2. 获取当前gas价格</span></span><br><span class="line">  <span class="keyword">const</span> gasPrice = <span class="keyword">await</span> token.<span class="property">provider</span>.<span class="title function_">getGasPrice</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 3. 估算gas</span></span><br><span class="line">  <span class="keyword">const</span> gasLimit = <span class="keyword">await</span> token.<span class="property">estimateGas</span>.<span class="title function_">transfer</span>(to, amount)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">est</span> =&gt;</span> est.<span class="title function_">mul</span>(<span class="number">12</span>).<span class="title function_">div</span>(<span class="number">10</span>)) <span class="comment">// 增加20%缓冲</span></span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function">() =&gt;</span> ethers.<span class="property">BigNumber</span>.<span class="title function_">from</span>(<span class="number">100000</span>)); <span class="comment">// 默认值</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 4. 构建原始交易</span></span><br><span class="line">  <span class="keyword">const</span> tx = &#123;</span><br><span class="line">    <span class="attr">to</span>: token.<span class="property">address</span>,</span><br><span class="line">    <span class="attr">data</span>: data,</span><br><span class="line">    <span class="attr">gasPrice</span>: gasPrice,</span><br><span class="line">    <span class="attr">gasLimit</span>: gasLimit</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 5. 发送交易</span></span><br><span class="line">  <span class="keyword">return</span> token.<span class="property">signer</span>.<span class="title function_">sendTransaction</span>(tx);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="安全注意事项"><a href="#安全注意事项" class="headerlink" title="安全注意事项"></a>安全注意事项</h2><ol>
+<li><strong>Calldata验证</strong>：始终验证外部传入的calldata，防止恶意调用</li>
+<li><strong>Gas限制</strong>：为未知calldata设置合理的gas限制</li>
+<li><strong>重放攻击</strong>：签名后的calldata可以被重放，包含chainId和nonce</li>
+<li><strong>参数清洗</strong>：在解码前检查calldata长度和格式</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Calldata 在以太坊开发中扮演着核心角色，通过 ethers.js 提供的工具可以：</p>
+<ol>
+<li>高效编码和解码函数调用</li>
+<li>实现复杂的批量交易模式</li>
+<li>构建安全的离线签名系统</li>
+<li>优化gas使用成本</li>
+<li>与代理合约和高级模式交互</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2041,205 +2181,6 @@
 <li>Use <code>onClick=&#123;() =&gt; handleClick(&#39;button clicked&#39;)&#125;</code> when the function requires arguments or when you need to customize the function call.</li>
 <li>The <code>() =&gt;</code> syntax ensures the function is called with the correct arguments <strong>only when the button is clicked</strong>, not during rendering.</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/01/30/Managing-Environment-Specific-Logging-and-Configuration-in-a-Vite-React-Application/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/01/30/Managing-Environment-Specific-Logging-and-Configuration-in-a-Vite-React-Application/" class="post-title-link" itemprop="url">Managing Environment-Specific Logging and Configuration in a Vite React Application</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-01-30 18:34:06" itemprop="dateCreated datePublished" datetime="2025-01-30T18:34:06-05:00">2025-01-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ReactJS/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ReactJS/TypeScript/Vite/" itemprop="url" rel="index"><span itemprop="name">Vite</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ReactJS/TypeScript/Vite/Yarn/" itemprop="url" rel="index"><span itemprop="name">Yarn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol>
-<li><strong>How to show console logs according to the environment</strong>.</li>
-<li><strong>How to load environment variables in your application</strong>.</li>
-<li><strong>How to load the correct environment file (with Vite or Yarn)</strong>.</li>
-<li><strong>How to start the application with the production build</strong>.</li>
-</ol>
-<hr>
-<h2 id="1-Show-Console-Logs-According-to-the-Environment"><a href="#1-Show-Console-Logs-According-to-the-Environment" class="headerlink" title="1. Show Console Logs According to the Environment"></a>1. Show Console Logs According to the Environment</h2><p>To ensure that <code>console.log</code>, <code>console.warn</code>, and <code>console.error</code> only work in specific environments (e.g., test mode), you can create a utility module that conditionally logs based on the environment.</p>
-<h3 id="Example-logUtil-ts"><a href="#Example-logUtil-ts" class="headerlink" title="Example: logUtil.ts"></a>Example: <code>logUtil.ts</code></h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> isTestEnv = <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">VITE_ENV</span> === <span class="string">&#x27;test&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> logUtil = &#123;</span><br><span class="line">    <span class="attr">log</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">warn</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">warn</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">error</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> logUtil;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation:"></a>Explanation:</h3><ul>
-<li><strong>Environment Check</strong>: The <code>isTestEnv</code> variable checks if the <code>VITE_ENV</code> environment variable is set to <code>&quot;test&quot;</code>.</li>
-<li><strong>Conditional Logging</strong>: The <code>logUtil</code> methods (<code>log</code>, <code>warn</code>, <code>error</code>) only execute <code>console</code> statements if the environment is <code>test</code>.</li>
-<li><strong>Type Safety</strong>: The utility uses TypeScript generics (<code>&lt;T&gt;</code>) to ensure type safety for the logged arguments.</li>
-</ul>
-<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage:"></a>Usage:</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logUtil <span class="keyword">from</span> <span class="string">&#x27;./utils/logUtil&#x27;</span>;</span><br><span class="line"></span><br><span class="line">logUtil.<span class="title function_">log</span>(<span class="string">&quot;This will only log in test mode&quot;</span>);</span><br><span class="line">logUtil.<span class="title function_">warn</span>(<span class="string">&quot;This warning will only appear in test mode&quot;</span>);</span><br><span class="line">logUtil.<span class="title function_">error</span>(<span class="string">&quot;This error will only appear in test mode&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="2-Load-Environment-Variables-in-Your-Application"><a href="#2-Load-Environment-Variables-in-Your-Application" class="headerlink" title="2. Load Environment Variables in Your Application"></a>2. Load Environment Variables in Your Application</h2><p>Vite automatically exposes environment variables prefixed with <code>VITE_</code> to your application via <code>import.meta.env</code>. To use environment-specific variables:</p>
-<h3 id="Example-env-test"><a href="#Example-env-test" class="headerlink" title="Example: .env.test"></a>Example: <code>.env.test</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VITE_ENV=test</span><br><span class="line">VITE_API_URL=https://api.test.example.com</span><br></pre></td></tr></table></figure>
-
-<h3 id="Accessing-Environment-Variables"><a href="#Accessing-Environment-Variables" class="headerlink" title="Accessing Environment Variables:"></a>Accessing Environment Variables:</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> apiUrl = <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">VITE_API_URL</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(apiUrl); <span class="comment">// Outputs: https://api.test.example.com</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Rules"><a href="#Rules" class="headerlink" title="Rules:"></a>Rules:</h3><ul>
-<li>Prefix all environment variables with <code>VITE_</code> (e.g., <code>VITE_ENV</code>, <code>VITE_API_URL</code>).</li>
-<li>Access them in your application using <code>import.meta.env</code>.</li>
-</ul>
-<hr>
-<h2 id="3-Load-the-Correct-Environment-File-with-Vite-or-Yarn"><a href="#3-Load-the-Correct-Environment-File-with-Vite-or-Yarn" class="headerlink" title="3. Load the Correct Environment File (with Vite or Yarn)"></a>3. Load the Correct Environment File (with Vite or Yarn)</h2><p>Vite loads environment variables from <code>.env</code> files based on the <code>mode</code> specified during the build or development process.</p>
-<h3 id="Environment-Files"><a href="#Environment-Files" class="headerlink" title="Environment Files:"></a>Environment Files:</h3><ul>
-<li><code>.env</code>: Default environment file (loaded in all modes).</li>
-<li><code>.env.test</code>: Loaded when the mode is <code>test</code>.</li>
-<li><code>.env.production</code>: Loaded when the mode is <code>production</code>.</li>
-</ul>
-<h3 id="Specifying-the-Mode"><a href="#Specifying-the-Mode" class="headerlink" title="Specifying the Mode:"></a>Specifying the Mode:</h3><ul>
-<li><strong>During Development</strong>:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn dev --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure></li>
-<li><strong>During Build</strong>:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="Example-Workflow"><a href="#Example-Workflow" class="headerlink" title="Example Workflow:"></a>Example Workflow:</h3><ol>
-<li><p>Create a <code>.env.test</code> file:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VITE_ENV=test</span><br><span class="line">VITE_API_URL=https://api.test.example.com</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Build the application in test mode:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Vite will load the <code>.env.test</code> file and expose its variables via <code>import.meta.env</code>.</p>
-</li>
-</ol>
-<hr>
-<h2 id="4-Start-the-Application-with-the-Build"><a href="#4-Start-the-Application-with-the-Build" class="headerlink" title="4. Start the Application with the Build"></a>4. Start the Application with the Build</h2><p>After building your application, you need to serve the production files. Use a static server like <code>serve</code> or Vite’s built-in <code>preview</code> command.</p>
-<h3 id="Option-1-Using-serve"><a href="#Option-1-Using-serve" class="headerlink" title="Option 1: Using serve"></a>Option 1: Using <code>serve</code></h3><ol>
-<li><p>Install <code>serve</code> globally or locally:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn global add serve</span><br></pre></td></tr></table></figure>
-<p>Or:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add serve</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Serve the production build:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serve -s dist</span><br></pre></td></tr></table></figure>
-<ul>
-<li>The <code>-s</code> flag ensures all routes fall back to <code>index.html</code> (useful for SPAs).</li>
-<li>The <code>dist</code> directory is the default output directory for Vite builds.</li>
-</ul>
-</li>
-<li><p>Access the application at <code>http://localhost:3000</code>.</p>
-</li>
-</ol>
-<h3 id="Option-2-Using-Vite’s-Preview-Command"><a href="#Option-2-Using-Vite’s-Preview-Command" class="headerlink" title="Option 2: Using Vite’s Preview Command"></a>Option 2: Using Vite’s Preview Command</h3><ol>
-<li><p>Add a <code>preview</code> script to your <code>package.json</code>:</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite build&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;preview&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite preview&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Build the application:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Start the preview server:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn preview</span><br></pre></td></tr></table></figure>
-<ul>
-<li>This serves the production build at <code>http://localhost:4173</code> (or another port if specified).</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ol>
-<li><p><strong>Environment-Specific Logging</strong>:</p>
-<ul>
-<li>Use a utility like <code>logUtil.ts</code> to conditionally log based on the environment.</li>
-</ul>
-</li>
-<li><p><strong>Loading Environment Variables</strong>:</p>
-<ul>
-<li>Prefix variables with <code>VITE_</code> and access them via <code>import.meta.env</code>.</li>
-</ul>
-</li>
-<li><p><strong>Loading the Correct Environment File</strong>:</p>
-<ul>
-<li>Use the <code>--mode</code> flag with <code>yarn dev</code> or <code>yarn build</code> to load the appropriate <code>.env</code> file.</li>
-</ul>
-</li>
-<li><p><strong>Starting the Application with the Build</strong>:</p>
-<ul>
-<li>Serve the production build using <code>serve</code> or Vite’s <code>preview</code> command.</li>
-</ul>
-</li>
-</ol>
 
       
     </div>

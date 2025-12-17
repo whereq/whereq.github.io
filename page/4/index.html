@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,205 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/01/30/Managing-Environment-Specific-Logging-and-Configuration-in-a-Vite-React-Application/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/01/30/Managing-Environment-Specific-Logging-and-Configuration-in-a-Vite-React-Application/" class="post-title-link" itemprop="url">Managing Environment-Specific Logging and Configuration in a Vite React Application</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-30 18:34:06" itemprop="dateCreated datePublished" datetime="2025-01-30T18:34:06-05:00">2025-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/" itemprop="url" rel="index"><span itemprop="name">ReactJS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/Vite/" itemprop="url" rel="index"><span itemprop="name">Vite</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ReactJS/TypeScript/Vite/Yarn/" itemprop="url" rel="index"><span itemprop="name">Yarn</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li><strong>How to show console logs according to the environment</strong>.</li>
+<li><strong>How to load environment variables in your application</strong>.</li>
+<li><strong>How to load the correct environment file (with Vite or Yarn)</strong>.</li>
+<li><strong>How to start the application with the production build</strong>.</li>
+</ol>
+<hr>
+<h2 id="1-Show-Console-Logs-According-to-the-Environment"><a href="#1-Show-Console-Logs-According-to-the-Environment" class="headerlink" title="1. Show Console Logs According to the Environment"></a>1. Show Console Logs According to the Environment</h2><p>To ensure that <code>console.log</code>, <code>console.warn</code>, and <code>console.error</code> only work in specific environments (e.g., test mode), you can create a utility module that conditionally logs based on the environment.</p>
+<h3 id="Example-logUtil-ts"><a href="#Example-logUtil-ts" class="headerlink" title="Example: logUtil.ts"></a>Example: <code>logUtil.ts</code></h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> isTestEnv = <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">VITE_ENV</span> === <span class="string">&#x27;test&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> logUtil = &#123;</span><br><span class="line">    <span class="attr">log</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">warn</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">warn</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">error</span>: &lt;T&gt;<span class="function">(<span class="params">...<span class="attr">args</span>: T[]</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isTestEnv) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">error</span>(...args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> logUtil;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation:"></a>Explanation:</h3><ul>
+<li><strong>Environment Check</strong>: The <code>isTestEnv</code> variable checks if the <code>VITE_ENV</code> environment variable is set to <code>&quot;test&quot;</code>.</li>
+<li><strong>Conditional Logging</strong>: The <code>logUtil</code> methods (<code>log</code>, <code>warn</code>, <code>error</code>) only execute <code>console</code> statements if the environment is <code>test</code>.</li>
+<li><strong>Type Safety</strong>: The utility uses TypeScript generics (<code>&lt;T&gt;</code>) to ensure type safety for the logged arguments.</li>
+</ul>
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage:"></a>Usage:</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logUtil <span class="keyword">from</span> <span class="string">&#x27;./utils/logUtil&#x27;</span>;</span><br><span class="line"></span><br><span class="line">logUtil.<span class="title function_">log</span>(<span class="string">&quot;This will only log in test mode&quot;</span>);</span><br><span class="line">logUtil.<span class="title function_">warn</span>(<span class="string">&quot;This warning will only appear in test mode&quot;</span>);</span><br><span class="line">logUtil.<span class="title function_">error</span>(<span class="string">&quot;This error will only appear in test mode&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-Load-Environment-Variables-in-Your-Application"><a href="#2-Load-Environment-Variables-in-Your-Application" class="headerlink" title="2. Load Environment Variables in Your Application"></a>2. Load Environment Variables in Your Application</h2><p>Vite automatically exposes environment variables prefixed with <code>VITE_</code> to your application via <code>import.meta.env</code>. To use environment-specific variables:</p>
+<h3 id="Example-env-test"><a href="#Example-env-test" class="headerlink" title="Example: .env.test"></a>Example: <code>.env.test</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VITE_ENV=test</span><br><span class="line">VITE_API_URL=https://api.test.example.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="Accessing-Environment-Variables"><a href="#Accessing-Environment-Variables" class="headerlink" title="Accessing Environment Variables:"></a>Accessing Environment Variables:</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> apiUrl = <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">VITE_API_URL</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(apiUrl); <span class="comment">// Outputs: https://api.test.example.com</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Rules"><a href="#Rules" class="headerlink" title="Rules:"></a>Rules:</h3><ul>
+<li>Prefix all environment variables with <code>VITE_</code> (e.g., <code>VITE_ENV</code>, <code>VITE_API_URL</code>).</li>
+<li>Access them in your application using <code>import.meta.env</code>.</li>
+</ul>
+<hr>
+<h2 id="3-Load-the-Correct-Environment-File-with-Vite-or-Yarn"><a href="#3-Load-the-Correct-Environment-File-with-Vite-or-Yarn" class="headerlink" title="3. Load the Correct Environment File (with Vite or Yarn)"></a>3. Load the Correct Environment File (with Vite or Yarn)</h2><p>Vite loads environment variables from <code>.env</code> files based on the <code>mode</code> specified during the build or development process.</p>
+<h3 id="Environment-Files"><a href="#Environment-Files" class="headerlink" title="Environment Files:"></a>Environment Files:</h3><ul>
+<li><code>.env</code>: Default environment file (loaded in all modes).</li>
+<li><code>.env.test</code>: Loaded when the mode is <code>test</code>.</li>
+<li><code>.env.production</code>: Loaded when the mode is <code>production</code>.</li>
+</ul>
+<h3 id="Specifying-the-Mode"><a href="#Specifying-the-Mode" class="headerlink" title="Specifying the Mode:"></a>Specifying the Mode:</h3><ul>
+<li><strong>During Development</strong>:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn dev --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>During Build</strong>:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="Example-Workflow"><a href="#Example-Workflow" class="headerlink" title="Example Workflow:"></a>Example Workflow:</h3><ol>
+<li><p>Create a <code>.env.test</code> file:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VITE_ENV=test</span><br><span class="line">VITE_API_URL=https://api.test.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Build the application in test mode:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Vite will load the <code>.env.test</code> file and expose its variables via <code>import.meta.env</code>.</p>
+</li>
+</ol>
+<hr>
+<h2 id="4-Start-the-Application-with-the-Build"><a href="#4-Start-the-Application-with-the-Build" class="headerlink" title="4. Start the Application with the Build"></a>4. Start the Application with the Build</h2><p>After building your application, you need to serve the production files. Use a static server like <code>serve</code> or Vite’s built-in <code>preview</code> command.</p>
+<h3 id="Option-1-Using-serve"><a href="#Option-1-Using-serve" class="headerlink" title="Option 1: Using serve"></a>Option 1: Using <code>serve</code></h3><ol>
+<li><p>Install <code>serve</code> globally or locally:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn global add serve</span><br></pre></td></tr></table></figure>
+<p>Or:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add serve</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Serve the production build:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serve -s dist</span><br></pre></td></tr></table></figure>
+<ul>
+<li>The <code>-s</code> flag ensures all routes fall back to <code>index.html</code> (useful for SPAs).</li>
+<li>The <code>dist</code> directory is the default output directory for Vite builds.</li>
+</ul>
+</li>
+<li><p>Access the application at <code>http://localhost:3000</code>.</p>
+</li>
+</ol>
+<h3 id="Option-2-Using-Vite’s-Preview-Command"><a href="#Option-2-Using-Vite’s-Preview-Command" class="headerlink" title="Option 2: Using Vite’s Preview Command"></a>Option 2: Using Vite’s Preview Command</h3><ol>
+<li><p>Add a <code>preview</code> script to your <code>package.json</code>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite build&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;preview&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite preview&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Build the application:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn build --mode <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Start the preview server:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn preview</span><br></pre></td></tr></table></figure>
+<ul>
+<li>This serves the production build at <code>http://localhost:4173</code> (or another port if specified).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ol>
+<li><p><strong>Environment-Specific Logging</strong>:</p>
+<ul>
+<li>Use a utility like <code>logUtil.ts</code> to conditionally log based on the environment.</li>
+</ul>
+</li>
+<li><p><strong>Loading Environment Variables</strong>:</p>
+<ul>
+<li>Prefix variables with <code>VITE_</code> and access them via <code>import.meta.env</code>.</li>
+</ul>
+</li>
+<li><p><strong>Loading the Correct Environment File</strong>:</p>
+<ul>
+<li>Use the <code>--mode</code> flag with <code>yarn dev</code> or <code>yarn build</code> to load the appropriate <code>.env</code> file.</li>
+</ul>
+</li>
+<li><p><strong>Starting the Application with the Build</strong>:</p>
+<ul>
+<li>Serve the production build using <code>serve</code> or Vite’s <code>preview</code> command.</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1666,145 +1865,6 @@
 <li><strong>Rate Limits</strong>: Some APIs may have rate limits or restrictions on the number of requests you can make. Be mindful of this when using a proxy.</li>
 </ul>
 <p>This setup will allow you to bypass CORS restrictions and make API requests from your application during development.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/12/09/Using-print-for-Python-Debugging-You-re-Outdated/" class="post-title-link" itemprop="url">Using print for Python Debugging? You're Outdated!</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-12-09 10:44:10" itemprop="dateCreated datePublished" datetime="2024-12-09T10:44:10-05:00">2024-12-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>In Python development practice, debugging is an indispensable part of the process. If you rely on <code>print()</code> statements to trace the execution flow of your program, you might encounter persistent exceptions that are difficult to pinpoint even after multiple code reviews. This is often due to the limitations of this debugging method as the terminal output grows, making it hard to correlate outputs with their corresponding function calls. This article introduces the IceCream library, a specialized debugging tool that significantly enhances debugging efficiency, making the entire process more systematic and standardized.</p>
-<p><code>print()</code> is the most basic output function in Python and is the preferred debugging tool for most developers. However, when dealing with complex function calls and data structures, this method often leads to cluttered output, reducing debugging efficiency. The <code>ic()</code> function from the IceCream library is optimized for debugging scenarios, providing more practical features.</p>
-<h3 id="Basic-Debugging-Example-Using-print"><a href="#Basic-Debugging-Example-Using-print" class="headerlink" title="Basic Debugging Example - Using print"></a><strong>Basic Debugging Example - Using <code>print</code></strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using print() for function debugging</span></span><br><span class="line"><span class="built_in">print</span>(add(<span class="number">10</span>, <span class="number">20</span>))  <span class="comment"># Output: 30</span></span><br><span class="line"><span class="built_in">print</span>(add(<span class="number">30</span>, <span class="number">40</span>))  <span class="comment"># Output: 70</span></span><br></pre></td></tr></table></figure>
-
-<p>The main issue with this traditional method is that when there are many output results, it becomes difficult to intuitively associate the output values with their corresponding function calls. Additional manual explanations are required.</p>
-<h3 id="Using-ic-for-Debugging"><a href="#Using-ic-for-Debugging" class="headerlink" title="Using ic for Debugging"></a><strong>Using <code>ic</code> for Debugging</strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> icecream <span class="keyword">import</span> ic</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using ic() for function debugging</span></span><br><span class="line">ic(add(<span class="number">10</span>, <span class="number">20</span>))</span><br><span class="line">ic(add(<span class="number">30</span>, <span class="number">40</span>))</span><br></pre></td></tr></table></figure>
-
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ic| add(10, 20): 30</span><br><span class="line">ic| add(30, 40): 70</span><br></pre></td></tr></table></figure>
-
-<p>By using the <code>ic()</code> function, each output clearly displays the complete information of the function call, including the function name, parameter values, and return results. This output format is particularly suitable for debugging complex sequences of function calls, allowing for quick problem identification.</p>
-<h3 id="Core-Advantages-of-the-ic-Function"><a href="#Core-Advantages-of-the-ic-Function" class="headerlink" title="Core Advantages of the ic Function"></a><strong>Core Advantages of the <code>ic</code> Function</strong></h3><ol>
-<li><p><strong>Detailed Execution Information Tracking</strong></p>
-<p>The <code>ic()</code> function not only displays the execution results but also fully records the operation process, eliminating the need for manually writing debugging information and improving debugging efficiency.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">multiply</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a * b</span><br><span class="line"></span><br><span class="line">ic(multiply(<span class="number">5</span>, <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
-
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ic| multiply(5, 5): 25</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>Integration of Debugging and Assignment Operations</strong></p>
-<p>One notable feature of the <code>ic()</code> function is its support for simultaneous debugging and variable assignment, which is not possible with traditional <code>print()</code> functions:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># print() method</span></span><br><span class="line">result = <span class="built_in">print</span>(multiply(<span class="number">4</span>, <span class="number">6</span>))  <span class="comment"># Output: 24</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># Output: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ic() method</span></span><br><span class="line">result = ic(multiply(<span class="number">4</span>, <span class="number">6</span>))  <span class="comment"># Output: ic| multiply(4, 6): 24</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># Output: 24</span></span><br></pre></td></tr></table></figure>
-
-<p>Using the <code>ic()</code> function, you can not only view debugging information but also correctly obtain and store the return value, which is particularly useful during debugging.</p>
-</li>
-<li><p><strong>Visualization of Data Structure Access</strong></p>
-<p>When dealing with data structures like dictionaries, the <code>ic()</code> function provides clearer access information:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Using ic() to track data access</span></span><br><span class="line">ic(data[<span class="string">&#x27;a&#x27;</span>])</span><br></pre></td></tr></table></figure>
-
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ic| data[&#x27;a&#x27;]: 1</span><br></pre></td></tr></table></figure>
-
-<p>The output clearly shows the access path and result, helping to understand the data operation process.</p>
-</li>
-<li><p><strong>Optimization of Complex Data Structure Display</strong></p>
-<p>When dealing with nested dictionaries or JSON-like complex data structures, the <code>ic()</code> function provides better readability through structured formatting:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">complex_data = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span>: <span class="number">30</span>,</span><br><span class="line">    <span class="string">&quot;languages&quot;</span>: [<span class="string">&quot;Python&quot;</span>, <span class="string">&quot;JavaScript&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ic(complex_data)</span><br></pre></td></tr></table></figure>
-
-<p>The output uses structured formatting with color differentiation, significantly enhancing the readability of complex data structures, facilitating quick location and analysis of data.</p>
-</li>
-</ol>
-<h3 id="Advanced-Features-of-the-IceCream-Library"><a href="#Advanced-Features-of-the-IceCream-Library" class="headerlink" title="Advanced Features of the IceCream Library"></a><strong>Advanced Features of the IceCream Library</strong></h3><p>In addition to basic debugging functions, the IceCream library offers a series of advanced features that can be customized according to specific needs:</p>
-<ol>
-<li><p><strong>Dynamic Control of Debugging Output</strong></p>
-<p>During development, you can dynamically control the output of debugging information as needed:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ic.disable()  <span class="comment"># Pause debugging output</span></span><br><span class="line">ic(multiply(<span class="number">3</span>, <span class="number">3</span>))  <span class="comment"># No output here</span></span><br><span class="line"></span><br><span class="line">ic.enable()  <span class="comment"># Resume debugging output</span></span><br><span class="line">ic(multiply(<span class="number">3</span>, <span class="number">3</span>))  <span class="comment"># Output: ic| multiply(3, 3): 9</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>Custom Configuration of Output Format</strong></p>
-<p>IceCream supports custom output formats, allowing you to adjust the output method according to project requirements:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">log_to_file</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;debug.log&quot;</span>, <span class="string">&quot;a&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(text + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">ic.configureOutput(prefix=<span class="string">&quot;DEBUG| &quot;</span>, outputFunction=log_to_file)</span><br><span class="line"></span><br><span class="line">ic(multiply(<span class="number">7</span>, <span class="number">7</span>))</span><br></pre></td></tr></table></figure>
-
-<p>This configuration can redirect debugging information to a log file and add a custom prefix, facilitating subsequent log analysis.</p>
-</li>
-</ol>
-<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a><strong>Conclusion</strong></h3><p>Although the <code>print()</code> function is widely used as a basic debugging tool in Python, it has obvious limitations in complex development scenarios. The IceCream library effectively addresses the shortcomings of traditional debugging methods by providing more professional debugging tools. Its rich features, flexible configuration options, and clear output format can significantly enhance the debugging efficiency of Python programs. In practical development, using the <code>ic()</code> function properly not only helps developers locate and solve problems faster but also improves code maintainability.</p>
 
       
     </div>
