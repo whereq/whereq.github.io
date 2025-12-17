@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,242 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Spark-in-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Spark-in-Kubernetes/" class="post-title-link" itemprop="url">Spark in Kubernetes</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 11:55:22" itemprop="dateCreated datePublished" datetime="2024-10-28T11:55:22-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#architecture-overview">Architecture Overview</a><ul>
+<li><a href="#diagram-architecture-overview">Diagram: Architecture Overview</a></li>
+</ul>
+</li>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#1-configuring-google-cloud-storage-gcs-bucket">1. Configuring Google Cloud Storage (GCS) Bucket</a></li>
+<li><a href="#2-deploying-postgresql-for-hive-metadata">2. Deploying PostgreSQL for Hive Metadata</a><ul>
+<li><a href="#postgresql-yaml">PostgreSQL YAML</a></li>
+</ul>
+</li>
+<li><a href="#3-installing-hive-metastore">3. Installing Hive Metastore</a><ul>
+<li><a href="#hive-configuration">Hive Configuration</a></li>
+</ul>
+</li>
+<li><a href="#4-deploying-spark-master-and-workers">4. Deploying Spark Master and Workers</a><ul>
+<li><a href="#spark-master-and-worker-statefulset-yaml">Spark Master and Worker StatefulSet YAML</a></li>
+</ul>
+</li>
+<li><a href="#5-setting-up-the-spark-history-server">5. Setting Up the Spark History Server</a><ul>
+<li><a href="#spark-history-server-yaml">Spark History Server YAML</a></li>
+</ul>
+</li>
+<li><a href="#6-configuring-ingress">6. Configuring Ingress</a><ul>
+<li><a href="#ingress-yaml">Ingress YAML</a></li>
+</ul>
+</li>
+<li><a href="#7-testing-the-deployment-with-spark-job">7. Testing the Deployment with Spark Job</a></li>
+<li><a href="#furthermore">Furthermore</a><ul>
+<li><a href="#statefulset-vs-deployment">StatefulSet vs Deployment</a></li>
+<li><a href="#1-spark-master-and-worker-as-statefulsets">1. <strong>Spark Master and Worker as StatefulSets</strong></a></li>
+<li><a href="#2-spark-history-server-as-a-deployment">2. <strong>Spark History Server as a Deployment</strong></a></li>
+</ul>
+</li>
+<li><a href="#summary-table">Summary Table</a></li>
+</ul>
+<hr>
+<p>This guide covers the steps to deploy an Apache Spark cluster with a master, two workers, and a Spark History Server on Kubernetes. It configures a GCS bucket as the default file system and installs Hive with PostgreSQL as its backend. An Ingress is set up for accessing the Spark UI and History Server.</p>
+<p><a name="architecture-overview"></a></p>
+<h2 id="Architecture-Overview"><a href="#Architecture-Overview" class="headerlink" title="Architecture Overview"></a>Architecture Overview</h2><p>The setup includes the following components:</p>
+<ul>
+<li><strong>Spark Master and Workers</strong>: Deployed using StatefulSets for stable identity and persistence.</li>
+<li><strong>History Server</strong>: Deployed using a Deployment and configured to store Spark event logs in GCS.</li>
+<li><strong>Hive and PostgreSQL</strong>: PostgreSQL is used as the backend for Hive metadata, and Hive is deployed to store Spark tables.</li>
+<li><strong>Ingress</strong>: Provides external access to Spark Master UI and History Server UI.</li>
+</ul>
+<h3 id="Diagram-Architecture-Overview"><a href="#Diagram-Architecture-Overview" class="headerlink" title="Diagram: Architecture Overview"></a>Diagram: Architecture Overview</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------+</span><br><span class="line">|                           |</span><br><span class="line">|        Kubernetes         |</span><br><span class="line">|                           |</span><br><span class="line">+---------------------------+</span><br><span class="line">|                           |</span><br><span class="line">|  +---------+   +---------+|</span><br><span class="line">|  |  Spark  |   |  Spark  ||</span><br><span class="line">|  |  Master |   | Workers ||</span><br><span class="line">|  +---------+   +---------+|</span><br><span class="line">|                           |</span><br><span class="line">|        +-----------+      |</span><br><span class="line">|        |  History  |      |</span><br><span class="line">|        |  Server   |      |</span><br><span class="line">|        +-----------+      |</span><br><span class="line">|            |              |</span><br><span class="line">|         Ingress           |</span><br><span class="line">+---------------------------+</span><br><span class="line">           |</span><br><span class="line">    External Access</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="prerequisites"></a></p>
+<h2 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h2><ul>
+<li><strong>Kubernetes Cluster</strong> with access to deploy resources.</li>
+<li><strong>kubectl</strong> command-line tool configured to access the cluster.</li>
+<li><strong>Helm</strong> for deploying Hive and PostgreSQL.</li>
+<li><strong>Google Cloud Storage (GCS)</strong> bucket created for Spark event logs.</li>
+<li><strong>Google Cloud SDK</strong> installed and configured for authentication to GCS.</li>
+</ul>
+<hr>
+<p><a name="1-configuring-google-cloud-storage-gcs-bucket"></a></p>
+<h2 id="1-Configuring-Google-Cloud-Storage-GCS-Bucket"><a href="#1-Configuring-Google-Cloud-Storage-GCS-Bucket" class="headerlink" title="1. Configuring Google Cloud Storage (GCS) Bucket"></a>1. Configuring Google Cloud Storage (GCS) Bucket</h2><ol>
+<li><p>Create a GCS bucket if not already created:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil mb gs://your-spark-event-logs</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Set up a GCS service account key and save it as a Kubernetes secret. This will allow Spark to access GCS:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret generic gcs-key \</span><br><span class="line">--from-file=key.json=/path/to/gcs-service-account-key.json</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p><a name="2-deploying-postgresql-for-hive-metadata"></a></p>
+<h2 id="2-Deploying-PostgreSQL-for-Hive-Metadata"><a href="#2-Deploying-PostgreSQL-for-Hive-Metadata" class="headerlink" title="2. Deploying PostgreSQL for Hive Metadata"></a>2. Deploying PostgreSQL for Hive Metadata</h2><p>PostgreSQL will act as the relational database for Hive’s metadata.</p>
+<h3 id="PostgreSQL-YAML"><a href="#PostgreSQL-YAML" class="headerlink" title="PostgreSQL YAML"></a>PostgreSQL YAML</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql-pvc</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">5Gi</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">postgresql</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgresql</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">postgresql</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">postgresql</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">postgres:13</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POSTGRES_DB</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;hive_metastore&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POSTGRES_USER</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;hiveuser&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POSTGRES_PASSWORD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;hivepassword&quot;</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">&quot;/var/lib/postgresql/data&quot;</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">postgresql-data</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">postgresql-data</span></span><br><span class="line">        <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">          <span class="attr">claimName:</span> <span class="string">postgresql-pvc</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="3-installing-hive-metastore"></a></p>
+<h2 id="3-Installing-Hive-Metastore"><a href="#3-Installing-Hive-Metastore" class="headerlink" title="3. Installing Hive Metastore"></a>3. Installing Hive Metastore</h2><p>Hive Metastore will manage metadata for Spark. </p>
+<h3 id="Hive-Configuration"><a href="#Hive-Configuration" class="headerlink" title="Hive Configuration"></a>Hive Configuration</h3><ol>
+<li><p>Download and install Hive Helm chart:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br><span class="line">helm install hive bitnami/hive --<span class="built_in">set</span> postgresql.enabled=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Update Hive configuration to use PostgreSQL.</p>
+</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Values.yaml for Hive</span></span><br><span class="line"><span class="attr">hive:</span></span><br><span class="line">  <span class="attr">metastore:</span></span><br><span class="line">    <span class="attr">databaseType:</span> <span class="string">postgres</span></span><br><span class="line">    <span class="attr">jdbcUrl:</span> <span class="string">jdbc:postgresql://postgresql-service/hive_metastore</span></span><br><span class="line">    <span class="attr">user:</span> <span class="string">hiveuser</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">hivepassword</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="4-deploying-spark-master-and-workers"></a></p>
+<h2 id="4-Deploying-Spark-Master-and-Workers"><a href="#4-Deploying-Spark-Master-and-Workers" class="headerlink" title="4. Deploying Spark Master and Workers"></a>4. Deploying Spark Master and Workers</h2><h3 id="Spark-Master-and-Worker-StatefulSet-YAML"><a href="#Spark-Master-and-Worker-StatefulSet-YAML" class="headerlink" title="Spark Master and Worker StatefulSet YAML"></a>Spark Master and Worker StatefulSet YAML</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">spark-master</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceName:</span> <span class="string">spark-master</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">spark</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">spark</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">spark-master</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">spark:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">7077</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPARK_MASTER_HOST</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;spark-master&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">spark-worker</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">spark</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">worker</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">spark</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">worker</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">spark-worker</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">spark:latest</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8081</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPARK_WORKER_CORES</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPARK_WORKER_MEMORY</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;1G&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPARK_MASTER</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;spark://spark-master:7077&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="5-setting-up-the-spark-history-server"></a></p>
+<h2 id="5-Setting-Up-the-Spark-History-Server"><a href="#5-Setting-Up-the-Spark-History-Server" class="headerlink" title="5. Setting Up the Spark History Server"></a>5. Setting Up the Spark History Server</h2><p>The History Server will read event logs from the GCS bucket for job history.</p>
+<h3 id="Spark-History-Server-YAML"><a href="#Spark-History-Server-YAML" class="headerlink" title="Spark History Server YAML"></a>Spark History Server YAML</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">spark-history-server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">spark-history</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">spark-history</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">spark-history-server</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">spark:latest</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPARK_HISTORY_OPTS</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;-Dspark.history.fs.logDirectory=gs://your-spark-event-logs&quot;</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/opt/spark/work-dir</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">gcs-key</span></span><br><span class="line">          <span class="attr">subPath:</span> <span class="string">key.json</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">gcs-key</span></span><br><span class="line">        <span class="attr">secret:</span></span><br><span class="line">          <span class="attr">secretName:</span> <span class="string">gcs-key</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="6-configuring-ingress"></a></p>
+<h2 id="6-Configuring-Ingress"><a href="#6-Configuring-Ingress" class="headerlink" title="6. Configuring Ingress"></a>6. Configuring Ingress</h2><p>Ingress will expose the Spark Master UI and History Server UI.</p>
+<h3 id="Ingress-YAML"><a href="#Ingress-YAML" class="headerlink" title="Ingress YAML"></a>Ingress YAML</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">spark-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">spark.example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/master</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">spark-master</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">8080</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/history</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">spark-history-server</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">18080</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="7-testing-the-deployment-with-spark-job"></a></p>
+<h2 id="7-Testing-the-Deployment-with-Spark-Job"><a href="#7-Testing-the-Deployment-with-Spark-Job" class="headerlink" title="7. Testing the Deployment with Spark Job"></a>7. Testing the Deployment with Spark Job</h2><p>To verify the installation, use <code>spark-submit</code> to run a simple calculation for PI.</p>
+<ol>
+<li><p>Submit a PI calculation job using <code>spark-submit</code>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -it spark-master-0 -- spark-submit \</span><br><span class="line">--class org.apache.spark.examples.SparkPi \</span><br><span class="line">--master spark://spark-master:7077 \</span><br><span class="line">/opt/spark/examples/jars/spark-examples_2.12-3.0.1.jar 1000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Check the Spark Master and History Server UIs</p>
+</li>
+</ol>
+<p> to confirm job execution and view logs.</p>
+<h2 id="Furthermore"><a href="#Furthermore" class="headerlink" title="Furthermore"></a>Furthermore</h2><h3 id="StatefulSet-vs-Deployment"><a href="#StatefulSet-vs-Deployment" class="headerlink" title="StatefulSet vs Deployment"></a>StatefulSet vs Deployment</h3><p>In the official Helm chart for Apache Spark, the choice of <strong>StatefulSet</strong> for Spark Master and Worker, and <strong>Deployment</strong> for the Spark History Server, aligns with the specific requirements and behaviors of each component. Here’s a breakdown of the reasons for these design choices:</p>
+<h3 id="1-Spark-Master-and-Worker-as-StatefulSets"><a href="#1-Spark-Master-and-Worker-as-StatefulSets" class="headerlink" title="1. Spark Master and Worker as StatefulSets"></a>1. <strong>Spark Master and Worker as StatefulSets</strong></h3><ul>
+<li><strong>Persistence and Stability</strong>: The Spark Master and Worker nodes need stable, unique identities to communicate reliably. Using <strong>StatefulSet</strong> ensures that each replica (instance) has a stable network identity (hostname) and, if configured, persistent storage.</li>
+<li><strong>Leader Election and Failover</strong>: Spark Master in standalone mode has a primary leader and backup node architecture, where the leader is responsible for the cluster state. StatefulSets allow these nodes to maintain consistent, unique identifiers, which is crucial for leader election and failover without disrupting the Spark cluster.</li>
+<li><strong>Worker Registration</strong>: Spark Workers register with the Master, and having a unique, stable network identity ensures workers don’t inadvertently re-register or conflict with each other after restarts or failures. StatefulSets are the preferred way to handle this kind of behavior.</li>
+</ul>
+<h3 id="2-Spark-History-Server-as-a-Deployment"><a href="#2-Spark-History-Server-as-a-Deployment" class="headerlink" title="2. Spark History Server as a Deployment"></a>2. <strong>Spark History Server as a Deployment</strong></h3><ul>
+<li><strong>Stateless Operation</strong>: The Spark History Server is fundamentally a stateless application. It reads from a pre-configured storage (such as HDFS or S3) where application logs are stored but doesn’t require persistent storage for its own operation. Using a <strong>Deployment</strong> is appropriate here, as the history server can be easily replicated or scaled without maintaining unique identities.</li>
+<li><strong>Easier Scaling and Update Management</strong>: Deployments provide automatic scaling and rolling updates, which are more suitable for stateless services. If you need to increase the availability of the history server, you can simply increase the replica count in the Deployment, and Kubernetes will handle the scaling automatically.</li>
+<li><strong>Failure Recovery</strong>: Since there’s no dependency on unique network identities or persistent state, if the History Server pod fails, it can be easily recreated without any additional orchestration, which is exactly what Deployments are optimized for.</li>
+</ul>
+<h2 id="Summary-Table"><a href="#Summary-Table" class="headerlink" title="Summary Table"></a>Summary Table</h2><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Kubernetes Kind</th>
+<th>Purpose</th>
+<th>Reasoning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Spark Master</strong></td>
+<td>StatefulSet</td>
+<td>Primary and backup master for Spark cluster</td>
+<td>Needs stable identity for cluster coordination and leader election</td>
+</tr>
+<tr>
+<td><strong>Spark Worker</strong></td>
+<td>StatefulSet</td>
+<td>Worker nodes that register with Spark Master</td>
+<td>Stable network identity ensures reliable registration and communication with Master</td>
+</tr>
+<tr>
+<td><strong>Spark History Server</strong></td>
+<td>Deployment</td>
+<td>Reads logs and provides historical application data</td>
+<td>Stateless and doesn’t need unique identities; easier to scale and restart as a Deployment</td>
+</tr>
+</tbody></table>
+<p>This setup optimizes the deployment structure for each Spark component’s unique requirements, leveraging Kubernetes’ StatefulSet and Deployment resources for their intended purposes.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1833,149 +2069,6 @@
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding and tuning kernel parameters in high-concurrency scenarios. By adjusting parameters related to TCP connection handling, the issue of repeated pod restarts due to high CPU load and connection timeouts was resolved. This approach can be applied to similar issues in Kubernetes environments to ensure stable and efficient operation.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/" class="post-title-link" itemprop="url">Analyzing High Memory Usage in Kubernetes</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 19:28:43" itemprop="dateCreated datePublished" datetime="2024-10-27T19:28:43-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#problem-background">Problem Background</a></li>
-<li><a href="#cause-analysis">Cause Analysis</a><ul>
-<li><a href="#using-docker-stats">Using <code>docker stats</code></a></li>
-</ul>
-</li>
-<li><a href="#verification-of-memory-calculation">Verification of Memory Calculation</a><ul>
-<li><a href="#verifying-with-memory_stats">Verifying with <code>memory_stats</code></a></li>
-</ul>
-</li>
-<li><a href="#understanding-cache-usage">Understanding Cache Usage</a></li>
-<li><a href="#solution">Solution</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In Kubernetes environments, monitoring resource usage is crucial for maintaining optimal performance and resource allocation. This article delves into a specific case where a user observed high memory usage by a Harbor pod on one of the nodes, leading to a discrepancy between <code>kubectl top</code> and <code>docker stats</code> results. We will analyze the cause, verify the memory calculation methods, and provide a solution to accurately monitor memory usage.</p>
-<hr>
-<p><a name="problem-background"></a></p>
-<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>A user observed that one of the nodes in their Kubernetes cluster showed high memory usage by a Harbor pod, approximately 3.7G, which seemed unusually high compared to other pods.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get node -owide</span><br><span class="line">NAME    STATUS   ROLES    AGE   VERSION    INTERNAL-IP   EXTERNAL-IP    </span><br><span class="line">node01  Ready    master   10d   v1.15.12   100.1.0.10   &lt;none&gt;   </span><br><span class="line">node02  Ready    master   12d   v1.15.12   100.1.0.11   &lt;none&gt;  </span><br><span class="line">node03  Ready    master   10d   v1.15.12   100.1.0.12   &lt;none&gt; </span><br><span class="line"></span><br><span class="line">[root@node02 ~]# kubectl top pod -A | grep harbor</span><br><span class="line">kube-system         harbor-master1-sxg2l                   15m           150Mi</span><br><span class="line">kube-system         harbor-master2-ncvb8                   8m            3781Mi</span><br><span class="line">kube-system         harbor-master3-2gdsn                   14m           227Mi</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="cause-analysis"></a></p>
-<h2 id="Cause-Analysis"><a href="#Cause-Analysis" class="headerlink" title="Cause Analysis"></a>Cause Analysis</h2><p>To understand the memory usage, the user compared the results from <code>kubectl top</code> and <code>docker stats</code>. Theoretically, <code>docker stats</code> should provide a more accurate result.</p>
-<h3 id="Using-docker-stats"><a href="#Using-docker-stats" class="headerlink" title="Using docker stats"></a>Using <code>docker stats</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# docker stats | grep harbor</span><br><span class="line">CONTAINER ID        NAME                                  CPU %    MEM USAGE / LIMIT     MEM %</span><br><span class="line">10a230bee3c7        k8s_nginx_harbor-master2-xxx          0.02%    14.15MiB / 94.26GiB   0.01%</span><br><span class="line">6ba14a04fd77        k8s_harbor-portal_harbor-master2-xxx  0.01%    13.73MiB / 94.26GiB   0.01%</span><br><span class="line">324413da20a9        k8s_harbor-jobservice_harbor-master2-xxx  0.11%    21.54MiB / 94.26GiB   0.02%</span><br><span class="line">d880b61cf4cb        k8s_harbor-core_harbor-master2-xxx    0.12%    33.2MiB / 94.26GiB    0.03%</span><br><span class="line">186c064d0930        k8s_harbor-registryctl_harbor-master2-xxx 0.01%    8.34MiB / 94.26GiB    0.01%</span><br><span class="line">52a50204a962        k8s_harbor-registry_harbor-master2-xxx 0.06%    29.99MiB / 94.26GiB   0.03%</span><br><span class="line">86031ddd0314        k8s_harbor-redis_harbor-master2-xxx   0.14%    11.51MiB / 94.26GiB   0.01%</span><br><span class="line">6366207680f2        k8s_harbor-database_harbor-master2-xxx 0.45%    8.859MiB / 94.26GiB   0.01%</span><br></pre></td></tr></table></figure>
-
-<p>The total memory usage from <code>docker stats</code> was around 140M, significantly lower than the 3.7G reported by <code>kubectl top</code>.</p>
-<hr>
-<p><a name="verification-of-memory-calculation"></a></p>
-<h2 id="Verification-of-Memory-Calculation"><a href="#Verification-of-Memory-Calculation" class="headerlink" title="Verification of Memory Calculation"></a>Verification of Memory Calculation</h2><p>The discrepancy arises from the different methods used by <code>kubectl top</code> and <code>docker stats</code> to calculate memory usage.</p>
-<ul>
-<li><strong><code>kubectl top</code> Calculation</strong>: <code>memory.usage_in_bytes - inactive_file</code></li>
-<li><strong><code>docker stats</code> Calculation</strong>: <code>memory.usage_in_bytes - cache</code></li>
-</ul>
-<p>If the cache is large, <code>kubectl top</code> will report a higher memory usage.</p>
-<h3 id="Verifying-with-memory-stats"><a href="#Verifying-with-memory-stats" class="headerlink" title="Verifying with memory_stats"></a>Verifying with <code>memory_stats</code></h3><p>To verify, the user fetched the <code>memory_stats</code> data using Docker’s API:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -s --unix-socket /var/run/docker.sock http:/v1.24/containers/xxx/stats | jq .<span class="string">&quot;memory_stats&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>Sample <code>memory_stats</code> data:</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;memory_stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;usage&quot;</span><span class="punctuation">:</span> <span class="number">14913536</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;max_usage&quot;</span><span class="punctuation">:</span> <span class="number">15183872</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;active_anon&quot;</span><span class="punctuation">:</span> <span class="number">14835712</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;active_file&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;cache&quot;</span><span class="punctuation">:</span> <span class="number">77824</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;dirty&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hierarchical_memory_limit&quot;</span><span class="punctuation">:</span> <span class="number">101205622784</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hierarchical_memsw_limit&quot;</span><span class="punctuation">:</span> <span class="number">9223372036854772000</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inactive_anon&quot;</span><span class="punctuation">:</span> <span class="number">4096</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inactive_file&quot;</span><span class="punctuation">:</span> <span class="number">73728</span><span class="punctuation">,</span></span><br><span class="line">      ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>By applying the formulas, the user confirmed that the results from <code>kubectl top</code> and <code>docker stats</code> were consistent with the expected calculations.</p>
-<hr>
-<p><a name="understanding-cache-usage"></a></p>
-<h2 id="Understanding-Cache-Usage"><a href="#Understanding-Cache-Usage" class="headerlink" title="Understanding Cache Usage"></a>Understanding Cache Usage</h2><p>The high cache usage in Harbor was primarily due to the <code>registry</code> component, which handles Docker image storage and involves extensive read&#x2F;write operations on image layers.</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;memory_stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;usage&quot;</span><span class="punctuation">:</span> <span class="number">5845127168</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;max_usage&quot;</span><span class="punctuation">:</span> <span class="number">22050988032</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;active_anon&quot;</span><span class="punctuation">:</span> <span class="number">31576064</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;active_file&quot;</span><span class="punctuation">:</span> <span class="number">3778052096</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cache&quot;</span><span class="punctuation">:</span> <span class="number">5813551104</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dirty&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hierarchical_memory_limit&quot;</span><span class="punctuation">:</span> <span class="number">101205622784</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hierarchical_memsw_limit&quot;</span><span class="punctuation">:</span> <span class="number">9223372036854772000</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;inactive_anon&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;inactive_file&quot;</span><span class="punctuation">:</span> <span class="number">2035499008</span><span class="punctuation">,</span></span><br><span class="line">    ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="solution"></a></p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>To address the discrepancy, the user was informed that <code>kubectl top</code> includes cache usage, which can be misleading. The cache, being non-critical, can be reclaimed by the system during memory pressure or manually released. The user was advised to use <code>docker stats</code> for a more accurate representation of actual memory usage.</p>
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding the different methods used by Kubernetes and Docker to calculate memory usage. By verifying the calculations and understanding the role of cache, users can make more informed decisions about resource management in their Kubernetes clusters. Using <code>docker stats</code> provides a more accurate view of memory usage, especially in scenarios where cache usage is significant.</p>
 
       
     </div>

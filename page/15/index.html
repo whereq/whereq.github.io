@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,282 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/23/Kafka-Producer-Tuning-Guide/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/23/Kafka-Producer-Tuning-Guide/" class="post-title-link" itemprop="url">Kafka Producer Tuning Guide</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-23 16:01:38" itemprop="dateCreated datePublished" datetime="2024-10-23T16:01:38-04:00">2024-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#kafka-producer-tuning-guide">Kafka Producer Tuning Guide</a><ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-optimizing-producer-throughput">2. Optimizing Producer Throughput</a><ul>
+<li><a href="#21-batching">2.1 Batching</a></li>
+<li><a href="#22-compression">2.2 Compression</a></li>
+<li><a href="#23-asynchronous-send">2.3 Asynchronous Send</a></li>
+<li><a href="#24-producer-configuration-for-high-throughput">2.4 Producer Configuration for High Throughput</a></li>
+</ul>
+</li>
+<li><a href="#3-ensuring-data-reliability">3. Ensuring Data Reliability</a><ul>
+<li><a href="#31-acknowledgment-acks">3.1 Acknowledgment (acks)</a></li>
+<li><a href="#32-retries-and-idempotence">3.2 Retries and Idempotence</a></li>
+<li><a href="#33-durability-with-replication">3.3 Durability with Replication</a></li>
+</ul>
+</li>
+<li><a href="#4-guaranteeing-exactly-once-semantics">4. Guaranteeing Exactly Once Semantics</a><ul>
+<li><a href="#41-idempotent-producer">4.1 Idempotent Producer</a></li>
+<li><a href="#42-transactions">4.2 Transactions</a></li>
+</ul>
+</li>
+<li><a href="#5-maintaining-data-order">5. Maintaining Data Order</a><ul>
+<li><a href="#51-partitioning">5.1 Partitioning</a></li>
+<li><a href="#52-producer-configuration-for-ordering">5.2 Producer Configuration for Ordering</a></li>
+</ul>
+</li>
+<li><a href="#6-conclusion">6. Conclusion</a></li>
+<li><a href="#diagram-kafka-producer-configuration-for-throughput-and-reliability">Diagram: Kafka Producer Configuration for Throughput and Reliability</a></li>
+<li><a href="#configuration-parameters">Configuration Parameters</a><ul>
+<li><a href="#maxinflightrequestsperconnection"><code>max.in.flight.requests.per.connection</code></a><ul>
+<li><a href="#how-it-works">How it Works:</a></li>
+<li><a href="#default-value">Default Value:</a></li>
+<li><a href="#impact-on-performance-and-ordering">Impact on Performance and Ordering:</a><ul>
+<li><a href="#1-throughput">1. <strong>Throughput:</strong></a></li>
+<li><a href="#2-message-ordering">2. <strong>Message Ordering:</strong></a></li>
+<li><a href="#3-reliability">3. <strong>Reliability:</strong></a></li>
+</ul>
+</li>
+<li><a href="#recommended-settings">Recommended Settings:</a></li>
+<li><a href="#summary-of-key-points">Summary of Key Points:</a></li>
+<li><a href="#diagram-effect-of-maxinflightrequestsperconnection-on-kafka-producer-behavior">Diagram: Effect of <code>max.in.flight.requests.per.connection</code> on Kafka Producer Behavior</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Kafka-Producer-Tuning-Guide"><a href="#Kafka-Producer-Tuning-Guide" class="headerlink" title="Kafka Producer Tuning Guide"></a>Kafka Producer Tuning Guide</h1><hr>
+<h3 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h3><p><a name="1-introduction"></a></p>
+<p>Apache Kafka is a distributed streaming platform often used for building real-time data pipelines and streaming applications. Kafka producers are responsible for sending records to Kafka brokers, and tuning their performance is essential to achieving high throughput, reliability, and proper data ordering. In this article, we will cover the various aspects of Kafka producer tuning, including optimizing throughput, ensuring reliability, avoiding data duplication, and maintaining data order.</p>
+<hr>
+<h3 id="2-Optimizing-Producer-Throughput"><a href="#2-Optimizing-Producer-Throughput" class="headerlink" title="2. Optimizing Producer Throughput"></a>2. Optimizing Producer Throughput</h3><p><a name="2-optimizing-producer-throughput"></a></p>
+<p>Throughput optimization focuses on increasing the number of messages the producer can send per second. Kafka producers offer multiple configuration options to improve throughput:</p>
+<h4 id="2-1-Batching"><a href="#2-1-Batching" class="headerlink" title="2.1 Batching"></a>2.1 Batching</h4><p><a name="21-batching"></a></p>
+<p>Kafka producers can batch multiple records before sending them to the broker, reducing the number of network requests.</p>
+<ul>
+<li><strong>Batch size (<code>batch.size</code>)</strong>: Determines the maximum number of bytes in a batch. Increasing this value allows the producer to group more records in one request, increasing throughput.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;batch.size&quot;</span>, <span class="number">16384</span>); <span class="comment">// 16KB per batch</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-Compression"><a href="#2-2-Compression" class="headerlink" title="2.2 Compression"></a>2.2 Compression</h4><p><a name="22-compression"></a></p>
+<p>Enabling compression can reduce the size of data being sent, decreasing network traffic and increasing throughput.</p>
+<ul>
+<li><strong>Compression type (<code>compression.type</code>)</strong>: Supported types are <code>gzip</code>, <code>snappy</code>, <code>lz4</code>, and <code>zstd</code>.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;compression.type&quot;</span>, <span class="string">&quot;snappy&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-Asynchronous-Send"><a href="#2-3-Asynchronous-Send" class="headerlink" title="2.3 Asynchronous Send"></a>2.3 Asynchronous Send</h4><p><a name="23-asynchronous-send"></a></p>
+<p>Producers can send data asynchronously to minimize the time spent waiting for broker acknowledgments.</p>
+<ul>
+<li><strong>Linger time (<code>linger.ms</code>)</strong>: The producer will wait for up to this time before sending a batch of messages, allowing more records to be added to the batch.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;linger.ms&quot;</span>, <span class="number">10</span>); <span class="comment">// Wait 10 ms before sending a batch</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-Producer-Configuration-for-High-Throughput"><a href="#2-4-Producer-Configuration-for-High-Throughput" class="headerlink" title="2.4 Producer Configuration for High Throughput"></a>2.4 Producer Configuration for High Throughput</h4><p><a name="24-producer-configuration-for-high-throughput"></a></p>
+<p>Below is a configuration snippet optimized for throughput:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Properties</span> <span class="variable">props</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">props.put(<span class="string">&quot;bootstrap.servers&quot;</span>, <span class="string">&quot;localhost:9092&quot;</span>);</span><br><span class="line">props.put(<span class="string">&quot;acks&quot;</span>, <span class="string">&quot;1&quot;</span>); <span class="comment">// Leader acknowledgment for faster send</span></span><br><span class="line">props.put(<span class="string">&quot;compression.type&quot;</span>, <span class="string">&quot;lz4&quot;</span>);</span><br><span class="line">props.put(<span class="string">&quot;batch.size&quot;</span>, <span class="number">32768</span>); <span class="comment">// 32KB batch size</span></span><br><span class="line">props.put(<span class="string">&quot;linger.ms&quot;</span>, <span class="number">5</span>); <span class="comment">// Wait for 5ms before sending</span></span><br><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="string">&quot;5&quot;</span>); <span class="comment">// Max concurrent requests</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-Ensuring-Data-Reliability"><a href="#3-Ensuring-Data-Reliability" class="headerlink" title="3. Ensuring Data Reliability"></a>3. Ensuring Data Reliability</h3><p><a name="3-ensuring-data-reliability"></a></p>
+<p>Reliability involves ensuring that messages are delivered and persisted correctly by the Kafka broker. To achieve this, several configurations control how Kafka handles acknowledgment and retries.</p>
+<h4 id="3-1-Acknowledgment-acks"><a href="#3-1-Acknowledgment-acks" class="headerlink" title="3.1 Acknowledgment (acks)"></a>3.1 Acknowledgment (acks)</h4><p><a name="31-acknowledgment-acks"></a></p>
+<ul>
+<li><strong><code>acks</code> configuration</strong>: Controls how many replicas must acknowledge the record. The safest setting is <code>acks=all</code>, ensuring the data is replicated to all in-sync replicas (ISR).</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;acks&quot;</span>, <span class="string">&quot;all&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-Retries-and-Idempotence"><a href="#3-2-Retries-and-Idempotence" class="headerlink" title="3.2 Retries and Idempotence"></a>3.2 Retries and Idempotence</h4><p><a name="32-retries-and-idempotence"></a></p>
+<ul>
+<li><strong><code>retries</code></strong>: Controls the number of retry attempts if a request fails.</li>
+<li><strong><code>enable.idempotence</code></strong>: Ensures that retries don’t result in duplicated messages.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;retries&quot;</span>, <span class="number">3</span>); <span class="comment">// Retry 3 times on failure</span></span><br><span class="line">props.put(<span class="string">&quot;enable.idempotence&quot;</span>, <span class="string">&quot;true&quot;</span>); <span class="comment">// Avoid duplicate messages</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-Durability-with-Replication"><a href="#3-3-Durability-with-Replication" class="headerlink" title="3.3 Durability with Replication"></a>3.3 Durability with Replication</h4><p><a name="33-durability-with-replication"></a></p>
+<p>Kafka ensures durability with data replication across multiple brokers. Setting the <strong><code>acks=all</code></strong> guarantees that the data is fully replicated before considering the record as successfully sent.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;acks&quot;</span>, <span class="string">&quot;all&quot;</span>); <span class="comment">// Wait for acknowledgment from all replicas</span></span><br><span class="line">props.put(<span class="string">&quot;min.insync.replicas&quot;</span>, <span class="number">2</span>); <span class="comment">// At least 2 replicas must acknowledge</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-Guaranteeing-Exactly-Once-Semantics"><a href="#4-Guaranteeing-Exactly-Once-Semantics" class="headerlink" title="4. Guaranteeing Exactly Once Semantics"></a>4. Guaranteeing Exactly Once Semantics</h3><p><a name="4-guaranteeing-exactly-once-semantics"></a></p>
+<p>Kafka provides <strong>exactly-once semantics (EOS)</strong>, ensuring that data is neither lost nor duplicated. This is critical for financial systems and applications that cannot tolerate duplicates or lost data.</p>
+<h4 id="4-1-Idempotent-Producer"><a href="#4-1-Idempotent-Producer" class="headerlink" title="4.1 Idempotent Producer"></a>4.1 Idempotent Producer</h4><p><a name="41-idempotent-producer"></a></p>
+<p>An idempotent producer ensures that duplicate messages are not written to the Kafka log, even in case of retries. This is achieved by enabling the idempotence feature.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;enable.idempotence&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-Transactions"><a href="#4-2-Transactions" class="headerlink" title="4.2 Transactions"></a>4.2 Transactions</h4><p><a name="42-transactions"></a></p>
+<p>Transactions allow multiple operations (e.g., sending messages to different partitions) to be treated as a single unit, ensuring that either all messages are written successfully or none are written.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Configuring a transactional producer</span></span><br><span class="line">props.put(<span class="string">&quot;transactional.id&quot;</span>, <span class="string">&quot;my-transaction-id&quot;</span>);</span><br><span class="line"></span><br><span class="line">KafkaProducer&lt;String, String&gt; producer = <span class="keyword">new</span> <span class="title class_">KafkaProducer</span>&lt;&gt;(props);</span><br><span class="line">producer.initTransactions();</span><br><span class="line">producer.beginTransaction();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    producer.send(<span class="keyword">new</span> <span class="title class_">ProducerRecord</span>&lt;&gt;(<span class="string">&quot;topic1&quot;</span>, <span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>));</span><br><span class="line">    producer.send(<span class="keyword">new</span> <span class="title class_">ProducerRecord</span>&lt;&gt;(<span class="string">&quot;topic2&quot;</span>, <span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>));</span><br><span class="line">    producer.commitTransaction();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    producer.abortTransaction();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-Maintaining-Data-Order"><a href="#5-Maintaining-Data-Order" class="headerlink" title="5. Maintaining Data Order"></a>5. Maintaining Data Order</h3><p><a name="5-maintaining-data-order"></a></p>
+<p>By default, Kafka guarantees that records are written in the order they are sent, but only within a partition. You can control data ordering by correctly configuring partitioning strategies.</p>
+<h4 id="5-1-Partitioning"><a href="#5-1-Partitioning" class="headerlink" title="5.1 Partitioning"></a>5.1 Partitioning</h4><p><a name="51-partitioning"></a></p>
+<p>Kafka producers can partition records using a <strong>key</strong>. Messages with the same key will always go to the same partition, ensuring their order is maintained.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">producer.send(<span class="keyword">new</span> <span class="title class_">ProducerRecord</span>&lt;&gt;(<span class="string">&quot;topic&quot;</span>, <span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-Producer-Configuration-for-Ordering"><a href="#5-2-Producer-Configuration-for-Ordering" class="headerlink" title="5.2 Producer Configuration for Ordering"></a>5.2 Producer Configuration for Ordering</h4><p><a name="52-producer-configuration-for-ordering"></a></p>
+<p>To maintain message order, especially during retries, the <strong><code>max.in.flight.requests.per.connection</code></strong> setting is crucial. Setting it to 1 ensures that only one request is sent to the broker at a time.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="number">1</span>); <span class="comment">// Guarantees ordering</span></span><br><span class="line">props.put(<span class="string">&quot;enable.idempotence&quot;</span>, <span class="string">&quot;true&quot;</span>); <span class="comment">// Ensures no duplicates</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-Conclusion"><a href="#6-Conclusion" class="headerlink" title="6. Conclusion"></a>6. Conclusion</h3><p><a name="6-conclusion"></a></p>
+<p>Kafka producer tuning involves balancing between throughput, reliability, and data ordering based on the specific requirements of the application. By configuring batching, compression, retries, and idempotence, Kafka producers can achieve high performance while maintaining the necessary level of data reliability and ordering.</p>
+<hr>
+<h3 id="Diagram-Kafka-Producer-Configuration-for-Throughput-and-Reliability"><a href="#Diagram-Kafka-Producer-Configuration-for-Throughput-and-Reliability" class="headerlink" title="Diagram: Kafka Producer Configuration for Throughput and Reliability"></a>Diagram: Kafka Producer Configuration for Throughput and Reliability</h3><p><a name="diagram-kafka-producer-configuration-for-throughput-and-reliability"></a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------------+        +----------------------+        +---------------------+</span><br><span class="line">| Producer Properties  | -----&gt; | Batch, Compression,  | -----&gt; | High Throughput and |</span><br><span class="line">| Configuration        |        | Asynchronous Send    |        | Reliable Delivery   |</span><br><span class="line">+----------------------+        +----------------------+        +---------------------+</span><br><span class="line">                                  |</span><br><span class="line">                                  v</span><br><span class="line">+----------------------+        +---------------------+        +---------------------+</span><br><span class="line">| Idempotence,         | -----&gt; | Exactly-Once        | -----&gt; | Guaranteed Message  |</span><br><span class="line">| Transactions Enabled |        | Semantics           |        | Ordering and No Dups|</span><br><span class="line">+----------------------+        +---------------------+        +---------------------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuration-Parameters"><a href="#Configuration-Parameters" class="headerlink" title="Configuration Parameters"></a>Configuration Parameters</h3><p><a name="configuration-parameters"></a></p>
+<h4 id="max-in-flight-requests-per-connection"><a href="#max-in-flight-requests-per-connection" class="headerlink" title="max.in.flight.requests.per.connection"></a><code>max.in.flight.requests.per.connection</code></h4><p><a name="maxinflightrequestsperconnection"></a></p>
+<p>The <code>max.in.flight.requests.per.connection</code> configuration in Kafka producers controls how many requests can be sent concurrently to the Kafka broker over a single connection. This setting plays a crucial role in determining how Kafka handles the trade-off between throughput, message ordering, and data reliability.</p>
+<h5 id="How-it-Works"><a href="#How-it-Works" class="headerlink" title="How it Works:"></a>How it Works:</h5><p><a name="how-it-works"></a></p>
+<ul>
+<li>When a producer sends messages to Kafka, each message is sent in a request to the broker.</li>
+<li>If the producer has multiple requests to send at the same time (due to batching or high message rates), these requests can either be sent sequentially or in parallel.</li>
+<li>The <code>max.in.flight.requests.per.connection</code> setting defines how many such requests can be “in-flight” — meaning waiting for a response from the broker — at any given time.</li>
+</ul>
+<h5 id="Default-Value"><a href="#Default-Value" class="headerlink" title="Default Value:"></a>Default Value:</h5><p><a name="default-value"></a></p>
+<ul>
+<li>By default, this value is set to <code>5</code>. This allows the producer to send up to five requests at once before receiving responses for any of them.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="Impact-on-Performance-and-Ordering"><a href="#Impact-on-Performance-and-Ordering" class="headerlink" title="Impact on Performance and Ordering:"></a>Impact on Performance and Ordering:</h5><p><a name="impact-on-performance-and-ordering"></a></p>
+<h6 id="1-Throughput"><a href="#1-Throughput" class="headerlink" title="1. Throughput:"></a>1. <strong>Throughput:</strong></h6><p><a name="1-throughput"></a></p>
+<ul>
+<li><p><strong>Higher Values</strong>: Setting <code>max.in.flight.requests.per.connection</code> to a higher number increases throughput, as the producer can send multiple requests simultaneously without waiting for each one to be acknowledged. This reduces the time spent waiting and maximizes network bandwidth usage.</p>
+</li>
+<li><p><strong>Lower Values</strong>: If you lower the value, for example, to <code>1</code>, the producer will wait for a response from the broker for each request before sending the next one. While this ensures ordering, it can limit throughput because the producer spends more time waiting for acknowledgments.</p>
+</li>
+</ul>
+<h6 id="2-Message-Ordering"><a href="#2-Message-Ordering" class="headerlink" title="2. Message Ordering:"></a>2. <strong>Message Ordering:</strong></h6><p><a name="2-message-ordering"></a></p>
+<ul>
+<li><p><strong>Higher Values</strong>: When <code>max.in.flight.requests.per.connection</code> is greater than 1, messages can potentially be delivered out of order if a failure occurs. For example, if two requests (Request A and Request B) are sent in parallel, and Request A fails while Request B succeeds, Kafka may retry Request A, leading to message reordering.</p>
+</li>
+<li><p><strong>Lower Values</strong>: Setting this value to <code>1</code> ensures strict message ordering. This is because the producer waits for each request to be acknowledged before sending the next one, preventing any reordering even in the case of retries.</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="number">1</span>); <span class="comment">// Guarantees strict message order</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="3-Reliability"><a href="#3-Reliability" class="headerlink" title="3. Reliability:"></a>3. <strong>Reliability:</strong></h6><p><a name="3-reliability"></a></p>
+<ul>
+<li><p><strong>Higher Values</strong>: While more concurrent requests can improve throughput, they can lead to situations where retries (in case of failure) result in duplicate messages or out-of-order delivery.</p>
+</li>
+<li><p><strong>Lower Values</strong>: With a value of <code>1</code>, Kafka guarantees that even if a retry occurs (due to network failure, for example), messages will be delivered in the correct order. Coupled with <code>enable.idempotence=true</code>, this ensures that no duplicate messages are sent, and they arrive in the correct sequence.</p>
+</li>
+</ul>
+<h5 id="Recommended-Settings"><a href="#Recommended-Settings" class="headerlink" title="Recommended Settings:"></a>Recommended Settings:</h5><p><a name="recommended-settings"></a></p>
+<ul>
+<li><p><strong>For High Throughput</strong>: </p>
+<ul>
+<li>Use higher values (such as <code>5</code> or more). This allows Kafka to send multiple messages simultaneously, maximizing throughput at the potential cost of strict ordering if failures occur.</li>
+</ul>
+</li>
+<li><p><strong>For Exactly Once Semantics (EOS)</strong>:</p>
+<ul>
+<li>Use <code>1</code> in conjunction with <code>enable.idempotence=true</code> and <code>retries</code> to ensure no duplicates and guarantee strict message ordering.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// High throughput with risk of out-of-order messages on failure</span></span><br><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="number">5</span>);</span><br><span class="line">props.put(<span class="string">&quot;enable.idempotence&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Strict ordering and exactly-once delivery</span></span><br><span class="line">props.put(<span class="string">&quot;max.in.flight.requests.per.connection&quot;</span>, <span class="number">1</span>);</span><br><span class="line">props.put(<span class="string">&quot;enable.idempotence&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br><span class="line">props.put(<span class="string">&quot;acks&quot;</span>, <span class="string">&quot;all&quot;</span>);</span><br><span class="line">props.put(<span class="string">&quot;retries&quot;</span>, Integer.MAX_VALUE);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h5 id="Summary-of-Key-Points"><a href="#Summary-of-Key-Points" class="headerlink" title="Summary of Key Points:"></a>Summary of Key Points:</h5><p><a name="summary-of-key-points"></a></p>
+<ul>
+<li><strong>Higher <code>max.in.flight.requests.per.connection</code></strong> increases throughput but may lead to message reordering on failure.</li>
+<li><strong>Lower <code>max.in.flight.requests.per.connection</code></strong> ensures strict ordering but may decrease throughput as the producer waits for each acknowledgment.</li>
+<li>For <strong>exactly-once semantics (EOS)</strong> and strict ordering, set it to <code>1</code> in conjunction with <code>enable.idempotence=true</code>.</li>
+</ul>
+<hr>
+<h5 id="Diagram-Effect-of-max-in-flight-requests-per-connection-on-Kafka-Producer-Behavior"><a href="#Diagram-Effect-of-max-in-flight-requests-per-connection-on-Kafka-Producer-Behavior" class="headerlink" title="Diagram: Effect of max.in.flight.requests.per.connection on Kafka Producer Behavior"></a>Diagram: Effect of <code>max.in.flight.requests.per.connection</code> on Kafka Producer Behavior</h5><p><a name="diagram-effect-of-maxinflightrequestsperconnection-on-kafka-producer-behavior"></a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+------------------------+          +----------------------+          +-----------------------+</span><br><span class="line">| max.in.flight = 5      | ------&gt;  | Higher Throughput    |  -----&gt;  | Possible Reordering   |</span><br><span class="line">| Multiple concurrent    |          | Faster message send  |          | Retries can cause out-|</span><br><span class="line">| requests allowed       |          | with reduced latency |          | of-order delivery     |</span><br><span class="line">+------------------------+          +----------------------+          +-----------------------+</span><br><span class="line"></span><br><span class="line">+------------------------+          +----------------------+          +-----------------------+</span><br><span class="line">| max.in.flight = 1      | ------&gt;  | Strict Ordering      |  -----&gt;  | Lower Throughput      |</span><br><span class="line">| One request at a time  |          | Each message waits   |          | Wait time for each    |</span><br><span class="line">| Strict sequence        |          | for ack before next  |          | acknowledgment        |</span><br><span class="line">+------------------------+          +----------------------+          +-----------------------+</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

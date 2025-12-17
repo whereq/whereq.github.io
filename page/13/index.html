@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,156 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XV/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XV</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:07:35" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:35-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>In the previous fourteen articles, we have delved into the foundational concepts of Spring WebFlux, Reactor, error handling, data stream transformation, reactive database access, performance optimization, security, testing, deployment and operations, best practices, common pitfalls, and integration with microservices architecture. This article will explore how to implement real-time data push functionality using Spring WebFlux to build high-performance, real-time responsive applications.</p>
+<ul>
+<li><a href="#real-time-data-push">Real-Time Data Push</a><ul>
+<li><a href="#introduction-to-real-time-data-push">Introduction to Real-Time Data Push</a></li>
+<li><a href="#implementing-real-time-data-push-with-websocket">Implementing Real-Time Data Push with WebSocket</a><ul>
+<li><a href="#adding-dependencies">Adding Dependencies</a></li>
+<li><a href="#configuring-websocket">Configuring WebSocket</a></li>
+<li><a href="#creating-a-websocket-handler">Creating a WebSocket Handler</a></li>
+<li><a href="#configuring-websocket-routes">Configuring WebSocket Routes</a></li>
+</ul>
+</li>
+<li><a href="#implementing-real-time-data-push-with-server-sent-events-sse">Implementing Real-Time Data Push with Server-Sent Events (SSE)</a><ul>
+<li><a href="#creating-an-sse-controller">Creating an SSE Controller</a></li>
+</ul>
+</li>
+<li><a href="#application-scenarios-for-real-time-data-push">Application Scenarios for Real-Time Data Push</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Real-Time-Data-Push"><a href="#Real-Time-Data-Push" class="headerlink" title="Real-Time Data Push"></a>Real-Time Data Push</h1><hr>
+<p><a name="introduction-to-real-time-data-push"></a></p>
+<h2 id="Introduction-to-Real-Time-Data-Push"><a href="#Introduction-to-Real-Time-Data-Push" class="headerlink" title="Introduction to Real-Time Data Push"></a>Introduction to Real-Time Data Push</h2><p>Real-time data push is a technology that enables servers to actively send updated data to clients without waiting for client requests. This technology is highly suitable for applications that require timely updates, such as stock prices, real-time chat, online games, and more. Common real-time data push technologies include WebSocket, Server-Sent Events (SSE), and Long Polling.</p>
+<p><a name="implementing-real-time-data-push-with-websocket"></a></p>
+<h2 id="Implementing-Real-Time-Data-Push-with-WebSocket"><a href="#Implementing-Real-Time-Data-Push-with-WebSocket" class="headerlink" title="Implementing Real-Time Data Push with WebSocket"></a>Implementing Real-Time Data Push with WebSocket</h2><p>WebSocket is a full-duplex communication protocol that allows real-time communication between the server and the client over a single TCP connection. Spring WebFlux provides robust support for WebSocket.</p>
+<p><a name="adding-dependencies"></a></p>
+<h3 id="Adding-Dependencies"><a href="#Adding-Dependencies" class="headerlink" title="Adding Dependencies"></a>Adding Dependencies</h3><p>To start, add the necessary WebSocket dependencies to your project:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-websocket<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="configuring-websocket"></a></p>
+<h3 id="Configuring-WebSocket"><a href="#Configuring-WebSocket" class="headerlink" title="Configuring WebSocket"></a>Configuring WebSocket</h3><p>Next, create a WebSocket configuration class:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.config.EnableWebFlux;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.config.WebFluxConfigurer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebFlux</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketConfig</span> <span class="keyword">implements</span> <span class="title class_">WebFluxConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> WebSocketHandlerAdapter <span class="title function_">handlerAdapter</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">WebSocketHandlerAdapter</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="creating-a-websocket-handler"></a></p>
+<h3 id="Creating-a-WebSocket-Handler"><a href="#Creating-a-WebSocket-Handler" class="headerlink" title="Creating a WebSocket Handler"></a>Creating a WebSocket Handler</h3><p>Create a WebSocket handler to manage client connections:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.WebSocketHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.WebSocketSession;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.WebSocketHandlerRegistry;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealTimeDataHandler</span> <span class="keyword">implements</span> <span class="title class_">WebSocketHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">handle</span><span class="params">(WebSocketSession session)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> session.send(</span><br><span class="line">                session.receive()</span><br><span class="line">                        .map(msg -&gt; session.textMessage(<span class="string">&quot;Server received: &quot;</span> + msg.getPayloadAsText()))</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="configuring-websocket-routes"></a></p>
+<h3 id="Configuring-WebSocket-Routes"><a href="#Configuring-WebSocket-Routes" class="headerlink" title="Configuring WebSocket Routes"></a>Configuring WebSocket Routes</h3><p>Finally, configure the WebSocket routes:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.support.WebSocketService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.support.DefaultHandshakeHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.WebSocketHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.WebSocketService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.socket.server.support.ReactorNettyRequestUpgradeStrategy;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketRouterConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> WebSocketService <span class="title function_">webSocketService</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">WebSocketService</span>(<span class="keyword">new</span> <span class="title class_">ReactorNettyRequestUpgradeStrategy</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> WebSocketHandlerAdapter <span class="title function_">webSocketHandlerAdapter</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">WebSocketHandlerAdapter</span>(webSocketService());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> WebSocketHandler <span class="title function_">realTimeDataHandler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RealTimeDataHandler</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="implementing-real-time-data-push-with-server-sent-events-sse"></a></p>
+<h2 id="Implementing-Real-Time-Data-Push-with-Server-Sent-Events-SSE"><a href="#Implementing-Real-Time-Data-Push-with-Server-Sent-Events-SSE" class="headerlink" title="Implementing Real-Time Data Push with Server-Sent Events (SSE)"></a>Implementing Real-Time Data Push with Server-Sent Events (SSE)</h2><p>Server-Sent Events (SSE) is a technology that allows servers to push real-time updates to browsers over HTTP. Spring WebFlux also provides excellent support for SSE.</p>
+<p><a name="creating-an-sse-controller"></a></p>
+<h3 id="Creating-an-SSE-Controller"><a href="#Creating-an-SSE-Controller" class="headerlink" title="Creating an SSE Controller"></a>Creating an SSE Controller</h3><p>Create an SSE controller to push real-time data:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalTime;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SSEController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/sse&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;String&gt; <span class="title function_">streamEvents</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Flux.interval(Duration.ofSeconds(<span class="number">1</span>))</span><br><span class="line">                .map(sequence -&gt; <span class="string">&quot;Server Time: &quot;</span> + LocalTime.now().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="application-scenarios-for-real-time-data-push"></a></p>
+<h2 id="Application-Scenarios-for-Real-Time-Data-Push"><a href="#Application-Scenarios-for-Real-Time-Data-Push" class="headerlink" title="Application Scenarios for Real-Time Data Push"></a>Application Scenarios for Real-Time Data Push</h2><p>Real-time data push is beneficial in various applications, including:</p>
+<ul>
+<li><strong>Financial Applications</strong>: Real-time updates for stock prices, market indices, etc.</li>
+<li><strong>Real-Time Chat</strong>: Implementing online chat applications with instant message reception.</li>
+<li><strong>Online Games</strong>: Pushing game states and player actions.</li>
+<li><strong>Internet of Things (IoT)</strong>: Real-time monitoring and control of IoT devices.</li>
+</ul>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to implement real-time data push using Spring WebFlux. By leveraging WebSocket and Server-Sent Events, we can build high-performance, real-time responsive applications. These technologies are essential for modern applications that require instant data updates and real-time interactions.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1615,147 +1765,6 @@
 <li><strong>Monitoring with Micrometer</strong>: Use Micrometer to instrument your reactive applications for better observability and performance metrics.</li>
 <li><strong>Serverless Architecture</strong>: Explore serverless solutions to handle unpredictable workloads efficiently, integrating with AWS Lambda or Azure Functions.</li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-V/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-V/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - V</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-24 14:06:39" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:39-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#reactive-database-access">Reactive Database Access</a><ul>
-<li><a href="#why-choose-reactive-database-access">Why Choose Reactive Database Access?</a></li>
-<li><a href="#spring-data-r2dbc">Spring Data R2DBC</a><ul>
-<li><a href="#1-project-setup">1. Project Setup</a></li>
-<li><a href="#2-database-connection-configuration">2. Database Connection Configuration</a></li>
-<li><a href="#-3-data-model"> 3. Data Model</a></li>
-<li><a href="#4-creating-a-repository">4. Creating a Repository</a></li>
-<li><a href="#5-data-initialization">5. Data Initialization</a></li>
-<li><a href="#6-handler-functions-and-route-configuration">6. Handler Functions and Route Configuration</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Reactive-Database-Access"><a href="#Reactive-Database-Access" class="headerlink" title="Reactive Database Access"></a>Reactive Database Access</h1><hr>
-<p><a name="why-choose-reactive-database-access"></a></p>
-<h2 id="Why-Choose-Reactive-Database-Access"><a href="#Why-Choose-Reactive-Database-Access" class="headerlink" title="Why Choose Reactive Database Access?"></a>Why Choose Reactive Database Access?</h2><p>Traditional database access methods are usually blocking, meaning that when a query is executing, the thread is blocked until the query is completed. This can lead to performance bottlenecks in highly concurrent environments. Reactive database access uses non-blocking I&#x2F;O operations, allowing applications to handle more concurrent requests, improving system throughput and response times.</p>
-<hr>
-<p><a name="spring-data-r2dbc"></a></p>
-<h2 id="Spring-Data-R2DBC"><a href="#Spring-Data-R2DBC" class="headerlink" title="Spring Data R2DBC"></a>Spring Data R2DBC</h2><p>Spring Data R2DBC (Reactive Relational Database Connectivity) is a project in the Spring ecosystem that provides reactive programming support for relational databases. R2DBC is a new database connection specification designed to support reactive programming models.</p>
-<p><a name="project-setup"></a></p>
-<h3 id="1-Project-Setup"><a href="#1-Project-Setup" class="headerlink" title="1. Project Setup"></a>1. Project Setup</h3><p>First, create a Spring Boot project and include the necessary dependencies:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-r2dbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.r2dbc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>r2dbc-h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><a name="database-connection-configuration"></a></p>
-<h3 id="2-Database-Connection-Configuration"><a href="#2-Database-Connection-Configuration" class="headerlink" title="2. Database Connection Configuration"></a>2. Database Connection Configuration</h3><p>Configure the H2 database in <code>application.properties</code>:</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring.r2dbc.url</span>=<span class="string">r2dbc:h2:mem:///testdb</span></span><br><span class="line"><span class="attr">spring.r2dbc.username</span>=<span class="string">sa</span></span><br><span class="line"><span class="attr">spring.r2dbc.password</span>=<span class="string"></span></span><br><span class="line"><span class="attr">spring.r2dbc.generate-unique-name</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring.h2.console.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">spring.h2.console.settings.web-allow-others</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-Data-Model"><a href="#3-Data-Model" class="headerlink" title=" 3. Data Model"></a><a name="data-model"></a> 3. Data Model</h3><p>Define a simple <code>User</code> entity:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Id;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.relational.core.mapping.Table;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Table(&quot;users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Getters and Setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="creating-a-repository"></a></p>
-<h3 id="4-Creating-a-Repository"><a href="#4-Creating-a-Repository" class="headerlink" title="4. Creating a Repository"></a>4. Creating a Repository</h3><p>Create a reactive <code>UserRepository</code> interface:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.repository.reactive.ReactiveCrudRepository;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserRepository</span> <span class="keyword">extends</span> <span class="title class_">ReactiveCrudRepository</span>&lt;User, Long&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="data-initialization"></a></p>
-<h3 id="5-Data-Initialization"><a href="#5-Data-Initialization" class="headerlink" title="5. Data Initialization"></a>5. Data Initialization</h3><p>Use an initializer class to preload some data:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.CommandLineRunner;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DataInitializer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    CommandLineRunner <span class="title function_">init</span><span class="params">(UserRepository repository)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">            Flux&lt;User&gt; userFlux = Flux.just(</span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">User</span>(<span class="literal">null</span>, <span class="string">&quot;John Doe&quot;</span>),</span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">User</span>(<span class="literal">null</span>, <span class="string">&quot;Jane Doe&quot;</span>),</span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">User</span>(<span class="literal">null</span>, <span class="string">&quot;Sam Smith&quot;</span>))</span><br><span class="line">                .flatMap(repository::save);</span><br><span class="line"></span><br><span class="line">            userFlux</span><br><span class="line">                .thenMany(repository.findAll())</span><br><span class="line">                .subscribe(user -&gt; System.out.println(<span class="string">&quot;Saving &quot;</span> + user.toString()));</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="handler-functions-and-route-configuration"></a></p>
-<h3 id="6-Handler-Functions-and-Route-Configuration"><a href="#6-Handler-Functions-and-Route-Configuration" class="headerlink" title="6. Handler Functions and Route Configuration"></a>6. Handler Functions and Route Configuration</h3><p>Create handler functions and route configurations to handle HTTP requests and return responses:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunction;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.RouterFunctions;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserHandler</span><span class="params">(UserRepository userRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userRepository = userRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getUser</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">Long</span> <span class="variable">userId</span> <span class="operator">=</span> Long.valueOf(request.pathVariable(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(userId)</span><br><span class="line">            .flatMap(user -&gt; ServerResponse.ok().body(Mono.just(user), User.class))</span><br><span class="line">            .switchIfEmpty(ServerResponse.notFound().build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">getAllUsers</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ServerResponse.ok().body(userRepository.findAll(), User.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">createUser</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        Mono&lt;User&gt; userMono = request.bodyToMono(User.class);</span><br><span class="line">        <span class="keyword">return</span> userMono.flatMap(userRepository::save)</span><br><span class="line">            .flatMap(user -&gt; ServerResponse.ok().body(Mono.just(user), User.class));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RouterConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title function_">route</span><span class="params">(UserHandler handler)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route()</span><br><span class="line">            .GET(<span class="string">&quot;/user/&#123;id&#125;&quot;</span>, handler::getUser)</span><br><span class="line">            .GET(<span class="string">&quot;/users&quot;</span>, handler::getAllUsers)</span><br><span class="line">            .POST(<span class="string">&quot;/user&quot;</span>, handler::createUser)</span><br><span class="line">            .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to perform reactive database access in Spring WebFlux. With Spring Data R2DBC, we can easily achieve non-blocking access to relational databases, greatly improving the performance and concurrency handling of applications.</p>
 
       
     </div>

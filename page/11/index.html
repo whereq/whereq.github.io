@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,149 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Analyzing-High-Memory-Usage-in-Kubernetes/" class="post-title-link" itemprop="url">Analyzing High Memory Usage in Kubernetes</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 19:28:43" itemprop="dateCreated datePublished" datetime="2024-10-27T19:28:43-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#problem-background">Problem Background</a></li>
+<li><a href="#cause-analysis">Cause Analysis</a><ul>
+<li><a href="#using-docker-stats">Using <code>docker stats</code></a></li>
+</ul>
+</li>
+<li><a href="#verification-of-memory-calculation">Verification of Memory Calculation</a><ul>
+<li><a href="#verifying-with-memory_stats">Verifying with <code>memory_stats</code></a></li>
+</ul>
+</li>
+<li><a href="#understanding-cache-usage">Understanding Cache Usage</a></li>
+<li><a href="#solution">Solution</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In Kubernetes environments, monitoring resource usage is crucial for maintaining optimal performance and resource allocation. This article delves into a specific case where a user observed high memory usage by a Harbor pod on one of the nodes, leading to a discrepancy between <code>kubectl top</code> and <code>docker stats</code> results. We will analyze the cause, verify the memory calculation methods, and provide a solution to accurately monitor memory usage.</p>
+<hr>
+<p><a name="problem-background"></a></p>
+<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>A user observed that one of the nodes in their Kubernetes cluster showed high memory usage by a Harbor pod, approximately 3.7G, which seemed unusually high compared to other pods.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get node -owide</span><br><span class="line">NAME    STATUS   ROLES    AGE   VERSION    INTERNAL-IP   EXTERNAL-IP    </span><br><span class="line">node01  Ready    master   10d   v1.15.12   100.1.0.10   &lt;none&gt;   </span><br><span class="line">node02  Ready    master   12d   v1.15.12   100.1.0.11   &lt;none&gt;  </span><br><span class="line">node03  Ready    master   10d   v1.15.12   100.1.0.12   &lt;none&gt; </span><br><span class="line"></span><br><span class="line">[root@node02 ~]# kubectl top pod -A | grep harbor</span><br><span class="line">kube-system         harbor-master1-sxg2l                   15m           150Mi</span><br><span class="line">kube-system         harbor-master2-ncvb8                   8m            3781Mi</span><br><span class="line">kube-system         harbor-master3-2gdsn                   14m           227Mi</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="cause-analysis"></a></p>
+<h2 id="Cause-Analysis"><a href="#Cause-Analysis" class="headerlink" title="Cause Analysis"></a>Cause Analysis</h2><p>To understand the memory usage, the user compared the results from <code>kubectl top</code> and <code>docker stats</code>. Theoretically, <code>docker stats</code> should provide a more accurate result.</p>
+<h3 id="Using-docker-stats"><a href="#Using-docker-stats" class="headerlink" title="Using docker stats"></a>Using <code>docker stats</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# docker stats | grep harbor</span><br><span class="line">CONTAINER ID        NAME                                  CPU %    MEM USAGE / LIMIT     MEM %</span><br><span class="line">10a230bee3c7        k8s_nginx_harbor-master2-xxx          0.02%    14.15MiB / 94.26GiB   0.01%</span><br><span class="line">6ba14a04fd77        k8s_harbor-portal_harbor-master2-xxx  0.01%    13.73MiB / 94.26GiB   0.01%</span><br><span class="line">324413da20a9        k8s_harbor-jobservice_harbor-master2-xxx  0.11%    21.54MiB / 94.26GiB   0.02%</span><br><span class="line">d880b61cf4cb        k8s_harbor-core_harbor-master2-xxx    0.12%    33.2MiB / 94.26GiB    0.03%</span><br><span class="line">186c064d0930        k8s_harbor-registryctl_harbor-master2-xxx 0.01%    8.34MiB / 94.26GiB    0.01%</span><br><span class="line">52a50204a962        k8s_harbor-registry_harbor-master2-xxx 0.06%    29.99MiB / 94.26GiB   0.03%</span><br><span class="line">86031ddd0314        k8s_harbor-redis_harbor-master2-xxx   0.14%    11.51MiB / 94.26GiB   0.01%</span><br><span class="line">6366207680f2        k8s_harbor-database_harbor-master2-xxx 0.45%    8.859MiB / 94.26GiB   0.01%</span><br></pre></td></tr></table></figure>
+
+<p>The total memory usage from <code>docker stats</code> was around 140M, significantly lower than the 3.7G reported by <code>kubectl top</code>.</p>
+<hr>
+<p><a name="verification-of-memory-calculation"></a></p>
+<h2 id="Verification-of-Memory-Calculation"><a href="#Verification-of-Memory-Calculation" class="headerlink" title="Verification of Memory Calculation"></a>Verification of Memory Calculation</h2><p>The discrepancy arises from the different methods used by <code>kubectl top</code> and <code>docker stats</code> to calculate memory usage.</p>
+<ul>
+<li><strong><code>kubectl top</code> Calculation</strong>: <code>memory.usage_in_bytes - inactive_file</code></li>
+<li><strong><code>docker stats</code> Calculation</strong>: <code>memory.usage_in_bytes - cache</code></li>
+</ul>
+<p>If the cache is large, <code>kubectl top</code> will report a higher memory usage.</p>
+<h3 id="Verifying-with-memory-stats"><a href="#Verifying-with-memory-stats" class="headerlink" title="Verifying with memory_stats"></a>Verifying with <code>memory_stats</code></h3><p>To verify, the user fetched the <code>memory_stats</code> data using Docker’s API:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -s --unix-socket /var/run/docker.sock http:/v1.24/containers/xxx/stats | jq .<span class="string">&quot;memory_stats&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>Sample <code>memory_stats</code> data:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;memory_stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;usage&quot;</span><span class="punctuation">:</span> <span class="number">14913536</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;max_usage&quot;</span><span class="punctuation">:</span> <span class="number">15183872</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;active_anon&quot;</span><span class="punctuation">:</span> <span class="number">14835712</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;active_file&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;cache&quot;</span><span class="punctuation">:</span> <span class="number">77824</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;dirty&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hierarchical_memory_limit&quot;</span><span class="punctuation">:</span> <span class="number">101205622784</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hierarchical_memsw_limit&quot;</span><span class="punctuation">:</span> <span class="number">9223372036854772000</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inactive_anon&quot;</span><span class="punctuation">:</span> <span class="number">4096</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inactive_file&quot;</span><span class="punctuation">:</span> <span class="number">73728</span><span class="punctuation">,</span></span><br><span class="line">      ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>By applying the formulas, the user confirmed that the results from <code>kubectl top</code> and <code>docker stats</code> were consistent with the expected calculations.</p>
+<hr>
+<p><a name="understanding-cache-usage"></a></p>
+<h2 id="Understanding-Cache-Usage"><a href="#Understanding-Cache-Usage" class="headerlink" title="Understanding Cache Usage"></a>Understanding Cache Usage</h2><p>The high cache usage in Harbor was primarily due to the <code>registry</code> component, which handles Docker image storage and involves extensive read&#x2F;write operations on image layers.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;memory_stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;usage&quot;</span><span class="punctuation">:</span> <span class="number">5845127168</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;max_usage&quot;</span><span class="punctuation">:</span> <span class="number">22050988032</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stats&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;active_anon&quot;</span><span class="punctuation">:</span> <span class="number">31576064</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;active_file&quot;</span><span class="punctuation">:</span> <span class="number">3778052096</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cache&quot;</span><span class="punctuation">:</span> <span class="number">5813551104</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dirty&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hierarchical_memory_limit&quot;</span><span class="punctuation">:</span> <span class="number">101205622784</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hierarchical_memsw_limit&quot;</span><span class="punctuation">:</span> <span class="number">9223372036854772000</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;inactive_anon&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;inactive_file&quot;</span><span class="punctuation">:</span> <span class="number">2035499008</span><span class="punctuation">,</span></span><br><span class="line">    ...</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="solution"></a></p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>To address the discrepancy, the user was informed that <code>kubectl top</code> includes cache usage, which can be misleading. The cache, being non-critical, can be reclaimed by the system during memory pressure or manually released. The user was advised to use <code>docker stats</code> for a more accurate representation of actual memory usage.</p>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding the different methods used by Kubernetes and Docker to calculate memory usage. By verifying the calculations and understanding the role of cache, users can make more informed decisions about resource management in their Kubernetes clusters. Using <code>docker stats</code> provides a more accurate view of memory usage, especially in scenarios where cache usage is significant.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2127,345 +2270,6 @@
 <h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>By logging cache statistics using a logging framework like SLF4J or integrating with monitoring tools like Prometheus and Grafana, we can effectively track and visualize the performance of the Caffeine cache. This allows us to monitor cache hits, misses, evictions, and other metrics, helping us to tune and optimize the cache for better performance.</p>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Caffeine cache is a powerful tool for improving the performance and scalability of Spring Boot applications. By understanding how Caffeine works, including its eviction policies and expiration</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Memory-Cache-in-Spring-Boot-Application/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Deep-Dive-into-Memory-Cache-in-Spring-Boot-Application/" class="post-title-link" itemprop="url">Deep Dive into Memory Cache in Spring Boot Application</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 11:32:05" itemprop="dateCreated datePublished" datetime="2024-10-27T11:32:05-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/" itemprop="url" rel="index"><span itemprop="name">Cache</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/Spring-Boot/Microservice/" itemprop="url" rel="index"><span itemprop="name">Microservice</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Deep-Dive-into-Memory-Cache-Design-and-Implementation-in-Spring-Boot-Microservice-Applications"><a href="#Deep-Dive-into-Memory-Cache-Design-and-Implementation-in-Spring-Boot-Microservice-Applications" class="headerlink" title="Deep Dive into Memory Cache Design and Implementation in Spring Boot Microservice Applications"></a>Deep Dive into Memory Cache Design and Implementation in Spring Boot Microservice Applications</h1><h2 id="Table-of-Contents"><a href="#Table-of-Contents" class="headerlink" title="Table of Contents"></a>Table of Contents</h2><ul>
-<li><a href="#deep-dive-into-memory-cache-design-and-implementation-in-spring-boot-microservice-applications">Deep Dive into Memory Cache Design and Implementation in Spring Boot Microservice Applications</a><ul>
-<li><a href="#table-of-contents">Table of Contents</a></li>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#understanding-memory-cache">Understanding Memory Cache</a><ul>
-<li><a href="#key-concepts">Key Concepts</a></li>
-</ul>
-</li>
-<li><a href="#cache-design-principles">Cache Design Principles</a><ul>
-<li><a href="#1-cache-hit-and-miss">1. <strong>Cache Hit and Miss</strong></a></li>
-<li><a href="#2-cache-eviction-policies">2. <strong>Cache Eviction Policies</strong></a></li>
-<li><a href="#3-cache-invalidation">3. <strong>Cache Invalidation</strong></a></li>
-</ul>
-</li>
-<li><a href="#cache-implementation-in-spring-boot">Cache Implementation in Spring Boot</a><ul>
-<li><a href="#spring-boot-cache-abstraction">Spring Boot Cache Abstraction</a></li>
-<li><a href="#caffeine-cache-integration">Caffeine Cache Integration</a></li>
-<li><a href="#cache-configuration">Cache Configuration</a></li>
-<li><a href="#yaml-configuration">YAML Configuration</a></li>
-<li><a href="#detailed-logic-in-caffeine-cache">Detailed Logic in Caffeine Cache</a><ul>
-<li><a href="#cache-lookup">Cache Lookup</a></li>
-<li><a href="#cache-miss-and-method-execution">Cache Miss and Method Execution</a></li>
-<li><a href="#cache-update">Cache Update</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#microservice-architecture-and-cache">Microservice Architecture and Cache</a><ul>
-<li><a href="#cache-consistency">Cache Consistency</a></li>
-<li><a href="#cache-eviction-strategies">Cache Eviction Strategies</a></li>
-</ul>
-</li>
-<li><a href="#complex-scenario-1-flow-control-and-backpressure-handling">Complex Scenario 1: Flow Control and Backpressure Handling</a><ul>
-<li><a href="#problem-statement">Problem Statement</a></li>
-<li><a href="#solution-architecture">Solution Architecture</a></li>
-<li><a href="#flow-chart">Flow Chart</a></li>
-<li><a href="#sample-code">Sample Code</a></li>
-</ul>
-</li>
-<li><a href="#complex-scenario-2-cache-invalidation-and-data-synchronization">Complex Scenario 2: Cache Invalidation and Data Synchronization</a><ul>
-<li><a href="#problem-statement-1">Problem Statement</a></li>
-<li><a href="#solution-architecture-1">Solution Architecture</a></li>
-<li><a href="#sequence-diagram">Sequence Diagram</a></li>
-<li><a href="#sample-code-1">Sample Code</a></li>
-</ul>
-</li>
-<li><a href="#complex-scenario-3-cache-stampede-prevention">Complex Scenario 3: Cache Stampede Prevention</a><ul>
-<li><a href="#problem-statement-2">Problem Statement</a></li>
-<li><a href="#solution-architecture-2">Solution Architecture</a></li>
-<li><a href="#flow-chart-1">Flow Chart</a></li>
-<li><a href="#sample-code-2">Sample Code</a></li>
-</ul>
-</li>
-<li><a href="#real-life-production-use-cases">Real-Life Production Use Cases</a><ul>
-<li><a href="#1-user-profile-caching">1. <strong>User Profile Caching</strong></a></li>
-<li><a href="#2-product-catalog-caching">2. <strong>Product Catalog Caching</strong></a></li>
-<li><a href="#3-api-response-caching">3. <strong>API Response Caching</strong></a></li>
-<li><a href="#4-session-data-caching">4. <strong>Session Data Caching</strong></a></li>
-</ul>
-</li>
-<li><a href="#sample-code-3">Sample Code</a><ul>
-<li><a href="#caffeine-cache-configuration">Caffeine Cache Configuration</a></li>
-<li><a href="#user-service-with-caching">User Service with Caching</a></li>
-</ul>
-</li>
-<li><a href="#rate-limiting-for-cache-access">Rate Limiting for Cache Access</a><ul>
-<li><a href="#why-rate-limiting-is-needed">Why Rate Limiting is Needed</a></li>
-<li><a href="#example-rate-limiting-with-spring-boot">Example: Rate Limiting with Spring Boot</a><ul>
-<li><a href="#add-dependencies">Add Dependencies</a></li>
-<li><a href="#rate-limiting-configuration">Rate Limiting Configuration</a></li>
-<li><a href="#service-implementation-with-rate-limiting">Service Implementation with Rate Limiting</a></li>
-</ul>
-</li>
-<li><a href="#explanation">Explanation</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-<li><a href="#conclusion-1">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In modern microservice architectures, performance and scalability are critical. Memory caching is a powerful technique to improve application performance by reducing the load on databases and other backend services. This article delves into the design and implementation of memory caches in Spring Boot applications, focusing on real-life project scenarios and the latest technology stack.</p>
-<hr>
-<p><a name="understanding-memory-cache"></a></p>
-<h2 id="Understanding-Memory-Cache"><a href="#Understanding-Memory-Cache" class="headerlink" title="Understanding Memory Cache"></a>Understanding Memory Cache</h2><p>A memory cache is a high-speed data storage layer that stores a subset of data, typically transient in nature, so that future requests for that data are served faster. Caching can significantly improve the performance and scalability of applications by reducing the need to access slower underlying storage layers.</p>
-<h3 id="Key-Concepts"><a href="#Key-Concepts" class="headerlink" title="Key Concepts"></a>Key Concepts</h3><ul>
-<li><strong>Cache Hit</strong>: When the requested data is found in the cache.</li>
-<li><strong>Cache Miss</strong>: When the requested data is not found in the cache.</li>
-<li><strong>Cache Eviction</strong>: The process of removing data from the cache to make room for new data.</li>
-</ul>
-<hr>
-<p><a name="cache-design-principles"></a></p>
-<h2 id="Cache-Design-Principles"><a href="#Cache-Design-Principles" class="headerlink" title="Cache Design Principles"></a>Cache Design Principles</h2><h3 id="1-Cache-Hit-and-Miss"><a href="#1-Cache-Hit-and-Miss" class="headerlink" title="1. Cache Hit and Miss"></a>1. <strong>Cache Hit and Miss</strong></h3><ul>
-<li><strong>Cache Hit</strong>: When the requested data is found in the cache.</li>
-<li><strong>Cache Miss</strong>: When the requested data is not found in the cache.</li>
-</ul>
-<h3 id="2-Cache-Eviction-Policies"><a href="#2-Cache-Eviction-Policies" class="headerlink" title="2. Cache Eviction Policies"></a>2. <strong>Cache Eviction Policies</strong></h3><ul>
-<li><strong>Least Recently Used (LRU)</strong>: Removes the least recently used items first.</li>
-<li><strong>First In, First Out (FIFO)</strong>: Removes the oldest items first.</li>
-<li><strong>Least Frequently Used (LFU)</strong>: Removes the least frequently used items first.</li>
-</ul>
-<h3 id="3-Cache-Invalidation"><a href="#3-Cache-Invalidation" class="headerlink" title="3. Cache Invalidation"></a>3. <strong>Cache Invalidation</strong></h3><ul>
-<li><strong>Time-to-Live (TTL)</strong>: Data is automatically invalidated after a certain period.</li>
-<li><strong>Event-Driven Invalidation</strong>: Data is invalidated based on specific events (e.g., data updates).</li>
-</ul>
-<hr>
-<p><a name="cache-implementation-in-spring-boot"></a></p>
-<h2 id="Cache-Implementation-in-Spring-Boot"><a href="#Cache-Implementation-in-Spring-Boot" class="headerlink" title="Cache Implementation in Spring Boot"></a>Cache Implementation in Spring Boot</h2><h3 id="Spring-Boot-Cache-Abstraction"><a href="#Spring-Boot-Cache-Abstraction" class="headerlink" title="Spring Boot Cache Abstraction"></a><a name="spring-boot-cache-abstraction"></a>Spring Boot Cache Abstraction</h3><p>Spring Boot provides a powerful cache abstraction that allows you to apply caching to your methods with minimal configuration. The core annotation is <code>@Cacheable</code>, which caches the result of a method invocation.</p>
-<h3 id="Caffeine-Cache-Integration"><a href="#Caffeine-Cache-Integration" class="headerlink" title="Caffeine Cache Integration"></a><a name="caffeine-cache-integration"></a>Caffeine Cache Integration</h3><p>Caffeine is a high-performance, near-optimal caching library for Java. It is widely used in Spring Boot applications due to its efficiency and ease of integration.</p>
-<h3 id="Cache-Configuration"><a href="#Cache-Configuration" class="headerlink" title="Cache Configuration"></a><a name="cache-configuration"></a>Cache Configuration</h3><p>To configure Caffeine cache in a Spring Boot application, you need to add the following dependencies:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.ben-manes.caffeine<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>caffeine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Next, enable caching in your Spring Boot application by adding the <code>@EnableCaching</code> annotation to your main application class:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.EnableCaching;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Application</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="YAML-Configuration"><a href="#YAML-Configuration" class="headerlink" title="YAML Configuration"></a><a name="yaml-configuration"></a>YAML Configuration</h3><p>You can also configure Caffeine cache using YAML:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">caffeine</span></span><br><span class="line">    <span class="attr">cache-names:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">userCache</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">productCache</span></span><br><span class="line">    <span class="attr">caffeine:</span></span><br><span class="line">      <span class="attr">spec:</span> <span class="string">maximumSize=500,expireAfterAccess=600s</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Detailed-Logic-in-Caffeine-Cache"><a href="#Detailed-Logic-in-Caffeine-Cache" class="headerlink" title="Detailed Logic in Caffeine Cache"></a>Detailed Logic in Caffeine Cache</h3><p>When you annotate a method with <code>@Cacheable</code> in Spring Boot, the cache manager will first check if the requested data is already present in the specified cache. If the data is found, it will be returned immediately, bypassing the method’s execution. If the data is not found, the method will be executed, and the result will be stored in the cache for future requests.</p>
-<h4 id="Cache-Lookup"><a href="#Cache-Lookup" class="headerlink" title="Cache Lookup"></a>Cache Lookup</h4><p>Caffeine uses a <code>ConcurrentHashMap</code> to store cache entries. When a lookup is performed, Caffeine checks if the key exists in the map:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">getIfPresent</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    Node&lt;K, V&gt; node = data.get(key);</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Additional logic for expiration and eviction checks</span></span><br><span class="line">    <span class="keyword">return</span> node.getValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Cache-Miss-and-Method-Execution"><a href="#Cache-Miss-and-Method-Execution" class="headerlink" title="Cache Miss and Method Execution"></a>Cache Miss and Method Execution</h4><p>If the key is not found in the cache, the method is executed, and the result is stored in the cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">get</span><span class="params">(K key, Function&lt;? <span class="built_in">super</span> K, ? extends V&gt; mappingFunction)</span> &#123;</span><br><span class="line">    <span class="type">V</span> <span class="variable">value</span> <span class="operator">=</span> getIfPresent(key);</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    value = mappingFunction.apply(key);</span><br><span class="line">    put(key, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Cache-Update"><a href="#Cache-Update" class="headerlink" title="Cache Update"></a>Cache Update</h4><p>When the result is fetched from the database, it is stored in the cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">    Node&lt;K, V&gt; node = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(key, value);</span><br><span class="line">    data.put(key, node);</span><br><span class="line">    <span class="comment">// Additional logic for eviction and expiration</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="microservice-architecture-and-cache"></a></p>
-<h2 id="Microservice-Architecture-and-Cache"><a href="#Microservice-Architecture-and-Cache" class="headerlink" title="Microservice Architecture and Cache"></a>Microservice Architecture and Cache</h2><h3 id="Cache-Consistency"><a href="#Cache-Consistency" class="headerlink" title="Cache Consistency"></a><a name="cache-consistency"></a>Cache Consistency</h3><p>Ensuring cache consistency is crucial in distributed systems. Techniques like cache invalidation, event-driven updates, and distributed locking can be used to maintain consistency.</p>
-<h3 id="Cache-Eviction-Strategies"><a href="#Cache-Eviction-Strategies" class="headerlink" title="Cache Eviction Strategies"></a><a name="cache-eviction-strategies"></a>Cache Eviction Strategies</h3><p>Choosing the right eviction strategy is important. LRU is commonly used, but in scenarios with frequent updates, LFU or custom eviction policies might be more appropriate.</p>
-<hr>
-<p><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a></p>
-<h2 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title="Complex Scenario 1: Flow Control and Backpressure Handling"></a>Complex Scenario 1: Flow Control and Backpressure Handling</h2><h3 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h3><p>In high-traffic scenarios, the cache might become a bottleneck if not properly managed. Flow control and backpressure handling are essential to prevent the cache from being overwhelmed.</p>
-<h3 id="Solution-Architecture"><a href="#Solution-Architecture" class="headerlink" title="Solution Architecture"></a>Solution Architecture</h3><ol>
-<li><strong>Rate Limiting</strong>: Implement rate limiting to control the number of requests hitting the cache.</li>
-<li><strong>Circuit Breaker</strong>: Use a circuit breaker to handle failures gracefully and prevent cascading failures.</li>
-<li><strong>Backpressure Handling</strong>: Implement backpressure mechanisms to manage the flow of data between services.</li>
-</ol>
-<h3 id="Flow-Chart"><a href="#Flow-Chart" class="headerlink" title="Flow Chart"></a>Flow Chart</h3><pre><code class="highlight mermaid">graph TD
-    A[Client Request] --&gt; B&#123;Rate Limiter&#125;
-    B --&gt;|Allowed| C[Cache Lookup]
-    B --&gt;|Denied| D[Fallback to Database]
-    C --&gt; E&#123;Cache Hit?&#125;
-    E --&gt;|Yes| F[Return Cached Data]
-    E --&gt;|No| G[Fetch from Database]
-    G --&gt; H[Update Cache]
-    H --&gt; F
-    D --&gt; G</code></pre>
-
-<h3 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserById</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Fetch user from database</span></span><br><span class="line">        <span class="keyword">return</span> fetchUserFromDatabase(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromDatabase</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Database query logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="complex-scenario-2-cache-invalidation-and-data-synchronization"></a></p>
-<h2 id="Complex-Scenario-2-Cache-Invalidation-and-Data-Synchronization"><a href="#Complex-Scenario-2-Cache-Invalidation-and-Data-Synchronization" class="headerlink" title="Complex Scenario 2: Cache Invalidation and Data Synchronization"></a>Complex Scenario 2: Cache Invalidation and Data Synchronization</h2><h3 id="Problem-Statement-1"><a href="#Problem-Statement-1" class="headerlink" title="Problem Statement"></a>Problem Statement</h3><p>Ensuring that the cache remains consistent with the underlying data store is challenging, especially in distributed systems.</p>
-<h3 id="Solution-Architecture-1"><a href="#Solution-Architecture-1" class="headerlink" title="Solution Architecture"></a>Solution Architecture</h3><ol>
-<li><strong>Event-Driven Invalidation</strong>: Use event-driven mechanisms to invalidate the cache when data changes.</li>
-<li><strong>Distributed Locking</strong>: Use distributed locking to ensure that only one service updates the cache at a time.</li>
-<li><strong>TTL-Based Invalidation</strong>: Use Time-to-Live (TTL) to automatically invalidate cache entries after a certain period.</li>
-</ol>
-<h3 id="Sequence-Diagram"><a href="#Sequence-Diagram" class="headerlink" title="Sequence Diagram"></a>Sequence Diagram</h3><pre><code class="highlight mermaid">sequenceDiagram
-    participant Client
-    participant Service
-    participant Cache
-    participant Database
-
-    Client-&gt;&gt;Service: Update User
-    Service-&gt;&gt;Database: Update User in Database
-    Database--&gt;&gt;Service: User Updated
-    Service-&gt;&gt;Cache: Invalidate User Cache
-    Cache--&gt;&gt;Service: Cache Invalidated
-    Service--&gt;&gt;Client: User Updated</code></pre>
-
-<h3 id="Sample-Code-1"><a href="#Sample-Code-1" class="headerlink" title="Sample Code"></a>Sample Code</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.CacheEvict;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CacheEvict(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateUser</span><span class="params">(Long userId, User user)</span> &#123;</span><br><span class="line">        <span class="comment">// Update user in database</span></span><br><span class="line">        updateUserInDatabase(userId, user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">updateUserInDatabase</span><span class="params">(Long userId, User user)</span> &#123;</span><br><span class="line">        <span class="comment">// Database update logic</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="complex-scenario-3-cache-stampede-prevention"></a></p>
-<h2 id="Complex-Scenario-3-Cache-Stampede-Prevention"><a href="#Complex-Scenario-3-Cache-Stampede-Prevention" class="headerlink" title="Complex Scenario 3: Cache Stampede Prevention"></a>Complex Scenario 3: Cache Stampede Prevention</h2><h3 id="Problem-Statement-2"><a href="#Problem-Statement-2" class="headerlink" title="Problem Statement"></a>Problem Statement</h3><p>A cache stampede occurs when multiple requests for the same data hit the cache simultaneously, leading to a spike in database load.</p>
-<h3 id="Solution-Architecture-2"><a href="#Solution-Architecture-2" class="headerlink" title="Solution Architecture"></a>Solution Architecture</h3><ol>
-<li><strong>Probabilistic Early Expiration</strong>: Use probabilistic early expiration to spread out cache expiration times.</li>
-<li><strong>Locking Mechanism</strong>: Implement a locking mechanism to ensure that only one request populates the cache at a time.</li>
-<li><strong>Background Refresh</strong>: Use background refresh to keep the cache up-to-date without impacting the user experience.</li>
-</ol>
-<h3 id="Flow-Chart-1"><a href="#Flow-Chart-1" class="headerlink" title="Flow Chart"></a>Flow Chart</h3><pre><code class="highlight mermaid">graph TD
-    A[Client Request] --&gt; B&#123;Cache Hit?&#125;
-    B --&gt;|Yes| C[Return Cached Data]
-    B --&gt;|No| D&#123;Lock Acquired?&#125;
-    D --&gt;|Yes| E[Fetch from Database]
-    D --&gt;|No| F[Wait for Lock]
-    E --&gt; G[Update Cache]
-    G --&gt; C
-    F --&gt; B</code></pre>
-
-<h3 id="Sample-Code-2"><a href="#Sample-Code-2" class="headerlink" title="Sample Code"></a>Sample Code</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.Lock;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantLock;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserById</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="comment">// Double-check to ensure the cache is still empty</span></span><br><span class="line">            <span class="type">User</span> <span class="variable">cachedUser</span> <span class="operator">=</span> fetchUserFromCache(userId);</span><br><span class="line">            <span class="keyword">if</span> (cachedUser != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> cachedUser;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Fetch user from database</span></span><br><span class="line">            <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> fetchUserFromDatabase(userId);</span><br><span class="line">            <span class="comment">// Update cache</span></span><br><span class="line">            updateCache(userId, user);</span><br><span class="line">            <span class="keyword">return</span> user;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromCache</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Cache lookup logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromDatabase</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Database query logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">updateCache</span><span class="params">(Long userId, User user)</span> &#123;</span><br><span class="line">        <span class="comment">// Cache update logic</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="real-life-production-use-cases"></a></p>
-<h2 id="Real-Life-Production-Use-Cases"><a href="#Real-Life-Production-Use-Cases" class="headerlink" title="Real-Life Production Use Cases"></a>Real-Life Production Use Cases</h2><h3 id="1-User-Profile-Caching"><a href="#1-User-Profile-Caching" class="headerlink" title="1. User Profile Caching"></a>1. <strong>User Profile Caching</strong></h3><p>In a social media application, user profiles are frequently accessed. Caching user profiles can significantly reduce the load on the database and improve response times.</p>
-<h3 id="2-Product-Catalog-Caching"><a href="#2-Product-Catalog-Caching" class="headerlink" title="2. Product Catalog Caching"></a>2. <strong>Product Catalog Caching</strong></h3><p>In an e-commerce application, product catalogs are often large and frequently accessed. Caching product data can improve performance and reduce database load.</p>
-<h3 id="3-API-Response-Caching"><a href="#3-API-Response-Caching" class="headerlink" title="3. API Response Caching"></a>3. <strong>API Response Caching</strong></h3><p>In microservices, caching API responses can reduce the number of calls to downstream services, improving overall system performance.</p>
-<h3 id="4-Session-Data-Caching"><a href="#4-Session-Data-Caching" class="headerlink" title="4. Session Data Caching"></a>4. <strong>Session Data Caching</strong></h3><p>In applications with user sessions, caching session data can reduce the load on session storage systems and improve scalability.</p>
-<hr>
-<p><a name="sample-code"></a></p>
-<h2 id="Sample-Code-3"><a href="#Sample-Code-3" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Caffeine-Cache-Configuration"><a href="#Caffeine-Cache-Configuration" class="headerlink" title="Caffeine Cache Configuration"></a>Caffeine Cache Configuration</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.CacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.caffeine.CaffeineCacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CacheManager <span class="title function_">cacheManager</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">CaffeineCacheManager</span> <span class="variable">cacheManager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CaffeineCacheManager</span>(<span class="string">&quot;userCache&quot;</span>, <span class="string">&quot;productCache&quot;</span>);</span><br><span class="line">        cacheManager.setCaffeine(caffeineCacheBuilder());</span><br><span class="line">        <span class="keyword">return</span> cacheManager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Caffeine&lt;Object, Object&gt; <span class="title function_">caffeineCacheBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Caffeine.newBuilder()</span><br><span class="line">                .maximumSize(<span class="number">500</span>)</span><br><span class="line">                .expireAfterAccess(<span class="number">600</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="User-Service-with-Caching"><a href="#User-Service-with-Caching" class="headerlink" title="User Service with Caching"></a>User Service with Caching</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserById</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Fetch user from database</span></span><br><span class="line">        <span class="keyword">return</span> fetchUserFromDatabase(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromDatabase</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Database query logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="rate-limiting-for-cache-access"></a></p>
-<h2 id="Rate-Limiting-for-Cache-Access"><a href="#Rate-Limiting-for-Cache-Access" class="headerlink" title="Rate Limiting for Cache Access"></a>Rate Limiting for Cache Access</h2><h3 id="Why-Rate-Limiting-is-Needed"><a href="#Why-Rate-Limiting-is-Needed" class="headerlink" title="Why Rate Limiting is Needed"></a>Why Rate Limiting is Needed</h3><p>Reading from a memory cache is generally very fast and should not be a bottleneck in terms of performance. However, there are several reasons why you might still want to implement rate limiting for cache access, even if the cache is in memory:</p>
-<ol>
-<li><p><strong>Resource Management</strong>: Even though reading from memory is fast, excessive concurrent requests can still consume a significant amount of CPU and memory resources. Rate limiting helps manage these resources more effectively, ensuring that the system remains responsive and does not become overwhelmed.</p>
-</li>
-<li><p><strong>Preventing Cache Stampede</strong>: While reading from the cache is fast, if the cache is not populated (cache miss), all concurrent requests will end up fetching the data from the database or another slow data source. This can lead to a cache stampede, where the database or other backend services are overwhelmed with requests. Rate limiting can help mitigate this by controlling the number of concurrent requests that can hit the cache.</p>
-</li>
-<li><p><strong>Graceful Degradation</strong>: In high-traffic scenarios, rate limiting ensures that the system can gracefully degrade its performance. By limiting the number of requests that can access the cache, you can prevent the system from becoming unresponsive or crashing under heavy load.</p>
-</li>
-<li><p><strong>Security and Denial of Service (DoS) Prevention</strong>: Rate limiting can also be a security measure to prevent Denial of Service (DoS) attacks. By limiting the number of requests from a single client or IP address, you can protect the system from being overwhelmed by malicious requests.</p>
-</li>
-<li><p><strong>Ensuring Fairness</strong>: Rate limiting ensures that all clients have fair access to the cache. Without rate limiting, a few clients with high request rates could monopolize the cache, leading to poor performance for other clients.</p>
-</li>
-<li><p><strong>Monitoring and Analytics</strong>: Rate limiting provides valuable data on the usage patterns of the cache. This data can be used for monitoring, analytics, and capacity planning.</p>
-</li>
-</ol>
-<h3 id="Example-Rate-Limiting-with-Spring-Boot"><a href="#Example-Rate-Limiting-with-Spring-Boot" class="headerlink" title="Example: Rate Limiting with Spring Boot"></a>Example: Rate Limiting with Spring Boot</h3><p>Here’s an example of how you might implement rate limiting for cache access in a Spring Boot application using the <code>Bucket4j</code> library:</p>
-<h4 id="Add-Dependencies"><a href="#Add-Dependencies" class="headerlink" title="Add Dependencies"></a>Add Dependencies</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.vladimir-bukhtoyarov<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>bucket4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Rate-Limiting-Configuration"><a href="#Rate-Limiting-Configuration" class="headerlink" title="Rate Limiting Configuration"></a>Rate Limiting Configuration</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bandwidth;</span><br><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bucket;</span><br><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bucket4j;</span><br><span class="line"><span class="keyword">import</span> io.github.bucket4j.Refill;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RateLimitingConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Bucket <span class="title function_">cacheRateLimiter</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Bandwidth</span> <span class="variable">limit</span> <span class="operator">=</span> Bandwidth.classic(<span class="number">100</span>, Refill.greedy(<span class="number">100</span>, Duration.ofMinutes(<span class="number">1</span>)));</span><br><span class="line">        <span class="keyword">return</span> Bucket4j.builder().addLimit(limit).build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Service-Implementation-with-Rate-Limiting"><a href="#Service-Implementation-with-Rate-Limiting" class="headerlink" title="Service Implementation with Rate Limiting"></a>Service Implementation with Rate Limiting</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bucket;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Bucket cacheRateLimiter;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserById</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (cacheRateLimiter.tryConsume(<span class="number">1</span>)) &#123;</span><br><span class="line">            <span class="comment">// Fetch user from database</span></span><br><span class="line">            <span class="keyword">return</span> fetchUserFromDatabase(userId);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Rate limit exceeded&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromDatabase</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Database query logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation"></a>Explanation</h3><ol>
-<li><strong>Bucket4j Configuration</strong>: The <code>Bucket4j</code> library is used to configure a rate limiter with a limit of 100 requests per minute.</li>
-<li><strong>Service Implementation</strong>: The <code>getUserById</code> method checks if the rate limit has been exceeded before fetching the user from the database. If the limit is exceeded, it throws an exception.</li>
-</ol>
-<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>While reading from a memory cache is fast and should not be a bottleneck, implementing rate limiting can provide several benefits, including resource management, preventing cache stampedes, ensuring fairness, and enhancing security. By using libraries like <code>Bucket4j</code>, you can easily implement rate limiting in your Spring Boot application to manage cache access effectively.</p>
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion-1"><a href="#Conclusion-1" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Memory caching is a powerful tool for improving the performance and scalability of Spring Boot applications in a microservice architecture. By understanding the principles of cache design and implementing best practices, you can effectively manage cache performance, consistency, and reliability in real-life projects.</p>
-<p>This article provides a comprehensive guide to memory cache design and implementation in Spring Boot, covering various scenarios and best practices. Use the provided sample code and diagrams to implement efficient caching in your microservice architecture.</p>
 
       
     </div>
