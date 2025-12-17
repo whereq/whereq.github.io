@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,255 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Best-Practices-of-Java-Core-ThreadPoolExecutor/" class="post-title-link" itemprop="url">Best Practices of Java Core ThreadPoolExecutor</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 23:01:49" itemprop="dateCreated datePublished" datetime="2024-10-28T23:01:49-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/" itemprop="url" rel="index"><span itemprop="name">Best Practices</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Best-Practices/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-why-executors-is-discouraged">1. Why Executors is Discouraged</a><ul>
+<li><a href="#example-code-not-recommended">Example Code (Not Recommended)</a></li>
+</ul>
+</li>
+<li><a href="#2-threadpoolexecutor-introduction">2. ThreadPoolExecutor Introduction</a></li>
+<li><a href="#3-overview-of-threadpoolexecutor">3. Overview of <code>ThreadPoolExecutor</code></a></li>
+<li><a href="#4-recommended-usage-threadpoolexecutor">4. Recommended Usage: ThreadPoolExecutor</a></li>
+<li><a href="#5-core-configuration-parameters">5. Core Configuration Parameters</a><ul>
+<li><a href="#best-practice-choose-configuration-values-based-on-workload-type-and-system-capacity">Best Practice: Choose configuration values based on workload type and system capacity.</a></li>
+</ul>
+</li>
+<li><a href="#6-analyzing-executors-source-code">6. Analyzing Executors Source Code</a></li>
+<li><a href="#7-threadpoolexecutor-constructors-and-parameters">7. ThreadPoolExecutor Constructors and Parameters</a><ul>
+<li><a href="#parameter-breakdown">Parameter Breakdown</a></li>
+</ul>
+</li>
+<li><a href="#8-advanced-queue-management">8. Advanced Queue Management</a><ul>
+<li><a href="#relationships-between-corepoolsize-and-maximumpoolsize">Relationships between <code>corePoolSize</code> and <code>maximumPoolSize</code></a></li>
+<li><a href="#understanding-workqueue-types">Understanding workQueue Types</a></li>
+</ul>
+</li>
+<li><a href="#9-thread-pool-scaling-strategies">9. Thread Pool Scaling Strategies</a><ul>
+<li><a href="#recommended-scaling">Recommended Scaling:</a></li>
+</ul>
+</li>
+<li><a href="#10-rejectedexecutionhandler-strategies-for-handling-excess-tasks">10. RejectedExecutionHandler: Strategies for Handling Excess Tasks</a></li>
+<li><a href="#11-enhanced-monitoring-techniques">11. Enhanced Monitoring Techniques</a></li>
+<li><a href="#12-backpressure-handling-in-production">12. Backpressure Handling in Production</a><ul>
+<li><a href="#diagram-dynamic-task-flow-and-backpressure">Diagram: Dynamic Task Flow and Backpressure</a></li>
+</ul>
+</li>
+<li><a href="#13-example">13. Example</a></li>
+<li><a href="#14-conclusion">14. Conclusion</a></li>
+</ul>
+<p><a name="1-why-executors-is-discouraged"></a></p>
+<h2 id="1-Why-Executors-is-Discouraged"><a href="#1-Why-Executors-is-Discouraged" class="headerlink" title="1. Why Executors is Discouraged"></a>1. Why Executors is Discouraged</h2><p>Java’s <strong><code>Executors</code></strong> class provides several factory methods to create various types of thread pools:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newSingleThreadExecutor</span><span class="params">()</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newFixedThreadPool</span><span class="params">(<span class="type">int</span> nThreads)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newCachedThreadPool</span><span class="params">()</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title function_">newSingleThreadScheduledExecutor</span><span class="params">()</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title function_">newScheduledThreadPool</span><span class="params">(<span class="type">int</span> corePoolSize)</span></span><br></pre></td></tr></table></figure>
+
+<p>These convenience methods simplify thread pool creation, but they do not allow fine-tuning. <strong>Using <code>Executors</code> to create thread pools is generally discouraged</strong> due to potential risks, such as resource exhaustion. The official guidance is to use <strong><code>ThreadPoolExecutor</code></strong> directly, enabling full control over pool configurations, ensuring stability under varying load conditions.</p>
+<h3 id="Example-Code-Not-Recommended"><a href="#Example-Code-Not-Recommended" class="headerlink" title="Example Code (Not Recommended)"></a>Example Code (Not Recommended)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">es</span> <span class="operator">=</span> Executors.newSingleThreadExecutor();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Why it’s discouraged</strong>: Creating a thread pool this way can lead to issues like uncontrolled resource usage. <strong>Best practice</strong>: use <code>ThreadPoolExecutor</code> instead.</p>
+<p><a name="2-threadpoolexecutor-introduction"></a></p>
+<h2 id="2-ThreadPoolExecutor-Introduction"><a href="#2-ThreadPoolExecutor-Introduction" class="headerlink" title="2. ThreadPoolExecutor Introduction"></a>2. ThreadPoolExecutor Introduction</h2><p>Java’s <code>ThreadPoolExecutor</code> is a cornerstone of concurrent programming. It provides a high-performance, versatile API for managing threads and handling tasks, but it requires careful configuration to prevent resource wastage, improve system responsiveness, and enhance maintainability.</p>
+<hr>
+<p><a name="3-overview-of-threadpoolexecutor"></a></p>
+<h2 id="3-Overview-of-ThreadPoolExecutor"><a href="#3-Overview-of-ThreadPoolExecutor" class="headerlink" title="3. Overview of ThreadPoolExecutor"></a>3. Overview of <code>ThreadPoolExecutor</code></h2><p>The <code>ThreadPoolExecutor</code> manages thread allocation, scaling, and task queueing while optimizing thread lifecycle to minimize system overhead. Here is a basic textual model of a <code>ThreadPoolExecutor</code> lifecycle and memory model:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">          +-----------------------------+</span><br><span class="line">          |         Task Queue          |</span><br><span class="line">          |   (BlockingQueue&lt;Runnable&gt;) |</span><br><span class="line">          +------------+----------------+</span><br><span class="line">                       |</span><br><span class="line">     +-----------------v-----------------+</span><br><span class="line">     |                                   |</span><br><span class="line">     |       ThreadPoolExecutor          |</span><br><span class="line">     |                                   |</span><br><span class="line">     +----------------+------------------+</span><br><span class="line">                       |</span><br><span class="line">+----------------------+--------------------+</span><br><span class="line">|      Worker Threads                       |</span><br><span class="line">|   +-----------------------------------+   |</span><br><span class="line">|   |           Worker Thread 1         |   |</span><br><span class="line">|   |-----------------------------------|   |</span><br><span class="line">|   |           Worker Thread 2         |   |</span><br><span class="line">|   |-----------------------------------|   |</span><br><span class="line">|   |           Worker Thread N         |   |</span><br><span class="line">+-------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Worker Threads</strong>: Execute tasks within a controlled environment.</li>
+<li><strong>Task Queue</strong>: Holds tasks awaiting execution, preventing unnecessary thread creation.</li>
+<li><strong>ThreadPoolExecutor</strong>: Controls the execution strategy, pool scaling, and task rejection policies.</li>
+</ul>
+<hr>
+<p><a name="4-recommended-usage-threadpoolexecutor"></a></p>
+<h2 id="4-Recommended-Usage-ThreadPoolExecutor"><a href="#4-Recommended-Usage-ThreadPoolExecutor" class="headerlink" title="4. Recommended Usage: ThreadPoolExecutor"></a>4. Recommended Usage: ThreadPoolExecutor</h2><p>To avoid risks, <strong>use <code>ThreadPoolExecutor</code></strong> directly for creating thread pools:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">es</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;Runnable&gt;(<span class="number">10</span>), Executors.defaultThreadFactory(),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.DiscardPolicy());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="5-core-configuration-parameters"></a></p>
+<h2 id="5-Core-Configuration-Parameters"><a href="#5-Core-Configuration-Parameters" class="headerlink" title="5. Core Configuration Parameters"></a>5. Core Configuration Parameters</h2><p>The <code>ThreadPoolExecutor</code> relies on several key configuration parameters:</p>
+<ul>
+<li><strong>corePoolSize</strong>: Minimum number of threads in the pool.</li>
+<li><strong>maximumPoolSize</strong>: Maximum threads allowed in the pool.</li>
+<li><strong>keepAliveTime</strong>: The time a thread can remain idle before termination if beyond corePoolSize.</li>
+<li><strong>workQueue</strong>: Queue holding tasks before they are assigned to threads.</li>
+</ul>
+<h4 id="Best-Practice-Choose-configuration-values-based-on-workload-type-and-system-capacity"><a href="#Best-Practice-Choose-configuration-values-based-on-workload-type-and-system-capacity" class="headerlink" title="Best Practice: Choose configuration values based on workload type and system capacity."></a>Best Practice: Choose configuration values based on workload type and system capacity.</h4><hr>
+<p><a name="6-analyzing-executors-source-code"></a></p>
+<h2 id="6-Analyzing-Executors-Source-Code"><a href="#6-Analyzing-Executors-Source-Code" class="headerlink" title="6. Analyzing Executors Source Code"></a>6. Analyzing Executors Source Code</h2><p>The methods <code>newSingleThreadExecutor()</code>, <code>newFixedThreadPool(int nThreads)</code>, and <code>newCachedThreadPool()</code> all internally use <strong><code>ThreadPoolExecutor</code></strong>. Below are the source code implementations from JDK 8:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newSingleThreadExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">FinalizableDelegatedExecutorService</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0L</span>, TimeUnit.MILLISECONDS, <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;Runnable&gt;())</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newFixedThreadPool</span><span class="params">(<span class="type">int</span> nThreads)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(nThreads, nThreads, <span class="number">0L</span>, TimeUnit.MILLISECONDS, <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newCachedThreadPool</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">0</span>, Integer.MAX_VALUE, <span class="number">60L</span>, TimeUnit.SECONDS, <span class="keyword">new</span> <span class="title class_">SynchronousQueue</span>&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>All three methods use <strong><code>ThreadPoolExecutor</code></strong> but provide different default configurations. These static methods abstract parameters, which can lead to undesired behaviors under high loads.</p>
+<p><a name="7-threadpoolexecutor-constructors-and-parameters"></a></p>
+<h2 id="7-ThreadPoolExecutor-Constructors-and-Parameters"><a href="#7-ThreadPoolExecutor-Constructors-and-Parameters" class="headerlink" title="7. ThreadPoolExecutor Constructors and Parameters"></a>7. ThreadPoolExecutor Constructors and Parameters</h2><p>When creating thread pools with <code>ThreadPoolExecutor</code>, initializing parameters must be specified. One of its constructors takes the following parameters:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ThreadPoolExecutor</span><span class="params">(<span class="type">int</span> corePoolSize, <span class="type">int</span> maximumPoolSize, <span class="type">long</span> keepAliveTime, TimeUnit unit,</span></span><br><span class="line"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue, ThreadFactory threadFactory,</span></span><br><span class="line"><span class="params">                          RejectedExecutionHandler handler)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Parameter-Breakdown"><a href="#Parameter-Breakdown" class="headerlink" title="Parameter Breakdown"></a>Parameter Breakdown</h3><ul>
+<li><strong><code>corePoolSize</code></strong>: Number of threads to keep in the pool.</li>
+<li><strong><code>maximumPoolSize</code></strong>: Maximum number of threads allowed.</li>
+<li><strong><code>keepAliveTime</code></strong>: Time limit for idle threads over <code>corePoolSize</code> before termination.</li>
+<li><strong><code>unit</code></strong>: Unit of time for <code>keepAliveTime</code>.</li>
+<li><strong><code>workQueue</code></strong>: Queue to hold tasks before execution.</li>
+<li><strong><code>threadFactory</code></strong>: Factory for creating threads, usually <code>Executors.defaultThreadFactory()</code>.</li>
+<li><strong><code>handler</code></strong>: Policy for handling tasks when the pool reaches its limit.</li>
+</ul>
+<p><a name="8-advanced-queue-management"></a></p>
+<h2 id="8-Advanced-Queue-Management"><a href="#8-Advanced-Queue-Management" class="headerlink" title="8. Advanced Queue Management"></a>8. Advanced Queue Management</h2><p><strong>Choosing the Right Queue</strong>:</p>
+<ol>
+<li><strong>SynchronousQueue</strong>: No internal capacity, ideal for transient spikes.</li>
+<li><strong>LinkedBlockingQueue</strong>: Unbounded, suitable for long-running processes.</li>
+<li><strong>ArrayBlockingQueue</strong>: Fixed size, optimal for bounded workloads.</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong>: Select a queue type aligned with task load, duration, and resource availability.</p>
+</blockquote>
+<h3 id="Relationships-between-corePoolSize-and-maximumPoolSize"><a href="#Relationships-between-corePoolSize-and-maximumPoolSize" class="headerlink" title="Relationships between corePoolSize and maximumPoolSize"></a>Relationships between <code>corePoolSize</code> and <code>maximumPoolSize</code></h3><ul>
+<li>If <strong><code>thread count &lt; corePoolSize</code></strong>, a new thread is created for each task.</li>
+<li>If <strong><code>thread count &gt;= corePoolSize</code></strong>, tasks are added to the <strong>task queue</strong>.</li>
+<li>If the <strong>queue is full</strong> and <strong><code>thread count &lt; maximumPoolSize</code></strong>, a new thread is created.</li>
+<li>If <strong><code>thread count &gt;= maximumPoolSize</code></strong>, the <code>handler</code> policy determines the behavior.</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: These relationships vary with the type of queue (bounded or unbounded). Unbounded queues will prevent maximum thread creation from being reached.</p>
+</blockquote>
+<p><a name="understanding-workqueue-types"></a></p>
+<h3 id="Understanding-workQueue-Types"><a href="#Understanding-workQueue-Types" class="headerlink" title="Understanding workQueue Types"></a>Understanding workQueue Types</h3><p>The <strong><code>workQueue</code></strong> holds pending tasks that await execution. Different queue types handle tasks differently:</p>
+<ul>
+<li><strong><code>SynchronousQueue</code></strong>: A <strong>direct hand-off</strong> mechanism with no capacity. If no thread is immediately available, a new one is created or the task is rejected based on <code>maximumPoolSize</code>.</li>
+<li><strong><code>LinkedBlockingQueue</code></strong>: An <strong>unbounded queue</strong>. When tasks exceed <code>corePoolSize</code>, they are added to the queue instead of creating new threads. <strong>Warning</strong>: Unbounded growth may exhaust memory if tasks are generated faster than processed.</li>
+<li></li>
+</ul>
+<hr>
+<p><a name="9-thread-pool-scaling-strategies"></a></p>
+<h2 id="9-Thread-Pool-Scaling-Strategies"><a href="#9-Thread-Pool-Scaling-Strategies" class="headerlink" title="9. Thread Pool Scaling Strategies"></a>9. Thread Pool Scaling Strategies</h2><p>Efficient scaling balances resource use against workload demands. Consider using dynamic scaling mechanisms for responsive systems.</p>
+<h4 id="Recommended-Scaling"><a href="#Recommended-Scaling" class="headerlink" title="Recommended Scaling:"></a>Recommended Scaling:</h4><ul>
+<li><strong>FixedThreadPool</strong>: When task load and timing are predictable.</li>
+<li><strong>CachedThreadPool</strong>: For unpredictable or short-lived task loads.</li>
+</ul>
+<hr>
+<p><a name="10-rejectedexecutionhandler-strategies-for-handling-excess-tasks"></a></p>
+<h2 id="10-RejectedExecutionHandler-Strategies-for-Handling-Excess-Tasks"><a href="#10-RejectedExecutionHandler-Strategies-for-Handling-Excess-Tasks" class="headerlink" title="10. RejectedExecutionHandler: Strategies for Handling Excess Tasks"></a>10. RejectedExecutionHandler: Strategies for Handling Excess Tasks</h2><p>When the pool and queue are full, the <strong><code>handler</code></strong> parameter specifies a strategy to handle tasks. Java provides four built-in policies:</p>
+<ul>
+<li><strong><code>DiscardOldestPolicy</code></strong>: Removes the oldest task in the queue to accommodate the new task.</li>
+<li><strong><code>CallerRunsPolicy</code></strong>: Executes the task in the <strong>caller thread</strong> if the pool is busy, providing a backpressure mechanism.</li>
+<li><strong><code>DiscardPolicy</code></strong>: Silently discards the task without further action.</li>
+<li><strong><code>AbortPolicy</code></strong>: Throws an <strong>exception</strong> to signal that the pool is at capacity.</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Customize <code>RejectedExecutionHandler</code> based on workload characteristics. Expecially for applications where resilience is critical, <strong>consider implementing a custom rejection handler</strong> or using <code>CallerRunsPolicy</code> to limit load. Proper configuration can prevent issues like out-of-memory errors.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RejectedExecutionHandler</span> <span class="variable">customHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RejectedExecutionHandler</span>() &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">rejectedExecution</span><span class="params">(Runnable r, ThreadPoolExecutor executor)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task rejected: &quot;</span> + r.toString());</span><br><span class="line">        <span class="comment">// custom logic for rejected task</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="11-enhanced-monitoring-techniques"></a></p>
+<h2 id="11-Enhanced-Monitoring-Techniques"><a href="#11-Enhanced-Monitoring-Techniques" class="headerlink" title="11. Enhanced Monitoring Techniques"></a>11. Enhanced Monitoring Techniques</h2><p>Monitoring thread and queue activity is essential for real-time scaling and troubleshooting. Use the following tools and approaches:</p>
+<ul>
+<li><strong>JMX (Java Management Extensions)</strong>: For real-time metrics on threads, tasks, and system load.</li>
+<li><strong>Thread Pool Executor’s <code>getPoolSize</code> and <code>getQueue().size()</code> Methods</strong>: To track runtime capacity and pending task counts.</li>
+</ul>
+<hr>
+<p><a name="12-backpressure-handling-in-production"></a></p>
+<h2 id="12-Backpressure-Handling-in-Production"><a href="#12-Backpressure-Handling-in-Production" class="headerlink" title="12. Backpressure Handling in Production"></a>12. Backpressure Handling in Production</h2><p>Backpressure handling in high-demand environments prevents overloads by controlling the flow of tasks:</p>
+<ul>
+<li><strong>Rejection Policies</strong>: Define fallback strategies for rejected tasks.</li>
+<li><strong>Queue Sizing</strong>: Set boundaries on task input rate.</li>
+</ul>
+<h4 id="Diagram-Dynamic-Task-Flow-and-Backpressure"><a href="#Diagram-Dynamic-Task-Flow-and-Backpressure" class="headerlink" title="Diagram: Dynamic Task Flow and Backpressure"></a>Diagram: Dynamic Task Flow and Backpressure</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Client Requests</span><br><span class="line">      |</span><br><span class="line"> +----v----+     Backpressure Control</span><br><span class="line"> | Task    |--------------------+</span><br><span class="line"> | Queue   |                    |</span><br><span class="line"> +---------+                    |</span><br><span class="line">       |                        |</span><br><span class="line">+------v-------+                |</span><br><span class="line">| Thread       |                |</span><br><span class="line">| Pool         |                |</span><br><span class="line">+--------------+----------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="13-example"></a></p>
+<h2 id="13-Example"><a href="#13-Example" class="headerlink" title="13. Example"></a>13. Example</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OptimizedThreadPoolExecutor</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. Configure core parameters with scaling strategy</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">            <span class="number">4</span>,                <span class="comment">// core pool size</span></span><br><span class="line">            <span class="number">10</span>,               <span class="comment">// maximum pool size</span></span><br><span class="line">            <span class="number">30</span>,               <span class="comment">// keep-alive time</span></span><br><span class="line">            TimeUnit.SECONDS, <span class="comment">// keep-alive time unit</span></span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">100</span>), <span class="comment">// task queue type</span></span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">// rejection policy</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. Simulate task submission</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">200</span>; i++) &#123;</span><br><span class="line">            executor.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> taskId;</span><br><span class="line"></span><br><span class="line">        Task(<span class="type">int</span> taskId) &#123;</span><br><span class="line">            <span class="built_in">this</span>.taskId = taskId;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;Executing Task &quot;</span> + taskId);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">500</span>); <span class="comment">// Simulate work</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                Thread.currentThread().interrupt();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="14-conclusion"></a></p>
+<h2 id="14-Conclusion"><a href="#14-Conclusion" class="headerlink" title="14. Conclusion"></a>14. Conclusion</h2><p><strong>Summary</strong>: Use <code>ThreadPoolExecutor</code> directly with appropriately sized pools, tailored queue types, and effective rejection policies to ensure optimal, safe performance. Mastering <code>ThreadPoolExecutor</code> for complex, production-grade applications requires an understanding of core parameters, workload patterns, and monitoring needs. These best practices are intended to improve performance, efficiency, and system resilience in multithreaded environments.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2397,194 +2646,6 @@
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This guide provides a foundational approach to building a ChatGPT-like system, managing sessions, scaling the architecture, and ensuring production reliability. From basic dialogue to advanced caching and scalability, these steps can help create a highly responsive and robust conversational AI.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Building-a-ChatGPT-like-System/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/Building-a-ChatGPT-like-System/" class="post-title-link" itemprop="url">Building a ChatGPT-like System</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-28 15:42:35" itemprop="dateCreated datePublished" datetime="2024-10-28T15:42:35-04:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ChatGPT/" itemprop="url" rel="index"><span itemprop="name">ChatGPT</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#system-overview">System Overview</a></li>
-<li><a href="#session-and-historical-message-management">Session and Historical Message Management</a><ul>
-<li><a href="#communication-protocols-and-apis">Communication Protocols and APIs</a></li>
-<li><a href="#standardized-prompt-format">Standardized Prompt Format</a></li>
-<li><a href="#managing-historical-messages">Managing Historical Messages</a></li>
-</ul>
-</li>
-<li><a href="#system-expansion">System Expansion</a><ul>
-<li><a href="#adding-cache-mechanism">Adding Cache Mechanism</a></li>
-<li><a href="#scope-of-caching">Scope of Caching</a></li>
-<li><a href="#elastic-scalability">Elastic Scalability</a></li>
-</ul>
-</li>
-<li><a href="#production-readiness">Production Readiness</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-<li><a href="#references">References</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><strong>ChatGPT</strong> is a conversational system based on <strong>Large Language Models (LLMs)</strong>. This article introduces the process of building a system similar to ChatGPT, covering everything from the <strong>model</strong>, <strong>inference engine</strong>, to the overall <strong>architecture</strong>.</p>
-<hr>
-<p><a name="system-overview"></a></p>
-<h2 id="System-Overview"><a href="#System-Overview" class="headerlink" title="System Overview"></a>System Overview</h2><p>Our primary focus will be on the core of the conversation system.</p>
-<p><strong>System Diagram:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Response   |</span><br><span class="line">       +--------------+</span><br></pre></td></tr></table></figure>
-
-<p><img src="/images/Building-a-ChatGPT-like-System/Image-1.png" alt="Core Dialogue Flow"></p>
-<p>In this basic system framework:</p>
-<ul>
-<li>The <strong>web interface</strong> interacts with users, </li>
-<li>The <strong>server</strong> receives user requests and forwards them to the <strong>inference runtime</strong> (inference engine), </li>
-<li>The <strong>inference runtime</strong> loads the <strong>LLM</strong> to generate a response, returning it to the user.</li>
-</ul>
-<hr>
-<p><a name="session-and-historical-message-management"></a></p>
-<h2 id="Session-and-Historical-Message-Management"><a href="#Session-and-Historical-Message-Management" class="headerlink" title="Session and Historical Message Management"></a>Session and Historical Message Management</h2><p>However, the above system has a critical flaw: it lacks <strong>session</strong> and <strong>historical message management</strong> for users. Common <strong>inference runtimes</strong> are typically <strong>stateless</strong> and do not directly support multi-turn conversations with historical context storage, meaning the system “forgets” previous exchanges within a single session.</p>
-<p>To address this, we need some essential modifications.</p>
-<p><strong>Enhanced System Diagram:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |  Database    |</span><br><span class="line">       +--------------+</span><br></pre></td></tr></table></figure>
-
-<p><img src="/images/Building-a-ChatGPT-like-System/Image-2.png" alt="Enhanced System with Session ahdn History Management"></p>
-<p>In this setup, we introduce a <strong>database component</strong> to store user sessions and historical messages.</p>
-<h3 id="Communication-Protocols-and-APIs"><a href="#Communication-Protocols-and-APIs" class="headerlink" title="Communication Protocols and APIs"></a>Communication Protocols and APIs</h3><p>For communication, the <strong>web interface</strong> and <strong>server</strong> can use <strong>HTTP</strong> protocols. Basic REST APIs might include:</p>
-<ul>
-<li><strong><code>POST /chat</code></strong>: Initiate a new session.</li>
-<li><strong><code>POST /chat/:chatID/completion</code></strong>: Continue a conversation within an existing session.</li>
-<li><strong><code>GET /chats</code></strong>: Retrieve a list of sessions.</li>
-<li><strong><code>DELETE /chat/:chatID</code></strong>: Delete a specific session.</li>
-</ul>
-<p>The <strong>server</strong> persists data in the database, structuring conversation messages with essential fields like <code>userID</code>, <code>chatID</code>, <code>userMessage</code>, and <code>assistantMessage</code>.</p>
-<h3 id="Standardized-Prompt-Format"><a href="#Standardized-Prompt-Format" class="headerlink" title="Standardized Prompt Format"></a>Standardized Prompt Format</h3><p>When sending data to the <strong>inference runtime</strong>, the server uses a standardized <strong>prompt format</strong>:</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;system&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;You are a helpful assistant.&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello!&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;assistant&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello there, how may I assist you today?&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;How are you?&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
-
-<p>The <code>role</code> field represents different participants: <code>system</code> defines the conversation context, <code>user</code> represents user input, and <code>assistant</code> represents the model’s output.</p>
-<h3 id="Managing-Historical-Messages"><a href="#Managing-Historical-Messages" class="headerlink" title="Managing Historical Messages"></a>Managing Historical Messages</h3><p>There are several ways to handle historical messages:</p>
-<ul>
-<li><strong>Direct Prompt Filling</strong>: Add historical messages in the prompt as <code>user</code> and <code>assistant</code> entries. This works well for short conversations.</li>
-<li><strong>Dynamic Context Adjustment</strong>: Discard earlier messages to fit within the LLM’s token limit.</li>
-<li><strong>Message Summarization</strong>: Use the inference engine to summarize conversation history, compressing information before filling the prompt.</li>
-</ul>
-<p>With session and historical message management, we establish a basic system framework.</p>
-<hr>
-<p><a name="system-expansion"></a></p>
-<h2 id="System-Expansion"><a href="#System-Expansion" class="headerlink" title="System Expansion"></a>System Expansion</h2><p>As the user base grows, the system will require further scalability.</p>
-<h3 id="Adding-Cache-Mechanism"><a href="#Adding-Cache-Mechanism" class="headerlink" title="Adding Cache Mechanism"></a>Adding Cache Mechanism</h3><p>One approach to scalability is implementing a <strong>cache</strong> to avoid repeated inference processes. The cache <strong>key-value</strong> pair would be the user’s question and the AI’s response. A cache hit would depend on whether the semantic content of the question is similar. For example, if two questions have different wording but the same meaning, the system should return the same response.</p>
-<p><strong>Enhanced Caching System Diagram:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|       Embedding          |</span><br><span class="line">|    Runtime &amp; Model       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">| Vector Storage &amp; Search  |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
-
-<p><img src="/images/Building-a-ChatGPT-like-System/Image-3.png" alt="Cache with Vector Embeddings for Similar Query Detection"></p>
-<p>Apart from the <strong>cache module</strong>, we add <strong>embedding runtime</strong> and a <strong>text embedding model</strong> to convert text into <strong>vectors</strong>. If two vectors are close, their text content is semantically similar. <strong>Vector storage and search</strong> modules are used to store and retrieve vectors.</p>
-<h3 id="Scope-of-Caching"><a href="#Scope-of-Caching" class="headerlink" title="Scope of Caching"></a>Scope of Caching</h3><p>Caching can be scoped to:</p>
-<ul>
-<li><strong>Single-user cache</strong>: Caching value is low as users rarely repeat the same question.</li>
-<li><strong>Global cache</strong>: Allows reuse across users, but risks exposing sensitive data.</li>
-</ul>
-<p>After data analysis and validation, decide if cache implementation is beneficial.</p>
-<h3 id="Elastic-Scalability"><a href="#Elastic-Scalability" class="headerlink" title="Elastic Scalability"></a>Elastic Scalability</h3><p><strong>Elastic scaling</strong> is another key to handling high concurrency. The <strong>server</strong> is stateless, which allows for easy horizontal scaling.</p>
-<p><strong>Scalability System Diagram:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Gateway    |</span><br><span class="line">       |  (Load Bal.) |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Server Instances       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtimes     |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
-
-<p><img src="/images/Building-a-ChatGPT-like-System/Image-4.png" alt="Load Balanced System Architecture with Elastic Scaling"></p>
-<p>Here, we introduce a <strong>gateway</strong> for load balancing. The <strong>inference runtime</strong> is also stateless and supports elastic scaling, but it requires more hardware resources and may respond slower than the server. To maintain stability under peak load, add a <strong>message queue (MQ)</strong> and change request handling to asynchronous, improving system resilience.</p>
-<hr>
-<p><a name="production-readiness"></a></p>
-<h2 id="Production-Readiness"><a href="#Production-Readiness" class="headerlink" title="Production Readiness"></a>Production Readiness</h2><p>The system architecture covers the basic logic, but to achieve <strong>production-readiness</strong>, further steps are necessary:</p>
-<ul>
-<li><strong>Technology Selection</strong>: Choose a database (e.g., PostgreSQL or MongoDB) and inference engine (e.g., <code>llama.cpp</code>, <code>HuggingFace Transformers</code>, <code>vLLM</code>) and map logical components to physical components.</li>
-<li><strong>Observability</strong>: Integrate <strong>logging</strong>, <strong>tracing</strong>, <strong>metrics</strong>, and set up monitoring and alerting.</li>
-<li><strong>CI&#x2F;CD and Deployment Environment</strong>: Configure automation pipelines for continuous integration and deployment, and select the appropriate environment (e.g., <strong>cloud platforms</strong> or <strong>Kubernetes</strong>).</li>
-</ul>
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article provides an overview of constructing a ChatGPT-like system, covering the core conversation flow and expanding to include session management and historical message storage. We discussed strategies for system expansion and laid out steps toward production readiness.</p>
-<hr>
-<p><a name="references"></a></p>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/ggerganov/llama.cpp">llama.cpp GitHub</a></li>
-<li><a target="_blank" rel="noopener" href="https://platform.openai.com/docs/api-reference/chat/create">OpenAI API Reference</a></li>
-</ul>
-<pre><code>
-This enhanced Markdown document covers each requested update, including detailed technical sections, diagrams, keywords, and sections for expansion and production readiness.
-</code></pre>
 
       
     </div>

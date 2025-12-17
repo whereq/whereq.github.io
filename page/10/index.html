@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,194 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Building-a-ChatGPT-like-System/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Building-a-ChatGPT-like-System/" class="post-title-link" itemprop="url">Building a ChatGPT-like System</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 15:42:35" itemprop="dateCreated datePublished" datetime="2024-10-28T15:42:35-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ChatGPT/" itemprop="url" rel="index"><span itemprop="name">ChatGPT</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#system-overview">System Overview</a></li>
+<li><a href="#session-and-historical-message-management">Session and Historical Message Management</a><ul>
+<li><a href="#communication-protocols-and-apis">Communication Protocols and APIs</a></li>
+<li><a href="#standardized-prompt-format">Standardized Prompt Format</a></li>
+<li><a href="#managing-historical-messages">Managing Historical Messages</a></li>
+</ul>
+</li>
+<li><a href="#system-expansion">System Expansion</a><ul>
+<li><a href="#adding-cache-mechanism">Adding Cache Mechanism</a></li>
+<li><a href="#scope-of-caching">Scope of Caching</a></li>
+<li><a href="#elastic-scalability">Elastic Scalability</a></li>
+</ul>
+</li>
+<li><a href="#production-readiness">Production Readiness</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><strong>ChatGPT</strong> is a conversational system based on <strong>Large Language Models (LLMs)</strong>. This article introduces the process of building a system similar to ChatGPT, covering everything from the <strong>model</strong>, <strong>inference engine</strong>, to the overall <strong>architecture</strong>.</p>
+<hr>
+<p><a name="system-overview"></a></p>
+<h2 id="System-Overview"><a href="#System-Overview" class="headerlink" title="System Overview"></a>System Overview</h2><p>Our primary focus will be on the core of the conversation system.</p>
+<p><strong>System Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Response   |</span><br><span class="line">       +--------------+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Building-a-ChatGPT-like-System/Image-1.png" alt="Core Dialogue Flow"></p>
+<p>In this basic system framework:</p>
+<ul>
+<li>The <strong>web interface</strong> interacts with users, </li>
+<li>The <strong>server</strong> receives user requests and forwards them to the <strong>inference runtime</strong> (inference engine), </li>
+<li>The <strong>inference runtime</strong> loads the <strong>LLM</strong> to generate a response, returning it to the user.</li>
+</ul>
+<hr>
+<p><a name="session-and-historical-message-management"></a></p>
+<h2 id="Session-and-Historical-Message-Management"><a href="#Session-and-Historical-Message-Management" class="headerlink" title="Session and Historical Message Management"></a>Session and Historical Message Management</h2><p>However, the above system has a critical flaw: it lacks <strong>session</strong> and <strong>historical message management</strong> for users. Common <strong>inference runtimes</strong> are typically <strong>stateless</strong> and do not directly support multi-turn conversations with historical context storage, meaning the system “forgets” previous exchanges within a single session.</p>
+<p>To address this, we need some essential modifications.</p>
+<p><strong>Enhanced System Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |  Database    |</span><br><span class="line">       +--------------+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Building-a-ChatGPT-like-System/Image-2.png" alt="Enhanced System with Session ahdn History Management"></p>
+<p>In this setup, we introduce a <strong>database component</strong> to store user sessions and historical messages.</p>
+<h3 id="Communication-Protocols-and-APIs"><a href="#Communication-Protocols-and-APIs" class="headerlink" title="Communication Protocols and APIs"></a>Communication Protocols and APIs</h3><p>For communication, the <strong>web interface</strong> and <strong>server</strong> can use <strong>HTTP</strong> protocols. Basic REST APIs might include:</p>
+<ul>
+<li><strong><code>POST /chat</code></strong>: Initiate a new session.</li>
+<li><strong><code>POST /chat/:chatID/completion</code></strong>: Continue a conversation within an existing session.</li>
+<li><strong><code>GET /chats</code></strong>: Retrieve a list of sessions.</li>
+<li><strong><code>DELETE /chat/:chatID</code></strong>: Delete a specific session.</li>
+</ul>
+<p>The <strong>server</strong> persists data in the database, structuring conversation messages with essential fields like <code>userID</code>, <code>chatID</code>, <code>userMessage</code>, and <code>assistantMessage</code>.</p>
+<h3 id="Standardized-Prompt-Format"><a href="#Standardized-Prompt-Format" class="headerlink" title="Standardized Prompt Format"></a>Standardized Prompt Format</h3><p>When sending data to the <strong>inference runtime</strong>, the server uses a standardized <strong>prompt format</strong>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;system&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;You are a helpful assistant.&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello!&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;assistant&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello there, how may I assist you today?&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;How are you?&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>The <code>role</code> field represents different participants: <code>system</code> defines the conversation context, <code>user</code> represents user input, and <code>assistant</code> represents the model’s output.</p>
+<h3 id="Managing-Historical-Messages"><a href="#Managing-Historical-Messages" class="headerlink" title="Managing Historical Messages"></a>Managing Historical Messages</h3><p>There are several ways to handle historical messages:</p>
+<ul>
+<li><strong>Direct Prompt Filling</strong>: Add historical messages in the prompt as <code>user</code> and <code>assistant</code> entries. This works well for short conversations.</li>
+<li><strong>Dynamic Context Adjustment</strong>: Discard earlier messages to fit within the LLM’s token limit.</li>
+<li><strong>Message Summarization</strong>: Use the inference engine to summarize conversation history, compressing information before filling the prompt.</li>
+</ul>
+<p>With session and historical message management, we establish a basic system framework.</p>
+<hr>
+<p><a name="system-expansion"></a></p>
+<h2 id="System-Expansion"><a href="#System-Expansion" class="headerlink" title="System Expansion"></a>System Expansion</h2><p>As the user base grows, the system will require further scalability.</p>
+<h3 id="Adding-Cache-Mechanism"><a href="#Adding-Cache-Mechanism" class="headerlink" title="Adding Cache Mechanism"></a>Adding Cache Mechanism</h3><p>One approach to scalability is implementing a <strong>cache</strong> to avoid repeated inference processes. The cache <strong>key-value</strong> pair would be the user’s question and the AI’s response. A cache hit would depend on whether the semantic content of the question is similar. For example, if two questions have different wording but the same meaning, the system should return the same response.</p>
+<p><strong>Enhanced Caching System Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Server     |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtime      |</span><br><span class="line">|   (LLM Inference Engine) |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|       Embedding          |</span><br><span class="line">|    Runtime &amp; Model       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">| Vector Storage &amp; Search  |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Building-a-ChatGPT-like-System/Image-3.png" alt="Cache with Vector Embeddings for Similar Query Detection"></p>
+<p>Apart from the <strong>cache module</strong>, we add <strong>embedding runtime</strong> and a <strong>text embedding model</strong> to convert text into <strong>vectors</strong>. If two vectors are close, their text content is semantically similar. <strong>Vector storage and search</strong> modules are used to store and retrieve vectors.</p>
+<h3 id="Scope-of-Caching"><a href="#Scope-of-Caching" class="headerlink" title="Scope of Caching"></a>Scope of Caching</h3><p>Caching can be scoped to:</p>
+<ul>
+<li><strong>Single-user cache</strong>: Caching value is low as users rarely repeat the same question.</li>
+<li><strong>Global cache</strong>: Allows reuse across users, but risks exposing sensitive data.</li>
+</ul>
+<p>After data analysis and validation, decide if cache implementation is beneficial.</p>
+<h3 id="Elastic-Scalability"><a href="#Elastic-Scalability" class="headerlink" title="Elastic Scalability"></a>Elastic Scalability</h3><p><strong>Elastic scaling</strong> is another key to handling high concurrency. The <strong>server</strong> is stateless, which allows for easy horizontal scaling.</p>
+<p><strong>Scalability System Diagram:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">       +--------------+</span><br><span class="line">       |    Web       |</span><br><span class="line">       |  Interface   |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">       +--------------+</span><br><span class="line">       |   Gateway    |</span><br><span class="line">       |  (Load Bal.) |</span><br><span class="line">       +--------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Server Instances       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|   Inference Runtimes     |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Building-a-ChatGPT-like-System/Image-4.png" alt="Load Balanced System Architecture with Elastic Scaling"></p>
+<p>Here, we introduce a <strong>gateway</strong> for load balancing. The <strong>inference runtime</strong> is also stateless and supports elastic scaling, but it requires more hardware resources and may respond slower than the server. To maintain stability under peak load, add a <strong>message queue (MQ)</strong> and change request handling to asynchronous, improving system resilience.</p>
+<hr>
+<p><a name="production-readiness"></a></p>
+<h2 id="Production-Readiness"><a href="#Production-Readiness" class="headerlink" title="Production Readiness"></a>Production Readiness</h2><p>The system architecture covers the basic logic, but to achieve <strong>production-readiness</strong>, further steps are necessary:</p>
+<ul>
+<li><strong>Technology Selection</strong>: Choose a database (e.g., PostgreSQL or MongoDB) and inference engine (e.g., <code>llama.cpp</code>, <code>HuggingFace Transformers</code>, <code>vLLM</code>) and map logical components to physical components.</li>
+<li><strong>Observability</strong>: Integrate <strong>logging</strong>, <strong>tracing</strong>, <strong>metrics</strong>, and set up monitoring and alerting.</li>
+<li><strong>CI&#x2F;CD and Deployment Environment</strong>: Configure automation pipelines for continuous integration and deployment, and select the appropriate environment (e.g., <strong>cloud platforms</strong> or <strong>Kubernetes</strong>).</li>
+</ul>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article provides an overview of constructing a ChatGPT-like system, covering the core conversation flow and expanding to include session management and historical message storage. We discussed strategies for system expansion and laid out steps toward production readiness.</p>
+<hr>
+<p><a name="references"></a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/ggerganov/llama.cpp">llama.cpp GitHub</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.openai.com/docs/api-reference/chat/create">OpenAI API Reference</a></li>
+</ul>
+<pre><code>
+This enhanced Markdown document covers each requested update, including detailed technical sections, diagrams, keywords, and sections for expansion and production readiness.
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1903,172 +2091,6 @@
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of considering system-level parameters, such as file descriptor limits, in high-concurrency scenarios. Adjusting these parameters can resolve performance bottlenecks and ensure stable operation of Kubernetes environments. For environments with high business load, it is strongly recommended to perform comprehensive operating system-level performance optimizations.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/" class="post-title-link" itemprop="url">Troubleshooting High Currency Issues in Kubernetes</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 21:20:30" itemprop="dateCreated datePublished" datetime="2024-10-27T21:20:30-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#pod-restart-crashloopbackoff-loop-due-to-high-concurrency">Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</a><ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#problem-background">Problem Background</a></li>
-<li><a href="#analysis-process">Analysis Process</a></li>
-<li><a href="#investigating-the-issue">Investigating the Issue</a></li>
-<li><a href="#tcp-connection-timeout">TCP Connection Timeout</a></li>
-<li><a href="#understanding-cpu-load">Understanding CPU Load</a></li>
-<li><a href="#kernel-parameter-tuning">Kernel Parameter Tuning</a><ul>
-<li><a href="#tcp-state-transition-diagram">TCP State Transition Diagram</a></li>
-<li><a href="#adjusting-kernel-parameters">Adjusting Kernel Parameters</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency"><a href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency" class="headerlink" title="Pod Restart CrashLoopBackOff Loop Due to High Concurrency"></a>Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</h1><hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In a Kubernetes cluster environment, a business operation involving extensive configuration distribution (lasting several hours or more) led to repeated restarts of Calico pods. This article details the troubleshooting process, focusing on identifying the root cause and implementing a solution.</p>
-<hr>
-<p><a name="problem-background"></a></p>
-<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>During a high-concurrency operation, Calico pods in the Kubernetes cluster began to restart repeatedly.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get pod -n kube-system -owide | grep node01</span><br><span class="line">calico-kube-controllers-6f59b8cdd8-8v2qw   1/1     Running            0          4h45m   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">calico-node-b8w2b                          1/1     CrashLoopBackOff   43         3d19h   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">coredns-795cc9c45c-k7qpb                   1/1     Running            0          4h45m   177.177.237.42    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="analysis-process"></a></p>
-<h2 id="Analysis-Process"><a href="#Analysis-Process" class="headerlink" title="Analysis Process"></a>Analysis Process</h2><p>Upon observing the <code>CrashLoopBackOff</code> state of the pods, the first step was to use <code>kubectl describe</code> to gather more information.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl describe pod -n kube-system calico-node-b8w2b</span><br><span class="line">...</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                      From               Message</span><br><span class="line">  ----     ------     ----                     ----               -------</span><br><span class="line">  Warning  Unhealthy  58m (x111 over 3h12m)    kubelet, node01  (combined from similar events): Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Normal   Pulled     43m (x36 over 3d19h)     kubelet, node01  Container image <span class="string">&quot;calico/node:v3.15.1&quot;</span> already present on machine</span><br><span class="line">  Warning  Unhealthy  8m16s (x499 over 3h43m)  kubelet, node01  Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Warning  BackOff    3m31s (x437 over 3h3m)   kubelet, node01  Back-off restarting failed container</span><br></pre></td></tr></table></figure>
-
-<p>The events indicated that the liveness probe was failing due to a connection timeout.</p>
-<hr>
-<p><a name="investigating-the-issue"></a></p>
-<h2 id="Investigating-the-Issue"><a href="#Investigating-the-Issue" class="headerlink" title="Investigating the Issue"></a>Investigating the Issue</h2><p>Manual execution of the health check command revealed slow response times, which were significantly higher than the usual millisecond-level response.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 06:24:35 GMT</span><br><span class="line">real    0m1.012s</span><br><span class="line">user    0m0.003s</span><br><span class="line">sys     0m0.005s</span><br></pre></td></tr></table></figure>
-
-<p>Logs from Calico’s bird, confd, and felix components did not show any apparent errors. Checking the port status indicated that it was listening correctly.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# netstat -anp | grep 9099</span><br><span class="line">tcp        0      0 127.0.0.1:9099          0.0.0.0:*               LISTEN      1202/calico-node    </span><br><span class="line">tcp        0      0 127.0.0.1:9099          127.0.0.1:56728         TIME_WAIT   -                   </span><br><span class="line">tcp        0      0 127.0.0.1:56546         127.0.0.1:9099          TIME_WAIT   -</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="tcp-connection-timeout"></a></p>
-<h2 id="TCP-Connection-Timeout"><a href="#TCP-Connection-Timeout" class="headerlink" title="TCP Connection Timeout"></a>TCP Connection Timeout</h2><p>Given the connection timeout error, the TCP connection state was observed.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -na | awk <span class="string">&#x27;/^tcp/&#123;s[$6]++&#125;END&#123;for(key in s) print key,s[key]&#125;&#x27;</span></span><br><span class="line">LISTEN 49</span><br><span class="line">ESTABLISHED 284</span><br><span class="line">SYN_SENT 4</span><br><span class="line">TIME_WAIT 176</span><br></pre></td></tr></table></figure>
-
-<p>The <code>top</code> command showed that the business Java process was consuming high CPU, peaking at over 2000%.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# top</span><br><span class="line">top - 14:28:57 up 13 days, 27 min,  2 <span class="built_in">users</span>,  load average: 9.55, 9.93, 9.91</span><br><span class="line">Tasks: 1149 total,   1 running, 1146 sleeping,   0 stopped,   2 zombie</span><br><span class="line">%Cpu(s): 16.0 us,  2.9 sy,  0.0 ni, 80.9 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st</span><br><span class="line">KiB Mem : 15249982+total, 21419184 free, 55542588 used, 75538048 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used. 94226176 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                                                                        </span><br><span class="line"> 6754 root      20   0   66.8g  25.1g 290100 S 700.0 17.3   2971:49 java                                                                                           </span><br><span class="line">25214 root      20   0 6309076 179992  37016 S  36.8  0.1 439:06.29 kubelet                                                                                        </span><br><span class="line">20331 root      20   0 3196660 172364  24908 S  21.1  0.1 349:56.64 dockerd</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="understanding-cpu-load"></a></p>
-<h2 id="Understanding-CPU-Load"><a href="#Understanding-CPU-Load" class="headerlink" title="Understanding CPU Load"></a>Understanding CPU Load</h2><p>Checking the total number of CPU cores and comparing it with the load average and CPU usage indicated that the load was not excessively high.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;physical id&quot;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> | <span class="built_in">wc</span> -l</span><br><span class="line">48</span><br><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;cpu cores&quot;</span> | <span class="built_in">uniq</span></span><br><span class="line">cpu cores: 1</span><br></pre></td></tr></table></figure>
-
-<p>Given the high concurrency, the issue was likely related to the TCP connection setup. Understanding the TCP connection phases helped pinpoint the problem.</p>
-<hr>
-<p><a name="kernel-parameter-tuning"></a></p>
-<h2 id="Kernel-Parameter-Tuning"><a href="#Kernel-Parameter-Tuning" class="headerlink" title="Kernel Parameter Tuning"></a>Kernel Parameter Tuning</h2><p>The issue was traced to the <code>SYN_SENT</code> phase of TCP connections. Adjusting kernel parameters related to TCP connections resolved the problem.</p>
-<h3 id="TCP-State-Transition-Diagram"><a href="#TCP-State-Transition-Diagram" class="headerlink" title="TCP State Transition Diagram"></a>TCP State Transition Diagram</h3><pre><code class="highlight mermaid">graph TD
-    CLOSED --&gt;|Client sends SYN| SYN_SENT
-    SYN_SENT --&gt;|Server responds with SYN+ACK| SYN_RECV
-    SYN_RECV --&gt;|Client sends ACK| ESTABLISHED
-    ESTABLISHED --&gt;|Connection closed by either party| FIN_WAIT_1
-    FIN_WAIT_1 --&gt;|ACK received| FIN_WAIT_2
-    FIN_WAIT_2 --&gt;|FIN received| TIME_WAIT
-    TIME_WAIT --&gt;|Timeout| CLOSED
-    FIN_WAIT_1 --&gt;|FIN received| CLOSING
-    CLOSING --&gt;|ACK received| TIME_WAIT
-    SYN_RECV --&gt;|Server sends FIN| LAST_ACK
-    LAST_ACK --&gt;|Client sends ACK| CLOSED</code></pre>
-
-<h3 id="Adjusting-Kernel-Parameters"><a href="#Adjusting-Kernel-Parameters" class="headerlink" title="Adjusting Kernel Parameters"></a>Adjusting Kernel Parameters</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /etc/sysctl.conf </span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# sysctl -p</span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
-
-<p>After applying these changes, the health check commands executed without delay, and the pods returned to normal.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 14:48:38 GMT</span><br><span class="line">real    0m0.011s</span><br><span class="line">user    0m0.004s</span><br><span class="line">sys     0m0.004s</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding and tuning kernel parameters in high-concurrency scenarios. By adjusting parameters related to TCP connection handling, the issue of repeated pod restarts due to high CPU load and connection timeouts was resolved. This approach can be applied to similar issues in Kubernetes environments to ensure stable and efficient operation.</p>
 
       
     </div>
