@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,169 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/02/18/Arrow-Function-Continues/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/18/Arrow-Function-Continues/" class="post-title-link" itemprop="url">Arrow Function Continues...</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-02-18 19:24:58" itemprop="dateCreated datePublished" datetime="2025-02-18T19:24:58-05:00">2025-02-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TypeScript/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>The difference between <code>onClick=&#123;() =&gt; handleClick(&#39;button clicked&#39;)&#125;</code> and <code>onClick=&#123;handleClick&#125;</code> lies in <strong>how the function is called</strong> and <strong>what arguments are passed to it</strong>. Let’s break it down:</p>
+<hr>
+<h3 id="1-onClick-handleClick"><a href="#1-onClick-handleClick" class="headerlink" title="1. onClick={handleClick}"></a>1. <strong><code>onClick=&#123;handleClick&#125;</code></strong></h3><ul>
+<li>This directly assigns the <code>handleClick</code> function to the <code>onClick</code> event handler.</li>
+<li><strong>Behavior</strong>: When the button is clicked, the <code>handleClick</code> function is called <strong>without any arguments</strong>.</li>
+<li><strong>Issue</strong>: If <code>handleClick</code> expects an argument (e.g., <code>sectionType</code>), this will result in an error because no argument is passed.</li>
+</ul>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick=&#123;handleClick&#125;&gt;<span class="title class_">Click</span> <span class="title class_">Me</span>&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>If <code>handleClick</code> is defined as:<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handleClick</span> = (<span class="params"><span class="attr">sectionType</span>: <span class="title class_">SectionType</span></span>) =&gt; &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(sectionType);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><strong>Result</strong>: When the button is clicked, <code>sectionType</code> will be <code>undefined</code>, leading to unexpected behavior or errors.</li>
+</ul>
+<hr>
+<h3 id="2-onClick-handleClick-button-clicked"><a href="#2-onClick-handleClick-button-clicked" class="headerlink" title="2. onClick={() =&gt; handleClick(&#39;button clicked&#39;)}"></a>2. <strong><code>onClick=&#123;() =&gt; handleClick(&#39;button clicked&#39;)&#125;</code></strong></h3><ul>
+<li>This uses an <strong>arrow function</strong> to create a new function that calls <code>handleClick</code> with the argument <code>&#39;button clicked&#39;</code>.</li>
+<li><strong>Behavior</strong>: When the button is clicked, the arrow function is executed, which in turn calls <code>handleClick</code> with the specific argument (<code>&#39;button clicked&#39;</code>).</li>
+<li><strong>Why <code>() =&gt;</code> is needed</strong>: The arrow function acts as a <strong>wrapper</strong> that ensures <code>handleClick</code> is called with the correct argument when the button is clicked.</li>
+</ul>
+<h4 id="Example-1"><a href="#Example-1" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick=&#123;<span class="function">() =&gt;</span> <span class="title function_">handleClick</span>(<span class="string">&#x27;button clicked&#x27;</span>)&#125;&gt;<span class="title class_">Click</span> <span class="title class_">Me</span>&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>If <code>handleClick</code> is defined as:<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handleClick</span> = (<span class="params"><span class="attr">sectionType</span>: <span class="title class_">SectionType</span></span>) =&gt; &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(sectionType);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><strong>Result</strong>: When the button is clicked, <code>&#39;button clicked&#39;</code> is passed to <code>handleClick</code>, and the function works as expected.</li>
+</ul>
+<hr>
+<h3 id="Why-Do-We-Need-Here"><a href="#Why-Do-We-Need-Here" class="headerlink" title="Why Do We Need () =&gt; Here?"></a>Why Do We Need <code>() =&gt;</code> Here?</h3><p>The <code>() =&gt;</code> syntax is necessary because:</p>
+<ol>
+<li><p><strong>Passing Arguments</strong>:</p>
+<ul>
+<li>If you want to pass an argument to <code>handleClick</code> (e.g., <code>&#39;button clicked&#39;</code>), you need to wrap it in an arrow function. This ensures the function is called with the correct argument when the event occurs.</li>
+</ul>
+</li>
+<li><p><strong>Avoiding Immediate Invocation</strong>:</p>
+<ul>
+<li>Without <code>() =&gt;</code>, writing <code>onClick=&#123;handleClick(&#39;button clicked&#39;)&#125;</code> would <strong>immediately invoke</strong> the function when the component renders, rather than when the button is clicked. This is not the desired behavior.</li>
+</ul>
+</li>
+<li><p><strong>Flexibility</strong>:</p>
+<ul>
+<li>The arrow function allows you to customize the behavior of the <code>onClick</code> handler. For example, you can pass different arguments or call multiple functions.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="Key-Differences"><a href="#Key-Differences" class="headerlink" title="Key Differences:"></a>Key Differences:</h3><table>
+<thead>
+<tr>
+<th><strong>Syntax</strong></th>
+<th><strong>Behavior</strong></th>
+<th><strong>When to Use</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onClick=&#123;handleClick&#125;</code></td>
+<td>Calls <code>handleClick</code> without arguments when the button is clicked.</td>
+<td>Use when the function does not require any arguments.</td>
+</tr>
+<tr>
+<td><code>onClick=&#123;() =&gt; handleClick(&#39;button clicked&#39;)&#125;</code></td>
+<td>Calls <code>handleClick</code> with <code>&#39;button clicked&#39;</code> when the button is clicked.</td>
+<td>Use when the function requires arguments or when you need to customize the call.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Practical-Example"><a href="#Practical-Example" class="headerlink" title="Practical Example:"></a>Practical Example:</h3><h4 id="Without-Arguments"><a href="#Without-Arguments" class="headerlink" title="Without Arguments:"></a>Without Arguments:</h4><p>If <code>handleClick</code> does not require any arguments:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handleClick</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Button clicked!&quot;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;handleClick&#125;</span>&gt;</span>Click Me<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="With-Arguments"><a href="#With-Arguments" class="headerlink" title="With Arguments:"></a>With Arguments:</h4><p>If <code>handleClick</code> requires an argument (e.g., <code>&#39;button clicked&#39;</code>):</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handleClick</span> = (<span class="params"><span class="attr">sectionType</span>: <span class="title class_">SectionType</span></span>) =&gt; &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(sectionType);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> handleClick(&#x27;button clicked&#x27;)&#125;&gt;Click Me<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary:"></a>Summary:</h3><ul>
+<li>Use <code>onClick=&#123;handleClick&#125;</code> when the function does not require any arguments.</li>
+<li>Use <code>onClick=&#123;() =&gt; handleClick(&#39;button clicked&#39;)&#125;</code> when the function requires arguments or when you need to customize the function call.</li>
+<li>The <code>() =&gt;</code> syntax ensures the function is called with the correct arguments <strong>only when the button is clicked</strong>, not during rendering.</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1727,144 +1890,6 @@
 <li><a target="_blank" rel="noopener" href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library Documentation</a></li>
 <li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index">Z-Index and Stacking Contexts</a></li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/12/19/Run-a-Proxy-Server-with-cors-anywhere/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/12/19/Run-a-Proxy-Server-with-cors-anywhere/" class="post-title-link" itemprop="url">Run a Proxy Server with cors-anywhere</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-12-19 12:14:20" itemprop="dateCreated datePublished" datetime="2024-12-19T12:14:20-05:00">2024-12-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Node-js/" itemprop="url" rel="index"><span itemprop="name">Node.js</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Node-js/Proxy/" itemprop="url" rel="index"><span itemprop="name">Proxy</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Node-js/Proxy/CORS/" itemprop="url" rel="index"><span itemprop="name">CORS</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="1-Install-Node-js"><a href="#1-Install-Node-js" class="headerlink" title="1. Install Node.js"></a>1. <strong>Install Node.js</strong></h4><ul>
-<li>Ensure you have Node.js installed on your machine. You can download it from <a target="_blank" rel="noopener" href="https://nodejs.org/">nodejs.org</a>.</li>
-<li>Verify the installation by running:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="2-Create-a-New-Directory-for-Your-Proxy-Server"><a href="#2-Create-a-New-Directory-for-Your-Proxy-Server" class="headerlink" title="2. Create a New Directory for Your Proxy Server"></a>2. <strong>Create a New Directory for Your Proxy Server</strong></h4><ul>
-<li>Create a new directory for your proxy server:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> cors-proxy-server</span><br><span class="line"><span class="built_in">cd</span> cors-proxy-server</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="3-Initialize-a-New-Node-js-Project"><a href="#3-Initialize-a-New-Node-js-Project" class="headerlink" title="3. Initialize a New Node.js Project"></a>3. <strong>Initialize a New Node.js Project</strong></h4><ul>
-<li>Initialize a new Node.js project:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -y</span><br></pre></td></tr></table></figure></li>
-<li>This will create a <code>package.json</code> file.</li>
-</ul>
-<h4 id="4-Install-cors-anywhere"><a href="#4-Install-cors-anywhere" class="headerlink" title="4. Install cors-anywhere"></a>4. <strong>Install <code>cors-anywhere</code></strong></h4><ul>
-<li>Install the <code>cors-anywhere</code> package:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install cors-anywhere</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="5-Create-the-Proxy-Server-Script"><a href="#5-Create-the-Proxy-Server-Script" class="headerlink" title="5. Create the Proxy Server Script"></a>5. <strong>Create the Proxy Server Script</strong></h4><ul>
-<li>Create a new file named <code>server.js</code> in the project directory:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> server.js</span><br></pre></td></tr></table></figure></li>
-<li>Add the following code to <code>server.js</code>:</li>
-</ul>
-<hr>
-<h3 id="server-js-JavaScript-Implementation"><a href="#server-js-JavaScript-Implementation" class="headerlink" title="server.js (JavaScript Implementation)"></a><code>server.js</code> (JavaScript Implementation)</h3><p>Here’s the complete implementation of the proxy server in <strong>JavaScript</strong>:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cors_proxy = <span class="built_in">require</span>(<span class="string">&quot;cors-anywhere&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Define the host and port for the proxy server</span></span><br><span class="line"><span class="keyword">const</span> host = <span class="string">&quot;127.0.0.1&quot;</span>; <span class="comment">// Localhost</span></span><br><span class="line"><span class="keyword">const</span> port = <span class="number">8080</span>; <span class="comment">// Port to run the proxy</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Create and start the proxy server</span></span><br><span class="line">cors_proxy</span><br><span class="line">    .<span class="title function_">createServer</span>(&#123;</span><br><span class="line">        <span class="attr">originWhitelist</span>: [], <span class="comment">// Allow all origins (you can restrict this to specific domains)</span></span><br><span class="line">        <span class="attr">requireHeader</span>: [<span class="string">&quot;origin&quot;</span>, <span class="string">&quot;x-requested-with&quot;</span>], <span class="comment">// Require these headers</span></span><br><span class="line">        <span class="attr">removeHeaders</span>: [<span class="string">&quot;cookie&quot;</span>, <span class="string">&quot;cookie2&quot;</span>], <span class="comment">// Remove sensitive headers</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">listen</span>(port, host, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`CORS Anywhere proxy server is running on http://<span class="subst">$&#123;host&#125;</span>:<span class="subst">$&#123;port&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="6-Run-the-Proxy-Server"><a href="#6-Run-the-Proxy-Server" class="headerlink" title="6. Run the Proxy Server"></a>6. <strong>Run the Proxy Server</strong></h3><ul>
-<li>Start the proxy server:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node server.js</span><br></pre></td></tr></table></figure></li>
-<li>You should see the following output:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS Anywhere proxy server is running on http://127.0.0.1:8080</span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr>
-<h3 id="Using-the-Proxy-Server-in-Your-Application"><a href="#Using-the-Proxy-Server-in-Your-Application" class="headerlink" title="Using the Proxy Server in Your Application"></a>Using the Proxy Server in Your Application</h3><p>Once the proxy server is running, you can use it in your application to bypass CORS restrictions.</p>
-<h4 id="Example-Fetching-Data-in-a-React-Application"><a href="#Example-Fetching-Data-in-a-React-Application" class="headerlink" title="Example: Fetching Data in a React Application"></a>Example: Fetching Data in a React Application</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> proxyUrl = <span class="string">&quot;http://127.0.0.1:8080/&quot;</span>; <span class="comment">// Your local proxy server</span></span><br><span class="line"><span class="keyword">const</span> apiUrl = <span class="string">&quot;https://dog.ceo/api/breeds/list/all&quot;</span>; <span class="comment">// The API you want to access</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">fetch</span>(proxyUrl + apiUrl)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">response</span>) =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(data))</span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function">(<span class="params">error</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error:&quot;</span>, error));</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="Summary-of-Steps"><a href="#Summary-of-Steps" class="headerlink" title="Summary of Steps"></a>Summary of Steps</h3><ol>
-<li>Install Node.js and initialize a new project.</li>
-<li>Install the <code>cors-anywhere</code> package.</li>
-<li>Create a <code>server.js</code> file with the proxy server implementation.</li>
-<li>Run the proxy server using <code>node server.js</code>.</li>
-<li>Use the proxy server in your application by prefixing your API URL with the proxy URL.</li>
-</ol>
-<hr>
-<h3 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h3><ul>
-<li><strong>Security</strong>: By default, the proxy server allows all origins (<code>originWhitelist: []</code>). You can restrict this to specific domains for better security.</li>
-<li><strong>Production</strong>: Running a local proxy server is fine for development, but for production, consider deploying the proxy server to a cloud service (e.g., Heroku, Vercel) or using a backend server as a middleman.</li>
-<li><strong>Rate Limits</strong>: Some APIs may have rate limits or restrictions on the number of requests you can make. Be mindful of this when using a proxy.</li>
-</ul>
-<p>This setup will allow you to bypass CORS restrictions and make API requests from your application during development.</p>
 
       
     </div>

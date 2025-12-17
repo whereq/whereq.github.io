@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,153 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VI/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - VI</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:06:43" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:43-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#reactive-programming-in-complex-scenarios">Reactive Programming in Complex Scenarios</a><ul>
+<li><a href="#complex-scenario-1-flow-control-and-backpressure-handling">Complex Scenario 1: Flow Control and Backpressure Handling</a><ul>
+<li><a href="#1-using-limitrate">1. Using <code>limitRate</code></a></li>
+<li><a href="#2-using-onbackpressurebuffer">2. Using <code>onBackpressureBuffer</code></a></li>
+<li><a href="#3-using-onbackpressuredrop">3. Using <code>onBackpressureDrop</code></a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-2-integrating-external-services">Complex Scenario 2: Integrating External Services</a><ul>
+<li><a href="#1-using-webclient-to-call-rest-apis">1. Using <code>WebClient</code> to Call REST APIs</a></li>
+<li><a href="#2-using-reactive-kafka-for-message-processing">2. Using Reactive Kafka for Message Processing</a></li>
+</ul>
+</li>
+<li><a href="#complex-scenario-3-handling-large-files">Complex Scenario 3: Handling Large Files</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#furthermore">Furthermore</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Reactive-Programming-in-Complex-Scenarios"><a href="#Reactive-Programming-in-Complex-Scenarios" class="headerlink" title="Reactive Programming in Complex Scenarios"></a>Reactive Programming in Complex Scenarios</h1><p>In previous articles, we discussed the foundational concepts of Spring WebFlux, Reactor, error handling, data flow transformation, reactive database access, and performance optimization. This article explores how to apply reactive programming in complex scenarios, including flow control, backpressure handling, and integrating external services.</p>
+<p><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a></p>
+<h2 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title="Complex Scenario 1: Flow Control and Backpressure Handling"></a>Complex Scenario 1: Flow Control and Backpressure Handling</h2><p>In high-concurrency environments, controlling data flow and managing backpressure are critical for ensuring system stability. Backpressure occurs when downstream consumers cannot keep up with the speed of upstream producers, leading to data accumulation and resource exhaustion. Reactor provides various ways to handle backpressure issues.</p>
+<h3 id="1-Using-limitRate"><a href="#1-Using-limitRate" class="headerlink" title="1. Using limitRate"></a>1. Using <code>limitRate</code></h3><p>The <code>limitRate</code> operator limits the amount of data requested at a time, thereby controlling the speed of data flow.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .limitRate(<span class="number">100</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Using-onBackpressureBuffer"><a href="#2-Using-onBackpressureBuffer" class="headerlink" title="2. Using onBackpressureBuffer"></a>2. Using <code>onBackpressureBuffer</code></h3><p>The <code>onBackpressureBuffer</code> operator buffers data during backpressure until the downstream can process it.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .onBackpressureBuffer(<span class="number">50</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Using-onBackpressureDrop"><a href="#3-Using-onBackpressureDrop" class="headerlink" title="3. Using onBackpressureDrop"></a>3. Using <code>onBackpressureDrop</code></h3><p>The <code>onBackpressureDrop</code> operator drops data during backpressure to prevent downstream overload.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .onBackpressureDrop()</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<p><a name="complex-scenario-2-integrating-external-services"></a></p>
+<h2 id="Complex-Scenario-2-Integrating-External-Services"><a href="#Complex-Scenario-2-Integrating-External-Services" class="headerlink" title="Complex Scenario 2: Integrating External Services"></a>Complex Scenario 2: Integrating External Services</h2><p>In real projects, interactions with external services are common, such as calling REST APIs or using message queues. Spring WebFlux provides powerful integration capabilities.</p>
+<h3 id="1-Using-WebClient-to-Call-REST-APIs"><a href="#1-Using-WebClient-to-Call-REST-APIs" class="headerlink" title="1. Using WebClient to Call REST APIs"></a>1. Using <code>WebClient</code> to Call REST APIs</h3><p><code>WebClient</code> is a non-blocking HTTP client provided by Spring WebFlux, suitable for interacting with external REST services.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebClientExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create(<span class="string">&quot;http://example.com&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">fetchData</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/data&quot;</span>)</span><br><span class="line">                .retrieve()</span><br><span class="line">                .bodyToMono(String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Using-Reactive-Kafka-for-Message-Processing"><a href="#2-Using-Reactive-Kafka-for-Message-Processing" class="headerlink" title="2. Using Reactive Kafka for Message Processing"></a>2. Using Reactive Kafka for Message Processing</h3><p>Spring WebFlux integrates seamlessly with Reactive Kafka to achieve non-blocking message processing.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka-reactive<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.kafka.annotation.KafkaListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.FluxSink;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">KafkaConsumer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> FluxSink&lt;String&gt; sink;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">KafkaConsumer</span><span class="params">(FluxSink&lt;String&gt; sink)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.sink = sink;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@KafkaListener(topics = &quot;example-topic&quot;, groupId = &quot;group_id&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listen</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        sink.next(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="complex-scenario-3-handling-large-files"></a></p>
+<h2 id="Complex-Scenario-3-Handling-Large-Files"><a href="#Complex-Scenario-3-Handling-Large-Files" class="headerlink" title="Complex Scenario 3: Handling Large Files"></a>Complex Scenario 3: Handling Large Files</h2><p>When processing large files, traditional reading methods can lead to excessive memory consumption. Using Spring WebFlux allows for non-blocking, streaming file processing.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.core.io.buffer.DataBuffer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.codec.multipart.FilePart;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileHandler</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">uploadFile</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> request.multipartData()</span><br><span class="line">                .flatMap(parts -&gt; &#123;</span><br><span class="line">                    <span class="type">FilePart</span> <span class="variable">filePart</span> <span class="operator">=</span> (FilePart) parts.toSingleValueMap().get(<span class="string">&quot;file&quot;</span>);</span><br><span class="line">                    Flux&lt;DataBuffer&gt; content = filePart.content();</span><br><span class="line">                    <span class="keyword">return</span> ServerResponse.ok().body(content, DataBuffer.class);</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored several strategies and methods for applying Spring WebFlux in complex scenarios. By effectively managing backpressure, integrating external services, and processing large files in a streaming fashion, we can build more robust and efficient reactive applications. </p>
+<p><a name="furthermore"></a></p>
+<h2 id="Furthermore"><a href="#Furthermore" class="headerlink" title="Furthermore"></a>Furthermore</h2><ol>
+<li><strong>Kubernetes for Deployment</strong>: Consider deploying your reactive applications using Kubernetes for better scalability and management.</li>
+<li><strong>Reactive Programming Patterns</strong>: Implement design patterns such as Circuit Breaker and Rate Limiter to enhance application resilience.</li>
+<li><strong>Monitoring with Micrometer</strong>: Use Micrometer to instrument your reactive applications for better observability and performance metrics.</li>
+<li><strong>Serverless Architecture</strong>: Explore serverless solutions to handle unpredictable workloads efficiently, integrating with AWS Lambda or Azure Functions.</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1861,210 +2008,6 @@
 <li><strong>Multiple Recover Methods</strong>: Allows for granular error handling based on exception types.</li>
 </ul>
 <p>By leveraging Spring Retry, developers can build resilient applications that can handle transient faults effectively, ensuring higher availability and reliability.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/23/How-to-Elegantly-Invoke-3rd-Party-APIs-in-Spring-Boot/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/23/How-to-Elegantly-Invoke-3rd-Party-APIs-in-Spring-Boot/" class="post-title-link" itemprop="url">How to Elegantly Invoke 3rd Party APIs in Spring Boot</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-23 20:20:44" itemprop="dateCreated datePublished" datetime="2024-10-23T20:20:44-04:00">2024-10-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/API/" itemprop="url" rel="index"><span itemprop="name">API</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#how-to-elegantly-invoke-3rd-party-apis-in-spring-boot-with-retries-and-circuit-breakers">How to Elegantly Invoke 3rd Party APIs in Spring Boot with Retries and Circuit Breakers</a><ul>
-<li><a href="#1-basic-api-invocation-using-resttemplate">1. Basic API Invocation Using <code>RestTemplate</code></a></li>
-<li><a href="#key-points">Key Points:</a></li>
-<li><a href="#2-elegant-error-handling-with-resttemplate">2. Elegant Error Handling with <code>RestTemplate</code></a></li>
-<li><a href="#key-points-1">Key Points:</a></li>
-<li><a href="#3-retries-using-retrytemplate-with-annotations">3. Retries Using <code>RetryTemplate</code> with Annotations</a><ul>
-<li><a href="#using-retryable-annotation">Using <code>@Retryable</code> Annotation</a></li>
-<li><a href="#explanation">Explanation:</a></li>
-</ul>
-</li>
-<li><a href="#key-points-2">Key Points:</a></li>
-<li><a href="#4-circuit-breaker-with-resilience4j-and-annotations">4. Circuit Breaker with Resilience4j and Annotations</a><ul>
-<li><a href="#dependency-setup">Dependency Setup</a></li>
-<li><a href="#circuit-breaker-configuration">Circuit Breaker Configuration</a></li>
-<li><a href="#using-resilience4j-annotations">Using Resilience4j Annotations</a></li>
-<li><a href="#explanation-1">Explanation:</a></li>
-</ul>
-</li>
-<li><a href="#key-points-3">Key Points:</a></li>
-<li><a href="#5-sample-code-with-annotations">5. Sample Code with Annotations</a></li>
-<li><a href="#key-points-4">Key Points:</a></li>
-<li><a href="#diagrams">Diagrams</a></li>
-<li><a href="#key-points-5">Key Points:</a></li>
-<li><a href="#6-conclusion">6. Conclusion</a></li>
-<li><a href="#key-takeaways">Key Takeaways:</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="How-to-Elegantly-Invoke-3rd-Party-APIs-in-Spring-Boot-with-Retries-and-Circuit-Breakers"><a href="#How-to-Elegantly-Invoke-3rd-Party-APIs-in-Spring-Boot-with-Retries-and-Circuit-Breakers" class="headerlink" title="How to Elegantly Invoke 3rd Party APIs in Spring Boot with Retries and Circuit Breakers"></a>How to Elegantly Invoke 3rd Party APIs in Spring Boot with Retries and Circuit Breakers</h1><hr>
-<p>When integrating with third-party APIs, ensuring robust and fault-tolerant API invocations is crucial for a resilient microservices architecture. In this updated guide, we will expand on retry mechanisms and fallback strategies, introducing annotations for retries and fallbacks. We will also explore enhanced usage of Resilience4j for circuit breaking, along with retry policies via <code>RetryTemplate</code> and Spring’s <code>@Retryable</code> annotation.</p>
-<hr>
-<h3 id="1-Basic-API-Invocation-Using-RestTemplate"><a href="#1-Basic-API-Invocation-Using-RestTemplate" class="headerlink" title="1. Basic API Invocation Using RestTemplate"></a>1. Basic API Invocation Using <code>RestTemplate</code></h3><p><a name="1-basic-api-invocation-using-resttemplate"></a></p>
-<p>We start with a simple HTTP client in Spring Boot, using <code>RestTemplate</code> to invoke a third-party API. Although basic, this approach lacks resilience for handling errors or failures in the third-party service.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ApiService</span><span class="params">(RestTemplateBuilder restTemplateBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplateBuilder.build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">invokeExternalApi</span><span class="params">(String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Key-Points"><a href="#Key-Points" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>RestTemplate</strong>: Basic HTTP client for API invocation.</li>
-<li><strong>Lack of Resilience</strong>: No built-in error handling or retry mechanisms.</li>
-</ul>
-<hr>
-<h3 id="2-Elegant-Error-Handling-with-RestTemplate"><a href="#2-Elegant-Error-Handling-with-RestTemplate" class="headerlink" title="2. Elegant Error Handling with RestTemplate"></a>2. Elegant Error Handling with <code>RestTemplate</code></h3><p><a name="2-elegant-error-handling-with-resttemplate"></a></p>
-<p>Error handling can be enhanced by implementing custom error handling for different types of HTTP status codes using <code>ResponseErrorHandler</code>.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ApiService</span><span class="params">(RestTemplateBuilder restTemplateBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplateBuilder</span><br><span class="line">                            .errorHandler(<span class="keyword">new</span> <span class="title class_">CustomErrorHandler</span>())  <span class="comment">// custom error handler</span></span><br><span class="line">                            .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">invokeExternalApi</span><span class="params">(String url)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (HttpClientErrorException ex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Client error: &quot;</span> + ex.getStatusCode();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (HttpServerErrorException ex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Server error: &quot;</span> + ex.getStatusCode();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomErrorHandler</span> <span class="keyword">implements</span> <span class="title class_">ResponseErrorHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasError</span><span class="params">(ClientHttpResponse response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="keyword">return</span> response.getStatusCode().is4xxClientError() || response.getStatusCode().is5xxServerError();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleError</span><span class="params">(ClientHttpResponse response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// Custom error handling</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Key-Points-1"><a href="#Key-Points-1" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>Custom Error Handler</strong>: Implements <code>ResponseErrorHandler</code> for fine-grained error handling.</li>
-<li><strong>Exception Handling</strong>: Catches specific HTTP exceptions for client and server errors.</li>
-</ul>
-<hr>
-<h3 id="3-Retries-Using-RetryTemplate-with-Annotations"><a href="#3-Retries-Using-RetryTemplate-with-Annotations" class="headerlink" title="3. Retries Using RetryTemplate with Annotations"></a>3. Retries Using <code>RetryTemplate</code> with Annotations</h3><p><a name="3-retries-using-retrytemplate-with-annotations"></a></p>
-<p>Spring Retry provides powerful retry mechanisms that can be applied using annotations for cleaner code. The <code>@Retryable</code> annotation helps trigger automatic retries when exceptions occur.</p>
-<h4 id="Using-Retryable-Annotation"><a href="#Using-Retryable-Annotation" class="headerlink" title="Using @Retryable Annotation"></a>Using <code>@Retryable</code> Annotation</h4><p><a name="using-retryable-annotation"></a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ApiService</span><span class="params">(RestTemplateBuilder restTemplateBuilder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplateBuilder.build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Retryable(</span></span><br><span class="line"><span class="meta">        value = &#123; HttpServerErrorException.class &#125;,</span></span><br><span class="line"><span class="meta">        maxAttempts = 5,</span></span><br><span class="line"><span class="meta">        backoff = @Backoff(delay = 2000)</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">invokeExternalApiWithRetry</span><span class="params">(String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Recover</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">recover</span><span class="params">(HttpServerErrorException e, String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Fallback response for: &quot;</span> + url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Explanation"><a href="#Explanation" class="headerlink" title="Explanation:"></a>Explanation:</h4><p><a name="explanation"></a></p>
-<ul>
-<li><strong>@Retryable</strong>: Specifies retryable exceptions (e.g., <code>HttpServerErrorException</code>), with configurable maximum attempts and backoff strategy.</li>
-<li><strong>@Recover</strong>: Defines a fallback method that triggers when retries are exhausted.</li>
-</ul>
-<h3 id="Key-Points-2"><a href="#Key-Points-2" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>Retry Logic</strong>: Automatically retries failed API calls.</li>
-<li><strong>Fallback Mechanism</strong>: Provides a fallback response when retries fail.</li>
-</ul>
-<hr>
-<h3 id="4-Circuit-Breaker-with-Resilience4j-and-Annotations"><a href="#4-Circuit-Breaker-with-Resilience4j-and-Annotations" class="headerlink" title="4. Circuit Breaker with Resilience4j and Annotations"></a>4. Circuit Breaker with Resilience4j and Annotations</h3><p><a name="4-circuit-breaker-with-resilience4j-and-annotations"></a></p>
-<p>Resilience4j is a lightweight, easy-to-use fault tolerance library designed for Java 8 and functional programming. It provides circuit breaking capabilities similar to Hystrix but with a more modern approach.</p>
-<h4 id="Dependency-Setup"><a href="#Dependency-Setup" class="headerlink" title="Dependency Setup"></a>Dependency Setup</h4><p>First, add the necessary dependencies to your <code>pom.xml</code>:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.resilience4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>resilience4j-spring-boot3<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Circuit-Breaker-Configuration"><a href="#Circuit-Breaker-Configuration" class="headerlink" title="Circuit Breaker Configuration"></a>Circuit Breaker Configuration</h4><p>Configure the circuit breaker in your Spring Boot application:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Resilience4jConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CircuitBreakerConfig <span class="title function_">circuitBreakerConfig</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> CircuitBreakerConfig.custom()</span><br><span class="line">            .failureRateThreshold(<span class="number">50</span>)</span><br><span class="line">            .waitDurationInOpenState(Duration.ofMillis(<span class="number">1000</span>))</span><br><span class="line">            .ringBufferSizeInClosedState(<span class="number">2</span>)</span><br><span class="line">            .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CircuitBreakerRegistry <span class="title function_">circuitBreakerRegistry</span><span class="params">(CircuitBreakerConfig circuitBreakerConfig)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> CircuitBreakerRegistry.of(circuitBreakerConfig);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CircuitBreaker <span class="title function_">circuitBreaker</span><span class="params">(CircuitBreakerRegistry circuitBreakerRegistry)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> circuitBreakerRegistry.circuitBreaker(<span class="string">&quot;externalApi&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Using-Resilience4j-Annotations"><a href="#Using-Resilience4j-Annotations" class="headerlink" title="Using Resilience4j Annotations"></a>Using Resilience4j Annotations</h4><p>Apply the circuit breaker to your service method:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CircuitBreaker circuitBreaker;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ApiService</span><span class="params">(RestTemplateBuilder restTemplateBuilder, CircuitBreaker circuitBreaker)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplateBuilder.build();</span><br><span class="line">        <span class="built_in">this</span>.circuitBreaker = circuitBreaker;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CircuitBreaker(name = &quot;externalApi&quot;, fallbackMethod = &quot;fallbackMethod&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">invokeApiWithCircuitBreaker</span><span class="params">(String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">fallbackMethod</span><span class="params">(String url, Throwable t)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Fallback response for: &quot;</span> + url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Explanation-1"><a href="#Explanation-1" class="headerlink" title="Explanation:"></a>Explanation:</h4><p><a name="explanation-1"></a></p>
-<ul>
-<li><strong>CircuitBreaker</strong>: Configures the circuit breaker with custom settings.</li>
-<li><strong>@CircuitBreaker</strong>: Annotates the method to be protected by the circuit breaker.</li>
-<li><strong>Fallback Method</strong>: Provides a fallback response when the circuit breaker trips.</li>
-</ul>
-<h3 id="Key-Points-3"><a href="#Key-Points-3" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>Resilience4j</strong>: Modern fault tolerance library replacing Hystrix.</li>
-<li><strong>Circuit Breaker</strong>: Prevents cascading failures by short-circuiting failed API calls.</li>
-<li><strong>Fallback Method</strong>: Provides a fallback response when the circuit breaker trips.</li>
-</ul>
-<hr>
-<h3 id="5-Sample-Code-with-Annotations"><a href="#5-Sample-Code-with-Annotations" class="headerlink" title="5. Sample Code with Annotations"></a>5. Sample Code with Annotations</h3><p><a name="5-sample-code-with-annotations"></a></p>
-<p>Combining both <code>@Retryable</code> and Resilience4j’s <code>@CircuitBreaker</code>, we create a highly resilient service capable of handling third-party API failures.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CircuitBreaker circuitBreaker;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ApiService</span><span class="params">(RestTemplateBuilder restTemplateBuilder, CircuitBreaker circuitBreaker)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplateBuilder.build();</span><br><span class="line">        <span class="built_in">this</span>.circuitBreaker = circuitBreaker;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Retryable(</span></span><br><span class="line"><span class="meta">        value = &#123; HttpServerErrorException.class &#125;,</span></span><br><span class="line"><span class="meta">        maxAttempts = 5,</span></span><br><span class="line"><span class="meta">        backoff = @Backoff(delay = 1000)</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line">    <span class="meta">@CircuitBreaker(name = &quot;externalApi&quot;, fallbackMethod = &quot;fallbackMethod&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">invokeApi</span><span class="params">(String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Recover</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">retryRecovery</span><span class="params">(HttpServerErrorException e, String url)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Retry failed for: &quot;</span> + url;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">fallbackMethod</span><span class="params">(String url, Throwable t)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Circuit breaker fallback for: &quot;</span> + url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Key-Points-4"><a href="#Key-Points-4" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>Combined Resilience</strong>: Combines retries and circuit breaking for improved fault tolerance.</li>
-<li><strong>Fallback Handling</strong>: Provides fallback responses for both retry failures and circuit breaker trips.</li>
-</ul>
-<hr>
-<h3 id="Diagrams"><a href="#Diagrams" class="headerlink" title="Diagrams"></a>Diagrams</h3><p><a name="diagrams"></a></p>
-<p>To visualize how retries and circuit breakers work together, the following diagram illustrates the flow:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+      +------------------+</span><br><span class="line">| API Call Attempt  |----&gt; | Retry Logic      |</span><br><span class="line">+-------------------+      +------------------+</span><br><span class="line">                              |</span><br><span class="line">            Retry Success&lt;----+----&gt;Retry Failure</span><br><span class="line">                              |</span><br><span class="line">                          Circuit Breaker</span><br><span class="line">                              |</span><br><span class="line">            Success&lt;-----------+------------&gt;Fallback</span><br></pre></td></tr></table></figure>
-
-<h3 id="Key-Points-5"><a href="#Key-Points-5" class="headerlink" title="Key Points:"></a>Key Points:</h3><ul>
-<li><strong>API Call Attempt</strong>: Initial API invocation.</li>
-<li><strong>Retry Logic</strong>: Retries the API call if it fails.</li>
-<li><strong>Circuit Breaker</strong>: Evaluates whether to invoke the fallback method after retries fail.</li>
-</ul>
-<hr>
-<h3 id="6-Conclusion"><a href="#6-Conclusion" class="headerlink" title="6. Conclusion"></a>6. Conclusion</h3><p><a name="6-conclusion"></a></p>
-<p>In Spring Boot, integrating with third-party APIs elegantly involves applying retry mechanisms and circuit breaker patterns. Using <code>@Retryable</code> and Resilience4j annotations simplifies the code, making it more resilient to failures and easier to maintain. The combination of these two approaches ensures that your system can handle both intermittent and persistent issues with third-party APIs.</p>
-<h3 id="Key-Takeaways"><a href="#Key-Takeaways" class="headerlink" title="Key Takeaways:"></a>Key Takeaways:</h3><ul>
-<li><strong>Resilient API Invocations</strong>: Use retries and circuit breakers for fault tolerance.</li>
-<li><strong>Annotation-Based Configuration</strong>: Simplifies implementation and maintenance.</li>
-<li><strong>Fallback Strategies</strong>: Provide graceful degradation when API calls fail.</li>
-</ul>
-<p>By mastering these techniques, you can build robust and resilient microservices that gracefully handle third-party API failures.</p>
 
       
     </div>

@@ -124,7 +124,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,172 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes/" class="post-title-link" itemprop="url">Troubleshooting High Currency Issues in Kubernetes</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 21:20:30" itemprop="dateCreated datePublished" datetime="2024-10-27T21:20:30-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#pod-restart-crashloopbackoff-loop-due-to-high-concurrency">Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#problem-background">Problem Background</a></li>
+<li><a href="#analysis-process">Analysis Process</a></li>
+<li><a href="#investigating-the-issue">Investigating the Issue</a></li>
+<li><a href="#tcp-connection-timeout">TCP Connection Timeout</a></li>
+<li><a href="#understanding-cpu-load">Understanding CPU Load</a></li>
+<li><a href="#kernel-parameter-tuning">Kernel Parameter Tuning</a><ul>
+<li><a href="#tcp-state-transition-diagram">TCP State Transition Diagram</a></li>
+<li><a href="#adjusting-kernel-parameters">Adjusting Kernel Parameters</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency"><a href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency" class="headerlink" title="Pod Restart CrashLoopBackOff Loop Due to High Concurrency"></a>Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In a Kubernetes cluster environment, a business operation involving extensive configuration distribution (lasting several hours or more) led to repeated restarts of Calico pods. This article details the troubleshooting process, focusing on identifying the root cause and implementing a solution.</p>
+<hr>
+<p><a name="problem-background"></a></p>
+<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>During a high-concurrency operation, Calico pods in the Kubernetes cluster began to restart repeatedly.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get pod -n kube-system -owide | grep node01</span><br><span class="line">calico-kube-controllers-6f59b8cdd8-8v2qw   1/1     Running            0          4h45m   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">calico-node-b8w2b                          1/1     CrashLoopBackOff   43         3d19h   10.10.119.238    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">coredns-795cc9c45c-k7qpb                   1/1     Running            0          4h45m   177.177.237.42    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="analysis-process"></a></p>
+<h2 id="Analysis-Process"><a href="#Analysis-Process" class="headerlink" title="Analysis Process"></a>Analysis Process</h2><p>Upon observing the <code>CrashLoopBackOff</code> state of the pods, the first step was to use <code>kubectl describe</code> to gather more information.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl describe pod -n kube-system calico-node-b8w2b</span><br><span class="line">...</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                      From               Message</span><br><span class="line">  ----     ------     ----                     ----               -------</span><br><span class="line">  Warning  Unhealthy  58m (x111 over 3h12m)    kubelet, node01  (combined from similar events): Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Normal   Pulled     43m (x36 over 3d19h)     kubelet, node01  Container image <span class="string">&quot;calico/node:v3.15.1&quot;</span> already present on machine</span><br><span class="line">  Warning  Unhealthy  8m16s (x499 over 3h43m)  kubelet, node01  Liveness probe failed: Get http://localhost:9099/liveness: net/http: request canceled <span class="keyword">while</span> waiting <span class="keyword">for</span> connection (Client.Timeout exceeded <span class="keyword">while</span> awaiting headers)</span><br><span class="line">  Warning  BackOff    3m31s (x437 over 3h3m)   kubelet, node01  Back-off restarting failed container</span><br></pre></td></tr></table></figure>
+
+<p>The events indicated that the liveness probe was failing due to a connection timeout.</p>
+<hr>
+<p><a name="investigating-the-issue"></a></p>
+<h2 id="Investigating-the-Issue"><a href="#Investigating-the-Issue" class="headerlink" title="Investigating the Issue"></a>Investigating the Issue</h2><p>Manual execution of the health check command revealed slow response times, which were significantly higher than the usual millisecond-level response.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 06:24:35 GMT</span><br><span class="line">real    0m1.012s</span><br><span class="line">user    0m0.003s</span><br><span class="line">sys     0m0.005s</span><br></pre></td></tr></table></figure>
+
+<p>Logs from Calico’s bird, confd, and felix components did not show any apparent errors. Checking the port status indicated that it was listening correctly.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# netstat -anp | grep 9099</span><br><span class="line">tcp        0      0 127.0.0.1:9099          0.0.0.0:*               LISTEN      1202/calico-node    </span><br><span class="line">tcp        0      0 127.0.0.1:9099          127.0.0.1:56728         TIME_WAIT   -                   </span><br><span class="line">tcp        0      0 127.0.0.1:56546         127.0.0.1:9099          TIME_WAIT   -</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="tcp-connection-timeout"></a></p>
+<h2 id="TCP-Connection-Timeout"><a href="#TCP-Connection-Timeout" class="headerlink" title="TCP Connection Timeout"></a>TCP Connection Timeout</h2><p>Given the connection timeout error, the TCP connection state was observed.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -na | awk <span class="string">&#x27;/^tcp/&#123;s[$6]++&#125;END&#123;for(key in s) print key,s[key]&#125;&#x27;</span></span><br><span class="line">LISTEN 49</span><br><span class="line">ESTABLISHED 284</span><br><span class="line">SYN_SENT 4</span><br><span class="line">TIME_WAIT 176</span><br></pre></td></tr></table></figure>
+
+<p>The <code>top</code> command showed that the business Java process was consuming high CPU, peaking at over 2000%.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# top</span><br><span class="line">top - 14:28:57 up 13 days, 27 min,  2 <span class="built_in">users</span>,  load average: 9.55, 9.93, 9.91</span><br><span class="line">Tasks: 1149 total,   1 running, 1146 sleeping,   0 stopped,   2 zombie</span><br><span class="line">%Cpu(s): 16.0 us,  2.9 sy,  0.0 ni, 80.9 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st</span><br><span class="line">KiB Mem : 15249982+total, 21419184 free, 55542588 used, 75538048 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used. 94226176 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                                                                        </span><br><span class="line"> 6754 root      20   0   66.8g  25.1g 290100 S 700.0 17.3   2971:49 java                                                                                           </span><br><span class="line">25214 root      20   0 6309076 179992  37016 S  36.8  0.1 439:06.29 kubelet                                                                                        </span><br><span class="line">20331 root      20   0 3196660 172364  24908 S  21.1  0.1 349:56.64 dockerd</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="understanding-cpu-load"></a></p>
+<h2 id="Understanding-CPU-Load"><a href="#Understanding-CPU-Load" class="headerlink" title="Understanding CPU Load"></a>Understanding CPU Load</h2><p>Checking the total number of CPU cores and comparing it with the load average and CPU usage indicated that the load was not excessively high.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;physical id&quot;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> | <span class="built_in">wc</span> -l</span><br><span class="line">48</span><br><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /proc/cpuinfo | grep <span class="string">&quot;cpu cores&quot;</span> | <span class="built_in">uniq</span></span><br><span class="line">cpu cores: 1</span><br></pre></td></tr></table></figure>
+
+<p>Given the high concurrency, the issue was likely related to the TCP connection setup. Understanding the TCP connection phases helped pinpoint the problem.</p>
+<hr>
+<p><a name="kernel-parameter-tuning"></a></p>
+<h2 id="Kernel-Parameter-Tuning"><a href="#Kernel-Parameter-Tuning" class="headerlink" title="Kernel Parameter Tuning"></a>Kernel Parameter Tuning</h2><p>The issue was traced to the <code>SYN_SENT</code> phase of TCP connections. Adjusting kernel parameters related to TCP connections resolved the problem.</p>
+<h3 id="TCP-State-Transition-Diagram"><a href="#TCP-State-Transition-Diagram" class="headerlink" title="TCP State Transition Diagram"></a>TCP State Transition Diagram</h3><pre><code class="highlight mermaid">graph TD
+    CLOSED --&gt;|Client sends SYN| SYN_SENT
+    SYN_SENT --&gt;|Server responds with SYN+ACK| SYN_RECV
+    SYN_RECV --&gt;|Client sends ACK| ESTABLISHED
+    ESTABLISHED --&gt;|Connection closed by either party| FIN_WAIT_1
+    FIN_WAIT_1 --&gt;|ACK received| FIN_WAIT_2
+    FIN_WAIT_2 --&gt;|FIN received| TIME_WAIT
+    TIME_WAIT --&gt;|Timeout| CLOSED
+    FIN_WAIT_1 --&gt;|FIN received| CLOSING
+    CLOSING --&gt;|ACK received| TIME_WAIT
+    SYN_RECV --&gt;|Server sends FIN| LAST_ACK
+    LAST_ACK --&gt;|Client sends ACK| CLOSED</code></pre>
+
+<h3 id="Adjusting-Kernel-Parameters"><a href="#Adjusting-Kernel-Parameters" class="headerlink" title="Adjusting Kernel Parameters"></a>Adjusting Kernel Parameters</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /etc/sysctl.conf </span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# sysctl -p</span><br><span class="line">...</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
+
+<p>After applying these changes, the health check commands executed without delay, and the pods returned to normal.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# time curl -i http://localhost:9099/liveness</span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">Date: Tue, 15 Jun 2021 14:48:38 GMT</span><br><span class="line">real    0m0.011s</span><br><span class="line">user    0m0.004s</span><br><span class="line">sys     0m0.004s</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of understanding and tuning kernel parameters in high-concurrency scenarios. By adjusting parameters related to TCP connection handling, the issue of repeated pod restarts due to high CPU load and connection timeouts was resolved. This approach can be applied to similar issues in Kubernetes environments to ensure stable and efficient operation.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1958,318 +2124,6 @@
 
 <p><a name="conclusion"></a></p>
 <h2 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h2><p>Distributed caching is a vital component of scalable systems. By understanding different patterns, topologies, and consistency mechanisms, developers can effectively improve system performance and reliability.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Caffeine-Cache-and-Integration-with-Spring-Boot/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Deep-Dive-into-Caffeine-Cache-and-Integration-with-Spring-Boot/" class="post-title-link" itemprop="url">Deep Dive into Caffeine Cache and Integration with Spring Boot</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 13:55:44" itemprop="dateCreated datePublished" datetime="2024-10-27T13:55:44-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/" itemprop="url" rel="index"><span itemprop="name">Cache</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#caffeine-cache-overview">Caffeine Cache Overview</a><ul>
-<li><a href="#key-features">Key Features</a></li>
-</ul>
-</li>
-<li><a href="#configuring-caffeine-cache-in-spring-boot">Configuring Caffeine Cache in Spring Boot</a><ul>
-<li><a href="#adding-dependencies">Adding Dependencies</a></li>
-<li><a href="#enabling-caching">Enabling Caching</a></li>
-<li><a href="#configuring-cache-manager">Configuring Cache Manager</a></li>
-<li><a href="#yaml-configuration">YAML Configuration</a></li>
-<li><a href="#explanation-of-caffeine-cache-configuration">Explanation of Caffeine Cache Configuration</a></li>
-</ul>
-</li>
-<li><a href="#how-caffeine-cache-works">How Caffeine Cache Works</a><ul>
-<li><a href="#cache-population">Cache Population</a></li>
-<li><a href="#cache-eviction">Cache Eviction</a></li>
-<li><a href="#expiration">Expiration</a></li>
-<li><a href="#statistics">Statistics</a><ul>
-<li><a href="#statistics-recording">Statistics Recording</a></li>
-<li><a href="#tracking-cache-hits-misses-and-evictions">Tracking Cache Hits, Misses, and Evictions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#caffeine-cache-internals">Caffeine Cache Internals</a><ul>
-<li><a href="#cache-interface">Cache Interface</a></li>
-<li><a href="#caffeine-class">Caffeine Class</a></li>
-<li><a href="#boundedlocalcache-class">BoundedLocalCache Class</a></li>
-<li><a href="#detailed-logic-in-caffeine-cache">Detailed Logic in Caffeine Cache</a><ul>
-<li><a href="#cache-lookup">Cache Lookup</a></li>
-<li><a href="#cache-miss-and-method-execution">Cache Miss and Method Execution</a></li>
-<li><a href="#cache-update">Cache Update</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#real-life-production-use-cases">Real-Life Production Use Cases</a><ul>
-<li><a href="#1-user-profile-caching">1. <strong>User Profile Caching</strong></a></li>
-<li><a href="#2-product-catalog-caching">2. <strong>Product Catalog Caching</strong></a></li>
-<li><a href="#3-api-response-caching">3. <strong>API Response Caching</strong></a></li>
-<li><a href="#4-session-data-caching">4. <strong>Session Data Caching</strong></a></li>
-</ul>
-</li>
-<li><a href="#sample-code">Sample Code</a><ul>
-<li><a href="#caffeine-cache-configuration">Caffeine Cache Configuration</a></li>
-<li><a href="#user-service-with-caching">User Service with Caching</a></li>
-<li><a href="#flow-diagram">Flow Diagram</a></li>
-<li><a href="#explanation-of-the-flow-diagram">Explanation of the Flow Diagram</a></li>
-</ul>
-</li>
-<li><a href="#statistics-logging-tracking-and-mornitoring">Statistics Logging, Tracking and Mornitoring</a><ul>
-<li><a href="#1-logging-cache-statistics">1. <strong>Logging Cache Statistics</strong></a><ul>
-<li><a href="#example-logging-cache-statistics-with-slf4j">Example: Logging Cache Statistics with SLF4J</a></li>
-</ul>
-</li>
-<li><a href="#2-integrating-with-gui-tools">2. <strong>Integrating with GUI Tools</strong></a><ul>
-<li><a href="#step-1-add-prometheus-and-grafana-dependencies">Step 1: Add Prometheus and Grafana Dependencies</a></li>
-<li><a href="#step-2-configure-prometheus-metrics-collector">Step 2: Configure Prometheus Metrics Collector</a></li>
-<li><a href="#step-3-configure-prometheus-and-grafana">Step 3: Configure Prometheus and Grafana</a></li>
-</ul>
-</li>
-<li><a href="#example-prometheus-configuration">Example: Prometheus Configuration</a></li>
-<li><a href="#example-grafana-dashboard">Example: Grafana Dashboard</a></li>
-<li><a href="#summary">Summary</a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Caffeine is a high-performance, near-optimal caching library for Java, widely used in Spring Boot applications to improve performance by reducing the load on databases and other backend services. This article delves into the details of Caffeine cache, its integration with Spring Boot, and how it works under the hood. We’ll also provide real-life production use cases and sample code to illustrate its usage.</p>
-<hr>
-<p><a name="caffeine-cache-overview"></a></p>
-<h2 id="Caffeine-Cache-Overview"><a href="#Caffeine-Cache-Overview" class="headerlink" title="Caffeine Cache Overview"></a>Caffeine Cache Overview</h2><p>Caffeine is designed to be efficient and easy to use, providing advanced features like eviction policies, time-based expiration, and statistics recording. It uses a combination of data structures and algorithms to manage cache entries efficiently.</p>
-<h3 id="Key-Features"><a href="#Key-Features" class="headerlink" title="Key Features"></a>Key Features</h3><ul>
-<li><strong>High Performance</strong>: Optimized for fast read and write operations.</li>
-<li><strong>Eviction Policies</strong>: Supports LRU, FIFO, and LFU eviction policies.</li>
-<li><strong>Time-Based Expiration</strong>: Entries can be expired after a specified period of inactivity or since they were last written.</li>
-<li><strong>Statistics Recording</strong>: Tracks cache hits, misses, and evictions for monitoring and tuning.</li>
-</ul>
-<hr>
-<p><a name="configuring-caffeine-cache-in-spring-boot"></a></p>
-<h2 id="Configuring-Caffeine-Cache-in-Spring-Boot"><a href="#Configuring-Caffeine-Cache-in-Spring-Boot" class="headerlink" title="Configuring Caffeine Cache in Spring Boot"></a>Configuring Caffeine Cache in Spring Boot</h2><h3 id="Adding-Dependencies"><a href="#Adding-Dependencies" class="headerlink" title="Adding Dependencies"></a><a name="adding-dependencies"></a>Adding Dependencies</h3><p>First, ensure you have the necessary dependencies in your <code>pom.xml</code>:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.ben-manes.caffeine<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>caffeine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Enabling-Caching"><a href="#Enabling-Caching" class="headerlink" title="Enabling Caching"></a><a name="enabling-caching"></a>Enabling Caching</h3><p>Enable caching in your Spring Boot application by adding the <code>@EnableCaching</code> annotation to your main application class:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.EnableCaching;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Application</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Configuring-Cache-Manager"><a href="#Configuring-Cache-Manager" class="headerlink" title="Configuring Cache Manager"></a><a name="configuring-cache-manager"></a>Configuring Cache Manager</h3><p>Create a configuration class to set up Caffeine cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.CacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.EnableCaching;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.caffeine.CaffeineCacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CacheManager <span class="title function_">cacheManager</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">CaffeineCacheManager</span> <span class="variable">cacheManager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CaffeineCacheManager</span>(<span class="string">&quot;userCache&quot;</span>, <span class="string">&quot;productCache&quot;</span>);</span><br><span class="line">        cacheManager.setCaffeine(caffeineCacheBuilder());</span><br><span class="line">        <span class="keyword">return</span> cacheManager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Caffeine&lt;Object, Object&gt; <span class="title function_">caffeineCacheBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Caffeine.newBuilder()</span><br><span class="line">                .maximumSize(<span class="number">500</span>)</span><br><span class="line">                .expireAfterAccess(<span class="number">600</span>, TimeUnit.SECONDS)</span><br><span class="line">                .recordStats();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="YAML-Configuration"><a href="#YAML-Configuration" class="headerlink" title="YAML Configuration"></a><a name="yaml-configuration"></a>YAML Configuration</h3><p>You can also configure Caffeine cache using YAML:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">caffeine</span></span><br><span class="line">    <span class="attr">cache-names:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">userCache</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">productCache</span></span><br><span class="line">    <span class="attr">caffeine:</span></span><br><span class="line">      <span class="attr">spec:</span> <span class="string">maximumSize=500,expireAfterAccess=600s</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Explanation-of-Caffeine-Cache-Configuration"><a href="#Explanation-of-Caffeine-Cache-Configuration" class="headerlink" title="Explanation of Caffeine Cache Configuration"></a>Explanation of Caffeine Cache Configuration</h3><ul>
-<li><strong><code>CaffeineCacheManager</code></strong>: Manages multiple caches, each identified by a name.</li>
-<li><strong>Cache Names</strong>: <code>&quot;userCache&quot;</code> and <code>&quot;productCache&quot;</code> are used to identify different caches.</li>
-<li><strong><code>maximumSize(500)</code></strong>: Sets the maximum number of entries the cache can hold.</li>
-<li><strong><code>expireAfterAccess(600, TimeUnit.SECONDS)</code></strong>: Specifies that entries should be expired after 600 seconds of inactivity.</li>
-<li><strong><code>recordStats()</code></strong>: Enables statistics recording for monitoring cache performance.</li>
-</ul>
-<hr>
-<p><a name="how-caffeine-cache-works"></a></p>
-<h2 id="How-Caffeine-Cache-Works"><a href="#How-Caffeine-Cache-Works" class="headerlink" title="How Caffeine Cache Works"></a>How Caffeine Cache Works</h2><h3 id="Cache-Population"><a href="#Cache-Population" class="headerlink" title="Cache Population"></a><a name="cache-population"></a>Cache Population</h3><p>When a cache miss occurs, Caffeine fetches the data from the underlying data source (e.g., database) and stores it in the cache.</p>
-<h3 id="Cache-Eviction"><a href="#Cache-Eviction" class="headerlink" title="Cache Eviction"></a><a name="cache-eviction"></a>Cache Eviction</h3><p>Caffeine uses various eviction policies to manage the cache size:</p>
-<ul>
-<li><strong>Least Recently Used (LRU)</strong>: Evicts the least recently used entries first.</li>
-<li><strong>First In, First Out (FIFO)</strong>: Evicts the oldest entries first.</li>
-<li><strong>Least Frequently Used (LFU)</strong>: Evicts the least frequently used entries first.</li>
-</ul>
-<h3 id="Expiration"><a href="#Expiration" class="headerlink" title="Expiration"></a><a name="expiration"></a>Expiration</h3><p>Caffeine supports time-based expiration:</p>
-<ul>
-<li><strong>Expire After Access</strong>: Entries are expired after a specified period of inactivity.</li>
-<li><strong>Expire After Write</strong>: Entries are expired after a specified period since they were last written.</li>
-</ul>
-<h3 id="Statistics"><a href="#Statistics" class="headerlink" title="Statistics"></a><a name="statistics"></a>Statistics</h3><p>Caffeine can record statistics such as cache hits, misses, and evictions, which can be useful for monitoring and tuning the cache.</p>
-<h4 id="Statistics-Recording"><a href="#Statistics-Recording" class="headerlink" title="Statistics Recording"></a>Statistics Recording</h4><p>Caffeine provides a <code>recordStats()</code> method that enables the collection of cache statistics. This method returns a <code>Caffeine</code> instance that will record statistics for the cache.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Caffeine&lt;Object, Object&gt; <span class="title function_">caffeineCacheBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Caffeine.newBuilder()</span><br><span class="line">            .maximumSize(<span class="number">500</span>)</span><br><span class="line">            .expireAfterAccess(<span class="number">600</span>, TimeUnit.SECONDS)</span><br><span class="line">            .recordStats();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Tracking-Cache-Hits-Misses-and-Evictions"><a href="#Tracking-Cache-Hits-Misses-and-Evictions" class="headerlink" title="Tracking Cache Hits, Misses, and Evictions"></a>Tracking Cache Hits, Misses, and Evictions</h4><p>Once statistics recording is enabled, you can access the statistics using the <code>stats()</code> method on the cache. This method returns a <code>CacheStats</code> object that contains various metrics:</p>
-<ul>
-<li><strong><code>hitCount()</code></strong>: The number of successful cache hits.</li>
-<li><strong><code>missCount()</code></strong>: The number of cache misses.</li>
-<li><strong><code>evictionCount()</code></strong>: The number of cache evictions.</li>
-<li><strong><code>loadSuccessCount()</code></strong>: The number of times a cache miss was successfully loaded.</li>
-<li><strong><code>loadFailureCount()</code></strong>: The number of times a cache miss failed to load.</li>
-</ul>
-<p>Here’s an example of how to access and log cache statistics:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Cache;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.stats.CacheStats;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheStatisticsExample</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Cache&lt;String, String&gt; cache = Caffeine.newBuilder()</span><br><span class="line">                .maximumSize(<span class="number">100</span>)</span><br><span class="line">                .recordStats()</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Perform cache operations</span></span><br><span class="line">        cache.put(<span class="string">&quot;key1&quot;</span>, <span class="string">&quot;value1&quot;</span>);</span><br><span class="line">        cache.getIfPresent(<span class="string">&quot;key1&quot;</span>);</span><br><span class="line">        cache.getIfPresent(<span class="string">&quot;key2&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Access cache statistics</span></span><br><span class="line">        <span class="type">CacheStats</span> <span class="variable">stats</span> <span class="operator">=</span> cache.stats();</span><br><span class="line">        System.out.println(<span class="string">&quot;Cache Hits: &quot;</span> + stats.hitCount());</span><br><span class="line">        System.out.println(<span class="string">&quot;Cache Misses: &quot;</span> + stats.missCount());</span><br><span class="line">        System.out.println(<span class="string">&quot;Cache Evictions: &quot;</span> + stats.evictionCount());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="caffeine-cache-internals"></a></p>
-<h2 id="Caffeine-Cache-Internals"><a href="#Caffeine-Cache-Internals" class="headerlink" title="Caffeine Cache Internals"></a>Caffeine Cache Internals</h2><h3 id="Cache-Interface"><a href="#Cache-Interface" class="headerlink" title="Cache Interface"></a><a name="cache-interface"></a>Cache Interface</h3><p>The <code>Cache</code> interface defines the core operations for interacting with the cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Cache</span>&lt;K, V&gt; &#123;</span><br><span class="line">    V <span class="title function_">getIfPresent</span><span class="params">(K key)</span>;</span><br><span class="line">    V <span class="title function_">get</span><span class="params">(K key, Function&lt;? <span class="built_in">super</span> K, ? extends V&gt; mappingFunction)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(K key, V value)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">invalidate</span><span class="params">(K key)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">invalidateAll</span><span class="params">()</span>;</span><br><span class="line">    <span class="type">long</span> <span class="title function_">estimatedSize</span><span class="params">()</span>;</span><br><span class="line">    CacheStats <span class="title function_">stats</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Caffeine-Class"><a href="#Caffeine-Class" class="headerlink" title="Caffeine Class"></a><a name="caffeine-class"></a>Caffeine Class</h3><p>The <code>Caffeine</code> class is the builder for creating cache instances:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Caffeine</span>&lt;K, V&gt; &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;K, V&gt; Caffeine&lt;K, V&gt;newBuilder() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Caffeine</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Caffeine&lt;K, V&gt; <span class="title function_">maximumSize</span><span class="params">(<span class="type">long</span> maximumSize)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Caffeine&lt;K, V&gt; <span class="title function_">expireAfterAccess</span><span class="params">(<span class="type">long</span> duration, TimeUnit unit)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Cache&lt;K, V&gt; <span class="title function_">build</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">BoundedLocalCache</span>&lt;&gt;(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="BoundedLocalCache-Class"><a href="#BoundedLocalCache-Class" class="headerlink" title="BoundedLocalCache Class"></a><a name="boundedlocalcache-class"></a>BoundedLocalCache Class</h3><p>The <code>BoundedLocalCache</code> class is the core implementation of the cache, handling operations like get, put, and eviction:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">BoundedLocalCache</span>&lt;K, V&gt; <span class="keyword">extends</span> <span class="title class_">LocalCache</span>&lt;K, V&gt; &#123;</span><br><span class="line">    BoundedLocalCache(Caffeine&lt;K, V&gt; builder) &#123;</span><br><span class="line">        <span class="comment">// Initialization</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> V <span class="title function_">getIfPresent</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">invalidate</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">estimatedSize</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> CacheStats <span class="title function_">stats</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Implementation</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Detailed-Logic-in-Caffeine-Cache"><a href="#Detailed-Logic-in-Caffeine-Cache" class="headerlink" title="Detailed Logic in Caffeine Cache"></a>Detailed Logic in Caffeine Cache</h3><h4 id="Cache-Lookup"><a href="#Cache-Lookup" class="headerlink" title="Cache Lookup"></a>Cache Lookup</h4><p>Caffeine uses a <code>ConcurrentHashMap</code> to store cache entries. When a lookup is performed, Caffeine checks if the key exists in the map:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">getIfPresent</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    Node&lt;K, V&gt; node = data.get(key);</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Additional logic for expiration and eviction checks</span></span><br><span class="line">    <span class="keyword">return</span> node.getValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Cache-Miss-and-Method-Execution"><a href="#Cache-Miss-and-Method-Execution" class="headerlink" title="Cache Miss and Method Execution"></a>Cache Miss and Method Execution</h4><p>If the key is not found in the cache, the method is executed, and the result is stored in the cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">get</span><span class="params">(K key, Function&lt;? <span class="built_in">super</span> K, ? extends V&gt; mappingFunction)</span> &#123;</span><br><span class="line">    <span class="type">V</span> <span class="variable">value</span> <span class="operator">=</span> getIfPresent(key);</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    value = mappingFunction.apply(key);</span><br><span class="line">    put(key, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Cache-Update"><a href="#Cache-Update" class="headerlink" title="Cache Update"></a>Cache Update</h4><p>When the result is fetched from the database, it is stored in the cache:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">    Node&lt;K, V&gt; node = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(key, value);</span><br><span class="line">    data.put(key, node);</span><br><span class="line">    <span class="comment">// Additional logic for eviction and expiration</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="real-life-production-use-cases"></a></p>
-<h2 id="Real-Life-Production-Use-Cases"><a href="#Real-Life-Production-Use-Cases" class="headerlink" title="Real-Life Production Use Cases"></a>Real-Life Production Use Cases</h2><h3 id="1-User-Profile-Caching"><a href="#1-User-Profile-Caching" class="headerlink" title="1. User Profile Caching"></a>1. <strong>User Profile Caching</strong></h3><p>In a social media application, user profiles are frequently accessed. Caching user profiles can significantly reduce the load on the database and improve response times.</p>
-<h3 id="2-Product-Catalog-Caching"><a href="#2-Product-Catalog-Caching" class="headerlink" title="2. Product Catalog Caching"></a>2. <strong>Product Catalog Caching</strong></h3><p>In an e-commerce application, product catalogs are often large and frequently accessed. Caching product data can improve performance and reduce database load.</p>
-<h3 id="3-API-Response-Caching"><a href="#3-API-Response-Caching" class="headerlink" title="3. API Response Caching"></a>3. <strong>API Response Caching</strong></h3><p>In microservices, caching API responses can reduce the number of calls to downstream services, improving overall system performance.</p>
-<h3 id="4-Session-Data-Caching"><a href="#4-Session-Data-Caching" class="headerlink" title="4. Session Data Caching"></a>4. <strong>Session Data Caching</strong></h3><p>In applications with user sessions, caching session data can reduce the load on session storage systems and improve scalability.</p>
-<hr>
-<p><a name="sample-code"></a></p>
-<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><h3 id="Caffeine-Cache-Configuration"><a href="#Caffeine-Cache-Configuration" class="headerlink" title="Caffeine Cache Configuration"></a>Caffeine Cache Configuration</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.CacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.EnableCaching;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.caffeine.CaffeineCacheManager;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CacheManager <span class="title function_">cacheManager</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">CaffeineCacheManager</span> <span class="variable">cacheManager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CaffeineCacheManager</span>(<span class="string">&quot;userCache&quot;</span>, <span class="string">&quot;productCache&quot;</span>);</span><br><span class="line">        cacheManager.setCaffeine(caffeineCacheBuilder());</span><br><span class="line">        <span class="keyword">return</span> cacheManager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Caffeine&lt;Object, Object&gt; <span class="title function_">caffeineCacheBuilder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Caffeine.newBuilder()</span><br><span class="line">                .maximumSize(<span class="number">500</span>)</span><br><span class="line">                .expireAfterAccess(<span class="number">600</span>, TimeUnit.SECONDS)</span><br><span class="line">                .recordStats();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="User-Service-with-Caching"><a href="#User-Service-with-Caching" class="headerlink" title="User Service with Caching"></a>User Service with Caching</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;userCache&quot;, key = &quot;#userId&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserById</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Fetch user from database</span></span><br><span class="line">        <span class="keyword">return</span> fetchUserFromDatabase(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">fetchUserFromDatabase</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// Database query logic</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>(userId, <span class="string">&quot;John Doe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Flow-Diagram"><a href="#Flow-Diagram" class="headerlink" title="Flow Diagram"></a>Flow Diagram</h3><p>Here’s a textual diagram to illustrate the flow:</p>
-<pre><code class="highlight mermaid">graph TD
-    A[Client Request] --&gt; B&#123;Cache Lookup&#125;
-    B --&gt;|Cache Hit| C[Return Cached Data]
-    B --&gt;|Cache Miss| D[Execute Method]
-    D --&gt; E[Fetch from Database]
-    E --&gt; F[Update Cache]
-    F --&gt; C</code></pre>
-
-<h3 id="Explanation-of-the-Flow-Diagram"><a href="#Explanation-of-the-Flow-Diagram" class="headerlink" title="Explanation of the Flow Diagram"></a>Explanation of the Flow Diagram</h3><ol>
-<li><strong>Client Request</strong>: The client makes a request to fetch a user by ID.</li>
-<li><strong>Cache Lookup</strong>: The cache manager looks up the <code>userId</code> in the <code>&quot;userCache&quot;</code>.</li>
-<li><strong>Cache Hit</strong>: If the user is found in the cache, the cached data is returned immediately.</li>
-<li><strong>Cache Miss</strong>: If the user is not found in the cache, the method <code>getUserById(Long userId)</code> is executed.</li>
-<li><strong>Execute Method</strong>: The method fetches the user from the database.</li>
-<li><strong>Fetch from Database</strong>: The user is retrieved from the database.</li>
-<li><strong>Update Cache</strong>: The fetched user is stored in the cache.</li>
-<li><strong>Return Cached Data</strong>: The user data is returned to the client.</li>
-</ol>
-<hr>
-<h2 id="Statistics-Logging-Tracking-and-Mornitoring"><a href="#Statistics-Logging-Tracking-and-Mornitoring" class="headerlink" title="Statistics Logging, Tracking and Mornitoring"></a>Statistics Logging, Tracking and Mornitoring</h2><p>Caffeine’s statistics can be tracked using logging tools and even integrated with GUI tools for better visualization and monitoring. </p>
-<h3 id="1-Logging-Cache-Statistics"><a href="#1-Logging-Cache-Statistics" class="headerlink" title="1. Logging Cache Statistics"></a>1. <strong>Logging Cache Statistics</strong></h3><p>Log cache statistics using a logging framework like SLF4J or Log4j. This allows you to periodically log the cache metrics to a log file or console.</p>
-<h4 id="Example-Logging-Cache-Statistics-with-SLF4J"><a href="#Example-Logging-Cache-Statistics-with-SLF4J" class="headerlink" title="Example: Logging Cache Statistics with SLF4J"></a>Example: Logging Cache Statistics with SLF4J</h4><p>First, add the necessary dependencies in <code>pom.xml</code>:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.32<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-simple<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.32<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Next, configure cache to log statistics periodically:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Cache;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.stats.CacheStats;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheStatisticsLogger</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(CacheStatisticsLogger.class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Cache&lt;String, String&gt; cache = Caffeine.newBuilder()</span><br><span class="line">                .maximumSize(<span class="number">100</span>)</span><br><span class="line">                .recordStats()</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Perform cache operations</span></span><br><span class="line">        cache.put(<span class="string">&quot;key1&quot;</span>, <span class="string">&quot;value1&quot;</span>);</span><br><span class="line">        cache.getIfPresent(<span class="string">&quot;key1&quot;</span>);</span><br><span class="line">        cache.getIfPresent(<span class="string">&quot;key2&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Log cache statistics</span></span><br><span class="line">        logCacheStats(cache);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">logCacheStats</span><span class="params">(Cache&lt;?, ?&gt; cache)</span> &#123;</span><br><span class="line">        <span class="type">CacheStats</span> <span class="variable">stats</span> <span class="operator">=</span> cache.stats();</span><br><span class="line">        logger.info(<span class="string">&quot;Cache Hits: &#123;&#125;&quot;</span>, stats.hitCount());</span><br><span class="line">        logger.info(<span class="string">&quot;Cache Misses: &#123;&#125;&quot;</span>, stats.missCount());</span><br><span class="line">        logger.info(<span class="string">&quot;Cache Evictions: &#123;&#125;&quot;</span>, stats.evictionCount());</span><br><span class="line">        logger.info(<span class="string">&quot;Load Success Count: &#123;&#125;&quot;</span>, stats.loadSuccessCount());</span><br><span class="line">        logger.info(<span class="string">&quot;Load Failure Count: &#123;&#125;&quot;</span>, stats.loadFailureCount());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-Integrating-with-GUI-Tools"><a href="#2-Integrating-with-GUI-Tools" class="headerlink" title="2. Integrating with GUI Tools"></a>2. <strong>Integrating with GUI Tools</strong></h3><p>Integrate Caffeine’s statistics with GUI tools like Grafana or Prometheus for better visualization and monitoring. Here’s an example of how to integrate with Prometheus and Grafana.</p>
-<h4 id="Step-1-Add-Prometheus-and-Grafana-Dependencies"><a href="#Step-1-Add-Prometheus-and-Grafana-Dependencies" class="headerlink" title="Step 1: Add Prometheus and Grafana Dependencies"></a>Step 1: Add Prometheus and Grafana Dependencies</h4><p>Add the necessary dependencies to <code>pom.xml</code>:</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.prometheus<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>simpleclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.15.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.prometheus<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>simpleclient_hotspot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.15.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.prometheus<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>simpleclient_servlet<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.15.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.prometheus<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>simpleclient_spring_boot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.15.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="Step-2-Configure-Prometheus-Metrics-Collector"><a href="#Step-2-Configure-Prometheus-Metrics-Collector" class="headerlink" title="Step 2: Configure Prometheus Metrics Collector"></a>Step 2: Configure Prometheus Metrics Collector</h4><p>Create a configuration class to collect cache statistics using Prometheus:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Cache;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Caffeine;</span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.stats.CacheStats;</span><br><span class="line"><span class="keyword">import</span> io.prometheus.client.CollectorRegistry;</span><br><span class="line"><span class="keyword">import</span> io.prometheus.client.Counter;</span><br><span class="line"><span class="keyword">import</span> io.prometheus.client.Gauge;</span><br><span class="line"><span class="keyword">import</span> io.prometheus.client.exporter.MetricsServlet;</span><br><span class="line"><span class="keyword">import</span> io.prometheus.client.hotspot.DefaultExports;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.web.servlet.ServletRegistrationBean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.annotation.PostConstruct;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PrometheusConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Cache&lt;String, String&gt; cache = Caffeine.newBuilder()</span><br><span class="line">            .maximumSize(<span class="number">100</span>)</span><br><span class="line">            .recordStats()</span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Counter</span> <span class="variable">cacheHits</span> <span class="operator">=</span> Counter.build()</span><br><span class="line">            .name(<span class="string">&quot;cache_hits_total&quot;</span>)</span><br><span class="line">            .help(<span class="string">&quot;Total number of cache hits.&quot;</span>)</span><br><span class="line">            .register();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Counter</span> <span class="variable">cacheMisses</span> <span class="operator">=</span> Counter.build()</span><br><span class="line">            .name(<span class="string">&quot;cache_misses_total&quot;</span>)</span><br><span class="line">            .help(<span class="string">&quot;Total number of cache misses.&quot;</span>)</span><br><span class="line">            .register();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Counter</span> <span class="variable">cacheEvictions</span> <span class="operator">=</span> Counter.build()</span><br><span class="line">            .name(<span class="string">&quot;cache_evictions_total&quot;</span>)</span><br><span class="line">            .help(<span class="string">&quot;Total number of cache evictions.&quot;</span>)</span><br><span class="line">            .register();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Gauge</span> <span class="variable">cacheSize</span> <span class="operator">=</span> Gauge.build()</span><br><span class="line">            .name(<span class="string">&quot;cache_size&quot;</span>)</span><br><span class="line">            .help(<span class="string">&quot;Current size of the cache.&quot;</span>)</span><br><span class="line">            .register();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">        DefaultExports.initialize();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ServletRegistrationBean&lt;MetricsServlet&gt; <span class="title function_">metricsServlet</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">CollectorRegistry</span> <span class="variable">collectorRegistry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CollectorRegistry</span>();</span><br><span class="line">        collectorRegistry.register(cacheHits);</span><br><span class="line">        collectorRegistry.register(cacheMisses);</span><br><span class="line">        collectorRegistry.register(cacheEvictions);</span><br><span class="line">        collectorRegistry.register(cacheSize);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ServletRegistrationBean</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">MetricsServlet</span>(collectorRegistry), <span class="string">&quot;/metrics&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Cache&lt;String, String&gt; <span class="title function_">cache</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cache;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Runnable <span class="title function_">cacheStatsCollector</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">            <span class="type">CacheStats</span> <span class="variable">stats</span> <span class="operator">=</span> cache.stats();</span><br><span class="line">            cacheHits.inc(stats.hitCount());</span><br><span class="line">            cacheMisses.inc(stats.missCount());</span><br><span class="line">            cacheEvictions.inc(stats.evictionCount());</span><br><span class="line">            cacheSize.set(cache.estimatedSize());</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Step-3-Configure-Prometheus-and-Grafana"><a href="#Step-3-Configure-Prometheus-and-Grafana" class="headerlink" title="Step 3: Configure Prometheus and Grafana"></a>Step 3: Configure Prometheus and Grafana</h4><ol>
-<li><p><strong>Prometheus</strong>: Configure Prometheus to scrape the metrics endpoint (<code>/metrics</code>) of the Spring Boot application.</p>
-</li>
-<li><p><strong>Grafana</strong>: Set up Grafana to visualize the metrics collected by Prometheus. Dashboards can be created to display cache hits, misses, evictions, and other relevant metrics.</p>
-</li>
-</ol>
-<h3 id="Example-Prometheus-Configuration"><a href="#Example-Prometheus-Configuration" class="headerlink" title="Example: Prometheus Configuration"></a>Example: Prometheus Configuration</h3><p>Create a <code>prometheus.yml</code> file:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">scrape_interval:</span> <span class="string">15s</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;spring-boot-app&#x27;</span></span><br><span class="line">    <span class="attr">metrics_path:</span> <span class="string">&#x27;/metrics&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:8080&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<h3 id="Example-Grafana-Dashboard"><a href="#Example-Grafana-Dashboard" class="headerlink" title="Example: Grafana Dashboard"></a>Example: Grafana Dashboard</h3><ol>
-<li><strong>Add Prometheus as a Data Source</strong> in Grafana.</li>
-<li><strong>Create a Dashboard</strong> and add panels to visualize the cache metrics:<ul>
-<li><strong>Cache Hits</strong>: <code>cache_hits_total</code></li>
-<li><strong>Cache Misses</strong>: <code>cache_misses_total</code></li>
-<li><strong>Cache Evictions</strong>: <code>cache_evictions_total</code></li>
-<li><strong>Cache Size</strong>: <code>cache_size</code></li>
-</ul>
-</li>
-</ol>
-<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>By logging cache statistics using a logging framework like SLF4J or integrating with monitoring tools like Prometheus and Grafana, we can effectively track and visualize the performance of the Caffeine cache. This allows us to monitor cache hits, misses, evictions, and other metrics, helping us to tune and optimize the cache for better performance.</p>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Caffeine cache is a powerful tool for improving the performance and scalability of Spring Boot applications. By understanding how Caffeine works, including its eviction policies and expiration</p>
 
       
     </div>
