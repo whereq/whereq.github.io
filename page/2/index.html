@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,744 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/12/01/Full-Fine-Tuning-vs-LoRA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/01/Full-Fine-Tuning-vs-LoRA/" class="post-title-link" itemprop="url">Full Fine-Tuning vs LoRA</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-12-01 14:37:04 / Modified: 15:05:29" itemprop="dateCreated datePublished" datetime="2025-12-01T14:37:04-05:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LoRA/" itemprop="url" rel="index"><span itemprop="name">LoRA</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LoRA/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LoRA/AI/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Table-of-Contents"><a href="#Table-of-Contents" class="headerlink" title="Table of Contents"></a>Table of Contents</h2><ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#what-is-fine-tuning">What is Fine-Tuning?</a></li>
+<li><a href="#full-fine-tuning-explained">Full Fine-Tuning Explained</a></li>
+<li><a href="#lora-low-rank-adaptation-explained">LoRA (Low-Rank Adaptation) Explained</a></li>
+<li><a href="#technical-comparison">Technical Comparison</a></li>
+<li><a href="#real-world-use-cases">Real-World Use Cases</a></li>
+<li><a href="#when-to-use-which-method">When to Use Which Method</a></li>
+<li><a href="#hands-on-practice-guide">Hands-On Practice Guide</a></li>
+<li><a href="#advanced-topics">Advanced Topics</a></li>
+<li><a href="#decision-framework">Decision Framework</a></li>
+</ol>
+<hr>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>In the era of Large Language Models (LLMs), <strong>fine-tuning</strong> has become the key to adapting pre-trained models to specific tasks. Two main approaches dominate the landscape:</p>
+<ul>
+<li><strong>Full Fine-Tuning</strong>: Training all model parameters</li>
+<li><strong>LoRA (Low-Rank Adaptation)</strong>: Training only a small subset of parameters</li>
+</ul>
+<hr>
+<h2 id="What-is-Fine-Tuning"><a href="#What-is-Fine-Tuning" class="headerlink" title="What is Fine-Tuning?"></a>What is Fine-Tuning?</h2><h3 id="Simple-Analogy"><a href="#Simple-Analogy" class="headerlink" title="Simple Analogy"></a>Simple Analogy</h3><p>Think of a pre-trained model as a <strong>medical doctor with general knowledge</strong>. Fine-tuning is like:</p>
+<ul>
+<li><strong>Full Fine-Tuning</strong>: Sending the doctor back to medical school to relearn everything with a focus on a specialty</li>
+<li><strong>LoRA</strong>: Giving the doctor a specialized handbook they can reference without forgetting their general knowledge</li>
+</ul>
+<h3 id="Technical-Definition"><a href="#Technical-Definition" class="headerlink" title="Technical Definition"></a>Technical Definition</h3><p>Fine-tuning takes a pre-trained model (trained on massive general data) and continues training it on domain-specific data to improve performance on particular tasks.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Pre-trained Model (General Knowledge)</span><br><span class="line">         ↓</span><br><span class="line">    Fine-Tuning (Specialized Training)</span><br><span class="line">         ↓</span><br><span class="line">Task-Specific Model (Expert Knowledge)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Full-Fine-Tuning-Explained"><a href="#Full-Fine-Tuning-Explained" class="headerlink" title="Full Fine-Tuning Explained"></a>Full Fine-Tuning Explained</h2><h3 id="What-is-Full-Fine-Tuning"><a href="#What-is-Full-Fine-Tuning" class="headerlink" title="What is Full Fine-Tuning?"></a>What is Full Fine-Tuning?</h3><p>Full fine-tuning means <strong>updating ALL parameters</strong> in the model during training.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Model Architecture (Example: 7B parameters)</span><br><span class="line">┌──────────────────────────────────────┐</span><br><span class="line">│  Layer 1: [All parameters trainable] │ ← Updated</span><br><span class="line">│  Layer 2: [All parameters trainable] │ ← Updated</span><br><span class="line">│  Layer 3: [All parameters trainable] │ ← Updated</span><br><span class="line">│  ...                                │ ← Updated</span><br><span class="line">│  Layer N: [All parameters trainable] │ ← Updated</span><br><span class="line">└──────────────────────────────────────┘</span><br><span class="line">Total Trainable: 7,000,000,000 params</span><br></pre></td></tr></table></figure>
+
+<h3 id="How-It-Works"><a href="#How-It-Works" class="headerlink" title="How It Works"></a>How It Works</h3><ol>
+<li><strong>Load pre-trained model</strong> (e.g., GPT-3, LLaMA, ChatGLM)</li>
+<li><strong>Prepare task-specific dataset</strong> (e.g., medical Q&amp;A, legal documents)</li>
+<li><strong>Train ALL parameters</strong> using your dataset</li>
+<li><strong>Save the entire model</strong> (full 7B+ parameters)</li>
+</ol>
+<h3 id="Advantages-✅"><a href="#Advantages-✅" class="headerlink" title="Advantages ✅"></a>Advantages ✅</h3><ol>
+<li><strong>Maximum Performance</strong>: Can achieve the best possible results</li>
+<li><strong>Deep Customization</strong>: All parameters adapt to your specific task</li>
+<li><strong>Flexible</strong>: Works for any task, especially those very different from pre-training</li>
+</ol>
+<h3 id="Disadvantages-❌"><a href="#Disadvantages-❌" class="headerlink" title="Disadvantages ❌"></a>Disadvantages ❌</h3><ol>
+<li><p><strong>Extremely High Cost</strong>:</p>
+<ul>
+<li>GPT-3 175B full fine-tuning requires <strong>&gt;2TB GPU memory</strong></li>
+<li>Needs high-end GPU clusters (multiple A100s)</li>
+<li>Training can cost <strong>$20,000+</strong> per run</li>
+</ul>
+</li>
+<li><p><strong>Long Training Time</strong>: Days or weeks to complete</p>
+</li>
+<li><p><strong>Storage Overhead</strong>: </p>
+<ul>
+<li>Each task needs a complete model copy</li>
+<li>7B model &#x3D; ~14GB storage per task</li>
+<li>10 tasks &#x3D; 140GB storage needed</li>
+</ul>
+</li>
+<li><p><strong>Catastrophic Forgetting</strong>:</p>
+<ul>
+<li>Model may lose general knowledge</li>
+<li>Reduced generalization ability</li>
+</ul>
+</li>
+</ol>
+<h3 id="Real-World-Example"><a href="#Real-World-Example" class="headerlink" title="Real-World Example"></a>Real-World Example</h3><p><strong>Google’s Multilingual Search Optimization</strong></p>
+<ul>
+<li>Used full fine-tuning on BERT-Large for multilingual search</li>
+<li>Result: 25% improvement in low-resource language recall</li>
+<li>Cost: Requires massive GPU infrastructure</li>
+<li>Benefit: State-of-the-art performance across 100+ languages</li>
+</ul>
+<hr>
+<h2 id="LoRA-Low-Rank-Adaptation-Explained"><a href="#LoRA-Low-Rank-Adaptation-Explained" class="headerlink" title="LoRA (Low-Rank Adaptation) Explained"></a>LoRA (Low-Rank Adaptation) Explained</h2><h3 id="What-is-LoRA"><a href="#What-is-LoRA" class="headerlink" title="What is LoRA?"></a>What is LoRA?</h3><p>LoRA is a <strong>parameter-efficient fine-tuning</strong> method proposed by Microsoft in 2021. Instead of updating all parameters, LoRA:</p>
+<ul>
+<li><strong>Freezes</strong> the original model weights</li>
+<li><strong>Adds small “adapter” matrices</strong> to specific layers</li>
+<li><strong>Trains only</strong> these tiny adapters (typically 0.1%-1% of total parameters)</li>
+</ul>
+<h3 id="Visual-Explanation"><a href="#Visual-Explanation" class="headerlink" title="Visual Explanation"></a>Visual Explanation</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Original Transformer Layer</span><br><span class="line">┌────────────────────────────────────────┐</span><br><span class="line">│  Pre-trained Weight Matrix W           │</span><br><span class="line">│  [Frozen - Not Updated]                │</span><br><span class="line">│          +                             │</span><br><span class="line">│  Low-Rank Adapter: A × B               │</span><br><span class="line">│  [Trainable - Only These Updated]      │</span><br><span class="line">└────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">Output = W·x + A·B·x</span><br><span class="line">         ↑      ↑</span><br><span class="line">      Frozen  Trained (tiny!)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Mathematical-Foundation"><a href="#Mathematical-Foundation" class="headerlink" title="Mathematical Foundation"></a>Mathematical Foundation</h3><p>For a pre-trained weight matrix <strong>W</strong> (dimension d × k):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Full Fine-Tuning:</span><br><span class="line">  Updates: ΔW (d × k parameters)</span><br><span class="line">  Total trainable: d × k</span><br><span class="line"></span><br><span class="line">LoRA:</span><br><span class="line">  Decomposes: ΔW ≈ A × B</span><br><span class="line">  Where: A is (d × r), B is (r × k)</span><br><span class="line">  Total trainable: d×r + r×k</span><br><span class="line">  </span><br><span class="line">Example (d=4096, k=4096, r=8):</span><br><span class="line">  Full: 4096 × 4096 = 16,777,216 params</span><br><span class="line">  LoRA: 4096×8 + 8×4096 = 65,536 params</span><br><span class="line">  Reduction: 99.6%! 🎉</span><br></pre></td></tr></table></figure>
+
+<h3 id="How-LoRA-Works-Step-by-Step"><a href="#How-LoRA-Works-Step-by-Step" class="headerlink" title="How LoRA Works (Step-by-Step)"></a>How LoRA Works (Step-by-Step)</h3><ol>
+<li><p><strong>Freeze Original Model</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for param in pretrained_model.parameters():</span><br><span class="line">    param.requires_grad = False  # Don&#x27;t update these</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Inject Low-Rank Matrices</strong></p>
+<ul>
+<li>Insert matrices A and B into attention layers</li>
+<li>Initialize: A with random values, B with zeros</li>
+<li>Typically apply to Query, Value projection matrices</li>
+</ul>
+</li>
+<li><p><strong>Train Only Adapters</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for param in lora_adapters.parameters():</span><br><span class="line">    param.requires_grad = True  # Only update these</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Inference</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">output = original_weight @ x + (A @ B) @ x</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Advantages-✅-1"><a href="#Advantages-✅-1" class="headerlink" title="Advantages ✅"></a>Advantages ✅</h3><ol>
+<li><p><strong>Extreme Parameter Efficiency</strong>:</p>
+<ul>
+<li>Reduces trainable parameters by <strong>90-99%</strong></li>
+<li>7B model: Train only 7-70M parameters instead of 7B</li>
+</ul>
+</li>
+<li><p><strong>Low Cost, Fast Deployment</strong>:</p>
+<ul>
+<li>Consumer GPU (RTX 4090, RTX 3090) can fine-tune large models</li>
+<li>Training time: Hours instead of days</li>
+<li>Cost: <strong>$50-200</strong> instead of $20,000+</li>
+</ul>
+</li>
+<li><p><strong>Multi-Task Flexibility</strong>:</p>
+<ul>
+<li>Save only adapter weights (~10-100MB per task)</li>
+<li>Dynamically load different adapters for different tasks</li>
+<li>One base model + multiple adapters &#x3D; multiple specialized models</li>
+</ul>
+</li>
+<li><p><strong>Less Catastrophic Forgetting</strong>:</p>
+<ul>
+<li>Original weights unchanged</li>
+<li>Retains general knowledge better</li>
+</ul>
+</li>
+</ol>
+<h3 id="Disadvantages-❌-1"><a href="#Disadvantages-❌-1" class="headerlink" title="Disadvantages ❌"></a>Disadvantages ❌</h3><ol>
+<li><p><strong>Rank Parameter Tuning Required</strong>:</p>
+<ul>
+<li>Too small <code>r</code> (rank) → underfitting</li>
+<li>Too large <code>r</code> → loses efficiency</li>
+<li>Needs experimentation</li>
+</ul>
+</li>
+<li><p><strong>“Intruder Dimensions” Problem</strong> (Recent Discovery):</p>
+<ul>
+<li>LoRA introduces high-ranking singular vectors</li>
+<li>Reduces out-of-distribution (OOD) generalization by 5-8%</li>
+<li>Less robust in continual learning scenarios</li>
+</ul>
+</li>
+<li><p><strong>Slightly Lower Peak Performance</strong>:</p>
+<ul>
+<li>May not reach absolute best performance</li>
+<li>Gap is usually small (&lt;1-3%) for most tasks</li>
+</ul>
+</li>
+</ol>
+<h3 id="Real-World-Examples"><a href="#Real-World-Examples" class="headerlink" title="Real-World Examples"></a>Real-World Examples</h3><p><strong>1. Medical Document Summarization</strong></p>
+<ul>
+<li>Hospital used LoRA to fine-tune GPT-3 for medical report generation</li>
+<li>Result: High-quality summaries, doctor efficiency increased 40%</li>
+<li>Cost: Single RTX A6000 GPU, trained in 6 hours</li>
+<li>Storage: Base model (14GB) + Adapter (50MB)</li>
+</ul>
+<p><strong>2. E-commerce Customer Service</strong></p>
+<ul>
+<li>Online retailer fine-tuned ChatGLM for customer support</li>
+<li>Result: Response speed improved 3x, satisfaction up 25%</li>
+<li>Deployment: 5 different product category adapters</li>
+<li>Total storage: One model + 5 adapters &#x3D; 14.3GB (vs 70GB for 5 full models)</li>
+</ul>
+<p><strong>3. Financial News Generation</strong></p>
+<ul>
+<li>News agency fine-tuned GPT-3 for real-time financial reporting</li>
+<li>Result: News generation latency reduced to seconds, 40% cost reduction</li>
+<li>Adaptation time: 4 hours on 2× RTX 4090</li>
+</ul>
+<hr>
+<h2 id="Technical-Comparison"><a href="#Technical-Comparison" class="headerlink" title="Technical Comparison"></a>Technical Comparison</h2><h3 id="Architecture-Comparison"><a href="#Architecture-Comparison" class="headerlink" title="Architecture Comparison"></a>Architecture Comparison</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FULL FINE-TUNING</span><br><span class="line">════════════════════════════════════════</span><br><span class="line">Input → [Layer 1 ✏️] → [Layer 2 ✏️] → [Layer 3 ✏️] → Output</span><br><span class="line">        All Updated   All Updated    All Updated</span><br><span class="line"></span><br><span class="line">LoRA</span><br><span class="line">════════════════════════════════════════</span><br><span class="line">Input → [Layer 1 🔒] → [Layer 2 🔒] → [Layer 3 🔒] → Output</span><br><span class="line">        + Adapter✏️   + Adapter✏️    + Adapter✏️</span><br><span class="line">        </span><br><span class="line">🔒 = Frozen (unchanged)</span><br><span class="line">✏️ = Trainable (updated during training)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Detailed-Comparison-Table"><a href="#Detailed-Comparison-Table" class="headerlink" title="Detailed Comparison Table"></a>Detailed Comparison Table</h3><table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Full Fine-Tuning</th>
+<th>LoRA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Trainable Parameters</strong></td>
+<td>100% (e.g., 7B params)</td>
+<td>0.1-1% (e.g., 7-70M params)</td>
+</tr>
+<tr>
+<td><strong>GPU Memory</strong></td>
+<td>Very High (&gt;80GB for 7B)</td>
+<td>Low (24-48GB for 7B)</td>
+</tr>
+<tr>
+<td><strong>Training Time</strong></td>
+<td>Days to weeks</td>
+<td>Hours to 1-2 days</td>
+</tr>
+<tr>
+<td><strong>Cost per Training</strong></td>
+<td>$10,000 - $100,000+</td>
+<td>$50 - $500</td>
+</tr>
+<tr>
+<td><strong>Storage per Task</strong></td>
+<td>Full model (~14GB for 7B)</td>
+<td>Adapter only (~10-100MB)</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Highest (100% baseline)</td>
+<td>Very High (95-99% of full)</td>
+</tr>
+<tr>
+<td><strong>Multi-Task Deployment</strong></td>
+<td>Difficult (one model per task)</td>
+<td>Easy (one model + N adapters)</td>
+</tr>
+<tr>
+<td><strong>Catastrophic Forgetting</strong></td>
+<td>High risk</td>
+<td>Low risk</td>
+</tr>
+<tr>
+<td><strong>Hardware Requirements</strong></td>
+<td>High-end GPU cluster (A100×8)</td>
+<td>Consumer GPU (RTX 3090&#x2F;4090)</td>
+</tr>
+<tr>
+<td><strong>Generalization (OOD)</strong></td>
+<td>Best</td>
+<td>Good (5-8% lower)</td>
+</tr>
+<tr>
+<td><strong>Best For</strong></td>
+<td>Maximum performance, unlimited budget</td>
+<td>Fast iteration, limited resources</td>
+</tr>
+</tbody></table>
+<h3 id="Memory-Comparison-7B-Model-Example"><a href="#Memory-Comparison-7B-Model-Example" class="headerlink" title="Memory Comparison (7B Model Example)"></a>Memory Comparison (7B Model Example)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Full Fine-Tuning (7B parameters):</span><br><span class="line">┌─────────────────────────────────┐</span><br><span class="line">│ Model: 14GB                     │</span><br><span class="line">│ Optimizer States: 42GB          │</span><br><span class="line">│ Gradients: 14GB                 │</span><br><span class="line">│ Activations: 20GB               │</span><br><span class="line">│ ─────────────────────────────── │</span><br><span class="line">│ Total: ~90GB                    │</span><br><span class="line">└─────────────────────────────────┘</span><br><span class="line">Required: 4× A100 (40GB each)</span><br><span class="line"></span><br><span class="line">LoRA (7B base + 10M adapter):</span><br><span class="line">┌─────────────────────────────────┐</span><br><span class="line">│ Base Model: 14GB (frozen)       │</span><br><span class="line">│ Adapter: 20MB                   │</span><br><span class="line">│ Optimizer States: 60MB          │</span><br><span class="line">│ Gradients: 20MB                 │</span><br><span class="line">│ Activations: 12GB               │</span><br><span class="line">│ ─────────────────────────────── │</span><br><span class="line">│ Total: ~27GB                    │</span><br><span class="line">└─────────────────────────────────┘</span><br><span class="line">Required: 1× RTX 3090/4090 (24GB)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Real-World-Use-Cases"><a href="#Real-World-Use-Cases" class="headerlink" title="Real-World Use Cases"></a>Real-World Use Cases</h2><h3 id="Use-Case-1-Healthcare-Clinical-Note-Generation"><a href="#Use-Case-1-Healthcare-Clinical-Note-Generation" class="headerlink" title="Use Case 1: Healthcare - Clinical Note Generation"></a>Use Case 1: Healthcare - Clinical Note Generation</h3><p><strong>Scenario</strong>: Hospital needs AI to generate structured clinical notes from doctor-patient conversations.</p>
+<p><strong>Challenge</strong>:</p>
+<ul>
+<li>Medical terminology requires domain adaptation</li>
+<li>HIPAA compliance &#x3D; can’t use cloud APIs</li>
+<li>Limited budget and GPU resources</li>
+</ul>
+<p><strong>Solution: LoRA Fine-Tuning</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Approach</span></span><br><span class="line">Base Model: LLaMA-<span class="number">2</span>-7B</span><br><span class="line">Dataset: <span class="number">10</span>,<span class="number">000</span> anonymized clinical conversations</span><br><span class="line">Training: LoRA (r=<span class="number">16</span>, α=<span class="number">32</span>)</span><br><span class="line">Hardware: <span class="number">1</span>× RTX A6000 (48GB)</span><br><span class="line">Time: <span class="number">8</span> hours</span><br><span class="line">Cost: ~$<span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Results</span></span><br><span class="line">- Accuracy: <span class="number">94</span>% (vs <span class="number">96</span>% <span class="keyword">with</span> full fine-tuning)</span><br><span class="line">- Deployment: One base model + adapter (<span class="number">14.05</span>GB total)</span><br><span class="line">- Multi-specialty: <span class="number">5</span> adapters <span class="keyword">for</span> different departments (<span class="number">14.3</span>GB total)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Why LoRA Won</strong>:</p>
+<ul>
+<li>✅ Budget-friendly</li>
+<li>✅ Fast iteration for different specialties</li>
+<li>✅ Meets accuracy requirements</li>
+<li>✅ Easy deployment on-premise</li>
+</ul>
+<hr>
+<h3 id="Use-Case-2-Legal-Contract-Analysis"><a href="#Use-Case-2-Legal-Contract-Analysis" class="headerlink" title="Use Case 2: Legal - Contract Analysis"></a>Use Case 2: Legal - Contract Analysis</h3><p><strong>Scenario</strong>: Law firm needs to analyze merger &amp; acquisition contracts for risk factors.</p>
+<p><strong>Challenge</strong>:</p>
+<ul>
+<li>Complex legal language</li>
+<li>High accuracy requirement (mistakes &#x3D; legal liability)</li>
+<li>Contracts vary significantly by jurisdiction</li>
+</ul>
+<p><strong>Solution: Full Fine-Tuning</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Approach</span></span><br><span class="line">Base Model: GPT-<span class="number">3.5</span>-turbo-instruct</span><br><span class="line">Dataset: <span class="number">50</span>,<span class="number">000</span> labeled M&amp;A contracts</span><br><span class="line">Training: Full fine-tuning <span class="built_in">all</span> parameters</span><br><span class="line">Hardware: <span class="number">8</span>× A100 GPUs (cloud)</span><br><span class="line">Time: <span class="number">4</span> days</span><br><span class="line">Cost: ~$<span class="number">25</span>,<span class="number">000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Results</span></span><br><span class="line">- Accuracy: <span class="number">98.5</span>% (vs <span class="number">95</span>% <span class="keyword">with</span> LoRA r=<span class="number">64</span>)</span><br><span class="line">- Risk detection: <span class="number">99.2</span>% recall (critical <span class="keyword">for</span> legal)</span><br><span class="line">- <span class="literal">False</span> positive rate: <span class="number">1.8</span>% (vs <span class="number">4.2</span>% <span class="keyword">with</span> LoRA)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Why Full Fine-Tuning Won</strong>:</p>
+<ul>
+<li>✅ Maximum accuracy needed (legal liability)</li>
+<li>✅ Budget available (law firm can afford)</li>
+<li>✅ Single specialized task</li>
+<li>✅ 3% accuracy improvement &#x3D; millions in risk mitigation</li>
+</ul>
+<hr>
+<h3 id="Use-Case-3-E-Commerce-Multi-Category-Product-Descriptions"><a href="#Use-Case-3-E-Commerce-Multi-Category-Product-Descriptions" class="headerlink" title="Use Case 3: E-Commerce - Multi-Category Product Descriptions"></a>Use Case 3: E-Commerce - Multi-Category Product Descriptions</h3><p><strong>Scenario</strong>: Online marketplace needs to generate product descriptions for 10 different categories (electronics, fashion, home, etc.).</p>
+<p><strong>Challenge</strong>:</p>
+<ul>
+<li>10 different writing styles needed</li>
+<li>Rapid product launches (new categories added quarterly)</li>
+<li>Budget-conscious startup</li>
+</ul>
+<p><strong>Solution: LoRA with Multi-Adapter Architecture</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Approach</span></span><br><span class="line">Base Model: Qwen-7B</span><br><span class="line">Training: <span class="number">10</span> separate LoRA adapters (r=<span class="number">8</span>)</span><br><span class="line">  - Electronics adapter</span><br><span class="line">  - Fashion adapter</span><br><span class="line">  - Home &amp; Garden adapter</span><br><span class="line">  - Sports adapter</span><br><span class="line">  - ... (<span class="number">6</span> more)</span><br><span class="line">Hardware: <span class="number">1</span>× RTX <span class="number">4090</span></span><br><span class="line">Time per adapter: <span class="number">3</span> hours</span><br><span class="line">Total cost: ~$<span class="number">300</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line">Storage:</span><br><span class="line">  Base model: 14GB</span><br><span class="line">  <span class="number">10</span> adapters: <span class="number">10</span> × 40MB = 400MB</span><br><span class="line">  Total: <span class="number">14.4</span>GB (vs 140GB <span class="keyword">for</span> <span class="number">10</span> full models)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Runtime</span></span><br><span class="line">Load base model once, swap adapters dynamically:</span><br><span class="line">electronics_model = base + electronics_adapter</span><br><span class="line">fashion_model = base + fashion_adapter</span><br></pre></td></tr></table></figure>
+
+<p><strong>Why LoRA Won</strong>:</p>
+<ul>
+<li>✅ 10× storage savings</li>
+<li>✅ Can train new category adapter in hours</li>
+<li>✅ Single GPU deployment</li>
+<li>✅ Easy A&#x2F;B testing different adapters</li>
+</ul>
+<hr>
+<h3 id="Use-Case-4-Multilingual-Customer-Support"><a href="#Use-Case-4-Multilingual-Customer-Support" class="headerlink" title="Use Case 4: Multilingual Customer Support"></a>Use Case 4: Multilingual Customer Support</h3><p><strong>Scenario</strong>: Global SaaS company needs chatbots for 20 languages.</p>
+<p><strong>Challenge</strong>:</p>
+<ul>
+<li>20 language-specific models needed</li>
+<li>Need to update all models when features change</li>
+<li>Some languages low-resource (limited training data)</li>
+</ul>
+<p><strong>LoRA Approach</strong> (Recommended):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Base Model: Multilingual LLaMA-2-13B</span><br><span class="line">Training: 20 language adapters (r=16)</span><br><span class="line"></span><br><span class="line">Storage: 26GB base + (20 × 80MB) = 27.6GB</span><br><span class="line">vs Full Fine-Tuning: 20 × 26GB = 520GB</span><br><span class="line"></span><br><span class="line">Benefit: Update base model → all languages benefit</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="When-to-Use-Which-Method"><a href="#When-to-Use-Which-Method" class="headerlink" title="When to Use Which Method"></a>When to Use Which Method</h2><h3 id="Choose-Full-Fine-Tuning-When"><a href="#Choose-Full-Fine-Tuning-When" class="headerlink" title="Choose Full Fine-Tuning When:"></a>Choose Full Fine-Tuning When:</h3><ol>
+<li><p><strong>Maximum Performance is Critical</strong> ✅</p>
+<ul>
+<li>Legal, medical, financial applications where errors are costly</li>
+<li>Need that extra 2-5% accuracy</li>
+</ul>
+</li>
+<li><p><strong>Large Dataset Available</strong> ✅</p>
+<ul>
+<li>Have &gt;100,000 high-quality labeled examples</li>
+<li>Data justifies training all parameters</li>
+</ul>
+</li>
+<li><p><strong>Unlimited Budget &amp; Resources</strong> ✅</p>
+<ul>
+<li>Access to GPU clusters (8+ A100s)</li>
+<li>Can afford $10,000-100,000 training costs</li>
+</ul>
+</li>
+<li><p><strong>Single Specialized Task</strong> ✅</p>
+<ul>
+<li>Only need one model for one task</li>
+<li>No plan for multi-task deployment</li>
+</ul>
+</li>
+<li><p><strong>Task Very Different from Pre-training</strong> ✅</p>
+<ul>
+<li>Specialized domains (medical, legal, scientific)</li>
+<li>Low-resource languages</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example Decision</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Use Full Fine-Tuning if:</span><br><span class="line">  (Accuracy_requirement &gt; 97%) AND</span><br><span class="line">  (Budget &gt; $10,000) AND</span><br><span class="line">  (Single_task OR Task_very_different)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Choose-LoRA-When"><a href="#Choose-LoRA-When" class="headerlink" title="Choose LoRA When:"></a>Choose LoRA When:</h3><ol>
+<li><p><strong>Limited Resources</strong> ✅</p>
+<ul>
+<li>Budget &lt; $5,000</li>
+<li>Only have consumer GPUs (RTX 3090, 4090)</li>
+</ul>
+</li>
+<li><p><strong>Need Fast Iteration</strong> ✅</p>
+<ul>
+<li>Startup environment</li>
+<li>Frequent model updates</li>
+<li>Rapid experimentation</li>
+</ul>
+</li>
+<li><p><strong>Multi-Task Deployment</strong> ✅</p>
+<ul>
+<li>Need models for 5+ different tasks&#x2F;domains</li>
+<li>Want to switch between tasks dynamically</li>
+</ul>
+</li>
+<li><p><strong>Storage Constraints</strong> ✅</p>
+<ul>
+<li>Limited disk space</li>
+<li>Edge device deployment</li>
+</ul>
+</li>
+<li><p><strong>Continuous Learning</strong> ✅</p>
+<ul>
+<li>Need to add new capabilities over time</li>
+<li>Can’t afford catastrophic forgetting</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example Decision</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Use LoRA if:</span><br><span class="line">  (Budget &lt; $5,000) OR</span><br><span class="line">  (GPU_memory &lt; 80GB) OR</span><br><span class="line">  (Num_tasks &gt; 3) OR</span><br><span class="line">  (Need_fast_iteration)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Hands-On-Practice-Guide"><a href="#Hands-On-Practice-Guide" class="headerlink" title="Hands-On Practice Guide"></a>Hands-On Practice Guide</h2><h3 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install required libraries</span></span><br><span class="line">pip install torch transformers peft datasets accelerate bitsandbytes</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check GPU</span></span><br><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
+
+<h3 id="Practice-1-Full-Fine-Tuning-Small-Model"><a href="#Practice-1-Full-Fine-Tuning-Small-Model" class="headerlink" title="Practice 1: Full Fine-Tuning (Small Model)"></a>Practice 1: Full Fine-Tuning (Small Model)</h3><p><strong>Task</strong>: Fine-tune GPT-2 (small) for custom text generation</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments</span><br><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> load_dataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. Load pre-trained model</span></span><br><span class="line">model = GPT2LMHeadModel.from_pretrained(<span class="string">&quot;gpt2&quot;</span>)</span><br><span class="line">tokenizer = GPT2Tokenizer.from_pretrained(<span class="string">&quot;gpt2&quot;</span>)</span><br><span class="line">tokenizer.pad_token = tokenizer.eos_token</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. Prepare dataset</span></span><br><span class="line">dataset = load_dataset(<span class="string">&quot;wikitext&quot;</span>, <span class="string">&quot;wikitext-2-raw-v1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tokenize_function</span>(<span class="params">examples</span>):</span><br><span class="line">    <span class="keyword">return</span> tokenizer(examples[<span class="string">&quot;text&quot;</span>], truncation=<span class="literal">True</span>, </span><br><span class="line">                     max_length=<span class="number">512</span>, padding=<span class="string">&quot;max_length&quot;</span>)</span><br><span class="line"></span><br><span class="line">tokenized_datasets = dataset.<span class="built_in">map</span>(tokenize_function, batched=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. Training configuration (FULL FINE-TUNING)</span></span><br><span class="line">training_args = TrainingArguments(</span><br><span class="line">    output_dir=<span class="string">&quot;./gpt2-finetuned-full&quot;</span>,</span><br><span class="line">    num_train_epochs=<span class="number">3</span>,</span><br><span class="line">    per_device_train_batch_size=<span class="number">4</span>,</span><br><span class="line">    save_steps=<span class="number">500</span>,</span><br><span class="line">    save_total_limit=<span class="number">2</span>,</span><br><span class="line">    learning_rate=<span class="number">2e-5</span>,</span><br><span class="line">    <span class="comment"># All parameters trainable (default)</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. Train</span></span><br><span class="line">trainer = Trainer(</span><br><span class="line">    model=model,</span><br><span class="line">    args=training_args,</span><br><span class="line">    train_dataset=tokenized_datasets[<span class="string">&quot;train&quot;</span>],</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. Save model</span></span><br><span class="line">model.save_pretrained(<span class="string">&quot;./gpt2-finetuned-full&quot;</span>)</span><br><span class="line">tokenizer.save_pretrained(<span class="string">&quot;./gpt2-finetuned-full&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Model size: <span class="subst">&#123;<span class="built_in">sum</span>(p.numel() <span class="keyword">for</span> p <span class="keyword">in</span> model.parameters())&#125;</span> parameters&quot;</span>)</span><br><span class="line"><span class="comment"># Output: ~124M parameters all trained</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Resource Requirements</strong>:</p>
+<ul>
+<li>GPU: GTX 1080 Ti or better (11GB+)</li>
+<li>Time: ~2 hours</li>
+<li>Storage: ~500MB</li>
+</ul>
+<hr>
+<h3 id="Practice-2-LoRA-Fine-Tuning-Large-Model"><a href="#Practice-2-LoRA-Fine-Tuning-Large-Model" class="headerlink" title="Practice 2: LoRA Fine-Tuning (Large Model)"></a>Practice 2: LoRA Fine-Tuning (Large Model)</h3><p><strong>Task</strong>: Fine-tune LLaMA-2-7B for instruction following using LoRA</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer, TrainingArguments</span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model, prepare_model_for_kbit_training</span><br><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> load_dataset</span><br><span class="line"><span class="keyword">from</span> trl <span class="keyword">import</span> SFTTrainer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. Load base model (with 4-bit quantization for efficiency)</span></span><br><span class="line">model_name = <span class="string">&quot;meta-llama/Llama-2-7b-hf&quot;</span></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    model_name,</span><br><span class="line">    load_in_4bit=<span class="literal">True</span>,  <span class="comment"># Quantization to reduce memory</span></span><br><span class="line">    device_map=<span class="string">&quot;auto&quot;</span></span><br><span class="line">)</span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(model_name)</span><br><span class="line">tokenizer.pad_token = tokenizer.eos_token</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. Configure LoRA</span></span><br><span class="line">lora_config = LoraConfig(</span><br><span class="line">    r=<span class="number">16</span>,                       <span class="comment"># Rank (try 8, 16, 32, 64)</span></span><br><span class="line">    lora_alpha=<span class="number">32</span>,              <span class="comment"># Scaling factor</span></span><br><span class="line">    target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>],  <span class="comment"># Apply to attention</span></span><br><span class="line">    lora_dropout=<span class="number">0.05</span>,</span><br><span class="line">    bias=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">    task_type=<span class="string">&quot;CAUSAL_LM&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. Prepare model for LoRA training</span></span><br><span class="line">model = prepare_model_for_kbit_training(model)</span><br><span class="line">model = get_peft_model(model, lora_config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Print trainable parameters</span></span><br><span class="line">model.print_trainable_parameters()</span><br><span class="line"><span class="comment"># Output: trainable params: 4,194,304 || all params: 6,738,415,616 || trainable%: 0.06%</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. Load instruction dataset</span></span><br><span class="line">dataset = load_dataset(<span class="string">&quot;timdettmers/openassistant-guanaco&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. Training configuration</span></span><br><span class="line">training_args = TrainingArguments(</span><br><span class="line">    output_dir=<span class="string">&quot;./llama2-lora&quot;</span>,</span><br><span class="line">    num_train_epochs=<span class="number">3</span>,</span><br><span class="line">    per_device_train_batch_size=<span class="number">4</span>,</span><br><span class="line">    gradient_accumulation_steps=<span class="number">4</span>,</span><br><span class="line">    learning_rate=<span class="number">2e-4</span>,</span><br><span class="line">    logging_steps=<span class="number">10</span>,</span><br><span class="line">    save_strategy=<span class="string">&quot;epoch&quot;</span>,</span><br><span class="line">    fp16=<span class="literal">True</span>,  <span class="comment"># Mixed precision</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. Train with SFTTrainer (Supervised Fine-Tuning)</span></span><br><span class="line">trainer = SFTTrainer(</span><br><span class="line">    model=model,</span><br><span class="line">    train_dataset=dataset[<span class="string">&quot;train&quot;</span>],</span><br><span class="line">    args=training_args,</span><br><span class="line">    peft_config=lora_config,</span><br><span class="line">    dataset_text_field=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    max_seq_length=<span class="number">512</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. Save only LoRA adapter (tiny!)</span></span><br><span class="line">model.save_pretrained(<span class="string">&quot;./llama2-lora-adapter&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. Load and use later</span></span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PeftModel</span><br><span class="line"></span><br><span class="line">base_model = AutoModelForCausalLM.from_pretrained(model_name)</span><br><span class="line">lora_model = PeftModel.from_pretrained(base_model, <span class="string">&quot;./llama2-lora-adapter&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate</span></span><br><span class="line">inputs = tokenizer(<span class="string">&quot;Explain quantum computing:&quot;</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line">outputs = lora_model.generate(**inputs, max_length=<span class="number">100</span>)</span><br><span class="line"><span class="built_in">print</span>(tokenizer.decode(outputs[<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+
+<p><strong>Resource Requirements</strong>:</p>
+<ul>
+<li>GPU: RTX 3090 (24GB) or better</li>
+<li>Time: 4-8 hours</li>
+<li>Storage: Base model (14GB) + Adapter (50MB)</li>
+</ul>
+<p><strong>Key Observations</strong>:</p>
+<ul>
+<li>Only 0.06% of parameters trained! (4M out of 6.7B)</li>
+<li>Memory usage: ~18GB (vs ~90GB for full fine-tuning)</li>
+<li>Can train multiple adapters and switch between them</li>
+</ul>
+<hr>
+<h3 id="Practice-3-Comparing-LoRA-Ranks"><a href="#Practice-3-Comparing-LoRA-Ranks" class="headerlink" title="Practice 3: Comparing LoRA Ranks"></a>Practice 3: Comparing LoRA Ranks</h3><p><strong>Experiment</strong>: Train same model with different ranks and compare</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Train adapters with different ranks</span></span><br><span class="line">ranks = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">64</span>]</span><br><span class="line">results = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> r <span class="keyword">in</span> ranks:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n<span class="subst">&#123;<span class="string">&#x27;=&#x27;</span>*<span class="number">50</span>&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Training with rank r=<span class="subst">&#123;r&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;<span class="string">&#x27;=&#x27;</span>*<span class="number">50</span>&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    lora_config = LoraConfig(</span><br><span class="line">        r=r,</span><br><span class="line">        lora_alpha=r*<span class="number">2</span>,  <span class="comment"># Common practice: alpha = 2*r</span></span><br><span class="line">        target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>],</span><br><span class="line">        lora_dropout=<span class="number">0.05</span>,</span><br><span class="line">        bias=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">        task_type=<span class="string">&quot;CAUSAL_LM&quot;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    model = prepare_model_for_kbit_training(base_model)</span><br><span class="line">    model = get_peft_model(model, lora_config)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Train and evaluate</span></span><br><span class="line">    trainer = SFTTrainer(...)</span><br><span class="line">    trainer.train()</span><br><span class="line">    metrics = trainer.evaluate()</span><br><span class="line">    </span><br><span class="line">    results[r] = &#123;</span><br><span class="line">        <span class="string">&#x27;trainable_params&#x27;</span>: <span class="built_in">sum</span>(p.numel() <span class="keyword">for</span> p <span class="keyword">in</span> model.parameters() <span class="keyword">if</span> p.requires_grad),</span><br><span class="line">        <span class="string">&#x27;loss&#x27;</span>: metrics[<span class="string">&#x27;eval_loss&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;adapter_size_mb&#x27;</span>: get_adapter_size(model)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compare results</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.DataFrame(results).T</span><br><span class="line"><span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Expected output:</span></span><br><span class="line"><span class="comment">#     trainable_params  loss  adapter_size_mb</span></span><br><span class="line"><span class="comment"># 4      2,097,152    2.45       8</span></span><br><span class="line"><span class="comment"># 8      4,194,304    2.31      16</span></span><br><span class="line"><span class="comment"># 16     8,388,608    2.24      32</span></span><br><span class="line"><span class="comment"># 32    16,777,216    2.21      64</span></span><br><span class="line"><span class="comment"># 64    33,554,432    2.19     128</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Insights</strong>:</p>
+<ul>
+<li>Rank 4-8: Fast, tiny, good for simple tasks</li>
+<li>Rank 16-32: Sweet spot for most tasks</li>
+<li>Rank 64+: Approaching full fine-tuning performance</li>
+</ul>
+<hr>
+<h2 id="Advanced-Topics"><a href="#Advanced-Topics" class="headerlink" title="Advanced Topics"></a>Advanced Topics</h2><h3 id="1-QLoRA-Quantized-LoRA"><a href="#1-QLoRA-Quantized-LoRA" class="headerlink" title="1. QLoRA (Quantized LoRA)"></a>1. QLoRA (Quantized LoRA)</h3><p><strong>What</strong>: Combines LoRA with 4-bit quantization for even lower memory usage.</p>
+<p><strong>Breakthrough</strong>: Train 65B parameter models on a single 48GB GPU!</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BitsAndBytesConfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># QLoRA configuration</span></span><br><span class="line">bnb_config = BitsAndBytesConfig(</span><br><span class="line">    load_in_4bit=<span class="literal">True</span>,</span><br><span class="line">    bnb_4bit_use_double_quant=<span class="literal">True</span>,</span><br><span class="line">    bnb_4bit_quant_type=<span class="string">&quot;nf4&quot;</span>,</span><br><span class="line">    bnb_4bit_compute_dtype=torch.bfloat16</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    <span class="string">&quot;meta-llama/Llama-2-70b-hf&quot;</span>,</span><br><span class="line">    quantization_config=bnb_config,</span><br><span class="line">    device_map=<span class="string">&quot;auto&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Now train with LoRA as before</span></span><br><span class="line"><span class="comment"># Memory usage: ~40GB for 70B model! 🎉</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Use Case</strong>: Fine-tune massive models (65B, 70B+) on consumer hardware.</p>
+<hr>
+<h3 id="2-AdaLoRA-Adaptive-LoRA"><a href="#2-AdaLoRA-Adaptive-LoRA" class="headerlink" title="2. AdaLoRA (Adaptive LoRA)"></a>2. AdaLoRA (Adaptive LoRA)</h3><p><strong>What</strong>: Dynamically adjusts rank during training based on importance.</p>
+<p><strong>Benefit</strong>: Automatically finds optimal rank per layer.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> AdaLoraConfig, get_peft_model</span><br><span class="line"></span><br><span class="line">adalora_config = AdaLoraConfig(</span><br><span class="line">    init_r=<span class="number">12</span>,              <span class="comment"># Initial rank</span></span><br><span class="line">    target_r=<span class="number">8</span>,             <span class="comment"># Target rank</span></span><br><span class="line">    tinit=<span class="number">200</span>,              <span class="comment"># Warmup steps</span></span><br><span class="line">    tfinal=<span class="number">1000</span>,            <span class="comment"># Total steps</span></span><br><span class="line">    delta_t=<span class="number">10</span>,             <span class="comment"># Rank adjustment frequency</span></span><br><span class="line">    beta1=<span class="number">0.85</span>,</span><br><span class="line">    beta2=<span class="number">0.85</span>,</span><br><span class="line">    orth_reg_weight=<span class="number">0.5</span>,</span><br><span class="line">    lora_alpha=<span class="number">32</span>,</span><br><span class="line">    lora_dropout=<span class="number">0.1</span>,</span><br><span class="line">    target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>],</span><br><span class="line">    task_type=<span class="string">&quot;CAUSAL_LM&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, adalora_config)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Result</strong>: Better performance than fixed-rank LoRA with similar parameter count.</p>
+<hr>
+<h3 id="3-The-“Intruder-Dimensions”-Problem"><a href="#3-The-“Intruder-Dimensions”-Problem" class="headerlink" title="3. The “Intruder Dimensions” Problem"></a>3. The “Intruder Dimensions” Problem</h3><p><strong>Recent Discovery (MIT Research, 2024)</strong>:</p>
+<p>LoRA introduces high-ranking singular vectors not present in full fine-tuning. These “intruder dimensions”:</p>
+<ul>
+<li>Reduce out-of-distribution generalization by 5-8%</li>
+<li>Cause more forgetting in continual learning</li>
+<li>Appear more with lower ranks (r ≤ 16)</li>
+</ul>
+<p><strong>Visualization</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Full Fine-Tuning Weight Matrix SVD:</span><br><span class="line">Singular Values: [100, 95, 90, 85, 80, ...]  ← Smooth decay</span><br><span class="line">Singular Vectors: All similar to pre-trained</span><br><span class="line"></span><br><span class="line">LoRA Weight Matrix SVD:</span><br><span class="line">Singular Values: [100, 95, 90, 85, 80, ..., 15, 14, 13]  ← Similar</span><br><span class="line">                                               ↓</span><br><span class="line">                                    [50, 45, 40]  ← INTRUDER!</span><br><span class="line">Singular Vectors: Some very different from pre-trained</span><br></pre></td></tr></table></figure>
+
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>Use higher rank (r&#x3D;64+) with rank stabilization</li>
+<li>Use “rank-stabilized LoRA” techniques</li>
+<li>For critical applications, prefer full fine-tuning</li>
+</ol>
+<hr>
+<h3 id="4-Multi-Adapter-Architecture"><a href="#4-Multi-Adapter-Architecture" class="headerlink" title="4. Multi-Adapter Architecture"></a>4. Multi-Adapter Architecture</h3><p><strong>Pattern</strong>: One base model + dynamic adapter loading</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Training phase: Train multiple adapters</span></span><br><span class="line">adapters = &#123;</span><br><span class="line">    <span class="string">&#x27;medical&#x27;</span>: train_lora(base_model, medical_data, r=<span class="number">16</span>),</span><br><span class="line">    <span class="string">&#x27;legal&#x27;</span>: train_lora(base_model, legal_data, r=<span class="number">16</span>),</span><br><span class="line">    <span class="string">&#x27;finance&#x27;</span>: train_lora(base_model, finance_data, r=<span class="number">16</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Save adapters</span></span><br><span class="line"><span class="keyword">for</span> name, adapter <span class="keyword">in</span> adapters.items():</span><br><span class="line">    adapter.save_pretrained(<span class="string">f&quot;./adapters/<span class="subst">&#123;name&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Inference phase: Dynamically load adapters</span></span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PeftModel</span><br><span class="line"></span><br><span class="line">base_model = AutoModelForCausalLM.from_pretrained(<span class="string">&quot;llama-2-7b&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># For medical query</span></span><br><span class="line">medical_model = PeftModel.from_pretrained(base_model, <span class="string">&quot;./adapters/medical&quot;</span>)</span><br><span class="line">response = medical_model.generate(...)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Switch to legal</span></span><br><span class="line">legal_model = PeftModel.from_pretrained(base_model, <span class="string">&quot;./adapters/legal&quot;</span>)</span><br><span class="line">response = legal_model.generate(...)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Or merge multiple adapters!</span></span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PeftModel</span><br><span class="line">multi_model = PeftModel.from_pretrained(base_model, <span class="string">&quot;./adapters/medical&quot;</span>)</span><br><span class="line">multi_model.load_adapter(<span class="string">&quot;./adapters/legal&quot;</span>, adapter_name=<span class="string">&quot;legal&quot;</span>)</span><br><span class="line">multi_model.set_adapter([<span class="string">&quot;medical&quot;</span>, <span class="string">&quot;legal&quot;</span>])  <span class="comment"># Use both!</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Decision-Framework"><a href="#Decision-Framework" class="headerlink" title="Decision Framework"></a>Decision Framework</h2><h3 id="The-Complete-Decision-Tree"><a href="#The-Complete-Decision-Tree" class="headerlink" title="The Complete Decision Tree"></a>The Complete Decision Tree</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">START: Do you need to fine-tune a large language model?</span><br><span class="line">│</span><br><span class="line">├─→ Q1: What&#x27;s your budget?</span><br><span class="line">│   ├─→ &lt; $1,000: → LoRA (or QLoRA)</span><br><span class="line">│   ├─→ $1,000 - $10,000: → LoRA (consider full if single critical task)</span><br><span class="line">│   └─→ &gt; $10,000: → Consider full fine-tuning</span><br><span class="line">│</span><br><span class="line">├─→ Q2: What GPU do you have?</span><br><span class="line">│   ├─→ Consumer (RTX 3090/4090): → LoRA or QLoRA</span><br><span class="line">│   ├─→ Single A100 (40-80GB): → LoRA or Full (for &lt;7B models)</span><br><span class="line">│   └─→ GPU Cluster (8+ A100s): → Full fine-tuning possible</span><br><span class="line">│</span><br><span class="line">├─→ Q3: How many tasks?</span><br><span class="line">│   ├─→ 1 task: → Either (depends on other factors)</span><br><span class="line">│   ├─→ 2-5 tasks: → LoRA (multi-adapter)</span><br><span class="line">│   └─→ 5+ tasks: → Definitely LoRA</span><br><span class="line">│</span><br><span class="line">├─→ Q4: Accuracy requirements?</span><br><span class="line">│   ├─→ &gt;98% required: → Full fine-tuning</span><br><span class="line">│   ├─→ 95-98%: → LoRA (high rank, r=64+)</span><br><span class="line">│   └─→ &lt;95%: → LoRA (standard rank, r=8-16)</span><br><span class="line">│</span><br><span class="line">├─→ Q5: Deployment constraints?</span><br><span class="line">│   ├─→ Edge devices: → LoRA (smaller)</span><br><span class="line">│   ├─→ Cloud: → Either</span><br><span class="line">│   └─→ Need rapid updates: → LoRA</span><br><span class="line">│</span><br><span class="line">└─→ Q6: Continual learning needed?</span><br><span class="line">    ├─→ Yes, multiple sequential tasks: → High-rank LoRA or Full</span><br><span class="line">    ├─→ No: → Standard LoRA</span><br><span class="line">    └─→ Critical to avoid forgetting: → Full fine-tuning</span><br></pre></td></tr></table></figure>
+
+<h3 id="Quick-Selection-Matrix"><a href="#Quick-Selection-Matrix" class="headerlink" title="Quick Selection Matrix"></a>Quick Selection Matrix</h3><table>
+<thead>
+<tr>
+<th>Your Situation</th>
+<th>Recommended Method</th>
+<th>Rank&#x2F;Config</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Startup, limited GPU, 3+ tasks</td>
+<td>LoRA</td>
+<td>r&#x3D;8-16</td>
+</tr>
+<tr>
+<td>Enterprise, single critical task</td>
+<td>Full Fine-Tuning</td>
+<td>All parameters</td>
+</tr>
+<tr>
+<td>Research, multiple experiments</td>
+<td>LoRA</td>
+<td>r&#x3D;16-32</td>
+</tr>
+<tr>
+<td>&gt;100B model, limited hardware</td>
+<td>QLoRA</td>
+<td>r&#x3D;8-16, 4-bit</td>
+</tr>
+<tr>
+<td>Medical&#x2F;Legal high-stakes</td>
+<td>Full Fine-Tuning</td>
+<td>All parameters</td>
+</tr>
+<tr>
+<td>Multi-lingual deployment</td>
+<td>LoRA multi-adapter</td>
+<td>r&#x3D;16 per language</td>
+</tr>
+<tr>
+<td>Rapid A&#x2F;B testing</td>
+<td>LoRA</td>
+<td>r&#x3D;8 (fast training)</td>
+</tr>
+<tr>
+<td>Edge device deployment</td>
+<td>QLoRA</td>
+<td>r&#x3D;4-8, quantized</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Best-Practices-Tips"><a href="#Best-Practices-Tips" class="headerlink" title="Best Practices &amp; Tips"></a>Best Practices &amp; Tips</h2><h3 id="For-LoRA-Fine-Tuning"><a href="#For-LoRA-Fine-Tuning" class="headerlink" title="For LoRA Fine-Tuning"></a>For LoRA Fine-Tuning</h3><ol>
+<li><p><strong>Start Small, Scale Up</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Experiment progression</span></span><br><span class="line"><span class="number">1.</span> Try r=<span class="number">8</span> first (fast, good baseline)</span><br><span class="line"><span class="number">2.</span> If underfitting, increase to r=<span class="number">16</span></span><br><span class="line"><span class="number">3.</span> For <span class="built_in">complex</span> tasks, <span class="keyword">try</span> r=<span class="number">32</span> <span class="keyword">or</span> r=<span class="number">64</span></span><br><span class="line"><span class="number">4.</span> Monitor validation loss to find sweet spot</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Target the Right Modules</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># For most language models</span></span><br><span class="line">target_modules = [<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>]  <span class="comment"># Minimum (queries &amp; values)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># For better performance</span></span><br><span class="line">target_modules = [<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;k_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>, <span class="string">&quot;o_proj&quot;</span>]  <span class="comment"># All attention</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># For maximum adaptation (more params)</span></span><br><span class="line">target_modules = [<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;k_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>, <span class="string">&quot;o_proj&quot;</span>, </span><br><span class="line">                  <span class="string">&quot;gate_proj&quot;</span>, <span class="string">&quot;up_proj&quot;</span>, <span class="string">&quot;down_proj&quot;</span>]  <span class="comment"># Attention + FFN</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Learning Rate Selection</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># LoRA typically needs higher LR than full fine-tuning</span></span><br><span class="line">Full Fine-Tuning: lr = <span class="number">1e-5</span> to <span class="number">5e-5</span></span><br><span class="line">LoRA: lr = <span class="number">1e-4</span> to <span class="number">3e-4</span>  (10x higher!)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rule of thumb</span></span><br><span class="line">lora_lr = full_finetuning_lr * <span class="number">10</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Rank Selection Guide</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Task Complexity        → Recommended Rank</span><br><span class="line">─────────────────────────────────────────</span><br><span class="line">Simple (sentiment)     → r=4-8</span><br><span class="line">Medium (summarization) → r=8-16</span><br><span class="line">Complex (reasoning)    → r=16-32</span><br><span class="line">Very complex (coding)  → r=32-64</span><br><span class="line">Approaching full FT    → r=128-256</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Prevent Intruder Dimensions</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use rank stabilization</span></span><br><span class="line">lora_config = LoraConfig(</span><br><span class="line">    r=<span class="number">32</span>,</span><br><span class="line">    lora_alpha=<span class="number">64</span>,</span><br><span class="line">    use_rslora=<span class="literal">True</span>,  <span class="comment"># Rank-stabilized LoRA</span></span><br><span class="line">    <span class="comment"># ... other params</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="For-Full-Fine-Tuning"><a href="#For-Full-Fine-Tuning" class="headerlink" title="For Full Fine-Tuning"></a>For Full Fine-Tuning</h3><ol>
+<li><p><strong>Gradient Checkpointing</strong> (Save Memory)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.gradient_checkpointing_enable()</span><br><span class="line"><span class="comment"># Trades computation for memory</span></span><br><span class="line"><span class="comment"># Enables training larger models on same GPU</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Mixed Precision Training</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">training_args = TrainingArguments(</span><br><span class="line">    fp16=<span class="literal">True</span>,  <span class="comment"># For older GPUs</span></span><br><span class="line">    bf16=<span class="literal">True</span>,  <span class="comment"># For A100s (better for large models)</span></span><br><span class="line">    <span class="comment"># Reduces memory usage by 2x</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Distributed Training</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use DeepSpeed for multi-GPU</span></span><br><span class="line">training_args = TrainingArguments(</span><br><span class="line">    deepspeed=<span class="string">&quot;ds_config.json&quot;</span>,</span><br><span class="line">    per_device_train_batch_size=<span class="number">1</span>,</span><br><span class="line">    gradient_accumulation_steps=<span class="number">16</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ds_config.json</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;train_batch_size&quot;</span>: <span class="string">&quot;auto&quot;</span>,</span><br><span class="line">    <span class="string">&quot;zero_optimization&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;stage&quot;</span>: <span class="number">3</span>,  <span class="comment"># ZeRO-3: Shard everything</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Prevent Catastrophic Forgetting</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use lower learning rate</span></span><br><span class="line">learning_rate = <span class="number">1e-5</span>  <span class="comment"># vs 2e-4 for pre-training</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Freeze some layers (partial fine-tuning)</span></span><br><span class="line"><span class="keyword">for</span> i, layer <span class="keyword">in</span> <span class="built_in">enumerate</span>(model.layers):</span><br><span class="line">    <span class="keyword">if</span> i &lt; <span class="number">20</span>:  <span class="comment"># Freeze first 20 layers</span></span><br><span class="line">        <span class="keyword">for</span> param <span class="keyword">in</span> layer.parameters():</span><br><span class="line">            param.requires_grad = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use elastic weight consolidation (EWC)</span></span><br><span class="line"><span class="comment"># Add regularization term penalizing large weight changes</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="Common-Mistakes-How-to-Avoid-Them"><a href="#Common-Mistakes-How-to-Avoid-Them" class="headerlink" title="Common Mistakes &amp; How to Avoid Them"></a>Common Mistakes &amp; How to Avoid Them</h2><h3 id="Mistake-1-Using-LoRA-rank-that’s-too-low"><a href="#Mistake-1-Using-LoRA-rank-that’s-too-low" class="headerlink" title="Mistake 1: Using LoRA rank that’s too low"></a>Mistake 1: Using LoRA rank that’s too low</h3><p>❌ <strong>Problem</strong>: r&#x3D;4 for complex instruction following</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lora_config = LoraConfig(r=<span class="number">4</span>, ...)  <span class="comment"># Too small!</span></span><br><span class="line"><span class="comment"># Result: Model can&#x27;t learn complex patterns, poor performance</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>Solution</strong>: Start with r&#x3D;16, increase if needed</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lora_config = LoraConfig(r=<span class="number">16</span>, lora_alpha=<span class="number">32</span>, ...)</span><br><span class="line"><span class="comment"># Monitor validation loss, increase to r=32 if plateauing</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Mistake-2-Wrong-learning-rate"><a href="#Mistake-2-Wrong-learning-rate" class="headerlink" title="Mistake 2: Wrong learning rate"></a>Mistake 2: Wrong learning rate</h3><p>❌ <strong>Problem</strong>: Using same LR for LoRA as full fine-tuning</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Full fine-tuning LR used for LoRA</span></span><br><span class="line">training_args = TrainingArguments(learning_rate=<span class="number">2e-5</span>, ...)</span><br><span class="line"><span class="comment"># Result: Slow convergence, underfitting</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>Solution</strong>: Use 10x higher LR for LoRA</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">training_args = TrainingArguments(learning_rate=<span class="number">2e-4</span>, ...)</span><br><span class="line"><span class="comment"># LoRA adapters need stronger signals to learn</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Mistake-3-Not-quantizing-when-memory-is-tight"><a href="#Mistake-3-Not-quantizing-when-memory-is-tight" class="headerlink" title="Mistake 3: Not quantizing when memory is tight"></a>Mistake 3: Not quantizing when memory is tight</h3><p>❌ <strong>Problem</strong>: Trying to load 7B model in FP16 on 16GB GPU</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model = AutoModelForCausalLM.from_pretrained(<span class="string">&quot;llama-2-7b&quot;</span>)</span><br><span class="line"><span class="comment"># Result: CUDA Out of Memory error</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>Solution</strong>: Use 4-bit&#x2F;8-bit quantization</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    <span class="string">&quot;llama-2-7b&quot;</span>,</span><br><span class="line">    load_in_4bit=<span class="literal">True</span>,</span><br><span class="line">    device_map=<span class="string">&quot;auto&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Result: Fits in 8GB GPU!</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Mistake-4-Training-on-too-few-examples"><a href="#Mistake-4-Training-on-too-few-examples" class="headerlink" title="Mistake 4: Training on too few examples"></a>Mistake 4: Training on too few examples</h3><p>❌ <strong>Problem</strong>: Fine-tuning on 100 examples</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dataset = load_dataset(...)[:<span class="number">100</span>]  <span class="comment"># Only 100 examples</span></span><br><span class="line"><span class="comment"># Result: Overfitting, poor generalization</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>Solution</strong>: Minimum dataset sizes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Full Fine-Tuning: 10,000+ examples (ideally 100k+)</span><br><span class="line">LoRA: 1,000+ examples (can work with 500 for simple tasks)</span><br><span class="line">QLoRA: 500+ examples (most efficient)</span><br><span class="line"></span><br><span class="line">If you have &lt;500 examples:</span><br><span class="line">  → Use prompt engineering or few-shot learning instead</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Mistake-5-Not-saving-checkpoints"><a href="#Mistake-5-Not-saving-checkpoints" class="headerlink" title="Mistake 5: Not saving checkpoints"></a>Mistake 5: Not saving checkpoints</h3><p>❌ <strong>Problem</strong>: Training crashes after 20 hours, no checkpoints</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">training_args = TrainingArguments(</span><br><span class="line">    save_strategy=<span class="string">&quot;no&quot;</span>,  <span class="comment"># Dangerous!</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>Solution</strong>: Regular checkpointing</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">training_args = TrainingArguments(</span><br><span class="line">    save_strategy=<span class="string">&quot;steps&quot;</span>,</span><br><span class="line">    save_steps=<span class="number">500</span>,</span><br><span class="line">    save_total_limit=<span class="number">3</span>,  <span class="comment"># Keep last 3 checkpoints</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Real-Cost-Comparison"><a href="#Real-Cost-Comparison" class="headerlink" title="Real Cost Comparison"></a>Real Cost Comparison</h2><h3 id="Example-Fine-tuning-LLaMA-2-7B-for-3-epochs-on-10-000-examples"><a href="#Example-Fine-tuning-LLaMA-2-7B-for-3-epochs-on-10-000-examples" class="headerlink" title="Example: Fine-tuning LLaMA-2-7B for 3 epochs on 10,000 examples"></a>Example: Fine-tuning LLaMA-2-7B for 3 epochs on 10,000 examples</h3><p><strong>Full Fine-Tuning</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hardware: 4× A100 (80GB) via AWS</span><br><span class="line">Cost: $32.77/hour per GPU</span><br><span class="line">Duration: 48 hours</span><br><span class="line">Total: $32.77 × 4 × 48 = $6,293</span><br><span class="line"></span><br><span class="line">Storage: 14GB per model</span><br><span class="line">If 5 tasks: 70GB total</span><br><span class="line"></span><br><span class="line">Total Investment: ~$6,300 + ongoing storage</span><br></pre></td></tr></table></figure>
+
+<p><strong>LoRA (r&#x3D;16)</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Hardware: 1× RTX 4090 (24GB) - owned or $2/hour cloud</span><br><span class="line">Cost: $2/hour</span><br><span class="line">Duration: 12 hours</span><br><span class="line">Total: $2 × 12 = $24</span><br><span class="line"></span><br><span class="line">Storage: 14GB base + (5 × 50MB adapters) = 14.25GB</span><br><span class="line"></span><br><span class="line">Total Investment: ~$24 + one-time GPU purchase (~$1,600)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Savings: 99.6%</strong> 🎉</p>
+<hr>
+<h2 id="Latest-Research-Trends-2024-2025"><a href="#Latest-Research-Trends-2024-2025" class="headerlink" title="Latest Research &amp; Trends (2024-2025)"></a>Latest Research &amp; Trends (2024-2025)</h2><h3 id="1-LoRA-and-LoRA-FA"><a href="#1-LoRA-and-LoRA-FA" class="headerlink" title="1. LoRA+ and LoRA-FA"></a>1. LoRA+ and LoRA-FA</h3><ul>
+<li><strong>LoRA+</strong>: Different learning rates for A and B matrices</li>
+<li><strong>LoRA-FA</strong>: Frozen-A variant (only train B matrix)</li>
+<li>Result: Faster convergence, better performance</li>
+</ul>
+<h3 id="2-DoRA-Weight-Decomposed-LoRA"><a href="#2-DoRA-Weight-Decomposed-LoRA" class="headerlink" title="2. DoRA (Weight-Decomposed LoRA)"></a>2. DoRA (Weight-Decomposed LoRA)</h3><ul>
+<li>Decomposes weights into magnitude and direction</li>
+<li>Bridges gap between LoRA and full fine-tuning</li>
+<li>20% better performance on reasoning tasks</li>
+</ul>
+<h3 id="3-MultiLoRA-LoRA-Composition"><a href="#3-MultiLoRA-LoRA-Composition" class="headerlink" title="3. MultiLoRA &amp; LoRA Composition"></a>3. MultiLoRA &amp; LoRA Composition</h3><ul>
+<li>Train multiple LoRA adapters</li>
+<li>Compose them at inference time</li>
+<li>Example: (medical_adapter × 0.7) + (general_adapter × 0.3)</li>
+</ul>
+<h3 id="4-LoRA-for-Vision-Multimodal-Models"><a href="#4-LoRA-for-Vision-Multimodal-Models" class="headerlink" title="4. LoRA for Vision &amp; Multimodal Models"></a>4. LoRA for Vision &amp; Multimodal Models</h3><ul>
+<li>VoRA: LoRA for vision transformers</li>
+<li>Successful for CLIP, Stable Diffusion fine-tuning</li>
+<li>90% memory reduction for image model fine-tuning</li>
+</ul>
+<hr>
+<h2 id="Summary-Recommendations"><a href="#Summary-Recommendations" class="headerlink" title="Summary &amp; Recommendations"></a>Summary &amp; Recommendations</h2><h3 id="The-Bottom-Line"><a href="#The-Bottom-Line" class="headerlink" title="The Bottom Line"></a>The Bottom Line</h3><p><strong>LoRA is the default choice for most practitioners in 2024-2025.</strong></p>
+<p>Reasons:</p>
+<ul>
+<li>✅ 99% cost reduction</li>
+<li>✅ Accessible on consumer hardware</li>
+<li>✅ Fast iteration (hours vs days)</li>
+<li>✅ Easy multi-task deployment</li>
+<li>✅ Good enough performance for most applications (95-99% of full)</li>
+</ul>
+<p><strong>Full Fine-Tuning is for special cases:</strong></p>
+<ul>
+<li>High-stakes applications (medical, legal, financial)</li>
+<li>Unlimited budget and resources</li>
+<li>Need absolute best performance</li>
+<li>Research settings exploring model limits</li>
+</ul>
+<h3 id="Your-Action-Plan"><a href="#Your-Action-Plan" class="headerlink" title="Your Action Plan"></a>Your Action Plan</h3><p><strong>Week 1: Start with LoRA</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> Choose base model (LLaMA-<span class="number">2</span>-7B, Mistral-7B, Qwen)</span><br><span class="line"><span class="number">2.</span> Prepare <span class="number">1</span>,<span class="number">000</span>+ examples</span><br><span class="line"><span class="number">3.</span> Train LoRA (r=<span class="number">16</span>) on <span class="number">1</span>× GPU</span><br><span class="line"><span class="number">4.</span> Evaluate on validation <span class="built_in">set</span></span><br><span class="line"><span class="number">5.</span> Iterate on rank <span class="keyword">and</span> hyperparameters</span><br></pre></td></tr></table></figure>
+
+<p><strong>Week 2: Optimize</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> Experiment <span class="keyword">with</span> ranks: <span class="number">8</span>, <span class="number">16</span>, <span class="number">32</span></span><br><span class="line"><span class="number">2.</span> Try different target modules</span><br><span class="line"><span class="number">3.</span> Test QLoRA <span class="keyword">if</span> memory constrained</span><br><span class="line"><span class="number">4.</span> A/B test different adapters</span><br></pre></td></tr></table></figure>
+
+<p><strong>Month 2+: Scale if Needed</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> performance &lt; requirements:</span><br><span class="line">    <span class="keyword">if</span> budget_available:</span><br><span class="line">        <span class="keyword">try</span> full fine-tuning</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span> higher rank LoRA (r=<span class="number">64</span>-<span class="number">128</span>)</span><br><span class="line">        <span class="keyword">or</span> <span class="keyword">try</span> DoRA/LoRA+ variants</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Additional-Resources"><a href="#Additional-Resources" class="headerlink" title="Additional Resources"></a>Additional Resources</h2><h3 id="Code-Repositories"><a href="#Code-Repositories" class="headerlink" title="Code Repositories"></a>Code Repositories</h3><ul>
+<li><strong>Hugging Face PEFT</strong>: <a target="_blank" rel="noopener" href="https://github.com/huggingface/peft">https://github.com/huggingface/peft</a></li>
+<li><strong>LoRA Paper</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">https://arxiv.org/abs/2106.09685</a></li>
+<li><strong>QLoRA Paper</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2305.14314">https://arxiv.org/abs/2305.14314</a></li>
+</ul>
+<h3 id="Tutorials"><a href="#Tutorials" class="headerlink" title="Tutorials"></a>Tutorials</h3><ul>
+<li>Hugging Face LoRA Tutorial: <a target="_blank" rel="noopener" href="https://huggingface.co/docs/peft">https://huggingface.co/docs/peft</a></li>
+<li>Fast.ai Practical Deep Learning: <a target="_blank" rel="noopener" href="https://course.fast.ai/">https://course.fast.ai</a></li>
+</ul>
+<h3 id="Communities"><a href="#Communities" class="headerlink" title="Communities"></a>Communities</h3><ul>
+<li>Hugging Face Forums: <a target="_blank" rel="noopener" href="https://discuss.huggingface.co/">https://discuss.huggingface.co</a></li>
+<li>r&#x2F;LocalLLaMA (Reddit): For LoRA discussions</li>
+<li>EleutherAI Discord: For research discussions</li>
+</ul>
+<hr>
+<p><strong>Remember</strong>:</p>
+<ul>
+<li>Start with LoRA (r&#x3D;16)</li>
+<li>Scale to full fine-tuning only if truly needed</li>
+<li>Focus on data quality over method choice</li>
+<li>Iterate quickly and measure results</li>
+</ul>
+<p><strong>The best method is the one that:</strong></p>
+<ol>
+<li>Fits your budget</li>
+<li>Meets your accuracy requirements</li>
+<li>Enables fast iteration</li>
+<li>Scales with your needs</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1814,182 +2552,6 @@
 <li>The <code>receive()</code> function (special fallback function doesn’t need ABI entry)</li>
 </ul>
 <h3 id="CCBusERC20-sol"><a href="#CCBusERC20-sol" class="headerlink" title="CCBusERC20.sol"></a>CCBusERC20.sol</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Created By: CC-Bus</span></span><br><span class="line"><span class="comment">//  Website: https://ccbus.cc</span></span><br><span class="line"><span class="comment">//  Telegram: https://t.me/CCBus</span></span><br><span class="line"><span class="comment">//  The Best Tool for Token Management</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// SPDX-License-Identifier: MIT</span></span><br><span class="line">pragma solidity ^<span class="number">0.8</span><span class="number">.18</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">contract <span class="title class_">Context</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_msgSender</span>(<span class="params"></span>) internal view <span class="title function_">returns</span> (address) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">payable</span>(msg.<span class="property">sender</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_msgData</span>(<span class="params"></span>) internal view <span class="title function_">returns</span> (bytes memory) &#123;</span><br><span class="line">        <span class="variable language_">this</span>; <span class="comment">// silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691</span></span><br><span class="line">        <span class="keyword">return</span> msg.<span class="property">data</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">library <span class="title class_">SafeMath</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">add</span>(<span class="params">uint256 a, uint256 b</span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        uint256 c = a + b;</span><br><span class="line">        <span class="built_in">require</span>(c &gt;= a, <span class="string">&quot;SafeMath: addition overflow&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">sub</span>(<span class="params">uint256 a, uint256 b</span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">sub</span>(a, b, <span class="string">&quot;SafeMath: subtraction overflow&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">sub</span>(<span class="params"></span></span><br><span class="line"><span class="params">        uint256 a,</span></span><br><span class="line"><span class="params">        uint256 b,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="built_in">require</span>(b &lt;= a, errorMessage);</span><br><span class="line">        uint256 c = a - b;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">mul</span>(<span class="params">uint256 a, uint256 b</span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">if</span> (a == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        uint256 c = a * b;</span><br><span class="line">        <span class="built_in">require</span>(c / a == b, <span class="string">&quot;SafeMath: multiplication overflow&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">div</span>(<span class="params">uint256 a, uint256 b</span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">div</span>(a, b, <span class="string">&quot;SafeMath: division by zero&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">div</span>(<span class="params"></span></span><br><span class="line"><span class="params">        uint256 a,</span></span><br><span class="line"><span class="params">        uint256 b,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="built_in">require</span>(b &gt; <span class="number">0</span>, errorMessage);</span><br><span class="line">        uint256 c = a / b;</span><br><span class="line">        <span class="comment">// assert(a == b * c + a % b); // There is no case in which this doesn&#x27;t hold</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">mod</span>(<span class="params">uint256 a, uint256 b</span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">mod</span>(a, b, <span class="string">&quot;SafeMath: modulo by zero&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">mod</span>(<span class="params"></span></span><br><span class="line"><span class="params">        uint256 a,</span></span><br><span class="line"><span class="params">        uint256 b,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) internal pure <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="built_in">require</span>(b != <span class="number">0</span>, errorMessage);</span><br><span class="line">        <span class="keyword">return</span> a % b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">library <span class="title class_">Address</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">isContract</span>(<span class="params">address account</span>) internal view <span class="title function_">returns</span> (bool) &#123;</span><br><span class="line"></span><br><span class="line">        bytes32 codehash;</span><br><span class="line">        bytes32 accountHash = <span class="number">0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470</span>;</span><br><span class="line"></span><br><span class="line">        assembly &#123;</span><br><span class="line">            codehash := <span class="title function_">extcodehash</span>(account)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (codehash != accountHash &amp;&amp; codehash != <span class="number">0x0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">sendValue</span>(<span class="params">address payable recipient, uint256 amount</span>) internal &#123;</span><br><span class="line">        <span class="built_in">require</span>(</span><br><span class="line">            <span class="title function_">address</span>(<span class="variable language_">this</span>).<span class="property">balance</span> &gt;= amount,</span><br><span class="line">            <span class="string">&quot;Address: insufficient balance&quot;</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// solhint-disable-next-line avoid-low-level-calls, avoid-call-value</span></span><br><span class="line">        (bool success, ) = recipient.<span class="property">call</span>&#123;<span class="attr">value</span>: amount&#125;(<span class="string">&quot;&quot;</span>);</span><br><span class="line">        <span class="built_in">require</span>(</span><br><span class="line">            success,</span><br><span class="line">            <span class="string">&quot;Address: unable to send value, recipient may have reverted&quot;</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">functionCall</span>(<span class="params">address target, bytes memory data</span>)</span><br><span class="line">        internal</span><br><span class="line">        <span class="title function_">returns</span> (bytes memory)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">functionCall</span>(target, data, <span class="string">&quot;Address: low-level call failed&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">functionCall</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address target,</span></span><br><span class="line"><span class="params">        bytes memory data,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) internal <span class="title function_">returns</span> (bytes memory) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">_functionCallWithValue</span>(target, data, <span class="number">0</span>, errorMessage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">functionCallWithValue</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address target,</span></span><br><span class="line"><span class="params">        bytes memory data,</span></span><br><span class="line"><span class="params">        uint256 value</span></span><br><span class="line"><span class="params">    </span>) internal <span class="title function_">returns</span> (bytes memory) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">            <span class="title function_">functionCallWithValue</span>(</span><br><span class="line">                target,</span><br><span class="line">                data,</span><br><span class="line">                value,</span><br><span class="line">                <span class="string">&quot;Address: low-level call with value failed&quot;</span></span><br><span class="line">            );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">functionCallWithValue</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address target,</span></span><br><span class="line"><span class="params">        bytes memory data,</span></span><br><span class="line"><span class="params">        uint256 value,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) internal <span class="title function_">returns</span> (bytes memory) &#123;</span><br><span class="line">        <span class="built_in">require</span>(</span><br><span class="line">            <span class="title function_">address</span>(<span class="variable language_">this</span>).<span class="property">balance</span> &gt;= value,</span><br><span class="line">            <span class="string">&quot;Address: insufficient balance for call&quot;</span></span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">_functionCallWithValue</span>(target, data, value, errorMessage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_functionCallWithValue</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address target,</span></span><br><span class="line"><span class="params">        bytes memory data,</span></span><br><span class="line"><span class="params">        uint256 weiValue,</span></span><br><span class="line"><span class="params">        <span class="built_in">string</span> memory errorMessage</span></span><br><span class="line"><span class="params">    </span>) <span class="keyword">private</span> <span class="title function_">returns</span> (bytes memory) &#123;</span><br><span class="line">        <span class="built_in">require</span>(<span class="title function_">isContract</span>(target), <span class="string">&quot;Address: call to non-contract&quot;</span>);</span><br><span class="line"></span><br><span class="line">        (bool success, bytes memory returndata) = target.<span class="property">call</span>&#123;<span class="attr">value</span>: weiValue&#125;(</span><br><span class="line">            data</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">if</span> (success) &#123;</span><br><span class="line">            <span class="keyword">return</span> returndata;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (returndata.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                assembly &#123;</span><br><span class="line">                    <span class="keyword">let</span> returndata_size := <span class="title function_">mload</span>(returndata)</span><br><span class="line">                    <span class="title function_">revert</span>(<span class="title function_">add</span>(<span class="number">32</span>, returndata), returndata_size)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="title function_">revert</span>(errorMessage);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">IERC20</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">decimals</span>(<span class="params"></span>) external view <span class="title function_">returns</span> (uint256);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">symbol</span>(<span class="params"></span>) external view <span class="title function_">returns</span> (<span class="built_in">string</span> memory);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">name</span>(<span class="params"></span>) external view <span class="title function_">returns</span> (<span class="built_in">string</span> memory);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">totalSupply</span>(<span class="params"></span>) external view <span class="title function_">returns</span> (uint256);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">balanceOf</span>(<span class="params">address who</span>) external view <span class="title function_">returns</span> (uint);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">transfer</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address recipient,</span></span><br><span class="line"><span class="params">        uint256 amount</span></span><br><span class="line"><span class="params">    </span>) external <span class="title function_">returns</span> (bool);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">allowance</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address owner,</span></span><br><span class="line"><span class="params">        address spender</span></span><br><span class="line"><span class="params">    </span>) external view <span class="title function_">returns</span> (uint256);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">approve</span>(<span class="params">address _spender, uint _value</span>) external;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">transferFrom</span>(<span class="params">address _from, address _to, uint _value</span>) external ;</span><br><span class="line"></span><br><span class="line">    event <span class="title class_">Transfer</span>(address indexed <span class="keyword">from</span>, address indexed to, uint256 value);</span><br><span class="line">    event <span class="title class_">Approval</span>(</span><br><span class="line">        address indexed owner,</span><br><span class="line">        address indexed spender,</span><br><span class="line">        uint256 value</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">contract <span class="title class_">CCBusToken</span> is <span class="title class_">Context</span>, <span class="title class_">IERC20</span>&#123;</span><br><span class="line">    using <span class="title class_">SafeMath</span> <span class="keyword">for</span> uint256;</span><br><span class="line">    using <span class="title class_">Address</span> <span class="keyword">for</span> address;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">string</span> <span class="keyword">private</span> _name;</span><br><span class="line">    <span class="built_in">string</span> <span class="keyword">private</span> _symbol;</span><br><span class="line">    uint256 <span class="keyword">private</span> _decimals;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> uint256) _balances;</span><br><span class="line">    <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> uint256)) <span class="keyword">private</span> _allowances;</span><br><span class="line"></span><br><span class="line">    address <span class="keyword">public</span> immutable deadAddress =</span><br><span class="line">        <span class="number">0x000000000000000000000000000000000000dEaD</span>;</span><br><span class="line">    uint256 <span class="keyword">private</span> _totalSupply;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"> </span></span><br><span class="line"><span class="params">        <span class="built_in">string</span>[] memory stringParams,</span></span><br><span class="line"><span class="params">        address[] memory addressParams,</span></span><br><span class="line"><span class="params">        uint256[] memory numberParams,</span></span><br><span class="line"><span class="params">        bool[] memory boolParams</span></span><br><span class="line"><span class="params">    </span>) &#123;</span><br><span class="line">        <span class="built_in">require</span>(addressParams.<span class="property">length</span>==<span class="number">0</span>);</span><br><span class="line">        <span class="built_in">require</span>(boolParams.<span class="property">length</span>==<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        address receiveAddr = tx.<span class="property">origin</span>;</span><br><span class="line">        _name = stringParams[<span class="number">0</span>];</span><br><span class="line">        _symbol = stringParams[<span class="number">1</span>];</span><br><span class="line">        _decimals = numberParams[<span class="number">0</span>];</span><br><span class="line">        _totalSupply = numberParams[<span class="number">1</span>];</span><br><span class="line">        _balances[receiveAddr] = _totalSupply;</span><br><span class="line">        emit <span class="title class_">Transfer</span>(<span class="title function_">address</span>(<span class="number">0</span>), receiveAddr, _totalSupply);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">name</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="keyword">override</span> <span class="title function_">returns</span> (<span class="built_in">string</span> memory) &#123;</span><br><span class="line">        <span class="keyword">return</span> _name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">symbol</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="keyword">override</span> <span class="title function_">returns</span> (<span class="built_in">string</span> memory) &#123;</span><br><span class="line">        <span class="keyword">return</span> _symbol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">decimals</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="keyword">override</span> <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> _decimals;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">totalSupply</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="keyword">override</span> <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> _totalSupply;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">owner</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="title function_">returns</span> (address) &#123;</span><br><span class="line">        <span class="keyword">return</span> deadAddress;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">balanceOf</span>(<span class="params">address account</span>) <span class="keyword">public</span> view <span class="keyword">override</span> <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> _balances[account];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">allowance</span>(<span class="params">address owner1, address spender</span>)</span><br><span class="line">        <span class="keyword">public</span></span><br><span class="line">        view</span><br><span class="line">        <span class="keyword">override</span></span><br><span class="line">        <span class="title function_">returns</span> (uint256)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> _allowances[owner1][spender];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">increaseAllowance</span>(<span class="params">address spender, uint256 addedValue</span>)</span><br><span class="line">        <span class="keyword">public</span></span><br><span class="line">        virtual</span><br><span class="line">        <span class="title function_">returns</span> (bool)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title function_">_approve</span>(</span><br><span class="line">            <span class="title function_">_msgSender</span>(),</span><br><span class="line">            spender,</span><br><span class="line">            _allowances[<span class="title function_">_msgSender</span>()][spender].<span class="title function_">add</span>(addedValue)</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">decreaseAllowance</span>(<span class="params">address spender, uint256 subtractedValue</span>)</span><br><span class="line">        <span class="keyword">public</span></span><br><span class="line">        virtual</span><br><span class="line">        <span class="title function_">returns</span> (bool)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title function_">_approve</span>(</span><br><span class="line">            <span class="title function_">_msgSender</span>(),</span><br><span class="line">            spender,</span><br><span class="line">            _allowances[<span class="title function_">_msgSender</span>()][spender].<span class="title function_">sub</span>(</span><br><span class="line">                subtractedValue,</span><br><span class="line">                <span class="string">&quot;ERC20: decreased allowance below zero&quot;</span></span><br><span class="line">            )</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">approve</span>(<span class="params">address spender, uint256 amount</span>)</span><br><span class="line">        <span class="keyword">public</span></span><br><span class="line">        <span class="keyword">override</span></span><br><span class="line">        </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title function_">_approve</span>(<span class="title function_">_msgSender</span>(), spender, amount);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_approve</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address owner1,</span></span><br><span class="line"><span class="params">        address spender,</span></span><br><span class="line"><span class="params">        uint256 amount</span></span><br><span class="line"><span class="params">    </span>) <span class="keyword">private</span> &#123;</span><br><span class="line">        <span class="built_in">require</span>(owner1 != <span class="title function_">address</span>(<span class="number">0</span>), <span class="string">&quot;ERC20: approve from the zero address&quot;</span>);</span><br><span class="line">        <span class="built_in">require</span>(spender != <span class="title function_">address</span>(<span class="number">0</span>), <span class="string">&quot;ERC20: approve to the zero address&quot;</span>);</span><br><span class="line"></span><br><span class="line">        _allowances[owner1][spender] = amount;</span><br><span class="line">        emit <span class="title class_">Approval</span>(owner1, spender, amount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">getCirculatingSupply</span>(<span class="params"></span>) <span class="keyword">public</span> view <span class="title function_">returns</span> (uint256) &#123;</span><br><span class="line">        <span class="keyword">return</span> _totalSupply.<span class="title function_">sub</span>(<span class="title function_">balanceOf</span>(deadAddress));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//to recieve ETH from uniswapV2Router when swaping</span></span><br><span class="line">    <span class="title function_">receive</span>() external payable &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">transfer</span>(<span class="params">address recipient, uint256 amount</span>)</span><br><span class="line">        <span class="keyword">public</span></span><br><span class="line">        <span class="keyword">override</span></span><br><span class="line">        <span class="title function_">returns</span> (bool)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title function_">_transfer</span>(<span class="title function_">_msgSender</span>(), recipient, amount);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">transferFrom</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address sender,</span></span><br><span class="line"><span class="params">        address recipient,</span></span><br><span class="line"><span class="params">        uint256 amount</span></span><br><span class="line"><span class="params">    </span>) <span class="keyword">public</span> <span class="keyword">override</span>  &#123;</span><br><span class="line">        <span class="title function_">_transfer</span>(sender, recipient, amount);</span><br><span class="line">        <span class="title function_">_approve</span>(</span><br><span class="line">            sender,</span><br><span class="line">            <span class="title function_">_msgSender</span>(),</span><br><span class="line">            _allowances[sender][<span class="title function_">_msgSender</span>()].<span class="title function_">sub</span>(</span><br><span class="line">                amount,</span><br><span class="line">                <span class="string">&quot;ERC20: transfer amount exceeds allowance&quot;</span></span><br><span class="line">            )</span><br><span class="line">        );</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_transfer</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address sender,</span></span><br><span class="line"><span class="params">        address recipient,</span></span><br><span class="line"><span class="params">        uint256 amount</span></span><br><span class="line"><span class="params">    </span>) <span class="keyword">private</span> <span class="title function_">returns</span> (bool) &#123;</span><br><span class="line">        <span class="built_in">require</span>(sender != <span class="title function_">address</span>(<span class="number">0</span>), <span class="string">&quot;ERC20: transfer from the zero address&quot;</span>);</span><br><span class="line">        <span class="built_in">require</span>(recipient != <span class="title function_">address</span>(<span class="number">0</span>), <span class="string">&quot;ERC20: transfer to the zero address&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">_basicTransfer</span>(sender, recipient, amount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">_basicTransfer</span>(<span class="params"></span></span><br><span class="line"><span class="params">        address sender,</span></span><br><span class="line"><span class="params">        address recipient,</span></span><br><span class="line"><span class="params">        uint256 amount</span></span><br><span class="line"><span class="params">    </span>) internal <span class="title function_">returns</span> (bool) &#123;</span><br><span class="line">        _balances[sender] = _balances[sender].<span class="title function_">sub</span>(</span><br><span class="line">            amount,</span><br><span class="line">            <span class="string">&quot;Insufficient Balance&quot;</span></span><br><span class="line">        );</span><br><span class="line">        _balances[recipient] = _balances[recipient].<span class="title function_">add</span>(amount);</span><br><span class="line">        emit <span class="title class_">Transfer</span>(sender, recipient, amount);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2025/04/21/Merkle-Tree-in-Chinese/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/21/Merkle-Tree-in-Chinese/" class="post-title-link" itemprop="url">Merkle Tree in Chinese</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-04-21 18:54:45" itemprop="dateCreated datePublished" datetime="2025-04-21T18:54:45-04:00">2025-04-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Cypto-Currency/" itemprop="url" rel="index"><span itemprop="name">Cypto Currency</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Cypto-Currency/Ethereum/" itemprop="url" rel="index"><span itemprop="name">Ethereum</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Cypto-Currency/Ethereum/Data-Structure/" itemprop="url" rel="index"><span itemprop="name">Data Structure</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Merkle Tree（默克尔树）在区块链、密码学和数据完整性验证中是一个非常核心的概念。它是一种<strong>树状数据结构</strong>，用来高效而安全地验证数据的完整性。</p>
-<hr>
-<h2 id="🌳-一、Merkle-Tree-是什么？"><a href="#🌳-一、Merkle-Tree-是什么？" class="headerlink" title="🌳 一、Merkle Tree 是什么？"></a>🌳 一、Merkle Tree 是什么？</h2><p>Merkle Tree 是一种<strong>二叉树结构</strong>，每个叶子节点是某一笔数据的哈希值，每个非叶子节点是其子节点哈希值的组合再哈希后的结果，直到根节点 —— Merkle Root。</p>
-<h3 id="📌-特点："><a href="#📌-特点：" class="headerlink" title="📌 特点："></a>📌 特点：</h3><ul>
-<li>快速验证某条数据是否属于某批数据（O(log n)）</li>
-<li>数据完整性校验非常高效</li>
-<li>广泛用于区块链中（比特币、以太坊）以验证交易</li>
-</ul>
-<hr>
-<h2 id="🧩-二、图示说明"><a href="#🧩-二、图示说明" class="headerlink" title="🧩 二、图示说明"></a>🧩 二、图示说明</h2><p>假设我们有 4 个交易 <code>Tx0, Tx1, Tx2, Tx3</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">             Merkle Root</span><br><span class="line">                 │</span><br><span class="line">         ┌───────┴────────┐</span><br><span class="line">         │                │</span><br><span class="line">      Hash01           Hash23</span><br><span class="line">     ┌────┴────┐      ┌────┴────┐</span><br><span class="line">  Hash0      Hash1  Hash2     Hash3</span><br><span class="line">  │            │     │          │</span><br><span class="line">Tx0          Tx1   Tx2        Tx3</span><br></pre></td></tr></table></figure>
-
-<h3 id="哈希过程："><a href="#哈希过程：" class="headerlink" title="哈希过程："></a>哈希过程：</h3><ul>
-<li><code>Hash0 = hash(Tx0)</code>，<code>Hash1 = hash(Tx1)</code></li>
-<li><code>Hash01 = hash(Hash0 + Hash1)</code></li>
-<li><code>Merkle Root = hash(Hash01 + Hash23)</code></li>
-</ul>
-<hr>
-<h2 id="💡-三、Merkle-Tree-的作用"><a href="#💡-三、Merkle-Tree-的作用" class="headerlink" title="💡 三、Merkle Tree 的作用"></a>💡 三、Merkle Tree 的作用</h2><h3 id="✅-在区块链中主要用来："><a href="#✅-在区块链中主要用来：" class="headerlink" title="✅ 在区块链中主要用来："></a>✅ 在区块链中主要用来：</h3><table>
-<thead>
-<tr>
-<th>用途</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>验证交易是否在区块中</td>
-<td>比如比特币 SPV（轻节点）用来验证一笔交易是否在区块中，无需下载整个区块</td>
-</tr>
-<tr>
-<td>保证数据不可篡改</td>
-<td>即使更改一笔交易，Merkle Root 也会完全不同</td>
-</tr>
-<tr>
-<td>批量处理大量数据的完整性验证</td>
-<td>用于 IPFS、文件校验、区块快照</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="🧪-四、一个简单的-Merkle-Tree-实现（用-JavaScript）"><a href="#🧪-四、一个简单的-Merkle-Tree-实现（用-JavaScript）" class="headerlink" title="🧪 四、一个简单的 Merkle Tree 实现（用 JavaScript）"></a>🧪 四、一个简单的 Merkle Tree 实现（用 JavaScript）</h2><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createHash &#125; <span class="keyword">from</span> <span class="string">&#x27;crypto&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sha256</span>(<span class="params"><span class="attr">data</span>: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">createHash</span>(<span class="string">&#x27;sha256&#x27;</span>).<span class="title function_">update</span>(data).<span class="title function_">digest</span>(<span class="string">&#x27;hex&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建 Merkle Tree 并返回根节点</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">buildMerkleTree</span>(<span class="params"><span class="attr">leaves</span>: <span class="built_in">string</span>[]</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (leaves.<span class="property">length</span> === <span class="number">0</span>) <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> level = leaves.<span class="title function_">map</span>(sha256);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (level.<span class="property">length</span> &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="attr">nextLevel</span>: <span class="built_in">string</span>[] = [];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; level.<span class="property">length</span>; i += <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> left = level[i];</span><br><span class="line">      <span class="keyword">const</span> right = level[i + <span class="number">1</span>] ?? left; <span class="comment">// 如果是奇数，复制最后一个</span></span><br><span class="line">      nextLevel.<span class="title function_">push</span>(<span class="title function_">sha256</span>(left + right));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    level = nextLevel;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> level[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例</span></span><br><span class="line"><span class="keyword">const</span> txs = [<span class="string">&#x27;tx0&#x27;</span>, <span class="string">&#x27;tx1&#x27;</span>, <span class="string">&#x27;tx2&#x27;</span>, <span class="string">&#x27;tx3&#x27;</span>];</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Merkle Root:&#x27;</span>, <span class="title function_">buildMerkleTree</span>(txs));</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="🔍-五、如何验证某笔交易在-Merkle-Tree-中？"><a href="#🔍-五、如何验证某笔交易在-Merkle-Tree-中？" class="headerlink" title="🔍 五、如何验证某笔交易在 Merkle Tree 中？"></a>🔍 五、如何验证某笔交易在 Merkle Tree 中？</h2><p>验证步骤是：</p>
-<ol>
-<li>获取你那笔交易的哈希（比如 <code>tx1 → h1</code>）</li>
-<li>获取你需要验证路径的兄弟节点哈希（称为“Merkle Proof”）</li>
-<li>逐层拼接并计算，直到得出 Merkle Root</li>
-<li>看是否和真正的 Merkle Root 匹配</li>
-</ol>
-<p>这样你就可以<strong>仅凭部分数据验证整批数据完整性</strong>，这在区块链轻节点中尤为重要。</p>
-<hr>
-<h2 id="📦-六、真实区块链场景"><a href="#📦-六、真实区块链场景" class="headerlink" title="📦 六、真实区块链场景"></a>📦 六、真实区块链场景</h2><h3 id="以太坊中："><a href="#以太坊中：" class="headerlink" title="以太坊中："></a>以太坊中：</h3><ul>
-<li>并不直接使用二叉 Merkle Tree，而是使用改进版：<strong>Merkle Patricia Trie</strong> 来处理状态（账户、余额等）</li>
-<li>区块头中的 <code>transactionsRoot</code>、<code>stateRoot</code> 等字段就是 Merkle 根</li>
-</ul>
-<h3 id="比特币中："><a href="#比特币中：" class="headerlink" title="比特币中："></a>比特币中：</h3><ul>
-<li>区块中的 <code>merkle_root</code> 字段是所有交易的 Merkle 根</li>
-<li>支持轻节点（SPV）通过 Merkle Proof 验证交易</li>
-</ul>
-<hr>
-<h2 id="🧾-七、总结重点"><a href="#🧾-七、总结重点" class="headerlink" title="🧾 七、总结重点"></a>🧾 七、总结重点</h2><table>
-<thead>
-<tr>
-<th>项目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>是什么</td>
-<td>二叉哈希树，用于验证大批数据中某一条数据是否存在</td>
-</tr>
-<tr>
-<td>为什么重要</td>
-<td>高效验证、防篡改、轻节点支持</td>
-</tr>
-<tr>
-<td>区块链用途</td>
-<td>交易验证、状态验证、数据完整性证明</td>
-</tr>
-<tr>
-<td>优点</td>
-<td>空间占用小，验证时间快（对数级别），可组合证明</td>
-</tr>
-</tbody></table>
-
       
     </div>
 

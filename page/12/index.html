@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,275 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Caching-for-Distributed-Systems/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Deep-Dive-into-Caching-for-Distributed-Systems/" class="post-title-link" itemprop="url">Deep Dive into Caching for Distributed Systems</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 15:07:03" itemprop="dateCreated datePublished" datetime="2024-10-27T15:07:03-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Cache/" itemprop="url" rel="index"><span itemprop="name">Cache</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Cache/Distributed-System/" itemprop="url" rel="index"><span itemprop="name">Distributed System</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#1-overview-and-high-level-architecture">1. Overview and High-Level Architecture</a><ul>
+<li><a href="#high-level-architecture-diagram">High-Level Architecture Diagram</a></li>
+</ul>
+</li>
+<li><a href="#2-cache-design-patterns">2. Cache Design Patterns</a><ul>
+<li><a href="#21-read-through-cache">2.1 Read-Through Cache</a></li>
+<li><a href="#22-write-through-cache">2.2 Write-Through Cache</a></li>
+<li><a href="#23-write-behind-cache">2.3 Write-Behind Cache</a></li>
+<li><a href="#24-cache-aside-pattern">2.4 Cache-Aside Pattern</a></li>
+<li><a href="#25-differences-between-read-through-and-cache-aside-patterns">2.5 Differences between Read-Through and Cache-Aside Patterns</a></li>
+</ul>
+</li>
+<li><a href="#3-cache-topologies">3. Cache Topologies</a><ul>
+<li><a href="#31-single-node-cache">3.1 Single Node Cache</a></li>
+<li><a href="#32-distributed-cache">3.2 Distributed Cache</a></li>
+<li><a href="#33-hierarchical-cache">3.3 Hierarchical Cache</a></li>
+</ul>
+</li>
+<li><a href="#4-detailed-design-and-components">4. Detailed Design and Components</a><ul>
+<li><a href="#41-cache-consistency">4.1 Cache Consistency</a></li>
+<li><a href="#42-cache-invalidation-strategies">4.2 Cache Invalidation Strategies</a></li>
+<li><a href="#43-eviction-policies">4.3 Eviction Policies</a></li>
+</ul>
+</li>
+<li><a href="#5-implementation">5. Implementation</a><ul>
+<li><a href="#51-cache-layer-implementation">5.1 Cache Layer Implementation</a></li>
+<li><a href="#52-cache-invalidation-mechanisms">5.2 Cache Invalidation Mechanisms</a></li>
+</ul>
+</li>
+<li><a href="#6-monitoring-and-metrics">6. Monitoring and Metrics</a></li>
+<li><a href="#7-conclusion">7. Conclusion</a></li>
+</ul>
+<hr>
+<p>Effective caching can significantly improve the performance and scalability of distributed systems by reducing the load on databases and backend services. This document covers high-level architecture, detailed design, and sample code for implementing caching in distributed systems.</p>
+<p><a name="overview-and-high-level-architecture"></a></p>
+<h2 id="1-Overview-and-High-Level-Architecture"><a href="#1-Overview-and-High-Level-Architecture" class="headerlink" title="1. Overview and High-Level Architecture"></a>1. Overview and High-Level Architecture</h2><p>Caching in distributed systems improves data retrieval speeds, reduces network latency, and offloads backend databases. A typical caching architecture includes clients, a caching layer, and a backend data source. The caching layer can reside in-memory on the application server or be a distributed cache like <strong>Redis</strong>, <strong>Memcached</strong>, or <strong>Hazelcast</strong>.</p>
+<h3 id="High-Level-Architecture-Diagram"><a href="#High-Level-Architecture-Diagram" class="headerlink" title="High-Level Architecture Diagram"></a>High-Level Architecture Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+----------+        +--------------+        +--------------------+</span><br><span class="line">|  Clients | &lt;----&gt; |  Cache Layer | &lt;----&gt; | Backend Data Store |</span><br><span class="line">+----------+        +--------------+        +--------------------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>Components:</strong></p>
+<ul>
+<li><strong>Clients</strong>: The applications or services making requests for data.</li>
+<li><strong>Cache Layer</strong>: Responsible for storing frequently accessed data, reducing read times.</li>
+<li><strong>Backend Data Source</strong>: The main data storage, typically a database or another service.</li>
+</ul>
+<p><a name="cache-design-patterns"></a></p>
+<h2 id="2-Cache-Design-Patterns"><a href="#2-Cache-Design-Patterns" class="headerlink" title="2. Cache Design Patterns"></a>2. Cache Design Patterns</h2><p>Caching strategies are essential in defining how data is managed between the cache and the main data store.</p>
+<p><a name="read-through-cache"></a></p>
+<h3 id="2-1-Read-Through-Cache"><a href="#2-1-Read-Through-Cache" class="headerlink" title="2.1 Read-Through Cache"></a>2.1 Read-Through Cache</h3><p>In a read-through cache, requests for data are directed to the cache. If the data is not in the cache, it retrieves it from the database, caches it, and then serves the data.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Request  |  Application | -----&gt; |   Cache  | -----&gt; |  Database    |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">               |                       |                    </span><br><span class="line">               +-----------------------+                        </span><br><span class="line">             (Data cached after first retrieval)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Code Example</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReadThroughCache</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="type">Data</span> <span class="variable">data</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">        <span class="keyword">if</span> (data == <span class="literal">null</span>) &#123;</span><br><span class="line">            data = database.get(key);</span><br><span class="line">            cache.put(key, data);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="write-through-cache"></a></p>
+<h3 id="2-2-Write-Through-Cache"><a href="#2-2-Write-Through-Cache" class="headerlink" title="2.2 Write-Through Cache"></a>2.2 Write-Through Cache</h3><p>In this pattern, data is written to the cache and database simultaneously, ensuring cache consistency with the data source.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Update   |  Application | -----&gt; |   Cache  | -----&gt; |  Database    |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">                       (Writes to cache and database together)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Code Example</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WriteThroughCache</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        cache.put(key, data);</span><br><span class="line">        database.put(key, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="write-behind-cache"></a></p>
+<h3 id="2-3-Write-Behind-Cache"><a href="#2-3-Write-Behind-Cache" class="headerlink" title="2.3 Write-Behind Cache"></a>2.3 Write-Behind Cache</h3><p>The write-behind cache writes data asynchronously to the backend, which enhances write performance but requires a queue to manage pending updates.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Update   |  Application | -----&gt; |   Cache  | -----&gt; |   Queue      |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">                              (Data asynchronously written to Database)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Code Example</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WriteBehindCacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Database database;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ExecutorService executorService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WriteBehindCacheService</span><span class="params">(Cache cache, Database database)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.cache = cache;</span><br><span class="line">        <span class="built_in">this</span>.database = database;</span><br><span class="line">        <span class="built_in">this</span>.executorService = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Write to cache</span></span><br><span class="line">        cache.put(key, data);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Step 2: Asynchronously update the database</span></span><br><span class="line">        executorService.submit(() -&gt; database.put(key, data));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cache.get(key); <span class="comment">// Read from cache</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example, when <code>putData</code> is called, the data is immediately written to the cache, and an asynchronous task is created to update the database. This method improves application performance by deferring the database write.</p>
+<p><a name="cache-aside-pattern"></a></p>
+<h3 id="2-4-Cache-Aside-Pattern"><a href="#2-4-Cache-Aside-Pattern" class="headerlink" title="2.4 Cache-Aside Pattern"></a>2.4 Cache-Aside Pattern</h3><p>With the cache-aside pattern, the application retrieves data directly from the cache. On a cache miss, it loads data from the main store, updates the cache, and returns the result.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+--------------+       +----------+       +--------------+</span><br><span class="line">| Application  | ----&gt; |  Cache   | ----&gt; |  Database    |</span><br><span class="line">+--------------+       +----------+       +--------------+</span><br><span class="line">        |                          |</span><br><span class="line">       (Data fetched and cached when not found in cache)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Code Example</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheAsideService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">CacheAsideService</span><span class="params">(Cache cache, Database database)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.cache = cache;</span><br><span class="line">        <span class="built_in">this</span>.database = database;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Check cache first</span></span><br><span class="line">        <span class="type">Data</span> <span class="variable">data</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (data == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// Step 2: Load from database on cache miss</span></span><br><span class="line">            data = database.get(key);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (data != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Step 3: Store data in cache for future requests</span></span><br><span class="line">                cache.put(key, data);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Write to database</span></span><br><span class="line">        database.put(key, data);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Step 2: Invalidate cache or update cache</span></span><br><span class="line">        cache.put(key, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this example:</p>
+<ul>
+<li><strong>Read</strong>: <code>getData()</code> first tries to read from the cache. If there’s a cache miss, it fetches from the database, adds it to the cache, and returns the data.</li>
+<li><strong>Write</strong>: <code>putData()</code> writes to the database first, then updates or invalidates the cache.</li>
+</ul>
+<p><a name="differences-between-read-through-and-cache-aside-patterns"></a></p>
+<h3 id="2-5-Differences-between-Read-Through-and-Cache-Aside-Patterns"><a href="#2-5-Differences-between-Read-Through-and-Cache-Aside-Patterns" class="headerlink" title="2.5 Differences between Read-Through and Cache-Aside Patterns"></a>2.5 Differences between Read-Through and Cache-Aside Patterns</h3><ol>
+<li><p><strong>Read-Through Pattern</strong>:</p>
+<ul>
+<li>The cache sits directly in front of the database, intercepting reads.</li>
+<li>If data is requested, the cache checks if it’s present. If it’s a cache miss, it automatically fetches from the database, caches it, and returns the result.</li>
+<li>This pattern works well for applications where you want to decouple the application logic from the cache management.</li>
+<li>Common in systems where caching is managed as a service, like using a caching proxy or middleware.</li>
+</ul>
+</li>
+<li><p><strong>Cache-Aside Pattern</strong>:</p>
+<ul>
+<li>The application controls cache management explicitly.</li>
+<li>On a read operation, the application first checks the cache. If the data is not present (cache miss), the application fetches it from the database, then stores it in the cache for future use.</li>
+<li>This pattern gives the application full control over what data is cached, which can optimize cache usage for applications with varying data access patterns.</li>
+<li>Common in scenarios where cache storage is limited or there’s a need to frequently update specific items based on application logic.</li>
+</ul>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Read-Through Pattern</th>
+<th>Cache-Aside Pattern</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Cache Management</strong></td>
+<td>Managed by the cache itself</td>
+<td>Managed by the application</td>
+</tr>
+<tr>
+<td><strong>Caching Behavior</strong></td>
+<td>Automatically loads from DB on cache miss</td>
+<td>Application decides when to cache</td>
+</tr>
+<tr>
+<td><strong>Best Use Cases</strong></td>
+<td>For systems requiring a cache as a service</td>
+<td>For applications needing custom control over caching</td>
+</tr>
+<tr>
+<td><strong>Complexity</strong></td>
+<td>Lower, as caching logic is handled internally</td>
+<td>Higher, as caching must be managed in the application</td>
+</tr>
+</tbody></table>
+<hr>
+<p><a name="cache-topologies"></a></p>
+<h2 id="3-Cache-Topologies"><a href="#3-Cache-Topologies" class="headerlink" title="3. Cache Topologies"></a>3. Cache Topologies</h2><p><a name="single-node-cache"></a></p>
+<h3 id="3-1-Single-Node-Cache"><a href="#3-1-Single-Node-Cache" class="headerlink" title="3.1 Single Node Cache"></a>3.1 Single Node Cache</h3><p>Single-node caches store data locally on one machine and are simple to manage but lack scalability and resilience.</p>
+<p><a name="distributed-cache"></a></p>
+<h3 id="3-2-Distributed-Cache"><a href="#3-2-Distributed-Cache" class="headerlink" title="3.2 Distributed Cache"></a>3.2 Distributed Cache</h3><p>A distributed cache spreads data across multiple nodes for scalability, enabling data to be accessed from various locations in a distributed system.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+----------+     +-------------+     +-------------+     +-------------+</span><br><span class="line">| Client 1 |&lt;---&gt;| Cache Node 1|&lt;---&gt;| Cache Node 2|&lt;---&gt;| Cache Node 3|</span><br><span class="line">+----------+     +-------------+     +-------------+     +-------------+</span><br></pre></td></tr></table></figure>
+
+<p><a name="hierarchical-cache"></a></p>
+<h3 id="3-3-Hierarchical-Cache"><a href="#3-3-Hierarchical-Cache" class="headerlink" title="3.3 Hierarchical Cache"></a>3.3 Hierarchical Cache</h3><p>Hierarchical caches use a layered approach to caching, with data stored at different levels depending on usage frequency.</p>
+<p><strong>Diagram</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------+               </span><br><span class="line">|  L1 Cache   |                 </span><br><span class="line">+-------------+               </span><br><span class="line">       |                              </span><br><span class="line">+-------------+                       </span><br><span class="line">|  L2 Cache   |                       </span><br><span class="line">+-------------+                       </span><br><span class="line">       |                              </span><br><span class="line">+-------------+                       </span><br><span class="line">|  Backend DB |                       </span><br><span class="line">+-------------+                       </span><br></pre></td></tr></table></figure>
+
+<p><a name="detailed-design-and-components"></a></p>
+<h2 id="4-Detailed-Design-and-Components"><a href="#4-Detailed-Design-and-Components" class="headerlink" title="4. Detailed Design and Components"></a>4. Detailed Design and Components</h2><p><a name="cache-consistency"></a></p>
+<h3 id="4-1-Cache-Consistency"><a href="#4-1-Cache-Consistency" class="headerlink" title="4.1 Cache Consistency"></a>4.1 Cache Consistency</h3><p>Consistency in caching ensures that the data in the cache matches the data in the database. Techniques like cache synchronization and write-through strategies help maintain this consistency.</p>
+<p><a name="cache-invalidation-strategies"></a></p>
+<h3 id="4-2-Cache-Invalidation-Strategies"><a href="#4-2-Cache-Invalidation-Strategies" class="headerlink" title="4.2 Cache Invalidation Strategies"></a>4.2 Cache Invalidation Strategies</h3><p>Cache invalidation ensures that stale data is removed or updated within the cache. Common strategies include:</p>
+<ul>
+<li><strong>Time-based Expiration</strong>: Setting a TTL (Time to Live) for cache entries.</li>
+<li><strong>Event-based Invalidation</strong>: Using events to invalidate cache entries based on specific triggers.</li>
+</ul>
+<p><a name="eviction-policies"></a></p>
+<h3 id="4-3-Eviction-Policies"><a href="#4-3-Eviction-Policies" class="headerlink" title="4.3 Eviction Policies"></a>4.3 Eviction Policies</h3><p>Eviction policies determine how cache space is managed. Common policies include:</p>
+<ul>
+<li><strong>Least Recently Used (LRU)</strong>: Removes data that hasn’t been accessed recently.</li>
+<li><strong>Least Frequently Used (LFU)</strong>: Removes data that is accessed least frequently.</li>
+</ul>
+<p><a name="implementation"></a></p>
+<h2 id="5-Implementation"><a href="#5-Implementation" class="headerlink" title="5. Implementation"></a>5. Implementation</h2><p><a name="cache-layer-implementation"></a></p>
+<h3 id="5-1-Cache-Layer-Implementation"><a href="#5-1-Cache-Layer-Implementation" class="headerlink" title="5.1 Cache Layer Implementation"></a>5.1 Cache Layer Implementation</h3><p>Using Redis as an example of a distributed cache layer:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisCacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Jedis</span> <span class="variable">jedis</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Jedis</span>(<span class="string">&quot;localhost&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(String key, String value)</span> &#123;</span><br><span class="line">        jedis.set(key, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">get</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> jedis.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        jedis.del(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="cache-invalidation-mechanisms"></a></p>
+<h3 id="5-2-Cache-Invalidation-Mechanisms"><a href="#5-2-Cache-Invalidation-Mechanisms" class="headerlink" title="5.2 Cache Invalidation Mechanisms"></a>5.2 Cache Invalidation Mechanisms</h3><p>Implementing cache invalidation using a TTL and a cache purge mechanism:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Cache</span> <span class="variable">cache</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cache</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(String key, Data value, <span class="type">long</span> ttl, TimeUnit unit)</span> &#123;</span><br><span class="line">        cache.put(key, value);</span><br><span class="line">        cache.expire(key, ttl, unit);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="monitoring-and-metrics"></a></p>
+<h2 id="6-Monitoring-and-Metrics"><a href="#6-Monitoring-and-Metrics" class="headerlink" title="6. Monitoring and Metrics"></a>6. Monitoring and Metrics</h2><p>Monitoring the cache layer provides insights into performance. Using tools like <strong>Prometheus</strong> and <strong>Grafana</strong> with metrics for cache hit&#x2F;miss rates, latency, and eviction rates is essential.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Example Prometheus configuration for Redis</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;redis&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:6379&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h2><p>Distributed caching is a vital component of scalable systems. By understanding different patterns, topologies, and consistency mechanisms, developers can effectively improve system performance and reliability.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2222,157 +2491,6 @@
 <li><strong>Data Consistency</strong> ensures that after a transaction, the database remains in a valid state, where all integrity rules are maintained and the system behaves as expected.</li>
 </ul>
 <p>By using proper transaction management and enforcing data integrity rules, we can prevent inconsistent states and maintain the overall reliability of an online system.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XVII/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XVII/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XVII</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-24 14:07:44" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:44-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>In the previous sixteen articles, we have covered the foundational concepts of Spring WebFlux, Reactor, data stream transformation, reactive database access, performance optimization, security, testing, deployment and operations, best practices, common pitfalls, integration with microservices architecture, and real-time data push. This article will delve into implementing effective error handling strategies in Spring WebFlux applications to ensure system robustness and user experience.</p>
-<ul>
-<li><a href="#error-handling-strategies">Error Handling Strategies</a><ul>
-<li><a href="#importance-of-error-handling">Importance of Error Handling</a></li>
-<li><a href="#basic-concepts-of-error-handling">Basic Concepts of Error Handling</a></li>
-<li><a href="#global-error-handling">Global Error Handling</a><ul>
-<li><a href="#creating-a-global-error-handler">Creating a Global Error Handler</a></li>
-<li><a href="#configuration-class-explanation">Configuration Class Explanation</a></li>
-</ul>
-</li>
-<li><a href="#controller-level-error-handling">Controller-Level Error Handling</a></li>
-<li><a href="#error-handling-in-reactive-streams">Error Handling in Reactive Streams</a><ul>
-<li><a href="#using-onerrorresume">Using <code>onErrorResume</code></a></li>
-<li><a href="#using-onerrorreturn">Using <code>onErrorReturn</code></a></li>
-<li><a href="#using-onerrormap">Using <code>onErrorMap</code></a></li>
-</ul>
-</li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Error-Handling-Strategies"><a href="#Error-Handling-Strategies" class="headerlink" title="Error Handling Strategies"></a>Error Handling Strategies</h1><hr>
-<p><a name="importance-of-error-handling"></a></p>
-<h2 id="Importance-of-Error-Handling"><a href="#Importance-of-Error-Handling" class="headerlink" title="Importance of Error Handling"></a>Importance of Error Handling</h2><p>In any application, errors are inevitable. How these errors are handled not only affects system stability but also directly impacts user experience. In Spring WebFlux, due to its asynchronous and non-blocking nature, error handling is particularly crucial.</p>
-<p><a name="basic-concepts-of-error-handling"></a></p>
-<h2 id="Basic-Concepts-of-Error-Handling"><a href="#Basic-Concepts-of-Error-Handling" class="headerlink" title="Basic Concepts of Error Handling"></a>Basic Concepts of Error Handling</h2><p>In Spring WebFlux, error handling typically involves the following levels:</p>
-<ul>
-<li><strong>Global Error Handling</strong>: Captures unhandled exceptions in the application and provides a unified error response.</li>
-<li><strong>Controller-Level Error Handling</strong>: Handles errors specific to requests in controllers.</li>
-<li><strong>Error Handling in Reactive Streams</strong>: Manages and recovers from errors within reactive data streams.</li>
-</ul>
-<p><a name="global-error-handling"></a></p>
-<h2 id="Global-Error-Handling"><a href="#Global-Error-Handling" class="headerlink" title="Global Error Handling"></a>Global Error Handling</h2><p>Global error handling can be achieved by implementing the <code>ErrorWebExceptionHandler</code> interface.</p>
-<p><a name="creating-a-global-error-handler"></a></p>
-<h3 id="Creating-a-Global-Error-Handler"><a href="#Creating-a-Global-Error-Handler" class="headerlink" title="Creating a Global Error Handler"></a>Creating a Global Error Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.annotation.Order;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.server.ServerWebExchange;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalErrorHandlerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Order(-2)</span></span><br><span class="line">    <span class="keyword">public</span> ErrorWebExceptionHandler <span class="title function_">globalErrorHandler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">GlobalErrorHandler</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">GlobalErrorHandler</span> <span class="keyword">implements</span> <span class="title class_">ErrorWebExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">handle</span><span class="params">(ServerWebExchange exchange, Throwable ex)</span> &#123;</span><br><span class="line">            <span class="type">ServerRequest</span> <span class="variable">request</span> <span class="operator">=</span> ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());</span><br><span class="line">            <span class="keyword">return</span> renderErrorResponse(request, ex)</span><br><span class="line">                .flatMap(response -&gt; response.writeTo(exchange, HandlerStrategies.withDefaults()));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Mono&lt;ServerResponse&gt; <span class="title function_">renderErrorResponse</span><span class="params">(ServerRequest request, Throwable ex)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)</span><br><span class="line">                .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                .bodyValue(<span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ErrorResponse</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String message;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">ErrorResponse</span><span class="params">(String message)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.message = message;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> message;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="configuration-class-explanation"></a></p>
-<h3 id="Configuration-Class-Explanation"><a href="#Configuration-Class-Explanation" class="headerlink" title="Configuration Class Explanation"></a>Configuration Class Explanation</h3><p>In the above configuration, we define a global error handler <code>GlobalErrorHandler</code> that captures all unhandled exceptions and returns a unified error response. By implementing the <code>ErrorWebExceptionHandler</code> interface, we can customize the error handling logic.</p>
-<p><a name="controller-level-error-handling"></a></p>
-<h2 id="Controller-Level-Error-Handling"><a href="#Controller-Level-Error-Handling" class="headerlink" title="Controller-Level Error Handling"></a>Controller-Level Error Handling</h2><p>At the controller level, we can use the <code>@ExceptionHandler</code> annotation to handle specific exceptions.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestControllerAdvice;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ControllerExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(BookNotFoundException.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleBookNotFound</span><span class="params">(BookNotFoundException ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">errorResponse</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage());</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle other exceptions</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(Exception.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleException</span><span class="params">(Exception ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">errorResponse</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(<span class="string">&quot;Internal Server Error&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="error-handling-in-reactive-streams"></a></p>
-<h2 id="Error-Handling-in-Reactive-Streams"><a href="#Error-Handling-in-Reactive-Streams" class="headerlink" title="Error Handling in Reactive Streams"></a>Error Handling in Reactive Streams</h2><p>In reactive streams, we can use various operators to handle errors.</p>
-<p><a name="using-onerrorresume"></a></p>
-<h3 id="Using-onErrorResume"><a href="#Using-onErrorResume" class="headerlink" title="Using onErrorResume"></a>Using <code>onErrorResume</code></h3><p>The <code>onErrorResume</code> operator allows switching to another <code>Publisher</code> when an error occurs.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorResume(ex -&gt; &#123;</span><br><span class="line">            log.error(<span class="string">&quot;Error finding book&quot;</span>, ex);</span><br><span class="line">            <span class="keyword">return</span> Mono.empty();</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="using-onerrorreturn"></a></p>
-<h3 id="Using-onErrorReturn"><a href="#Using-onErrorReturn" class="headerlink" title="Using onErrorReturn"></a>Using <code>onErrorReturn</code></h3><p>The <code>onErrorReturn</code> operator allows returning a default value when an error occurs.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorReturn(<span class="keyword">new</span> <span class="title class_">Book</span>(<span class="string">&quot;default&quot;</span>, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown Author&quot;</span>, <span class="number">0.0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="using-onerrormap"></a></p>
-<h3 id="Using-onErrorMap"><a href="#Using-onErrorMap" class="headerlink" title="Using onErrorMap"></a>Using <code>onErrorMap</code></h3><p>The <code>onErrorMap</code> operator allows converting the error to another type of error.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorMap(ex -&gt; <span class="keyword">new</span> <span class="title class_">CustomException</span>(<span class="string">&quot;Custom error message&quot;</span>, ex));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to implement effective error handling strategies in Spring WebFlux applications. By using global error handling, controller-level error handling, and error handling in reactive streams, we can build more robust and user-friendly applications. Proper error handling is essential for maintaining the reliability and performance of modern reactive applications.</p>
 
       
     </div>

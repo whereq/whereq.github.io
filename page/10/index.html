@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,213 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Building-a-ChatGPT-like-System-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/Building-a-ChatGPT-like-System-II/" class="post-title-link" itemprop="url">Building a ChatGPT-like System - II</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 16:01:29" itemprop="dateCreated datePublished" datetime="2024-10-28T16:01:29-04:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ChatGPT/" itemprop="url" rel="index"><span itemprop="name">ChatGPT</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#system-overview">System Overview</a></li>
+<li><a href="#1-core-dialogue-architecture">1. Core Dialogue Architecture</a><ul>
+<li><a href="#diagram-core-dialogue-flow">Diagram: Core Dialogue Flow</a></li>
+</ul>
+</li>
+<li><a href="#2-session-and-history-management">2. Session and History Management</a><ul>
+<li><a href="#problem-of-stateless-inference">Problem of Stateless Inference</a></li>
+<li><a href="#diagram-enhanced-system-with-session-and-history-management">Diagram: Enhanced System with Session and History Management</a></li>
+</ul>
+</li>
+<li><a href="#3-rest-api-design">3. REST API Design</a></li>
+<li><a href="#4-message-structure-and-prompt-format">4. Message Structure and Prompt Format</a></li>
+<li><a href="#5-managing-history-and-context">5. Managing History and Context</a><ul>
+<li><a href="#techniques-for-history-management">Techniques for History Management</a></li>
+</ul>
+</li>
+<li><a href="#6-system-extensions-and-scalability">6. System Extensions and Scalability</a></li>
+<li><a href="#7-caching-strategies">7. Caching Strategies</a><ul>
+<li><a href="#diagram-cache-with-vector-embeddings-for-similar-query-detection">Diagram: Cache with Vector Embeddings for Similar Query Detection</a></li>
+<li><a href="#cache-scope-considerations">Cache Scope Considerations</a></li>
+</ul>
+</li>
+<li><a href="#8-elastic-scaling-and-load-balancing">8. Elastic Scaling and Load Balancing</a><ul>
+<li><a href="#diagram-load-balanced-system-architecture-with-elastic-scaling">Diagram: Load Balanced System Architecture with Elastic Scaling</a></li>
+</ul>
+</li>
+<li><a href="#9-production-readiness">9. Production Readiness</a><ul>
+<li><a href="#checklist-for-production">Checklist for Production</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr>
+<p>This guide provides an in-depth exploration of building a ChatGPT-style conversational AI system. We cover everything from model setup and inference engine design to system architecture, incorporating caching, scalability, and production-ready features.</p>
+<p><a name="system-overview"></a></p>
+<h2 id="System-Overview"><a href="#System-Overview" class="headerlink" title="System Overview"></a>System Overview</h2><p>A conversational AI system has several core components responsible for processing, generating, and managing dialogue flow with users. This overview explains the minimal structure for a functional, extensible ChatGPT-style system.</p>
+<p><a name="1-core-dialogue-architecture"></a></p>
+<h2 id="1-Core-Dialogue-Architecture"><a href="#1-Core-Dialogue-Architecture" class="headerlink" title="1. Core Dialogue Architecture"></a>1. Core Dialogue Architecture</h2><p>The architecture focuses on the interaction between the user, the web interface, and the inference engine that generates responses.</p>
+<h3 id="Diagram-Core-Dialogue-Flow"><a href="#Diagram-Core-Dialogue-Flow" class="headerlink" title="Diagram: Core Dialogue Flow"></a>Diagram: Core Dialogue Flow</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+---------------+               +-------------------+               +-----------------------+</span><br><span class="line">|    Web UI     | &lt;-- HTTP --&gt;  |   Server/API      | &lt;-- REST --&gt;  |   Inference Runtime   |</span><br><span class="line">| (User Access) |               | (Request Routing) |               | (LLM Model Handling)  |</span><br><span class="line">+---------------+               +-------------------+               +-----------------------+</span><br><span class="line">            ^                                                         |</span><br><span class="line">            |&lt;--------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>Web UI</strong>: Handles user interaction and displays responses.</li>
+<li><strong>Server&#x2F;API</strong>: Receives requests and forwards them to the <code>inference runtime</code>.</li>
+<li><strong>Inference Runtime</strong>: Loads the large language model (LLM), processes the input, and generates a response.</li>
+</ol>
+<p><a name="2-session-and-history-management"></a></p>
+<h2 id="2-Session-and-History-Management"><a href="#2-Session-and-History-Management" class="headerlink" title="2. Session and History Management"></a>2. Session and History Management</h2><h3 id="Problem-of-Stateless-Inference"><a href="#Problem-of-Stateless-Inference" class="headerlink" title="Problem of Stateless Inference"></a>Problem of Stateless Inference</h3><p>Standard <code>inference runtimes</code> are typically stateless, meaning they cannot recall previous messages in a conversation. To handle multi-turn dialogue, we integrate a database to persist session data and user message history.</p>
+<h3 id="Diagram-Enhanced-System-with-Session-and-History-Management"><a href="#Diagram-Enhanced-System-with-Session-and-History-Management" class="headerlink" title="Diagram: Enhanced System with Session and History Management"></a>Diagram: Enhanced System with Session and History Management</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+---------------+               +-------------------+               +-----------------------+</span><br><span class="line">|    Web UI     | &lt;-- HTTP --&gt;  |   Server/API      | &lt;-- REST --&gt;  |   Inference Runtime   |</span><br><span class="line">|               |               |                   |               |                       |</span><br><span class="line">+---------------+               +-------------------+               +-----------------------+</span><br><span class="line">                                          |</span><br><span class="line">                +---------------- Database ----------------+</span><br><span class="line">                |   User Session, ChatID, and Messages     |</span><br><span class="line">                +------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>Database</strong>: Stores user sessions, chat histories, and other metadata.</li>
+<li><strong>Server&#x2F;API</strong>: Uses REST endpoints to interact with the database, retrieving history when needed.</li>
+</ol>
+<p><a name="3-rest-api-design"></a></p>
+<h2 id="3-REST-API-Design"><a href="#3-REST-API-Design" class="headerlink" title="3. REST API Design"></a>3. REST API Design</h2><p>The Server&#x2F;API manages communication with the Web UI via REST APIs, handling user requests, responses, and session tracking.</p>
+<p><strong>REST Endpoints:</strong></p>
+<ul>
+<li><strong>POST &#x2F;chat</strong>: Starts a new conversation.</li>
+<li><strong>POST &#x2F;chat&#x2F;:chatID&#x2F;completion</strong>: Continues a conversation in an existing session.</li>
+<li><strong>GET &#x2F;chats</strong>: Retrieves the list of active sessions.</li>
+<li><strong>DELETE &#x2F;chat&#x2F;:chatID</strong>: Deletes a specified session.</li>
+</ul>
+<p><strong>Sample API Call to Start a Conversation</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://yourserver.com/chat \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;userID&quot;: &quot;12345&quot;, &quot;message&quot;: &quot;Hello, ChatGPT!&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><a name="4-message-structure-and-prompt-format"></a></p>
+<h2 id="4-Message-Structure-and-Prompt-Format"><a href="#4-Message-Structure-and-Prompt-Format" class="headerlink" title="4. Message Structure and Prompt Format"></a>4. Message Structure and Prompt Format</h2><p>The <strong>prompt format</strong> structures conversation history and provides context to the model.</p>
+<p><strong>Example Prompt Format in JSON</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;system&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;You are a helpful assistant.&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello!&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;assistant&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello there, how may I assist you today?&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;How are you?&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>Role</strong>: Indicates the message source (<code>system</code>, <code>user</code>, or <code>assistant</code>).</li>
+<li><strong>Content</strong>: The message text.</li>
+</ol>
+<p><a name="5-managing-history-and-context"></a></p>
+<h2 id="5-Managing-History-and-Context"><a href="#5-Managing-History-and-Context" class="headerlink" title="5. Managing History and Context"></a>5. Managing History and Context</h2><h3 id="Techniques-for-History-Management"><a href="#Techniques-for-History-Management" class="headerlink" title="Techniques for History Management"></a>Techniques for History Management</h3><ul>
+<li><strong>Direct Prompt Fill</strong>: Append all previous messages to the prompt, suitable for short interactions.</li>
+<li><strong>Context Truncation</strong>: Omit older messages when context length exceeds the model’s token limit.</li>
+<li><strong>History Summarization</strong>: Generate a summary of prior messages to condense the context, enabling longer conversations within token limits.</li>
+</ul>
+<p><a name="6-system-extensions-and-scalability"></a></p>
+<h2 id="6-System-Extensions-and-Scalability"><a href="#6-System-Extensions-and-Scalability" class="headerlink" title="6. System Extensions and Scalability"></a>6. System Extensions and Scalability</h2><p>In a high-traffic environment, it is essential to scale the system horizontally and incorporate caching for repeated requests.</p>
+<p><a name="7-caching-strategies"></a></p>
+<h2 id="7-Caching-Strategies"><a href="#7-Caching-Strategies" class="headerlink" title="7. Caching Strategies"></a>7. Caching Strategies</h2><p>Implementing caching reduces redundant processing for similar queries. This approach involves caching semantic meanings of requests rather than exact matches.</p>
+<h3 id="Diagram-Cache-with-Vector-Embeddings-for-Similar-Query-Detection"><a href="#Diagram-Cache-with-Vector-Embeddings-for-Similar-Query-Detection" class="headerlink" title="Diagram: Cache with Vector Embeddings for Similar Query Detection"></a>Diagram: Cache with Vector Embeddings for Similar Query Detection</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+---------------+                  +------------+               +----------------+</span><br><span class="line">|   User Query  |  -&gt; Embedding -&gt; |   Cache    |  Cache Hit -&gt; |   Response     |</span><br><span class="line">+---------------+                  +------------+               +----------------+</span><br><span class="line">               | No Hit                                      </span><br><span class="line">               v</span><br><span class="line">+---------------------------+          +--------------------+               </span><br><span class="line">|  Text Embedding Model     |   --&gt;    | Vector Storage and |</span><br><span class="line">|  (e.g., BERT/Word2Vec)    |          |  Search Database   |</span><br><span class="line">+---------------------------+          +--------------------+</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>Embedding Runtime</strong>: Converts queries into vector embeddings.</li>
+<li><strong>Vector Storage</strong>: Stores embeddings to detect semantically similar queries.</li>
+</ol>
+<h3 id="Cache-Scope-Considerations"><a href="#Cache-Scope-Considerations" class="headerlink" title="Cache Scope Considerations"></a>Cache Scope Considerations</h3><ul>
+<li><strong>Single User Cache</strong>: Stores responses per user session.</li>
+<li><strong>Global Cache</strong>: Shared across all users, introducing potential privacy considerations.</li>
+</ul>
+<p><a name="8-elastic-scaling-and-load-balancing"></a></p>
+<h2 id="8-Elastic-Scaling-and-Load-Balancing"><a href="#8-Elastic-Scaling-and-Load-Balancing" class="headerlink" title="8. Elastic Scaling and Load Balancing"></a>8. Elastic Scaling and Load Balancing</h2><p>Scaling is crucial for supporting high traffic. Stateless components like the server and <code>inference runtime</code> can be scaled horizontally using Kubernetes.</p>
+<h3 id="Diagram-Load-Balanced-System-Architecture-with-Elastic-Scaling"><a href="#Diagram-Load-Balanced-System-Architecture-with-Elastic-Scaling" class="headerlink" title="Diagram: Load Balanced System Architecture with Elastic Scaling"></a>Diagram: Load Balanced System Architecture with Elastic Scaling</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+           +---------------+         +--------------------------+</span><br><span class="line">|  Gateway                 |   ---&gt;    |   Server      |   ---&gt;  |  Inference               |</span><br><span class="line">|                          |           |               |         |  Runtime (Auto-scalable) |</span><br><span class="line">|  Load Balancer           |           |  (Stateless)  |         |                          |</span><br><span class="line">+--------------------------+           +---------------+         +--------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Gateway</strong>: Distributes traffic across multiple servers.</li>
+<li><strong>Message Queue (MQ)</strong>: Handles requests asynchronously for stable inference.</li>
+</ul>
+<p><a name="9-production-readiness"></a></p>
+<h2 id="9-Production-Readiness"><a href="#9-Production-Readiness" class="headerlink" title="9. Production Readiness"></a>9. Production Readiness</h2><p>To make the system production-ready, additional steps are essential.</p>
+<h3 id="Checklist-for-Production"><a href="#Checklist-for-Production" class="headerlink" title="Checklist for Production"></a>Checklist for Production</h3><ul>
+<li><strong>Technology Selection</strong>:<ul>
+<li><strong>Database</strong>: PostgreSQL or MongoDB for session persistence.</li>
+<li><strong>Inference Engine</strong>: Use efficient models like <code>llama.cpp</code>, <code>HuggingFace Transformers</code>, or <code>vLLM</code>.</li>
+</ul>
+</li>
+<li><strong>Observability</strong>:<ul>
+<li>Implement logging, tracing, and metrics.</li>
+</ul>
+</li>
+<li><strong>CI&#x2F;CD and Deployment</strong>:<ul>
+<li>Use Kubernetes or cloud-based deployment environments.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This guide provides a foundational approach to building a ChatGPT-like system, managing sessions, scaling the architecture, and ensuring production reliability. From basic dialogue to advanced caching and scalability, these steps can help create a highly responsive and robust conversational AI.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1942,155 +2149,6 @@ This enhanced Markdown document covers each requested update, including detailed
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The SOLID principles are fundamental to writing clean, maintainable, and scalable software. By adhering to these principles, developers can create code that is easier to understand, extend, and refactor. Each principle addresses a specific aspect of software design, and understanding how to apply them correctly can significantly improve the quality of your code.</p>
 <h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><p><a target="_blank" rel="noopener" href="https://blog.bytebytego.com/p/mastering-design-principles-solid">https://blog.bytebytego.com/p/mastering-design-principles-solid</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/" class="post-title-link" itemprop="url">Troubleshooting High Currency Issues in Kubernetes - Continued</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 21:30:37" itemprop="dateCreated datePublished" datetime="2024-10-27T21:30:37-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#pod-restart-crashloopbackoff-loop-due-to-high-concurrency-continued">Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency (Continued)</a><ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#problem-background">Problem Background</a></li>
-<li><a href="#cause-analysis">Cause Analysis</a></li>
-<li><a href="#verification-of-previous-fixes">Verification of Previous Fixes</a></li>
-<li><a href="#exploring-additional-causes">Exploring Additional Causes</a></li>
-<li><a href="#identifying-file-descriptor-limits">Identifying File Descriptor Limits</a></li>
-<li><a href="#solution">Solution</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency-Continued"><a href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency-Continued" class="headerlink" title="Pod Restart CrashLoopBackOff Loop Due to High Concurrency (Continued)"></a>Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency (Continued)</h1><hr>
-<p><a name="introduction"></a></p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Following the previous issue, the environment experienced another instance of Harbor and Calico pods restarting due to failed health checks. Additionally, using <code>kubectl</code> commands to enter the pods was extremely slow or timed out. This article continues the troubleshooting process to identify and resolve the root cause.</p>
-<hr>
-<p><a name="problem-background"></a></p>
-<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>After a period, the environment again faced issues with Harbor and Calico pods restarting due to failed health checks. Using <code>kubectl</code> commands to enter the pods was slow or timed out.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">^</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="cause-analysis"></a></p>
-<h2 id="Cause-Analysis"><a href="#Cause-Analysis" class="headerlink" title="Cause Analysis"></a>Cause Analysis</h2><p>The root cause of the repeated restarts was previously identified as health check timeouts, with TCP connections stuck in the <code>SYN_SENT</code> phase.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -anp | grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:38983         127.0.0.1:23380         SYN_SENT    -</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="verification-of-previous-fixes"></a></p>
-<h2 id="Verification-of-Previous-Fixes"><a href="#Verification-of-Previous-Fixes" class="headerlink" title="Verification of Previous Fixes"></a>Verification of Previous Fixes</h2><p>First, check if the previous kernel parameter adjustments are still in place.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /etc/sysctl.conf</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
-
-<p>Verify if the changes have taken effect.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# ss -lnt</span><br><span class="line">State      Recv-Q   Send-Q     Local Address:Port      Peer Address:Port          </span><br><span class="line">LISTEN     0        32768      127.0.0.1:23380         *:*</span><br></pre></td></tr></table></figure>
-
-<p>Despite the parameters being correctly set, the issue persisted.</p>
-<hr>
-<p><a name="exploring-additional-causes"></a></p>
-<h2 id="Exploring-Additional-Causes"><a href="#Exploring-Additional-Causes" class="headerlink" title="Exploring Additional Causes"></a>Exploring Additional Causes</h2><p>Given the global impact of the issue, it was likely due to a system-level performance bottleneck. High business load affects CPU, memory, disk, and connection counts. Since the connections were long-lived, the file descriptor limit could be a factor.</p>
-<hr>
-<p><a name="identifying-file-descriptor-limits"></a></p>
-<h2 id="Identifying-File-Descriptor-Limits"><a href="#Identifying-File-Descriptor-Limits" class="headerlink" title="Identifying File Descriptor Limits"></a>Identifying File Descriptor Limits</h2><p>Check the number of open file descriptors.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# lsof -p 45775 | <span class="built_in">wc</span> -l</span><br><span class="line">17974</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# lsof -p 45775 | grep <span class="string">&quot;sock&quot;</span> | <span class="built_in">wc</span> -l</span><br><span class="line">12051</span><br></pre></td></tr></table></figure>
-
-<p>The process had over 10,000 open sockets, exceeding the default limit of 1024.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n</span><br><span class="line">1024</span><br></pre></td></tr></table></figure>
-
-<p>Despite exceeding the limit, the business pod did not report “too many open files” errors.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl logs -n system node1-59c9475bc6-zkhq5</span><br><span class="line">start config</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="solution"></a></p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>Temporarily increase the file descriptor limit.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n 65535</span><br><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n</span><br><span class="line">65535</span><br></pre></td></tr></table></figure>
-
-<p>After the adjustment, <code>kubectl</code> commands responded normally, and the <code>SYN_SENT</code> phase issue was resolved.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line">[root@node01 ~]# netstat -anp | grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:56369         127.0.0.1:23380         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57601         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57479         TIME_WAIT   -</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of considering system-level parameters, such as file descriptor limits, in high-concurrency scenarios. Adjusting these parameters can resolve performance bottlenecks and ensure stable operation of Kubernetes environments. For environments with high business load, it is strongly recommended to perform comprehensive operating system-level performance optimizations.</p>
 
       
     </div>

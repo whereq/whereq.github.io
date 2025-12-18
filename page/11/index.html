@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,155 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/27/Troubleshooting-High-Currency-Issues-in-Kubernetes-Continued/" class="post-title-link" itemprop="url">Troubleshooting High Currency Issues in Kubernetes - Continued</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-27 21:30:37" itemprop="dateCreated datePublished" datetime="2024-10-27T21:30:37-04:00">2024-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Troubleshooting/" itemprop="url" rel="index"><span itemprop="name">Troubleshooting</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#pod-restart-crashloopbackoff-loop-due-to-high-concurrency-continued">Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency (Continued)</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#problem-background">Problem Background</a></li>
+<li><a href="#cause-analysis">Cause Analysis</a></li>
+<li><a href="#verification-of-previous-fixes">Verification of Previous Fixes</a></li>
+<li><a href="#exploring-additional-causes">Exploring Additional Causes</a></li>
+<li><a href="#identifying-file-descriptor-limits">Identifying File Descriptor Limits</a></li>
+<li><a href="#solution">Solution</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency-Continued"><a href="#Pod-Restart-CrashLoopBackOff-Loop-Due-to-High-Concurrency-Continued" class="headerlink" title="Pod Restart CrashLoopBackOff Loop Due to High Concurrency (Continued)"></a>Pod Restart <code>CrashLoopBackOff</code> Loop Due to High Concurrency (Continued)</h1><hr>
+<p><a name="introduction"></a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Following the previous issue, the environment experienced another instance of Harbor and Calico pods restarting due to failed health checks. Additionally, using <code>kubectl</code> commands to enter the pods was extremely slow or timed out. This article continues the troubleshooting process to identify and resolve the root cause.</p>
+<hr>
+<p><a name="problem-background"></a></p>
+<h2 id="Problem-Background"><a href="#Problem-Background" class="headerlink" title="Problem Background"></a>Problem Background</h2><p>After a period, the environment again faced issues with Harbor and Calico pods restarting due to failed health checks. Using <code>kubectl</code> commands to enter the pods was slow or timed out.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">^</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="cause-analysis"></a></p>
+<h2 id="Cause-Analysis"><a href="#Cause-Analysis" class="headerlink" title="Cause Analysis"></a>Cause Analysis</h2><p>The root cause of the repeated restarts was previously identified as health check timeouts, with TCP connections stuck in the <code>SYN_SENT</code> phase.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -anp | grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:38983         127.0.0.1:23380         SYN_SENT    -</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="verification-of-previous-fixes"></a></p>
+<h2 id="Verification-of-Previous-Fixes"><a href="#Verification-of-Previous-Fixes" class="headerlink" title="Verification of Previous Fixes"></a>Verification of Previous Fixes</h2><p>First, check if the previous kernel parameter adjustments are still in place.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">cat</span> /etc/sysctl.conf</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
+
+<p>Verify if the changes have taken effect.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# ss -lnt</span><br><span class="line">State      Recv-Q   Send-Q     Local Address:Port      Peer Address:Port          </span><br><span class="line">LISTEN     0        32768      127.0.0.1:23380         *:*</span><br></pre></td></tr></table></figure>
+
+<p>Despite the parameters being correctly set, the issue persisted.</p>
+<hr>
+<p><a name="exploring-additional-causes"></a></p>
+<h2 id="Exploring-Additional-Causes"><a href="#Exploring-Additional-Causes" class="headerlink" title="Exploring Additional Causes"></a>Exploring Additional Causes</h2><p>Given the global impact of the issue, it was likely due to a system-level performance bottleneck. High business load affects CPU, memory, disk, and connection counts. Since the connections were long-lived, the file descriptor limit could be a factor.</p>
+<hr>
+<p><a name="identifying-file-descriptor-limits"></a></p>
+<h2 id="Identifying-File-Descriptor-Limits"><a href="#Identifying-File-Descriptor-Limits" class="headerlink" title="Identifying File Descriptor Limits"></a>Identifying File Descriptor Limits</h2><p>Check the number of open file descriptors.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# lsof -p 45775 | <span class="built_in">wc</span> -l</span><br><span class="line">17974</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# lsof -p 45775 | grep <span class="string">&quot;sock&quot;</span> | <span class="built_in">wc</span> -l</span><br><span class="line">12051</span><br></pre></td></tr></table></figure>
+
+<p>The process had over 10,000 open sockets, exceeding the default limit of 1024.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n</span><br><span class="line">1024</span><br></pre></td></tr></table></figure>
+
+<p>Despite exceeding the limit, the business pod did not report “too many open files” errors.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl logs -n system node1-59c9475bc6-zkhq5</span><br><span class="line">start config</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="solution"></a></p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>Temporarily increase the file descriptor limit.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n 65535</span><br><span class="line">[root@node01 ~]# <span class="built_in">ulimit</span> -n</span><br><span class="line">65535</span><br></pre></td></tr></table></figure>
+
+<p>After the adjustment, <code>kubectl</code> commands responded normally, and the <code>SYN_SENT</code> phase issue was resolved.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line">[root@node01 ~]# kubectl <span class="built_in">exec</span> -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">[root@node1-59c9475bc6-zkhq5]# <span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line">[root@node01 ~]# netstat -anp | grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:56369         127.0.0.1:23380         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57601         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57479         TIME_WAIT   -</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This case study highlights the importance of considering system-level parameters, such as file descriptor limits, in high-concurrency scenarios. Adjusting these parameters can resolve performance bottlenecks and ensure stable operation of Kubernetes environments. For environments with high business load, it is strongly recommended to perform comprehensive operating system-level performance optimizations.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1855,275 +2004,6 @@
 <hr>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Caching is a powerful mechanism for improving the performance and scalability of distributed systems. By understanding the high-level architecture and detailed designs, you can effectively implement cache mechanisms that handle various complex scenarios like flow control, cache invalidation, and cache stampede prevention. Use the provided sample code and diagrams to implement efficient caching in your distributed system.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/27/Deep-Dive-into-Caching-for-Distributed-Systems/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/27/Deep-Dive-into-Caching-for-Distributed-Systems/" class="post-title-link" itemprop="url">Deep Dive into Caching for Distributed Systems</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-27 15:07:03" itemprop="dateCreated datePublished" datetime="2024-10-27T15:07:03-04:00">2024-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/" itemprop="url" rel="index"><span itemprop="name">Cache</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Cache/Distributed-System/" itemprop="url" rel="index"><span itemprop="name">Distributed System</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#1-overview-and-high-level-architecture">1. Overview and High-Level Architecture</a><ul>
-<li><a href="#high-level-architecture-diagram">High-Level Architecture Diagram</a></li>
-</ul>
-</li>
-<li><a href="#2-cache-design-patterns">2. Cache Design Patterns</a><ul>
-<li><a href="#21-read-through-cache">2.1 Read-Through Cache</a></li>
-<li><a href="#22-write-through-cache">2.2 Write-Through Cache</a></li>
-<li><a href="#23-write-behind-cache">2.3 Write-Behind Cache</a></li>
-<li><a href="#24-cache-aside-pattern">2.4 Cache-Aside Pattern</a></li>
-<li><a href="#25-differences-between-read-through-and-cache-aside-patterns">2.5 Differences between Read-Through and Cache-Aside Patterns</a></li>
-</ul>
-</li>
-<li><a href="#3-cache-topologies">3. Cache Topologies</a><ul>
-<li><a href="#31-single-node-cache">3.1 Single Node Cache</a></li>
-<li><a href="#32-distributed-cache">3.2 Distributed Cache</a></li>
-<li><a href="#33-hierarchical-cache">3.3 Hierarchical Cache</a></li>
-</ul>
-</li>
-<li><a href="#4-detailed-design-and-components">4. Detailed Design and Components</a><ul>
-<li><a href="#41-cache-consistency">4.1 Cache Consistency</a></li>
-<li><a href="#42-cache-invalidation-strategies">4.2 Cache Invalidation Strategies</a></li>
-<li><a href="#43-eviction-policies">4.3 Eviction Policies</a></li>
-</ul>
-</li>
-<li><a href="#5-implementation">5. Implementation</a><ul>
-<li><a href="#51-cache-layer-implementation">5.1 Cache Layer Implementation</a></li>
-<li><a href="#52-cache-invalidation-mechanisms">5.2 Cache Invalidation Mechanisms</a></li>
-</ul>
-</li>
-<li><a href="#6-monitoring-and-metrics">6. Monitoring and Metrics</a></li>
-<li><a href="#7-conclusion">7. Conclusion</a></li>
-</ul>
-<hr>
-<p>Effective caching can significantly improve the performance and scalability of distributed systems by reducing the load on databases and backend services. This document covers high-level architecture, detailed design, and sample code for implementing caching in distributed systems.</p>
-<p><a name="overview-and-high-level-architecture"></a></p>
-<h2 id="1-Overview-and-High-Level-Architecture"><a href="#1-Overview-and-High-Level-Architecture" class="headerlink" title="1. Overview and High-Level Architecture"></a>1. Overview and High-Level Architecture</h2><p>Caching in distributed systems improves data retrieval speeds, reduces network latency, and offloads backend databases. A typical caching architecture includes clients, a caching layer, and a backend data source. The caching layer can reside in-memory on the application server or be a distributed cache like <strong>Redis</strong>, <strong>Memcached</strong>, or <strong>Hazelcast</strong>.</p>
-<h3 id="High-Level-Architecture-Diagram"><a href="#High-Level-Architecture-Diagram" class="headerlink" title="High-Level Architecture Diagram"></a>High-Level Architecture Diagram</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+----------+        +--------------+        +--------------------+</span><br><span class="line">|  Clients | &lt;----&gt; |  Cache Layer | &lt;----&gt; | Backend Data Store |</span><br><span class="line">+----------+        +--------------+        +--------------------+</span><br></pre></td></tr></table></figure>
-
-<p><strong>Components:</strong></p>
-<ul>
-<li><strong>Clients</strong>: The applications or services making requests for data.</li>
-<li><strong>Cache Layer</strong>: Responsible for storing frequently accessed data, reducing read times.</li>
-<li><strong>Backend Data Source</strong>: The main data storage, typically a database or another service.</li>
-</ul>
-<p><a name="cache-design-patterns"></a></p>
-<h2 id="2-Cache-Design-Patterns"><a href="#2-Cache-Design-Patterns" class="headerlink" title="2. Cache Design Patterns"></a>2. Cache Design Patterns</h2><p>Caching strategies are essential in defining how data is managed between the cache and the main data store.</p>
-<p><a name="read-through-cache"></a></p>
-<h3 id="2-1-Read-Through-Cache"><a href="#2-1-Read-Through-Cache" class="headerlink" title="2.1 Read-Through Cache"></a>2.1 Read-Through Cache</h3><p>In a read-through cache, requests for data are directed to the cache. If the data is not in the cache, it retrieves it from the database, caches it, and then serves the data.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Request  |  Application | -----&gt; |   Cache  | -----&gt; |  Database    |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">               |                       |                    </span><br><span class="line">               +-----------------------+                        </span><br><span class="line">             (Data cached after first retrieval)</span><br></pre></td></tr></table></figure>
-
-<p><strong>Code Example</strong>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReadThroughCache</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="type">Data</span> <span class="variable">data</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">        <span class="keyword">if</span> (data == <span class="literal">null</span>) &#123;</span><br><span class="line">            data = database.get(key);</span><br><span class="line">            cache.put(key, data);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="write-through-cache"></a></p>
-<h3 id="2-2-Write-Through-Cache"><a href="#2-2-Write-Through-Cache" class="headerlink" title="2.2 Write-Through Cache"></a>2.2 Write-Through Cache</h3><p>In this pattern, data is written to the cache and database simultaneously, ensuring cache consistency with the data source.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Update   |  Application | -----&gt; |   Cache  | -----&gt; |  Database    |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">                       (Writes to cache and database together)</span><br></pre></td></tr></table></figure>
-
-<p><strong>Code Example</strong>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WriteThroughCache</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        cache.put(key, data);</span><br><span class="line">        database.put(key, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="write-behind-cache"></a></p>
-<h3 id="2-3-Write-Behind-Cache"><a href="#2-3-Write-Behind-Cache" class="headerlink" title="2.3 Write-Behind Cache"></a>2.3 Write-Behind Cache</h3><p>The write-behind cache writes data asynchronously to the backend, which enhances write performance but requires a queue to manage pending updates.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">Update   |  Application | -----&gt; |   Cache  | -----&gt; |   Queue      |</span><br><span class="line">         +--------------+        +----------+        +--------------+</span><br><span class="line">                              (Data asynchronously written to Database)</span><br></pre></td></tr></table></figure>
-
-<p><strong>Code Example</strong>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WriteBehindCacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Database database;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ExecutorService executorService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WriteBehindCacheService</span><span class="params">(Cache cache, Database database)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.cache = cache;</span><br><span class="line">        <span class="built_in">this</span>.database = database;</span><br><span class="line">        <span class="built_in">this</span>.executorService = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Write to cache</span></span><br><span class="line">        cache.put(key, data);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Step 2: Asynchronously update the database</span></span><br><span class="line">        executorService.submit(() -&gt; database.put(key, data));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cache.get(key); <span class="comment">// Read from cache</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">shutdown</span><span class="params">()</span> &#123;</span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example, when <code>putData</code> is called, the data is immediately written to the cache, and an asynchronous task is created to update the database. This method improves application performance by deferring the database write.</p>
-<p><a name="cache-aside-pattern"></a></p>
-<h3 id="2-4-Cache-Aside-Pattern"><a href="#2-4-Cache-Aside-Pattern" class="headerlink" title="2.4 Cache-Aside Pattern"></a>2.4 Cache-Aside Pattern</h3><p>With the cache-aside pattern, the application retrieves data directly from the cache. On a cache miss, it loads data from the main store, updates the cache, and returns the result.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+--------------+       +----------+       +--------------+</span><br><span class="line">| Application  | ----&gt; |  Cache   | ----&gt; |  Database    |</span><br><span class="line">+--------------+       +----------+       +--------------+</span><br><span class="line">        |                          |</span><br><span class="line">       (Data fetched and cached when not found in cache)</span><br></pre></td></tr></table></figure>
-
-<p><strong>Code Example</strong>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheAsideService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Cache cache;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Database database;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">CacheAsideService</span><span class="params">(Cache cache, Database database)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.cache = cache;</span><br><span class="line">        <span class="built_in">this</span>.database = database;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Check cache first</span></span><br><span class="line">        <span class="type">Data</span> <span class="variable">data</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (data == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// Step 2: Load from database on cache miss</span></span><br><span class="line">            data = database.get(key);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (data != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Step 3: Store data in cache for future requests</span></span><br><span class="line">                cache.put(key, data);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putData</span><span class="params">(String key, Data data)</span> &#123;</span><br><span class="line">        <span class="comment">// Step 1: Write to database</span></span><br><span class="line">        database.put(key, data);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Step 2: Invalidate cache or update cache</span></span><br><span class="line">        cache.put(key, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example:</p>
-<ul>
-<li><strong>Read</strong>: <code>getData()</code> first tries to read from the cache. If there’s a cache miss, it fetches from the database, adds it to the cache, and returns the data.</li>
-<li><strong>Write</strong>: <code>putData()</code> writes to the database first, then updates or invalidates the cache.</li>
-</ul>
-<p><a name="differences-between-read-through-and-cache-aside-patterns"></a></p>
-<h3 id="2-5-Differences-between-Read-Through-and-Cache-Aside-Patterns"><a href="#2-5-Differences-between-Read-Through-and-Cache-Aside-Patterns" class="headerlink" title="2.5 Differences between Read-Through and Cache-Aside Patterns"></a>2.5 Differences between Read-Through and Cache-Aside Patterns</h3><ol>
-<li><p><strong>Read-Through Pattern</strong>:</p>
-<ul>
-<li>The cache sits directly in front of the database, intercepting reads.</li>
-<li>If data is requested, the cache checks if it’s present. If it’s a cache miss, it automatically fetches from the database, caches it, and returns the result.</li>
-<li>This pattern works well for applications where you want to decouple the application logic from the cache management.</li>
-<li>Common in systems where caching is managed as a service, like using a caching proxy or middleware.</li>
-</ul>
-</li>
-<li><p><strong>Cache-Aside Pattern</strong>:</p>
-<ul>
-<li>The application controls cache management explicitly.</li>
-<li>On a read operation, the application first checks the cache. If the data is not present (cache miss), the application fetches it from the database, then stores it in the cache for future use.</li>
-<li>This pattern gives the application full control over what data is cached, which can optimize cache usage for applications with varying data access patterns.</li>
-<li>Common in scenarios where cache storage is limited or there’s a need to frequently update specific items based on application logic.</li>
-</ul>
-</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Read-Through Pattern</th>
-<th>Cache-Aside Pattern</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Cache Management</strong></td>
-<td>Managed by the cache itself</td>
-<td>Managed by the application</td>
-</tr>
-<tr>
-<td><strong>Caching Behavior</strong></td>
-<td>Automatically loads from DB on cache miss</td>
-<td>Application decides when to cache</td>
-</tr>
-<tr>
-<td><strong>Best Use Cases</strong></td>
-<td>For systems requiring a cache as a service</td>
-<td>For applications needing custom control over caching</td>
-</tr>
-<tr>
-<td><strong>Complexity</strong></td>
-<td>Lower, as caching logic is handled internally</td>
-<td>Higher, as caching must be managed in the application</td>
-</tr>
-</tbody></table>
-<hr>
-<p><a name="cache-topologies"></a></p>
-<h2 id="3-Cache-Topologies"><a href="#3-Cache-Topologies" class="headerlink" title="3. Cache Topologies"></a>3. Cache Topologies</h2><p><a name="single-node-cache"></a></p>
-<h3 id="3-1-Single-Node-Cache"><a href="#3-1-Single-Node-Cache" class="headerlink" title="3.1 Single Node Cache"></a>3.1 Single Node Cache</h3><p>Single-node caches store data locally on one machine and are simple to manage but lack scalability and resilience.</p>
-<p><a name="distributed-cache"></a></p>
-<h3 id="3-2-Distributed-Cache"><a href="#3-2-Distributed-Cache" class="headerlink" title="3.2 Distributed Cache"></a>3.2 Distributed Cache</h3><p>A distributed cache spreads data across multiple nodes for scalability, enabling data to be accessed from various locations in a distributed system.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+----------+     +-------------+     +-------------+     +-------------+</span><br><span class="line">| Client 1 |&lt;---&gt;| Cache Node 1|&lt;---&gt;| Cache Node 2|&lt;---&gt;| Cache Node 3|</span><br><span class="line">+----------+     +-------------+     +-------------+     +-------------+</span><br></pre></td></tr></table></figure>
-
-<p><a name="hierarchical-cache"></a></p>
-<h3 id="3-3-Hierarchical-Cache"><a href="#3-3-Hierarchical-Cache" class="headerlink" title="3.3 Hierarchical Cache"></a>3.3 Hierarchical Cache</h3><p>Hierarchical caches use a layered approach to caching, with data stored at different levels depending on usage frequency.</p>
-<p><strong>Diagram</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------+               </span><br><span class="line">|  L1 Cache   |                 </span><br><span class="line">+-------------+               </span><br><span class="line">       |                              </span><br><span class="line">+-------------+                       </span><br><span class="line">|  L2 Cache   |                       </span><br><span class="line">+-------------+                       </span><br><span class="line">       |                              </span><br><span class="line">+-------------+                       </span><br><span class="line">|  Backend DB |                       </span><br><span class="line">+-------------+                       </span><br></pre></td></tr></table></figure>
-
-<p><a name="detailed-design-and-components"></a></p>
-<h2 id="4-Detailed-Design-and-Components"><a href="#4-Detailed-Design-and-Components" class="headerlink" title="4. Detailed Design and Components"></a>4. Detailed Design and Components</h2><p><a name="cache-consistency"></a></p>
-<h3 id="4-1-Cache-Consistency"><a href="#4-1-Cache-Consistency" class="headerlink" title="4.1 Cache Consistency"></a>4.1 Cache Consistency</h3><p>Consistency in caching ensures that the data in the cache matches the data in the database. Techniques like cache synchronization and write-through strategies help maintain this consistency.</p>
-<p><a name="cache-invalidation-strategies"></a></p>
-<h3 id="4-2-Cache-Invalidation-Strategies"><a href="#4-2-Cache-Invalidation-Strategies" class="headerlink" title="4.2 Cache Invalidation Strategies"></a>4.2 Cache Invalidation Strategies</h3><p>Cache invalidation ensures that stale data is removed or updated within the cache. Common strategies include:</p>
-<ul>
-<li><strong>Time-based Expiration</strong>: Setting a TTL (Time to Live) for cache entries.</li>
-<li><strong>Event-based Invalidation</strong>: Using events to invalidate cache entries based on specific triggers.</li>
-</ul>
-<p><a name="eviction-policies"></a></p>
-<h3 id="4-3-Eviction-Policies"><a href="#4-3-Eviction-Policies" class="headerlink" title="4.3 Eviction Policies"></a>4.3 Eviction Policies</h3><p>Eviction policies determine how cache space is managed. Common policies include:</p>
-<ul>
-<li><strong>Least Recently Used (LRU)</strong>: Removes data that hasn’t been accessed recently.</li>
-<li><strong>Least Frequently Used (LFU)</strong>: Removes data that is accessed least frequently.</li>
-</ul>
-<p><a name="implementation"></a></p>
-<h2 id="5-Implementation"><a href="#5-Implementation" class="headerlink" title="5. Implementation"></a>5. Implementation</h2><p><a name="cache-layer-implementation"></a></p>
-<h3 id="5-1-Cache-Layer-Implementation"><a href="#5-1-Cache-Layer-Implementation" class="headerlink" title="5.1 Cache Layer Implementation"></a>5.1 Cache Layer Implementation</h3><p>Using Redis as an example of a distributed cache layer:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisCacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Jedis</span> <span class="variable">jedis</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Jedis</span>(<span class="string">&quot;localhost&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(String key, String value)</span> &#123;</span><br><span class="line">        jedis.set(key, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">get</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> jedis.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        jedis.del(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="cache-invalidation-mechanisms"></a></p>
-<h3 id="5-2-Cache-Invalidation-Mechanisms"><a href="#5-2-Cache-Invalidation-Mechanisms" class="headerlink" title="5.2 Cache Invalidation Mechanisms"></a>5.2 Cache Invalidation Mechanisms</h3><p>Implementing cache invalidation using a TTL and a cache purge mechanism:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Cache</span> <span class="variable">cache</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cache</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(String key, Data value, <span class="type">long</span> ttl, TimeUnit unit)</span> &#123;</span><br><span class="line">        cache.put(key, value);</span><br><span class="line">        cache.expire(key, ttl, unit);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="monitoring-and-metrics"></a></p>
-<h2 id="6-Monitoring-and-Metrics"><a href="#6-Monitoring-and-Metrics" class="headerlink" title="6. Monitoring and Metrics"></a>6. Monitoring and Metrics</h2><p>Monitoring the cache layer provides insights into performance. Using tools like <strong>Prometheus</strong> and <strong>Grafana</strong> with metrics for cache hit&#x2F;miss rates, latency, and eviction rates is essential.</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Example Prometheus configuration for Redis</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;redis&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:6379&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="7-Conclusion"><a href="#7-Conclusion" class="headerlink" title="7. Conclusion"></a>7. Conclusion</h2><p>Distributed caching is a vital component of scalable systems. By understanding different patterns, topologies, and consistency mechanisms, developers can effectively improve system performance and reliability.</p>
 
       
     </div>

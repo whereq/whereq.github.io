@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,157 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XVII/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-XVII/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - XVII</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-24 14:07:44" itemprop="dateCreated datePublished" datetime="2024-10-24T14:07:44-04:00">2024-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>In the previous sixteen articles, we have covered the foundational concepts of Spring WebFlux, Reactor, data stream transformation, reactive database access, performance optimization, security, testing, deployment and operations, best practices, common pitfalls, integration with microservices architecture, and real-time data push. This article will delve into implementing effective error handling strategies in Spring WebFlux applications to ensure system robustness and user experience.</p>
+<ul>
+<li><a href="#error-handling-strategies">Error Handling Strategies</a><ul>
+<li><a href="#importance-of-error-handling">Importance of Error Handling</a></li>
+<li><a href="#basic-concepts-of-error-handling">Basic Concepts of Error Handling</a></li>
+<li><a href="#global-error-handling">Global Error Handling</a><ul>
+<li><a href="#creating-a-global-error-handler">Creating a Global Error Handler</a></li>
+<li><a href="#configuration-class-explanation">Configuration Class Explanation</a></li>
+</ul>
+</li>
+<li><a href="#controller-level-error-handling">Controller-Level Error Handling</a></li>
+<li><a href="#error-handling-in-reactive-streams">Error Handling in Reactive Streams</a><ul>
+<li><a href="#using-onerrorresume">Using <code>onErrorResume</code></a></li>
+<li><a href="#using-onerrorreturn">Using <code>onErrorReturn</code></a></li>
+<li><a href="#using-onerrormap">Using <code>onErrorMap</code></a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Error-Handling-Strategies"><a href="#Error-Handling-Strategies" class="headerlink" title="Error Handling Strategies"></a>Error Handling Strategies</h1><hr>
+<p><a name="importance-of-error-handling"></a></p>
+<h2 id="Importance-of-Error-Handling"><a href="#Importance-of-Error-Handling" class="headerlink" title="Importance of Error Handling"></a>Importance of Error Handling</h2><p>In any application, errors are inevitable. How these errors are handled not only affects system stability but also directly impacts user experience. In Spring WebFlux, due to its asynchronous and non-blocking nature, error handling is particularly crucial.</p>
+<p><a name="basic-concepts-of-error-handling"></a></p>
+<h2 id="Basic-Concepts-of-Error-Handling"><a href="#Basic-Concepts-of-Error-Handling" class="headerlink" title="Basic Concepts of Error Handling"></a>Basic Concepts of Error Handling</h2><p>In Spring WebFlux, error handling typically involves the following levels:</p>
+<ul>
+<li><strong>Global Error Handling</strong>: Captures unhandled exceptions in the application and provides a unified error response.</li>
+<li><strong>Controller-Level Error Handling</strong>: Handles errors specific to requests in controllers.</li>
+<li><strong>Error Handling in Reactive Streams</strong>: Manages and recovers from errors within reactive data streams.</li>
+</ul>
+<p><a name="global-error-handling"></a></p>
+<h2 id="Global-Error-Handling"><a href="#Global-Error-Handling" class="headerlink" title="Global Error Handling"></a>Global Error Handling</h2><p>Global error handling can be achieved by implementing the <code>ErrorWebExceptionHandler</code> interface.</p>
+<p><a name="creating-a-global-error-handler"></a></p>
+<h3 id="Creating-a-Global-Error-Handler"><a href="#Creating-a-Global-Error-Handler" class="headerlink" title="Creating a Global Error Handler"></a>Creating a Global Error Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.annotation.Order;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.server.ServerWebExchange;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalErrorHandlerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Order(-2)</span></span><br><span class="line">    <span class="keyword">public</span> ErrorWebExceptionHandler <span class="title function_">globalErrorHandler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">GlobalErrorHandler</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">GlobalErrorHandler</span> <span class="keyword">implements</span> <span class="title class_">ErrorWebExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">handle</span><span class="params">(ServerWebExchange exchange, Throwable ex)</span> &#123;</span><br><span class="line">            <span class="type">ServerRequest</span> <span class="variable">request</span> <span class="operator">=</span> ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());</span><br><span class="line">            <span class="keyword">return</span> renderErrorResponse(request, ex)</span><br><span class="line">                .flatMap(response -&gt; response.writeTo(exchange, HandlerStrategies.withDefaults()));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Mono&lt;ServerResponse&gt; <span class="title function_">renderErrorResponse</span><span class="params">(ServerRequest request, Throwable ex)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)</span><br><span class="line">                .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">                .bodyValue(<span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ErrorResponse</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String message;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">ErrorResponse</span><span class="params">(String message)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.message = message;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> message;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="configuration-class-explanation"></a></p>
+<h3 id="Configuration-Class-Explanation"><a href="#Configuration-Class-Explanation" class="headerlink" title="Configuration Class Explanation"></a>Configuration Class Explanation</h3><p>In the above configuration, we define a global error handler <code>GlobalErrorHandler</code> that captures all unhandled exceptions and returns a unified error response. By implementing the <code>ErrorWebExceptionHandler</code> interface, we can customize the error handling logic.</p>
+<p><a name="controller-level-error-handling"></a></p>
+<h2 id="Controller-Level-Error-Handling"><a href="#Controller-Level-Error-Handling" class="headerlink" title="Controller-Level Error Handling"></a>Controller-Level Error Handling</h2><p>At the controller level, we can use the <code>@ExceptionHandler</code> annotation to handle specific exceptions.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ExceptionHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestControllerAdvice;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ControllerExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(BookNotFoundException.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleBookNotFound</span><span class="params">(BookNotFoundException ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">errorResponse</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage());</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle other exceptions</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(Exception.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleException</span><span class="params">(Exception ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">errorResponse</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(<span class="string">&quot;Internal Server Error&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="error-handling-in-reactive-streams"></a></p>
+<h2 id="Error-Handling-in-Reactive-Streams"><a href="#Error-Handling-in-Reactive-Streams" class="headerlink" title="Error Handling in Reactive Streams"></a>Error Handling in Reactive Streams</h2><p>In reactive streams, we can use various operators to handle errors.</p>
+<p><a name="using-onerrorresume"></a></p>
+<h3 id="Using-onErrorResume"><a href="#Using-onErrorResume" class="headerlink" title="Using onErrorResume"></a>Using <code>onErrorResume</code></h3><p>The <code>onErrorResume</code> operator allows switching to another <code>Publisher</code> when an error occurs.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorResume(ex -&gt; &#123;</span><br><span class="line">            log.error(<span class="string">&quot;Error finding book&quot;</span>, ex);</span><br><span class="line">            <span class="keyword">return</span> Mono.empty();</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="using-onerrorreturn"></a></p>
+<h3 id="Using-onErrorReturn"><a href="#Using-onErrorReturn" class="headerlink" title="Using onErrorReturn"></a>Using <code>onErrorReturn</code></h3><p>The <code>onErrorReturn</code> operator allows returning a default value when an error occurs.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorReturn(<span class="keyword">new</span> <span class="title class_">Book</span>(<span class="string">&quot;default&quot;</span>, <span class="string">&quot;Default Book&quot;</span>, <span class="string">&quot;Unknown Author&quot;</span>, <span class="number">0.0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="using-onerrormap"></a></p>
+<h3 id="Using-onErrorMap"><a href="#Using-onErrorMap" class="headerlink" title="Using onErrorMap"></a>Using <code>onErrorMap</code></h3><p>The <code>onErrorMap</code> operator allows converting the error to another type of error.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Mono&lt;Book&gt; <span class="title function_">findBookById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> bookRepository.findById(id)</span><br><span class="line">        .onErrorMap(ex -&gt; <span class="keyword">new</span> <span class="title class_">CustomException</span>(<span class="string">&quot;Custom error message&quot;</span>, ex));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a name="conclusion"></a></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to implement effective error handling strategies in Spring WebFlux applications. By using global error handling, controller-level error handling, and error handling in reactive streams, we can build more robust and user-friendly applications. Proper error handling is essential for maintaining the reliability and performance of modern reactive applications.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1638,155 +1789,6 @@
 </ul>
 <p><a name="conclusion"></a></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored how to implement security in Spring WebFlux applications. By leveraging Spring Security, we can provide comprehensive security for reactive applications, ensuring protection against common threats like CSRF and XSS. Adopting best practices such as HTTPS, strong passwords, and least privilege can further strengthen your application’s security.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VII/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/Reactive-Programming-in-Spring-WebFlux-Series-VII/" class="post-title-link" itemprop="url">Reactive Programming in Spring WebFlux Series - VII</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-24 14:06:47" itemprop="dateCreated datePublished" datetime="2024-10-24T14:06:47-04:00">2024-10-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/" itemprop="url" rel="index"><span itemprop="name">WebFlux</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WebFlux/Spring-Boot/Reactive/" itemprop="url" rel="index"><span itemprop="name">Reactive</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#reactive-programming-in-complex-scenarios">Reactive Programming in Complex Scenarios</a></li>
-<li><a href="#introduction">Introduction</a><ul>
-<li><a href="#complex-scenario-1-flow-control-and-backpressure-handling">Complex Scenario 1: Flow Control and Backpressure Handling</a><ul>
-<li><a href="#1-using-limitrate">1. Using <code>limitRate</code></a></li>
-<li><a href="#2-using-onbackpressurebuffer">2. Using <code>onBackpressureBuffer</code></a></li>
-<li><a href="#3-using-onbackpressuredrop">3. Using <code>onBackpressureDrop</code></a></li>
-</ul>
-</li>
-<li><a href="#complex-scenario-2-integrating-external-services">Complex Scenario 2: Integrating External Services</a><ul>
-<li><a href="#1-using-webclient-to-call-rest-apis">1. Using <code>WebClient</code> to Call REST APIs</a></li>
-<li><a href="#2-using-reactive-kafka-for-message-processing">2. Using Reactive Kafka for Message Processing</a></li>
-</ul>
-</li>
-<li><a href="#complex-scenario-3-handling-large-files">Complex Scenario 3: Handling Large Files</a></li>
-<li><a href="#conclusion">Conclusion</a></li>
-<li><a href="#furthermore">Furthermore</a></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Reactive-Programming-in-Complex-Scenarios"><a href="#Reactive-Programming-in-Complex-Scenarios" class="headerlink" title="Reactive Programming in Complex Scenarios"></a>Reactive Programming in Complex Scenarios</h1><p><a name="introduction"></a></p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>In previous articles, we discussed the foundational concepts of Spring WebFlux, Reactor, error handling, data flow transformation, reactive database access, and performance optimization. This article explores how to apply reactive programming in complex scenarios, including flow control, backpressure handling, and integrating external services.</p>
-<p><a name="complex-scenario-1-flow-control-and-backpressure-handling"></a></p>
-<h2 id="Complex-Scenario-1-Flow-Control-and-Backpressure-Handling"><a href="#Complex-Scenario-1-Flow-Control-and-Backpressure-Handling" class="headerlink" title="Complex Scenario 1: Flow Control and Backpressure Handling"></a>Complex Scenario 1: Flow Control and Backpressure Handling</h2><p>In high-concurrency environments, controlling data flow and managing backpressure are critical for ensuring system stability. Backpressure occurs when downstream consumers cannot keep up with the speed of upstream producers, leading to data accumulation and resource exhaustion. Reactor provides various ways to handle backpressure issues.</p>
-<h3 id="1-Using-limitRate"><a href="#1-Using-limitRate" class="headerlink" title="1. Using limitRate"></a>1. Using <code>limitRate</code></h3><p>The <code>limitRate</code> operator limits the amount of data requested at a time, thereby controlling the speed of data flow.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .limitRate(<span class="number">100</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-Using-onBackpressureBuffer"><a href="#2-Using-onBackpressureBuffer" class="headerlink" title="2. Using onBackpressureBuffer"></a>2. Using <code>onBackpressureBuffer</code></h3><p>The <code>onBackpressureBuffer</code> operator buffers data during backpressure until the downstream can process it.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .onBackpressureBuffer(<span class="number">50</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-Using-onBackpressureDrop"><a href="#3-Using-onBackpressureDrop" class="headerlink" title="3. Using onBackpressureDrop"></a>3. Using <code>onBackpressureDrop</code></h3><p>The <code>onBackpressureDrop</code> operator drops data during backpressure to prevent downstream overload.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line">    .onBackpressureDrop()</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<p><a name="complex-scenario-2-integrating-external-services"></a></p>
-<h2 id="Complex-Scenario-2-Integrating-External-Services"><a href="#Complex-Scenario-2-Integrating-External-Services" class="headerlink" title="Complex Scenario 2: Integrating External Services"></a>Complex Scenario 2: Integrating External Services</h2><p>In real projects, interactions with external services are common, such as calling REST APIs or using message queues. Spring WebFlux provides powerful integration capabilities.</p>
-<h3 id="1-Using-WebClient-to-Call-REST-APIs"><a href="#1-Using-WebClient-to-Call-REST-APIs" class="headerlink" title="1. Using WebClient to Call REST APIs"></a>1. Using <code>WebClient</code> to Call REST APIs</h3><p><code>WebClient</code> is a non-blocking HTTP client provided by Spring WebFlux, suitable for interacting with external REST services.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebClientExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WebClient</span> <span class="variable">webClient</span> <span class="operator">=</span> WebClient.create(<span class="string">&quot;http://example.com&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">fetchData</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/data&quot;</span>)</span><br><span class="line">                .retrieve()</span><br><span class="line">                .bodyToMono(String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-Using-Reactive-Kafka-for-Message-Processing"><a href="#2-Using-Reactive-Kafka-for-Message-Processing" class="headerlink" title="2. Using Reactive Kafka for Message Processing"></a>2. Using Reactive Kafka for Message Processing</h3><p>Spring WebFlux integrates seamlessly with Reactive Kafka to achieve non-blocking message processing.</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka-reactive<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.kafka.annotation.KafkaListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.FluxSink;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">KafkaConsumer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> FluxSink&lt;String&gt; sink;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">KafkaConsumer</span><span class="params">(FluxSink&lt;String&gt; sink)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.sink = sink;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@KafkaListener(topics = &quot;example-topic&quot;, groupId = &quot;group_id&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listen</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        sink.next(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="complex-scenario-3-handling-large-files"></a></p>
-<h2 id="Complex-Scenario-3-Handling-Large-Files"><a href="#Complex-Scenario-3-Handling-Large-Files" class="headerlink" title="Complex Scenario 3: Handling Large Files"></a>Complex Scenario 3: Handling Large Files</h2><p>When processing large files, traditional reading methods can lead to excessive memory consumption. Using Spring WebFlux allows for non-blocking, streaming file processing.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.core.io.buffer.DataBuffer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.codec.multipart.FilePart;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileHandler</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title function_">uploadFile</span><span class="params">(ServerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> request.multipartData()</span><br><span class="line">                .flatMap(parts -&gt; &#123;</span><br><span class="line">                    <span class="type">FilePart</span> <span class="variable">filePart</span> <span class="operator">=</span> (FilePart) parts.toSingleValueMap().get(<span class="string">&quot;file&quot;</span>);</span><br><span class="line">                    Flux&lt;DataBuffer&gt; content = filePart.content();</span><br><span class="line">                    <span class="keyword">return</span> ServerResponse.ok().body(content, DataBuffer.class);</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a name="conclusion"></a></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In this article, we explored several strategies and methods for applying Spring WebFlux in complex scenarios. By effectively managing backpressure, integrating external services, and processing large files in a streaming fashion, we can build more robust and efficient reactive applications. </p>
-<p><a name="furthermore"></a></p>
-<h2 id="Furthermore"><a href="#Furthermore" class="headerlink" title="Furthermore"></a>Furthermore</h2><ol>
-<li><strong>Kubernetes for Deployment</strong>: Consider deploying your reactive applications using Kubernetes for better scalability and management.</li>
-<li><strong>Reactive Programming Patterns</strong>: Implement design patterns such as Circuit Breaker and Rate Limiter to enhance application resilience.</li>
-<li><strong>Monitoring with Micrometer</strong>: Use Micrometer to instrument your reactive applications for better observability and performance metrics.</li>
-<li><strong>Serverless Architecture</strong>: Explore serverless solutions to handle unpredictable workloads efficiently, integrating with AWS Lambda or Azure Functions.</li>
-</ol>
 
       
     </div>
