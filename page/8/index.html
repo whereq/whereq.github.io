@@ -124,18 +124,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">132</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -152,6 +152,151 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/31/Deep-Dive-into-Kubernetes-Pod-and-Service-Interactions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dazhi Zhang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | WhereQ">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/31/Deep-Dive-into-Kubernetes-Pod-and-Service-Interactions/" class="post-title-link" itemprop="url">Deep Dive into Kubernetes Pod and Service Interactions</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-31 12:42:35" itemprop="dateCreated datePublished" datetime="2024-10-31T12:42:35-04:00">2024-10-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Deep-Dive/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a href="#understanding-kubernetes-pods">Understanding Kubernetes Pods</a></li>
+<li><a href="#understanding-kubernetes-services">Understanding Kubernetes Services</a></li>
+<li><a href="#pod-service-communication">Pod-Service Communication</a></li>
+<li><a href="#architecture-diagrams">Architecture Diagrams</a><ul>
+<li><a href="#pod-structure">Pod Structure</a></li>
+<li><a href="#service-structure-and-flow">Service Structure and Flow</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>In Kubernetes, <strong>Pods</strong> and <strong>Services</strong> work together to ensure reliable deployment, scaling, and network communication for containerized applications. This article provides a deep dive into their responsibilities, roles, and interaction processes within the Kubernetes architecture.</p>
+<p><a name="kubernetes-pods"></a></p>
+<h2 id="Understanding-Kubernetes-Pods"><a href="#Understanding-Kubernetes-Pods" class="headerlink" title="Understanding Kubernetes Pods"></a>Understanding Kubernetes Pods</h2><p>A <strong>Pod</strong> is the smallest deployable unit in Kubernetes. Each Pod represents one or more containers and is typically designed to hold a single application instance. Key responsibilities and characteristics of Pods include:</p>
+<ul>
+<li><strong>Containerized Workloads</strong>: A Pod holds one or more containers that share storage, network, and specifications.</li>
+<li><strong>Networking</strong>: Each Pod gets its own IP address, allowing containers within it to communicate over <code>localhost</code>.</li>
+<li><strong>Ephemeral Nature</strong>: Pods are disposable. When they fail or are deleted, a new Pod with a different IP is often created to replace them.</li>
+<li><strong>Scalability</strong>: Kubernetes replicates Pods based on defined scaling requirements to handle application load.</li>
+</ul>
+<p><strong>Pod Lifecycle</strong>:</p>
+<ol>
+<li><strong>Scheduled</strong>: The Scheduler places the Pod on an appropriate Node.</li>
+<li><strong>Running</strong>: Containers within the Pod are executing.</li>
+<li><strong>Terminated</strong>: When the Pod is completed or deleted.</li>
+</ol>
+<hr>
+<p><a name="kubernetes-services"></a></p>
+<h2 id="Understanding-Kubernetes-Services"><a href="#Understanding-Kubernetes-Services" class="headerlink" title="Understanding Kubernetes Services"></a>Understanding Kubernetes Services</h2><p>A <strong>Service</strong> in Kubernetes is a stable networking endpoint that exposes a set of Pods as a network-accessible service, typically grouped by labels. Services abstract the dynamic nature of Pods and allow continuous network access. The main responsibilities of Services include:</p>
+<ul>
+<li><strong>Stable Networking</strong>: Services maintain a consistent IP address and DNS name despite the ephemeral nature of Pods.</li>
+<li><strong>Load Balancing</strong>: Services automatically distribute incoming traffic across available Pods, balancing load.</li>
+<li><strong>Discovery</strong>: Pods can be dynamically assigned to a Service based on matching labels, enabling flexible scaling and updates.</li>
+</ul>
+<p><strong>Types of Services</strong>:</p>
+<ol>
+<li><strong>ClusterIP</strong> (default): Exposes a service within the cluster.</li>
+<li><strong>NodePort</strong>: Exposes a service on each Node’s IP at a static port.</li>
+<li><strong>LoadBalancer</strong>: Creates an external load balancer to expose the service externally.</li>
+<li><strong>ExternalName</strong>: Maps the Service to a DNS name outside of the cluster.</li>
+</ol>
+<hr>
+<p><a name="pod-service-communication"></a></p>
+<h2 id="Pod-Service-Communication"><a href="#Pod-Service-Communication" class="headerlink" title="Pod-Service Communication"></a>Pod-Service Communication</h2><p>Kubernetes leverages <strong>label selectors</strong> and <strong>IP allocation</strong> to connect Pods with Services. Here’s how communication works:</p>
+<ol>
+<li><strong>Label Selection</strong>: Services use labels to select Pods for traffic routing.</li>
+<li><strong>Endpoints Object</strong>: Kubernetes creates an Endpoint resource to track the IP addresses of Pods associated with the Service.</li>
+<li><strong>Service Proxying</strong>: <code>kube-proxy</code> intercepts traffic to a Service IP and forwards it to one of the Pod IPs listed in the Endpoints.</li>
+<li><strong>Service IP and DNS</strong>: Each Service has a unique IP and is discoverable via a DNS name, facilitating easy communication.</li>
+</ol>
+<hr>
+<p><a name="architecture-diagrams"></a></p>
+<h2 id="Architecture-Diagrams"><a href="#Architecture-Diagrams" class="headerlink" title="Architecture Diagrams"></a>Architecture Diagrams</h2><h3 id="Pod-Structure"><a href="#Pod-Structure" class="headerlink" title="Pod Structure"></a>Pod Structure</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+----------------------------------+</span><br><span class="line">|              Pod                 |</span><br><span class="line">| +-----------+      +-----------+ |</span><br><span class="line">| | Container |      | Container | |</span><br><span class="line">| |   App     |      |   Sidecar | |</span><br><span class="line">| +-----------+      +-----------+ |</span><br><span class="line">|      Network (localhost)         |</span><br><span class="line">|      Shared Storage              |</span><br><span class="line">+----------------------------------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="Service-Structure-and-Flow"><a href="#Service-Structure-and-Flow" class="headerlink" title="Service Structure and Flow"></a>Service Structure and Flow</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-----------------+               +------------------+</span><br><span class="line">|   Service IP    | &lt;------------&gt;|    kube-proxy    |</span><br><span class="line">+-----------------+               +------------------+</span><br><span class="line">        |                               |</span><br><span class="line">        v                               v</span><br><span class="line">+-----------------+          +------------------+    +------------------+</span><br><span class="line">|      Pod 1      |  &lt;-----&gt; |      Pod 2      | &lt;- |       Pod 3      |</span><br><span class="line">+-----------------+          +------------------+    +------------------+</span><br></pre></td></tr></table></figure>
+
+<p>In summary, Kubernetes Pods run containerized workloads, while Services provide stable network access to those workloads, regardless of individual Pod lifetimes. Together, they enable dynamic scaling, fault tolerance, and efficient networking within Kubernetes clusters.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2433,183 +2578,6 @@
 </ol>
 <p>The threads only reach a <strong>terminated state</strong> when the pool itself is <strong>shut down</strong> (e.g., calling <code>shutdown()</code> in <code>ThreadPoolExecutor</code>). Only then will the threads stop, exit the idle&#x2F;waiting state, and go to terminated. This approach keeps the pool flexible and efficient, reducing the overhead of creating and destroying threads for every task. </p>
 <p>So in short: threads in a thread pool <strong>do not reach terminated after completing tasks</strong>. They go back to idle&#x2F;waiting and can accept new tasks. And threads in a thread pool do not go back to the “RUNNABLE” state from the “TERMINATED” state neither. Instead, they remain in a waiting state until new tasks are available, ensuring efficient reuse of thread resources.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.whereq.com/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dazhi Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | WhereQ">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/Deep-Dive-into-Java-Core-Multi-Threading/" class="post-title-link" itemprop="url">Deep Dive into Java Core Multi-Threading</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-28 23:17:03" itemprop="dateCreated datePublished" datetime="2024-10-28T23:17:03-04:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-11-21 16:23:35" itemprop="dateModified" datetime="2025-11-21T16:23:35-05:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/" itemprop="url" rel="index"><span itemprop="name">Deep Dive</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Java-Core/" itemprop="url" rel="index"><span itemprop="name">Java Core</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Deep-Dive/Java-Core/Multi-Threading/" itemprop="url" rel="index"><span itemprop="name">Multi-Threading</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a href="#1-introduction">1. Introduction</a></li>
-<li><a href="#2-java-thread-pool-overview-and-components">2. Java Thread Pool: Overview and Components</a></li>
-<li><a href="#3-core-terms-explained">3. Core Terms Explained</a><ul>
-<li><a href="#task">Task</a></li>
-<li><a href="#thread">Thread</a></li>
-<li><a href="#worker">Worker</a></li>
-<li><a href="#thread-pool">Thread Pool</a></li>
-</ul>
-</li>
-<li><a href="#4-thread-lifecycle-in-a-thread-pool">4. Thread Lifecycle in a Thread Pool</a></li>
-<li><a href="#5-thread-state-transitions">5. Thread State Transitions</a></li>
-<li><a href="#6-sample-code-and-explanation">6. Sample Code and Explanation</a></li>
-<li><a href="#7-handling-terminated-threads">7. Handling TERMINATED Threads</a><ul>
-<li><a href="#what-happens-when-a-thread-reaches-terminated">What Happens When a Thread Reaches TERMINATED?</a></li>
-<li><a href="#reuse-in-fixed-pools">Reuse in Fixed Pools</a></li>
-<li><a href="#state-machine-transition">State Machine Transition</a></li>
-</ul>
-</li>
-<li><a href="#8-conclusion">8. Conclusion</a></li>
-</ul>
-<hr>
-<p>This article explores Java’s thread pool concept, detailing each component and state involved. We’ll cover tasks, threads, workers, thread pools, and the state transitions that occur during task execution. Detailed diagrams and annotated code examples demonstrate how each part interacts, making this a practical reference for developing multithreaded Java applications.</p>
-<hr>
-<p><a name="introduction"></a></p>
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>Java’s <code>ThreadPoolExecutor</code> provides a robust framework for managing a pool of worker threads that can efficiently process a series of asynchronous tasks. It’s designed to handle tasks without creating new threads for every request, conserving resources and reducing overhead. This article breaks down each term and component involved in a Java thread pool to provide a clear, practical understanding.</p>
-<hr>
-<p><a name="java-thread-pool-overview-and-components"></a></p>
-<h2 id="2-Java-Thread-Pool-Overview-and-Components"><a href="#2-Java-Thread-Pool-Overview-and-Components" class="headerlink" title="2. Java Thread Pool: Overview and Components"></a>2. Java Thread Pool: Overview and Components</h2><p>A thread pool is a collection of threads that are managed to execute tasks concurrently. Rather than creating a new thread for every task, a pool of threads is reused, allowing efficient execution without constant thread creation and destruction.</p>
-<p>Here’s a textual diagram illustrating a typical Java thread pool architecture:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+-------------------------------------------+</span><br><span class="line">|              Thread Pool                  |</span><br><span class="line">|-------------------------------------------|</span><br><span class="line">|                                           |</span><br><span class="line">|   Task Queue --&gt; [Task1] [Task2] [TaskN]  |</span><br><span class="line">|                                           |</span><br><span class="line">|        +-------------------------------+  |</span><br><span class="line">|        |           Worker Thread       |  |</span><br><span class="line">|        |-------------------------------|  |</span><br><span class="line">|        |    |--Thread-1--|--Running--| |  |</span><br><span class="line">|        |    |--Thread-2--|--Runnable-| |  |</span><br><span class="line">|        |    |--Thread-N--|--Waiting--| |  |</span><br><span class="line">|        +-------------------------------+  |</span><br><span class="line">+-------------------------------------------+</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="core-terms-explained"></a></p>
-<h2 id="3-Core-Terms-Explained"><a href="#3-Core-Terms-Explained" class="headerlink" title="3. Core Terms Explained"></a>3. Core Terms Explained</h2><h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><ul>
-<li><strong>Definition</strong>: A <code>Runnable</code> or <code>Callable</code> object representing a unit of work.</li>
-<li><strong>Purpose</strong>: The task contains logic that needs to be executed by a thread in the pool.</li>
-</ul>
-<h3 id="Thread"><a href="#Thread" class="headerlink" title="Thread"></a>Thread</h3><ul>
-<li><strong>Definition</strong>: An individual worker capable of executing a task.</li>
-<li><strong>States</strong>: Threads can be in various states, including <code>NEW</code>, <code>RUNNABLE</code>, <code>WAITING</code>, <code>TIMED_WAITING</code>, <code>BLOCKED</code>, and <code>TERMINATED</code>.</li>
-</ul>
-<h3 id="Worker"><a href="#Worker" class="headerlink" title="Worker"></a>Worker</h3><ul>
-<li><strong>Definition</strong>: An entity within the thread pool that wraps a thread, providing task management.</li>
-<li><strong>Role</strong>: Handles the execution of tasks by submitting them to a thread in the pool.</li>
-</ul>
-<h3 id="Thread-Pool"><a href="#Thread-Pool" class="headerlink" title="Thread Pool"></a>Thread Pool</h3><ul>
-<li><strong>Definition</strong>: A collection of threads managed by an executor that oversees thread lifecycle and task allocation.</li>
-<li><strong>Purpose</strong>: To improve performance by reusing threads for multiple tasks, avoiding the cost of creating and destroying threads frequently.</li>
-</ul>
-<hr>
-<p><a name="thread-lifecycle-in-a-thread-pool"></a></p>
-<h2 id="4-Thread-Lifecycle-in-a-Thread-Pool"><a href="#4-Thread-Lifecycle-in-a-Thread-Pool" class="headerlink" title="4. Thread Lifecycle in a Thread Pool"></a>4. Thread Lifecycle in a Thread Pool</h2><p>A thread in a pool goes through multiple states throughout its lifecycle. Let’s illustrate these states and transitions with a state diagram.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">+-----------+</span><br><span class="line">|   NEW     |   -- Thread created</span><br><span class="line">+-----------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+</span><br><span class="line">| RUNNABLE  |   -- Thread ready to execute</span><br><span class="line">+-----------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+</span><br><span class="line">| RUNNING   |   -- Thread actively executing a task</span><br><span class="line">+-----------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+</span><br><span class="line">| BLOCKED   |   -- Thread blocked, waiting for a resource</span><br><span class="line">+-----------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+</span><br><span class="line">| WAITING   |   -- Thread waiting indefinitely for a condition</span><br><span class="line">+-----------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+</span><br><span class="line">| TERMINATED|   -- Thread completed execution or terminated</span><br><span class="line">+-----------+</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><a name="thread-state-transitions"></a></p>
-<h2 id="5-Thread-State-Transitions"><a href="#5-Thread-State-Transitions" class="headerlink" title="5. Thread State Transitions"></a>5. Thread State Transitions</h2><p>Each thread’s state changes as it progresses through its lifecycle:</p>
-<ol>
-<li><strong>NEW</strong>: The thread is created but has not yet started.</li>
-<li><strong>RUNNABLE</strong>: The thread is ready to run but is waiting for CPU availability.</li>
-<li><strong>RUNNING</strong>: The thread is actively running its assigned task.</li>
-<li><strong>BLOCKED</strong>: The thread is waiting to acquire a lock to access a synchronized resource.</li>
-<li><strong>WAITING&#x2F;TIMED_WAITING</strong>: The thread is waiting indefinitely or for a specified time, typically for task completion or resource availability.</li>
-<li><strong>TERMINATED</strong>: The thread has completed its task and will either be recycled for a new task or discarded if no longer needed.</li>
-</ol>
-<hr>
-<p><a name="sample-code-and-explanation"></a></p>
-<h2 id="6-Sample-Code-and-Explanation"><a href="#6-Sample-Code-and-Explanation" class="headerlink" title="6. Sample Code and Explanation"></a>6. Sample Code and Explanation</h2><p>Below is a sample code demonstrating a thread pool with comments explaining each part of the process.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// Create a thread pool with a fixed number of threads</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">threadPool</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Submit multiple tasks to the thread pool</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            threadPool.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Shutdown the pool after tasks are completed</span></span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Task class implementing Runnable, representing a unit of work for the pool</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> taskId;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Task</span><span class="params">(<span class="type">int</span> taskId)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.taskId = taskId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Executing Task &quot;</span> + taskId + <span class="string">&quot; with &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">2000</span>); <span class="comment">// Simulate task duration</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task &quot;</span> + taskId + <span class="string">&quot; completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>In this example:</p>
-<ul>
-<li><strong>ThreadPoolExecutor</strong>: Manages a pool of three threads.</li>
-<li><strong>Task</strong>: Each task simulates a job that runs for two seconds, allowing us to observe thread reuse.</li>
-<li><strong>Thread</strong>: Each task is assigned a thread by the thread pool, which either executes it immediately or queues it until a thread becomes available.</li>
-</ul>
-<hr>
-<p><a name="handling-terminated-threads"></a></p>
-<h2 id="7-Handling-TERMINATED-Threads"><a href="#7-Handling-TERMINATED-Threads" class="headerlink" title="7. Handling TERMINATED Threads"></a>7. Handling TERMINATED Threads</h2><h3 id="What-Happens-When-a-Thread-Reaches-TERMINATED"><a href="#What-Happens-When-a-Thread-Reaches-TERMINATED" class="headerlink" title="What Happens When a Thread Reaches TERMINATED?"></a>What Happens When a Thread Reaches TERMINATED?</h3><p>Once a thread in the pool completes its task and reaches the <code>TERMINATED</code> state, it does not automatically return to <code>RUNNABLE</code>. In a fixed pool, the terminated thread is replaced by a new one, ensuring the pool maintains its core size. In cached pools, the thread may be recycled if the task load increases, maintaining efficiency.</p>
-<h3 id="Reuse-in-Fixed-Pools"><a href="#Reuse-in-Fixed-Pools" class="headerlink" title="Reuse in Fixed Pools"></a>Reuse in Fixed Pools</h3><p>In fixed-size pools, a thread that terminates due to completion is usually retained within the pool as a worker for future tasks.</p>
-<h3 id="State-Machine-Transition"><a href="#State-Machine-Transition" class="headerlink" title="State Machine Transition"></a>State Machine Transition</h3><p>The Java thread pool manages thread lifecycles by detecting <code>TERMINATED</code> threads and maintaining the required pool size by creating new threads as needed. This automatic management ensures the pool maintains availability and task-handling capacity.</p>
-<hr>
-<p><a name="conclusion"></a></p>
-<h2 id="8-Conclusion"><a href="#8-Conclusion" class="headerlink" title="8. Conclusion"></a>8. Conclusion</h2><p>Java’s thread pool provides an efficient way to handle concurrent tasks by reusing threads and managing their lifecycles. Key concepts like tasks, threads, and workers work together to ensure a scalable, resource-efficient application structure. By understanding thread pool states, configurations, and transition mechanisms, developers can design more resilient and optimized concurrent applications.</p>
 
       
     </div>
