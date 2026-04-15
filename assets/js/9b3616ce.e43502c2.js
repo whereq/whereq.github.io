@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunk_=globalThis.webpackChunk_||[]).push([[3792],{21560(a){a.exports=JSON.parse('{"tag":{"label":"proxy","permalink":"/blog/tags/proxy","allTagsPath":"/blog/tags","count":1,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/proxy","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

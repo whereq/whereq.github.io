@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunk_=globalThis.webpackChunk_||[]).push([[11890],{34448(l){l.exports=JSON.parse('{"tag":{"label":"ssl","permalink":"/blog/tags/ssl","allTagsPath":"/blog/tags","count":2,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/ssl","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

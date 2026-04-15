@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunk_=globalThis.webpackChunk_||[]).push([[53863],{97144(a){a.exports=JSON.parse('{"tag":{"label":"cors","permalink":"/blog/tags/cors","allTagsPath":"/blog/tags","count":1,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/cors","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
