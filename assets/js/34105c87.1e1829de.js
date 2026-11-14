@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunk_=globalThis.webpackChunk_||[]).push([[85822],{49790(a){a.exports=JSON.parse('{"tag":{"label":"retro","permalink":"/blog/tags/retro","allTagsPath":"/blog/tags","count":1,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/retro","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
