@@ -2,11 +2,145 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.whereq.com/blog</id>
     <title>WhereQ Blog</title>
-    <updated>2026-11-13T00:00:00.000Z</updated>
+    <updated>2026-11-16T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.whereq.com/blog"/>
     <subtitle>WhereQ Blog</subtitle>
     <icon>https://www.whereq.com/img/favicon-32x32.png</icon>
+    <entry>
+        <title type="html"><![CDATA[WhereQ-DOSBox 1.0.0.8：保存整台机器，让「继续」真的能继续]]></title>
+        <id>https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN</id>
+        <link href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN"/>
+        <updated>2026-11-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<ThemedImage]]></summary>
+        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://www.whereq.com/img/apps/whereq-dosbox-logo.png" alt="WhereQ-DOSBox" class="themedComponent_mlkZ themedComponent--light_NVdE" width="300"><img src="https://www.whereq.com/img/apps/whereq-dosbox-logo-transparent.png" alt="WhereQ-DOSBox" class="themedComponent_mlkZ themedComponent--dark_xIcU" width="300"></figure>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="一个会骗人的按钮">一个会骗人的按钮<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E4%B8%80%E4%B8%AA%E4%BC%9A%E9%AA%97%E4%BA%BA%E7%9A%84%E6%8C%89%E9%92%AE" class="hash-link" aria-label="Direct link to 一个会骗人的按钮" title="Direct link to 一个会骗人的按钮" translate="no">​</a></h2>
+<p>两个版本之前，我给启动器加了一个 <strong>Resume</strong> 按钮。它看上去就是个承诺：按一下，回到你刚才在玩的那局游戏。</p>
+<p>结果不是。它每次都把上一款游戏从头开始。</p>
+<p>我自己一直没发现，因为我桌上的模拟器进程还活着——游戏其实从没停过，自然也就没什么好「恢复」的。后来有位用户在手机上按了那个按钮，丢掉了一个小时的进度，直截了当地告诉我：<em>你这个 Resume 其实是重开。</em></p>
+<p>他没说错。而修它并不是改一行代码就行的——要做的是给整台机器拍一张快照。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="认真做的话存档是什么">认真做的话，存档是什么<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E8%AE%A4%E7%9C%9F%E5%81%9A%E7%9A%84%E8%AF%9D%E5%AD%98%E6%A1%A3%E6%98%AF%E4%BB%80%E4%B9%88" class="hash-link" aria-label="Direct link to 认真做的话，存档是什么" title="Direct link to 认真做的话，存档是什么" translate="no">​</a></h2>
+<p>DOS 游戏自己通常有存档。有的游戏有，很多没有；有的只把进度写在当前目录里，然后指望你自己找到菜单走回去。</p>
+<p><strong>存档点</strong>（save state）是另一回事：它是被冻住的整台机器。</p>
+<p>不是游戏，而是机器。带着寄存器的 CPU、DOS 内存、显存、硬件定时器，以及程序当时正打开的那些文件。是所有让这一局成为「此刻这一局」的东西——所以读档回来是回到同一个瞬间，而不是回到附近。</p>
+<p>DOSBox r4305 本身没有存档点，所以我在这个移植里写了一个。每个游戏有 <strong>三个槽位</strong>，以文件形式存在应用的私有目录里，因此退出应用、重启手机、升级 APK 都丢不掉。</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-save-states.jpg" alt="WhereQ-DOSBox 的存档对话框：正在运行的游戏有三个槽位，第一个是两小时前存的，每个槽位都有 Save 和 Load 按钮" width="900"></p>
+<p align="center"><sub>每个游戏三个槽位。Save 冻住正在运行的机器，Load 把它放回去。槽位是手机
+上的文件，退出应用也不会丢。</sub></p>
+<p>这里有个细节我啃了两天，值得写下来，因为它是「存档能用」和「存档会把游戏搞崩」的分界线。</p>
+<p>快照必须在<strong>安全点</strong>上拍：客机程序得真的在跑，画面得已经稳定，而且 CPU 不能正站在一个挂着 <code>IRET</code> 的中断回调里。位置选错了，读档就会落进 BIOS 调用的半截里——那种损坏看起来像游戏坏了，而不是像存档坏了。</p>
+<p>而且它必须把 <strong>DOS 层</strong>一起拍下来，不只是 CPU。开着 <code>SOUND\MUSIC.FLX</code> 的游戏，指望回来时那个文件还开着。不把文件句柄放进快照，Ultima VIII 每次读档后一秒左右就会走进自己的 extender，然后以 <code>DOS Error=0006 (invalid handle)</code> 中止。放进去之后，那十六个句柄都回来了，音乐也还在响。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="于是继续终于真的是继续">于是「继续」终于真的是继续<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E4%BA%8E%E6%98%AF%E7%BB%A7%E7%BB%AD%E7%BB%88%E4%BA%8E%E7%9C%9F%E7%9A%84%E6%98%AF%E7%BB%A7%E7%BB%AD" class="hash-link" aria-label="Direct link to 于是「继续」终于真的是继续" title="Direct link to 于是「继续」终于真的是继续" translate="no">​</a></h2>
+<p>这个按钮现在会读回你上次玩的那个游戏的最新槽位，而且会告诉你它要干什么：<em>Resume whereq-demo-bundle · slot 1 · just now</em>。如果一个槽位都没存，它就照旧从头开始。</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-resume.jpg" alt="WhereQ-DOSBox 存档之后的文件面板：绿色的 Resume 按钮显示 Resume whereq-demo-bundle，slot 1，just now，底部状态栏写着 Saved to slot 1" width="900"></p>
+<p align="center"><sub>Saved to slot 1——Resume 按钮已经知道了一切：哪个游戏、哪个槽位、多久之前
+存的。</sub></p>
+<p>这不是一个「复制文件」的按钮。应用会先把自己的进程拆掉，干净地启动一个什么都没排队的模拟器，等画面稳定下来，然后才把机器恢复进去。早了那么一瞬间——比如手机还在转屏——就会恢复进一个马上就要被丢弃的渲染器里，屏幕一片黑。这条我也追了一阵。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="说不清楚的那部分">说不清楚的那部分<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E8%AF%B4%E4%B8%8D%E6%B8%85%E6%A5%9A%E7%9A%84%E9%82%A3%E9%83%A8%E5%88%86" class="hash-link" aria-label="Direct link to 说不清楚的那部分" title="Direct link to 说不清楚的那部分" translate="no">​</a></h2>
+<p><strong>有些老 DOS 程序确实过不了读档这一关。</strong> Ultima VIII 的 extender 仍然会在读档后一秒左右中止：<code>Exit to error: RET from illegal descriptor type 0</code>。</p>
+<p>这不是应用的问题，也不是「继续」这条路的问题：手动打开面板读同一个槽位，结果完全一样。快照目前还没装下的，是 DOS/4GW 游戏真正依赖的那部分宿主状态——声卡和它的 DMA、EMS 与 XMS 的句柄表、VCPI 的 PIC 向量重映射、鼠标、RTC，以及 PIC 的事件队列。这是还没做完的里程碑，移植日志里写的也是同样的话。</p>
+<p>在那之前：STARFALL 存读都完全正常；Ultima VIII 这类游戏可以存、可以读，但它的 extender 读到之后不太高兴。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="游戏现在也能在后台活着了">游戏现在也能在后台活着了<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E6%B8%B8%E6%88%8F%E7%8E%B0%E5%9C%A8%E4%B9%9F%E8%83%BD%E5%9C%A8%E5%90%8E%E5%8F%B0%E6%B4%BB%E7%9D%80%E4%BA%86" class="hash-link" aria-label="Direct link to 游戏现在也能在后台活着了" title="Direct link to 游戏现在也能在后台活着了" translate="no">​</a></h2>
+<p>另一件我原本想当然的事，是以为离开应用就等于离开游戏。Android 上不是这样：系统随时可以回收一个后台应用的进程，而 DOSBox 把整台机器都放在内存里——于是游戏就那么没了，连个提示都没有。</p>
+<p>现在只要游戏在跑，就有一条常驻通知把进程保住。切到别的应用去，晚点再回来，游戏还在你离开的那一帧——不用存档，不用重载。</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-screenshot-phone.jpg" alt="WhereQ-DOSBox 在安卓手机横屏下的运行画面：中间的 DOSBox 欢迎画面和已挂载的 C 盘，左右黑边上是屏幕键盘，方向键排成倒 T 形" width="900"></p>
+<p align="center"><sub>手机上的实际画面。四个方向键现在是真键盘上的倒 T 形——上键在最上面，左右并排，
+下键在最下面——手指靠形状就能找对方向。</sub></p>
+<p>最后这条改动很小，但我挺喜欢。方向键原本是一根竖排的队列，这和它要代替的那块键盘完全不像：手指必须先「知道」四个键分别是哪一个。现在拇指直接读形状就行。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="拿去用">拿去用<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E6%8B%BF%E5%8E%BB%E7%94%A8" class="hash-link" aria-label="Direct link to 拿去用" title="Direct link to 拿去用" translate="no">​</a></h2>
+<p>发布版 APK 就在仓库里，用发布密钥签名，可以直接覆盖安装 1.0.0.7：</p>
+<p>👉 <strong><a href="https://github.com/whereq/whereq-dosbox" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/whereq-dosbox</a></strong> — tag <strong>v1.0.0.8</strong></p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">downloads/whereq-dosbox-1.0.0.8.apk</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256: ed17f39bddeb9e871485df390f772f19c5a43abdbf3b5845c7abd4afbb602ca3</span><br></div></code></pre></div></div>
+<p>它跑在 <strong>arm64-v8a、armeabi-v7a 和 x86_64</strong> 设备上，要求 Android 5.0 及以上，完全离线，不需要账号，没有任何追踪。项目采用 GPL-2.0 许可，DOSBox 核心连同它的 <code>AUTHORS</code>、<code>ChangeLog</code>、<code>COPYING</code> 和逐文件头注释一起嵌入。</p>
+<p>再说一遍：<strong>这篇文章不是文档。</strong> 文档是仓库本身：构建指南、移植日志（里面有一节专门讲快照到底怎么拍的，以及为什么必须等安全点）、性能测试笔记，以及这个移植的每一行代码。请去读那些，而不是信我的一面之词。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="谢谢-dosbox">谢谢 DOSBox<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8-CN#%E8%B0%A2%E8%B0%A2-dosbox" class="hash-link" aria-label="Direct link to 谢谢 DOSBox" title="Direct link to 谢谢 DOSBox" translate="no">​</a></h2>
+<p>没有 DOSBox 项目，这一切都不可能。</p>
+<p><strong>DOSBox</strong> 由 <a href="https://www.dosbox.com/crew.php" target="_blank" rel="noopener noreferrer" class="">DOSBox Team</a> 写成——一群志愿者把 1994 年的一套操作系统改造到此后世界造出的每一台机器上都能跑，包括那些当时还不存在的机器。他们让它活过了三十年，并免费交给任何想要的人。WhereQ-DOSBox 只是建在他们工作之上的一层薄薄的壳。原创力、手艺和慷慨完全属于他们。</p>
+<p>这个移植基于 <strong><a href="https://github.com/dreamlayers/em-dosbox" target="_blank" rel="noopener noreferrer" class="">Em-DOSBox</a></strong>——<a href="https://github.com/dreamlayers" target="_blank" rel="noopener noreferrer" class="">Boris Gjenero</a> 做的 DOSBox r4305 的 Emscripten 版，它又来自 <a href="https://github.com/CeRiAl" target="_blank" rel="noopener noreferrer" class="">Ismail Khatib</a> 最早那次用 Emscripten 编译 DOSBox 的尝试，并且踩着 <a href="https://github.com/kripken/" target="_blank" rel="noopener noreferrer" class="">Alon Zakai</a> 的 Emscripten 工作一路往前。窗口、音频和触摸输入则由 <a href="https://github.com/libsdl-org/SDL" target="_blank" rel="noopener noreferrer" class="">Sam Lantinga</a> 的 SDL2 库承担。</p>
+<p><strong>DOSBox 是 DOSBox 项目的商标</strong>；这个移植与 DOSBox 团队没有任何隶属或背书关系。</p>
+<hr>
+<p><em>如果你按下「继续」，游戏真的回到了离开时的样子——或者没有，而存档点正是你放弃的地方——请告诉我。我一直在记一份名单，那是最有用的一种反馈。</em></p>]]></content>
+        <author>
+            <name>Dazhi Zhang (Tony)</name>
+            <uri>/about</uri>
+        </author>
+        <category label="dosbox" term="dosbox"/>
+        <category label="android" term="android"/>
+        <category label="emulator" term="emulator"/>
+        <category label="release" term="release"/>
+        <category label="retro" term="retro"/>
+        <category label="open-source" term="open-source"/>
+        <category label="whereq" term="whereq"/>
+        <category label="save-states" term="save-states"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WhereQ-DOSBox 1.0.0.8: save the whole machine, and a Resume button that resumes]]></title>
+        <id>https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8</id>
+        <link href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8"/>
+        <updated>2026-11-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<ThemedImage]]></summary>
+        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://www.whereq.com/img/apps/whereq-dosbox-logo.png" alt="WhereQ-DOSBox" class="themedComponent_mlkZ themedComponent--light_NVdE" width="300"><img src="https://www.whereq.com/img/apps/whereq-dosbox-logo-transparent.png" alt="WhereQ-DOSBox" class="themedComponent_mlkZ themedComponent--dark_xIcU" width="300"></figure>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-button-that-lied">The button that lied<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#the-button-that-lied" class="hash-link" aria-label="Direct link to The button that lied" title="Direct link to The button that lied" translate="no">​</a></h2>
+<p>Two releases ago I gave the launcher a <strong>Resume</strong> button. It looked like a promise: press it, and you are back in the game you were playing.</p>
+<p>It was not. It started the last game from the beginning, every time.</p>
+<p>I did not notice it myself, because on my desk the emulator process was still alive — the game had never really stopped, so there was nothing to resume. Then somebody on a phone pressed the button, lost an hour of progress, and told me plainly: <em>the Resume button restarts the game.</em></p>
+<p>They were right, and the fix was not a one-liner. It took a whole-machine snapshot.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-a-save-state-is-when-you-are-serious-about-it">What a save state is, when you are serious about it<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#what-a-save-state-is-when-you-are-serious-about-it" class="hash-link" aria-label="Direct link to What a save state is, when you are serious about it" title="Direct link to What a save state is, when you are serious about it" translate="no">​</a></h2>
+<p>A DOS game has its own save files. Some games have them; many do not; the ones that do usually save somewhere in the current directory and expect you to find your way back through a menu.</p>
+<p>A <strong>save state</strong> is a different thing: it is the entire machine, frozen.</p>
+<p>Not the game — the machine. The CPU with its registers, the DOS memory, the video memory, the hardware timers, the files the program had open. Everything that made the game <em>that game at that moment</em>, so that restoring it puts you back in the same instant rather than near it.</p>
+<p>DOSBox r4305 has no save state at all, so I wrote one into the port. Every game gets <strong>three slots</strong>, written as files in the app's private directory, which means they survive quitting the app, rebooting the phone, and updating the APK.</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-save-states.jpg" alt="The save states dialog of WhereQ-DOSBox: three slots for the running game, the first one saved two hours ago, each with a Save and a Load button" width="900"></p>
+<p align="center"><sub>Three slots per game. Save freezes the running machine, Load puts it
+back. The slots are files on the phone — they survive quitting the
+app.</sub></p>
+<p>There is a subtlety that cost me two days and is worth writing down, because it is the difference between a snapshot that works and one that crashes the game.</p>
+<p>The snapshot has to be taken at a <strong>safe point</strong>: the guest program must actually be running, the picture must have settled, and the CPU must not be standing inside an interrupt callback with an <code>IRET</code> pending. Take it in the wrong place and you restore into the middle of a BIOS call — the kind of corruption that looks like a broken game rather than a broken save.</p>
+<p>And it has to capture the <strong>DOS layer</strong>, not just the CPU. A game that has <code>SOUND\MUSIC.FLX</code> open expects that file to still be open when it comes back. Without the file handles in the snapshot, Ultima VIII walked into its own extender and aborted with <code>DOS Error=0006 (invalid handle)</code> a second after every restore. With them, the sixteen handles come back and the music keeps playing.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="so-now-resume-means-resume">So now Resume means resume<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#so-now-resume-means-resume" class="hash-link" aria-label="Direct link to So now Resume means resume" title="Direct link to So now Resume means resume" translate="no">​</a></h2>
+<p>The button restores the newest slot of the last game you played, and it tells you what it is about to do: <em>Resume whereq-demo-bundle · slot 1 · just now</em>. With no slot saved, it starts the game from the beginning, exactly as before.</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-resume.jpg" alt="The Files panel of WhereQ-DOSBox after a save: a green Resume button reading Resume whereq-demo-bundle, slot 1, just now, and the status line Saved to slot 1" width="900"></p>
+<p align="center"><sub>Saved to slot 1 — and the Resume button already knows: the game, the
+slot, and how long ago it was written.</sub></p>
+<p>Under the hood this is not a button that copies a file. The app tears its own process down, boots a clean emulator with nothing queued, waits for the picture to settle, and only then restores the machine into it. A restore that happens a fraction of a second too early — while the phone is still rotating the screen — restores into a renderer that is about to be thrown away, and you get a black screen. I chased that one for a while too.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-honest-part">The honest part<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#the-honest-part" class="hash-link" aria-label="Direct link to The honest part" title="Direct link to The honest part" translate="no">​</a></h2>
+<p><strong>Some old DOS programs do not survive a restore.</strong> Ultima VIII's extender still aborts about a second after the load, with <code>Exit to error: RET from illegal descriptor type 0</code>.</p>
+<p>That is not the app, and it is not the Resume path: loading the same slot by hand, with the panel open, does exactly the same thing. What the snapshot does not capture yet is the rest of the host state a DOS/4GW game leans on — the sound chips and their DMA, the EMS and XMS handle tables, the VCPI PIC vector remapping, the mouse, the RTC, and the PIC event queue. It is milestone work that is not finished, and the porting log says so in the same words.</p>
+<p>Until it is: STARFALL saves and resumes perfectly, and a game like Ultima VIII can be saved and restored, but its extender does not like what it finds.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-game-keeps-running-now-too">The game keeps running now, too<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#the-game-keeps-running-now-too" class="hash-link" aria-label="Direct link to The game keeps running now, too" title="Direct link to The game keeps running now, too" translate="no">​</a></h2>
+<p>The other thing I got wrong was assuming that leaving the app would leave the game alone. On Android it does not: the OS is free to reclaim the process of a backgrounded app, and DOSBox keeps the whole machine in RAM — so the game was simply gone, with no warning.</p>
+<p>While a game is running, a small ongoing notification now holds the process. Switch to another app, come back later, and the game is exactly where you left it — no save, no reload, just the frame you walked away from.</p>
+<p align="center"><img src="https://www.whereq.com/img/apps/whereq-dosbox-screenshot-phone.jpg" alt="WhereQ-DOSBox running on an Android phone in landscape: the DOSBox welcome screen and a mounted C drive in the middle, the on-screen keyboard in the letterbox bars on the left and right, the arrow keys in an inverted T" width="900"></p>
+<p align="center"><sub>The app on a phone. The four arrows now sit in the inverted T of a real
+keyboard — up on top, left and right side by side, down below — so the
+thumb finds the direction by shape alone.</sub></p>
+<p>That last change is small and I am fond of it. The arrows used to be a single vertical column, which is nothing like the keyboard they stand in for: the finger had to <em>know</em> which of the four was which. Now the thumb reads the shape.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="get-it">Get it<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#get-it" class="hash-link" aria-label="Direct link to Get it" title="Direct link to Get it" translate="no">​</a></h2>
+<p>The release APK is in the repository, signed with the release key, so it installs over 1.0.0.7 in place:</p>
+<p>👉 <strong><a href="https://github.com/whereq/whereq-dosbox" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/whereq-dosbox</a></strong> — tag <strong>v1.0.0.8</strong></p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">downloads/whereq-dosbox-1.0.0.8.apk</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256: ed17f39bddeb9e871485df390f772f19c5a43abdbf3b5845c7abd4afbb602ca3</span><br></div></code></pre></div></div>
+<p>It runs on <strong>arm64-v8a, armeabi-v7a and x86_64</strong> devices, Android 5.0 and newer, entirely offline, with no account and no tracking. The project is GPL-2.0, and the DOSBox core is embedded with its <code>AUTHORS</code>, <code>ChangeLog</code>, <code>COPYING</code> and per-file headers intact.</p>
+<p>Again, <strong>this post is not the documentation.</strong> The documentation is the repository: the build guide, the porting log — including the section that explains exactly how a snapshot is taken and why it has to wait for a safe point — the benchmark notes, and every line of the port. Please read those rather than take my word for it.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="thank-you-dosbox">Thank you, DOSBox<a href="https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.8#thank-you-dosbox" class="hash-link" aria-label="Direct link to Thank you, DOSBox" title="Direct link to Thank you, DOSBox" translate="no">​</a></h2>
+<p>None of this is possible without the DOSBox project.</p>
+<p><strong>DOSBox</strong> was written by the <a href="https://www.dosbox.com/crew.php" target="_blank" rel="noopener noreferrer" class="">DOSBox Team</a> — a volunteer crew who took an operating system from 1994 and made it runnable on every machine the world has produced since, including the ones that did not exist yet. They kept it alive for three decades and gave it away to anyone who wanted it. WhereQ-DOSBox is a thin layer on top of their work. The originality, the craft and the generosity are entirely theirs.</p>
+<p>This port is built on <strong><a href="https://github.com/dreamlayers/em-dosbox" target="_blank" rel="noopener noreferrer" class="">Em-DOSBox</a></strong>, the Emscripten build of DOSBox r4305 by <a href="https://github.com/dreamlayers" target="_blank" rel="noopener noreferrer" class="">Boris Gjenero</a>, which grew out of <a href="https://github.com/CeRiAl" target="_blank" rel="noopener noreferrer" class="">Ismail Khatib's</a> first attempt to compile DOSBox with Emscripten, and rode on the Emscripten work of <a href="https://github.com/kripken/" target="_blank" rel="noopener noreferrer" class="">Alon Zakai</a>. The SDL2 library by <a href="https://github.com/libsdl-org/SDL" target="_blank" rel="noopener noreferrer" class="">Sam Lantinga</a> carries the window, the audio and the touch input.</p>
+<p><strong>DOSBox is a trademark of the DOSBox project</strong>; this port is not affiliated with or endorsed by the DOSBox team.</p>
+<hr>
+<p><em>If you press Resume and your game comes back exactly where you left it — or if it does not, and the save state is where you give up on it — tell me. I am keeping a list, and it is the most useful thing anyone can send me.</em></p>]]></content>
+        <author>
+            <name>Dazhi Zhang (Tony)</name>
+            <uri>/about</uri>
+        </author>
+        <category label="dosbox" term="dosbox"/>
+        <category label="android" term="android"/>
+        <category label="emulator" term="emulator"/>
+        <category label="release" term="release"/>
+        <category label="retro" term="retro"/>
+        <category label="open-source" term="open-source"/>
+        <category label="whereq" term="whereq"/>
+        <category label="save-states" term="save-states"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[WhereQ-DOSBox 1.0.0.7：跑自己的 DOS 游戏、真正的 JIT，以及一个塞得进手机的启动器]]></title>
         <id>https://www.whereq.com/blog/WhereQ-DOSBox-1.0.0.7-CN</id>
@@ -5490,481 +5624,5 @@ I’ll explain <strong>what it is, where it lives, what’s inside it, how it’
         </author>
         <category label="redis" term="redis"/>
         <category label="deep-dive" term="deep-dive"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Deep Dive into Redis IV]]></title>
-        <id>https://www.whereq.com/blog/Deep-Dive-into-Redis-IV</id>
-        <link href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV"/>
-        <updated>2026-01-08T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Slots are ONLY for routing, NOT for locating data.]]></summary>
-        <content type="html"><![CDATA[<blockquote>
-<p><strong>Slots are ONLY for routing, NOT for locating data.
-Redis finds data by key lookup in memory, not by slot.</strong></p>
-</blockquote>
-<p>We’ll clarify <strong>four different layers</strong>, because confusion usually comes from mixing them:</p>
-<ol>
-<li class=""><strong>Routing layer (Cluster / Slots)</strong></li>
-<li class=""><strong>Process ownership layer (Master / Shard)</strong></li>
-<li class=""><strong>In-memory data structures</strong></li>
-<li class=""><strong>Persistence (RDB / AOF)</strong></li>
-</ol>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-slot--data-location">1. Slot ≠ Data Location<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#1-slot--data-location" class="hash-link" aria-label="Direct link to 1. Slot ≠ Data Location" title="Direct link to 1. Slot ≠ Data Location" translate="no">​</a></h2>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="-common-misunderstanding">❌ Common misunderstanding<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#-common-misunderstanding" class="hash-link" aria-label="Direct link to ❌ Common misunderstanding" title="Direct link to ❌ Common misunderstanding" translate="no">​</a></h3>
-<blockquote>
-<p>“Slot key tells Redis where the data is stored”</p>
-</blockquote>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="-correct-understanding">✅ Correct understanding<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#-correct-understanding" class="hash-link" aria-label="Direct link to ✅ Correct understanding" title="Direct link to ✅ Correct understanding" translate="no">​</a></h3>
-<blockquote>
-<p><strong>Slot only tells Redis WHICH MASTER should own the key</strong></p>
-<p><strong>It does NOT tell Redis WHERE inside memory the key lives</strong></p>
-</blockquote>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-what-a-slot-really-is">2. What a Slot Really Is<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#2-what-a-slot-really-is" class="hash-link" aria-label="Direct link to 2. What a Slot Really Is" title="Direct link to 2. What a Slot Really Is" translate="no">​</a></h2>
-<p>A Redis slot is:</p>
-<ul>
-<li class="">
-<p>An <strong>integer label</strong>: <code>0 ~ 16383</code></p>
-</li>
-<li class="">
-<p>Computed by:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">slot = CRC16(key) % 16384</span><br></div></code></pre></div></div>
-</li>
-<li class="">
-<p>Stored as <strong>metadata</strong></p>
-</li>
-<li class="">
-<p>Used for <strong>routing decisions only</strong></p>
-</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="slots-responsibility">Slot’s Responsibility<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#slots-responsibility" class="hash-link" aria-label="Direct link to Slot’s Responsibility" title="Direct link to Slot’s Responsibility" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">KEY  ──hash──▶ SLOT ──lookup──▶ MASTER NODE</span><br></div></code></pre></div></div>
-<p>That’s it.
-After that, <strong>slot is no longer involved</strong>.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-what-happens-after-routing">3. What Happens After Routing<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#3-what-happens-after-routing" class="hash-link" aria-label="Direct link to 3. What Happens After Routing" title="Direct link to 3. What Happens After Routing" translate="no">​</a></h2>
-<p>Once the request reaches the correct master:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Client</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Correct Master</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Redis Process</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">In-memory key lookup</span><br></div></code></pre></div></div>
-<p>At this point:</p>
-<ul>
-<li class="">Redis <strong>does NOT use slots</strong></li>
-<li class="">Redis <strong>does NOT use RDB</strong></li>
-<li class="">Redis <strong>does NOT scan files</strong></li>
-</ul>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-redis-is-an-in-memory-database-first">4. Redis Is an In-Memory Database First<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#4-redis-is-an-in-memory-database-first" class="hash-link" aria-label="Direct link to 4. Redis Is an In-Memory Database First" title="Direct link to 4. Redis Is an In-Memory Database First" translate="no">​</a></h2>
-<p>Redis always works like this:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">WRITE:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Client → RAM → (later) RDB/AOF</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">READ:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Client → RAM</span><br></div></code></pre></div></div>
-<p>Persistence is <strong>secondary</strong>.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-core-data-structure-the-dictionary-hash-table">5. Core Data Structure: The Dictionary (Hash Table)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#5-core-data-structure-the-dictionary-hash-table" class="hash-link" aria-label="Direct link to 5. Core Data Structure: The Dictionary (Hash Table)" title="Direct link to 5. Core Data Structure: The Dictionary (Hash Table)" translate="no">​</a></h2>
-<p>Every Redis instance maintains a <strong>global in-memory dictionary</strong>:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">redisDb</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└── dict</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ├── "user:whereq" → value_ptr</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ├── "order:1001" → value_ptr</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ├── "counter:login" → value_ptr</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    └── ...</span><br></div></code></pre></div></div>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="this-dictionary">This dictionary:<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#this-dictionary" class="hash-link" aria-label="Direct link to This dictionary:" title="Direct link to This dictionary:" translate="no">​</a></h3>
-<ul>
-<li class="">Is a <strong>hash table</strong></li>
-<li class="">Key lookup is <strong>O(1) average</strong></li>
-<li class="">Slot is NOT part of the key</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagram-inside-a-redis-master">Diagram: Inside a Redis Master<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#diagram-inside-a-redis-master" class="hash-link" aria-label="Direct link to Diagram: Inside a Redis Master" title="Direct link to Diagram: Inside a Redis Master" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Redis Master (Shard Owner)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">┌─────────────────────────────┐</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ redisDb                     │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ ┌─────────────────────────┐ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ │ dict (hash table)       │ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ │ ┌──────────┐            │ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ │ │ key → ptr│───▶ Value  │ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ │ └──────────┘            │ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ └─────────────────────────┘ │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└─────────────────────────────┘</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-then-what-is-a-shard">6. Then What Is a “Shard”?<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#6-then-what-is-a-shard" class="hash-link" aria-label="Direct link to 6. Then What Is a “Shard”?" title="Direct link to 6. Then What Is a “Shard”?" translate="no">​</a></h2>
-<p>In Redis terms:</p>
-<blockquote>
-<p><strong>A shard = one master + its replicas</strong></p>
-</blockquote>
-<p>It is <strong>not</strong>:</p>
-<ul>
-<li class="">A separate data structure</li>
-<li class="">A file</li>
-<li class="">A memory region</li>
-</ul>
-<p>It’s a <strong>deployment and responsibility concept</strong>.</p>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="logical-shard-view">Logical Shard View<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#logical-shard-view" class="hash-link" aria-label="Direct link to Logical Shard View" title="Direct link to Logical Shard View" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Shard A</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── Master A (owns slots 0–5460)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│   └── RAM: keys belonging to those slots</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── Replica A1</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└── Replica A2</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-how-redis-ensures-a-shard-only-contains-its-slots-data">7. How Redis Ensures a Shard Only Contains Its Slots’ Data<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#7-how-redis-ensures-a-shard-only-contains-its-slots-data" class="hash-link" aria-label="Direct link to 7. How Redis Ensures a Shard Only Contains Its Slots’ Data" title="Direct link to 7. How Redis Ensures a Shard Only Contains Its Slots’ Data" translate="no">​</a></h2>
-<p>Important rule:</p>
-<blockquote>
-<p><strong>A master only stores keys whose slots it owns</strong></p>
-</blockquote>
-<p>This is enforced by:</p>
-<ul>
-<li class="">Slot ownership metadata</li>
-<li class="">Migration logic</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="during-normal-operation">During Normal Operation<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#during-normal-operation" class="hash-link" aria-label="Direct link to During Normal Operation" title="Direct link to During Normal Operation" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">KEY "user:whereq"</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">CRC16 → slot 5793</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Cluster metadata → Master A</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Stored in Master A’s dict</span><br></div></code></pre></div></div>
-<p>Master B <strong>never sees this key</strong>.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-slot-is-not-stored-with-the-key">8. Slot Is NOT Stored With the Key<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#8-slot-is-not-stored-with-the-key" class="hash-link" aria-label="Direct link to 8. Slot Is NOT Stored With the Key" title="Direct link to 8. Slot Is NOT Stored With the Key" translate="no">​</a></h2>
-<p>Internally, Redis stores:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">key = "user:whereq"</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">value = '{"user":"whereq"}'</span><br></div></code></pre></div></div>
-<p>NOT:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">slot = 5793</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">key = "user:whereq"</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">value = ...</span><br></div></code></pre></div></div>
-<p>Slot is <strong>recomputed when needed</strong>, not stored.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-what-about-slot-migration">9. What About Slot Migration?<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#9-what-about-slot-migration" class="hash-link" aria-label="Direct link to 9. What About Slot Migration?" title="Direct link to 9. What About Slot Migration?" translate="no">​</a></h2>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="migration-moves-data-not-metadata-only">Migration Moves DATA, Not Metadata Only<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#migration-moves-data-not-metadata-only" class="hash-link" aria-label="Direct link to Migration Moves DATA, Not Metadata Only" title="Direct link to Migration Moves DATA, Not Metadata Only" translate="no">​</a></h3>
-<p>During migration:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master A (slot 5793)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  |</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  |-- key + value</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  v</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master B</span><br></div></code></pre></div></div>
-<p>After migration:</p>
-<ul>
-<li class="">Master A deletes the key</li>
-<li class="">Master B stores the key in its own dict</li>
-<li class="">Metadata updates slot ownership</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="migration-diagram">Migration Diagram<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#migration-diagram" class="hash-link" aria-label="Direct link to Migration Diagram" title="Direct link to Migration Diagram" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Before:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master A dict:  "user:whereq"</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master B dict:  (empty)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">After:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master A dict:  (deleted)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Master B dict:  "user:whereq"</span><br></div></code></pre></div></div>
-<p>Slot is just <strong>the rule that decides this move</strong>, not the container.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-rdb-has-no-index--why-thats-ok">10. RDB Has No Index — Why That’s OK<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#10-rdb-has-no-index--why-thats-ok" class="hash-link" aria-label="Direct link to 10. RDB Has No Index — Why That’s OK" title="Direct link to 10. RDB Has No Index — Why That’s OK" translate="no">​</a></h2>
-<p>You are correct:</p>
-<blockquote>
-<p><strong>RDB has no index</strong></p>
-</blockquote>
-<p>That’s because:</p>
-<ul>
-<li class="">RDB is never queried directly</li>
-<li class="">Redis loads RDB into RAM at startup</li>
-<li class="">After loading, Redis rebuilds the hash table</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="rdb-load-process">RDB Load Process<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#rdb-load-process" class="hash-link" aria-label="Direct link to RDB Load Process" title="Direct link to RDB Load Process" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Redis restart</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Read RDB sequentially</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">For each key:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  - allocate memory</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  - insert into dict</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Ready for traffic</span><br></div></code></pre></div></div>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagram-rdb-restore">Diagram: RDB Restore<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#diagram-rdb-restore" class="hash-link" aria-label="Direct link to Diagram: RDB Restore" title="Direct link to Diagram: RDB Restore" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">dump.rdb</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── key1 → value1</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── key2 → value2</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└── key3 → value3</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">redisDb.dict</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-what-happens-if-rdb-contains-wrong-keys">11. What Happens If RDB Contains “Wrong” Keys?<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#11-what-happens-if-rdb-contains-wrong-keys" class="hash-link" aria-label="Direct link to 11. What Happens If RDB Contains “Wrong” Keys?" title="Direct link to 11. What Happens If RDB Contains “Wrong” Keys?" translate="no">​</a></h2>
-<p>Example:</p>
-<ul>
-<li class="">Slot migrated away</li>
-<li class="">Old RDB still contains keys</li>
-</ul>
-<p>On startup:</p>
-<ol>
-<li class="">
-<p>Redis loads all keys</p>
-</li>
-<li class="">
-<p>Cluster metadata says:</p>
-<ul>
-<li class="">“You do NOT own slot 5793”</li>
-</ul>
-</li>
-<li class="">
-<p>Redis:</p>
-<ul>
-<li class="">Deletes or refuses those keys</li>
-<li class="">Or resyncs from correct master</li>
-</ul>
-</li>
-</ol>
-<p>✔ <strong>Metadata always wins</strong></p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-full-request-lifecycle-end-to-end">12. Full Request Lifecycle (End-to-End)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#12-full-request-lifecycle-end-to-end" class="hash-link" aria-label="Direct link to 12. Full Request Lifecycle (End-to-End)" title="Direct link to 12. Full Request Lifecycle (End-to-End)" translate="no">​</a></h2>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Client</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Hash key → slot</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Cluster metadata lookup</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Correct master</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Redis dict lookup</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">Return value</span><br></div></code></pre></div></div>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="end-to-end-diagram">End-to-End Diagram<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#end-to-end-diagram" class="hash-link" aria-label="Direct link to End-to-End Diagram" title="Direct link to End-to-End Diagram" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">┌────────┐</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ Client │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└───┬────┘</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    │ CRC16(key)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">┌────────────┐</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ Slot (5793)│</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└───┬────────┘</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    │ metadata</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">┌────────────┐</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ Master A   │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ redisDb    │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ dict[key]  │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└────────────┘</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-key-takeaways-very-important">13. Key Takeaways (Very Important)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#13-key-takeaways-very-important" class="hash-link" aria-label="Direct link to 13. Key Takeaways (Very Important)" title="Direct link to 13. Key Takeaways (Very Important)" translate="no">​</a></h2>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="-correct-mental-model">✅ Correct Mental Model<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#-correct-mental-model" class="hash-link" aria-label="Direct link to ✅ Correct Mental Model" title="Direct link to ✅ Correct Mental Model" translate="no">​</a></h3>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Concept</th><th>Role</th></tr></thead><tbody><tr><td>Slot</td><td>Routing label</td></tr><tr><td>Shard</td><td>Ownership responsibility</td></tr><tr><td>Master</td><td>Data holder</td></tr><tr><td>RAM dict</td><td>Actual data location</td></tr><tr><td>RDB</td><td>Cold backup</td></tr><tr><td>AOF</td><td>Change log</td></tr></tbody></table>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="-golden-rule">🔥 Golden Rule<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-IV#-golden-rule" class="hash-link" aria-label="Direct link to 🔥 Golden Rule" title="Direct link to 🔥 Golden Rule" translate="no">​</a></h3>
-<blockquote>
-<p><strong>Redis never locates data by slot.
-Redis locates data by key lookup in RAM.
-Slot only decides WHICH Redis instance is allowed to hold that key.</strong></p>
-</blockquote>
-<hr>]]></content>
-        <author>
-            <name>Dazhi Zhang (Tony)</name>
-            <uri>/about</uri>
-        </author>
-        <category label="redis" term="redis"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Deep Dive into Redis V: Magic Hash]]></title>
-        <id>https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash</id>
-        <link href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash"/>
-        <updated>2026-01-08T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[1. What the Redis “magic hash” really is]]></summary>
-        <content type="html"><![CDATA[<ol>
-<li class="">What the Redis “magic hash” really is</li>
-<li class="">Why keys are <strong>not strings</strong>, but <strong>SDS pointers</strong></li>
-<li class="">How Redis achieves <strong>O(1)</strong> lookup without slots</li>
-<li class="">How Redis dict works internally (buckets, hashing, collisions)</li>
-<li class="">Why this is faster than slot-based indexing</li>
-<li class="">What happens during rehashing (without stopping the world)</li>
-</ol>
-<hr>
-<h1>Redis “Magic Hash”: How Redis Finds Data in O(1)</h1>
-<blockquote>
-<p><strong>Redis does NOT use slots to find data</strong>
-<strong>Redis does NOT scan memory</strong>
-<strong>Redis uses a very carefully designed hash table</strong></p>
-</blockquote>
-<p>This is the <em>real</em> magic.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-first-redis-keys-are-not-strings">1. First: Redis Keys Are NOT Strings<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#1-first-redis-keys-are-not-strings" class="hash-link" aria-label="Direct link to 1. First: Redis Keys Are NOT Strings" title="Direct link to 1. First: Redis Keys Are NOT Strings" translate="no">​</a></h2>
-<p>When you do:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">SET user:whereq {"user":"whereq"}</span><br></div></code></pre></div></div>
-<p>Internally:</p>
-<ul>
-<li class=""><code>"user:whereq"</code> is stored as an <strong>SDS</strong></li>
-<li class="">SDS = <em>Simple Dynamic String</em></li>
-<li class="">Redis stores a <strong>pointer</strong> to SDS, not a raw string</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="internal-representation">Internal Representation<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#internal-representation" class="hash-link" aria-label="Direct link to Internal Representation" title="Direct link to Internal Representation" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">key (char*) ──▶ SDS struct</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                 ├── len</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                 ├── alloc</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                 └── buf[] = "user:whereq"</span><br></div></code></pre></div></div>
-<p>So when Redis “hashes the key”, it hashes:</p>
-<blockquote>
-<p><strong>the bytes in SDS.buf</strong>, not a language string</p>
-</blockquote>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-redis-dict-the-core-data-structure">2. Redis Dict: The Core Data Structure<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#2-redis-dict-the-core-data-structure" class="hash-link" aria-label="Direct link to 2. Redis Dict: The Core Data Structure" title="Direct link to 2. Redis Dict: The Core Data Structure" translate="no">​</a></h2>
-<p>Every Redis instance has:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">redisDb</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└── dict</span><br></div></code></pre></div></div>
-<p>This <code>dict</code> is a <strong>hash table</strong>, implemented as:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">dict</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── ht[0]  (current table)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── ht[1]  (rehashing table)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── rehashidx</span><br></div></code></pre></div></div>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagram-redis-dict-layout">Diagram: Redis Dict Layout<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#diagram-redis-dict-layout" class="hash-link" aria-label="Direct link to Diagram: Redis Dict Layout" title="Direct link to Diagram: Redis Dict Layout" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">dict</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── ht[0]</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│   ├── bucket[0] → entry → entry → NULL</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│   ├── bucket[1] → NULL</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│   ├── bucket[2] → entry → NULL</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│   └── ...</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">├── ht[1] (used only during rehash)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└── rehashidx</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-the-magic-hash-function">3. The “Magic Hash” Function<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#3-the-magic-hash-function" class="hash-link" aria-label="Direct link to 3. The “Magic Hash” Function" title="Direct link to 3. The “Magic Hash” Function" translate="no">​</a></h2>
-<p>Redis uses <strong>SipHash</strong> (modern Redis) for dict keys.</p>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="why-siphash">Why SipHash?<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#why-siphash" class="hash-link" aria-label="Direct link to Why SipHash?" title="Direct link to Why SipHash?" translate="no">​</a></h3>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Reason</th><th>Benefit</th></tr></thead><tbody><tr><td>Fast</td><td>O(1) average</td></tr><tr><td>Secure</td><td>Prevents hash-flooding attacks</td></tr><tr><td>Stable</td><td>Good distribution</td></tr><tr><td>Byte-based</td><td>Works on SDS.buf</td></tr></tbody></table>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="hashing-flow">Hashing Flow<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#hashing-flow" class="hash-link" aria-label="Direct link to Hashing Flow" title="Direct link to Hashing Flow" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">SDS.buf ("user:whereq")</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">     ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">SipHash(key_bytes, secret_seed)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">     ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">64-bit hash value</span><br></div></code></pre></div></div>
-<p>This hash value is <strong>not</strong> the Redis slot hash.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-from-hash--bucket-index">4. From Hash → Bucket Index<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#4-from-hash--bucket-index" class="hash-link" aria-label="Direct link to 4. From Hash → Bucket Index" title="Direct link to 4. From Hash → Bucket Index" translate="no">​</a></h2>
-<p>Redis converts the hash to a bucket index:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">index = hash &amp; (table_size - 1)</span><br></div></code></pre></div></div>
-<p>Why this works:</p>
-<ul>
-<li class="">Table size is always power of 2</li>
-<li class="">Bitwise AND is faster than modulo</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="example">Example<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#example" class="hash-link" aria-label="Direct link to Example" title="Direct link to Example" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">hash = 0xA92F4C19</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">table_size = 1024</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">index = hash &amp; 1023</span><br></div></code></pre></div></div>
-<p>⚡ <strong>One CPU instruction</strong></p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-o1-lookup-path-real-path">5. O(1) Lookup Path (Real Path)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#5-o1-lookup-path-real-path" class="hash-link" aria-label="Direct link to 5. O(1) Lookup Path (Real Path)" title="Direct link to 5. O(1) Lookup Path (Real Path)" translate="no">​</a></h2>
-<p>When Redis reads a key:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">1. Hash SDS.buf (SipHash)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">2. Compute bucket index</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">3. Follow pointer</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">4. Compare keys (rare collisions)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">5. Return value</span><br></div></code></pre></div></div>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="diagram-lookup-path">Diagram: Lookup Path<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#diagram-lookup-path" class="hash-link" aria-label="Direct link to Diagram: Lookup Path" title="Direct link to Diagram: Lookup Path" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">GET user:whereq</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">SipHash(SDS.buf)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">bucket index</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">bucket pointer</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">dictEntry</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">        ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">value pointer</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-collision-handling-still-o1">6. Collision Handling (Still O(1))<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#6-collision-handling-still-o1" class="hash-link" aria-label="Direct link to 6. Collision Handling (Still O(1))" title="Direct link to 6. Collision Handling (Still O(1))" translate="no">​</a></h2>
-<p>Redis uses <strong>separate chaining</strong>:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">bucket[i] → entry → entry → NULL</span><br></div></code></pre></div></div>
-<p>Why collisions stay rare:</p>
-<ul>
-<li class="">Good hash function</li>
-<li class="">Resize before load factor is high</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="load-factor-rules">Load Factor Rules<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#load-factor-rules" class="hash-link" aria-label="Direct link to Load Factor Rules" title="Direct link to Load Factor Rules" translate="no">​</a></h3>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Condition</th><th>Action</th></tr></thead><tbody><tr><td>load factor ≥ 1</td><td>expand</td></tr><tr><td>load factor ≤ 0.1</td><td>shrink</td></tr></tbody></table>
-<p>This keeps chains short.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-incremental-rehashing-no-stop-the-world">7. Incremental Rehashing (No Stop-the-World)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#7-incremental-rehashing-no-stop-the-world" class="hash-link" aria-label="Direct link to 7. Incremental Rehashing (No Stop-the-World)" title="Direct link to 7. Incremental Rehashing (No Stop-the-World)" translate="no">​</a></h2>
-<p>When resizing is needed:</p>
-<ul>
-<li class="">Redis allocates ht[1]</li>
-<li class="">Gradually moves buckets from ht[0] → ht[1]</li>
-<li class="">Each command migrates a few buckets</li>
-</ul>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="rehashing-diagram">Rehashing Diagram<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#rehashing-diagram" class="hash-link" aria-label="Direct link to Rehashing Diagram" title="Direct link to Rehashing Diagram" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Before:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[0] → buckets</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[1] → empty</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">During:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[0] → some buckets</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[1] → some buckets</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">rehashidx → moving pointer</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">After:</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[0] empty</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">ht[1] becomes new ht[0]</span><br></div></code></pre></div></div>
-<p>Reads check <strong>both tables</strong> during rehash.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-why-slots-are-not-used-for-lookup">8. Why Slots Are NOT Used for Lookup<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#8-why-slots-are-not-used-for-lookup" class="hash-link" aria-label="Direct link to 8. Why Slots Are NOT Used for Lookup" title="Direct link to 8. Why Slots Are NOT Used for Lookup" translate="no">​</a></h2>
-<p>Now your key insight:</p>
-<blockquote>
-<p>“Why not use slot to locate data?”</p>
-</blockquote>
-<p>Because:</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Slot</th><th>Dict</th></tr></thead><tbody><tr><td>16K fixed</td><td>Dynamic size</td></tr><tr><td>Routing only</td><td>Data access</td></tr><tr><td>Cluster-level</td><td>Instance-level</td></tr><tr><td>Coarse</td><td>Precise</td></tr></tbody></table>
-<p>Slot would require <strong>secondary index</strong>. Redis avoids this entirely.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-why-this-is-faster-than-slot-based-lookup">9. Why This Is Faster Than Slot-Based Lookup<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#9-why-this-is-faster-than-slot-based-lookup" class="hash-link" aria-label="Direct link to 9. Why This Is Faster Than Slot-Based Lookup" title="Direct link to 9. Why This Is Faster Than Slot-Based Lookup" translate="no">​</a></h2>
-<p>If Redis used slots to locate data:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">slot → table → bucket → key</span><br></div></code></pre></div></div>
-<p>Current Redis:</p>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">hash(key) → bucket → key</span><br></div></code></pre></div></div>
-<p>Fewer indirections = faster.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-slot-vs-dict-hash-very-important">10. Slot vs Dict Hash (Very Important)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#10-slot-vs-dict-hash-very-important" class="hash-link" aria-label="Direct link to 10. Slot vs Dict Hash (Very Important)" title="Direct link to 10. Slot vs Dict Hash (Very Important)" translate="no">​</a></h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Purpose</th><th>Hash Used</th></tr></thead><tbody><tr><td>Cluster routing</td><td>CRC16</td></tr><tr><td>Key lookup</td><td>SipHash</td></tr></tbody></table>
-<p>They are <strong>completely independent</strong>.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-full-mental-model-correct">11. Full Mental Model (Correct)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#11-full-mental-model-correct" class="hash-link" aria-label="Direct link to 11. Full Mental Model (Correct)" title="Direct link to 11. Full Mental Model (Correct)" translate="no">​</a></h2>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">Client</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">CRC16(key) → slot → master</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">SipHash(key) → bucket → dictEntry</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">  ↓</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">value</span><br></div></code></pre></div></div>
-<hr>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="full-stack-diagram">Full Stack Diagram<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#full-stack-diagram" class="hash-link" aria-label="Direct link to Full Stack Diagram" title="Direct link to Full Stack Diagram" translate="no">​</a></h3>
-<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token plain">┌────────┐</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">│ Client │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">└───┬────┘</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">    ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">CRC16(key) ──▶ Slot ──▶ Master Node</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                    SipHash(key)</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                    Hash Table Bucket</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          │</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                          ▼</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">                    dictEntry → Value</span><br></div></code></pre></div></div>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-why-redis-can-promise-o1">12. Why Redis Can Promise O(1)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#12-why-redis-can-promise-o1" class="hash-link" aria-label="Direct link to 12. Why Redis Can Promise O(1)" title="Direct link to 12. Why Redis Can Promise O(1)" translate="no">​</a></h2>
-<p>Redis guarantees:</p>
-<blockquote>
-<p><strong>O(1) average time complexity</strong></p>
-</blockquote>
-<p>Because:</p>
-<ul>
-<li class="">Good hash</li>
-<li class="">Controlled load factor</li>
-<li class="">Incremental rehash</li>
-<li class="">In-memory pointers</li>
-</ul>
-<p>Worst-case exists (like any hash table), but is practically avoided.</p>
-<hr>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-final-takeaway-key-insight">13. Final Takeaway (Key Insight)<a href="https://www.whereq.com/blog/Deep-Dive-into-Redis-V-Magic-Hash#13-final-takeaway-key-insight" class="hash-link" aria-label="Direct link to 13. Final Takeaway (Key Insight)" title="Direct link to 13. Final Takeaway (Key Insight)" translate="no">​</a></h2>
-<blockquote>
-<p><strong>Slots route traffic.
-Dict hashes locate data.
-RDB/AOF persist state.
-None of them replace the others.</strong></p>
-</blockquote>
-<p>Redis is fast because <strong>each layer does only one job</strong> — and does it extremely well.</p>
-<hr>]]></content>
-        <author>
-            <name>Dazhi Zhang (Tony)</name>
-            <uri>/about</uri>
-        </author>
-        <category label="redis" term="redis"/>
     </entry>
 </feed>
