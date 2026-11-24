@@ -2,11 +2,151 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whereq.github.io/zh-CN/blog</id>
     <title>WhereQ Blog</title>
-    <updated>2026-11-22T00:00:00.000Z</updated>
+    <updated>2026-11-24T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whereq.github.io/zh-CN/blog"/>
     <subtitle>WhereQ Blog</subtitle>
     <icon>https://whereq.github.io/zh-CN/img/favicon-32x32.png</icon>
+    <entry>
+        <title type="html"><![CDATA[WhereQ-DOSBox 1.0.0.18：你早就有的那把键盘]]></title>
+        <id>https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN</id>
+        <link href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN"/>
+        <updated>2026-11-24T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<ThemedImage]]></summary>
+        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://whereq.github.io/img/apps/whereq-dosbox-logo.png" alt="WhereQ-DOSBox" class="themedComponent_K_SA themedComponent--light_mE0A" width="300"><img src="https://whereq.github.io/img/apps/whereq-dosbox-logo-transparent.png" alt="WhereQ-DOSBox" class="themedComponent_K_SA themedComponent--dark_re_f" width="300"></figure>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="抽屉里那把键盘">抽屉里那把键盘<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E6%8A%BD%E5%B1%89%E9%87%8C%E9%82%A3%E6%8A%8A%E9%94%AE%E7%9B%98" class="hash-link" aria-label="抽屉里那把键盘的直接链接" title="抽屉里那把键盘的直接链接" translate="no">​</a></h2>
+<p>大多数人的家里大概都有一把蓝牙键盘。它跟着平板、手机或者电视一起来，然后就一直躺在抽屉里——一块塑料，一百零四个键，手感比屏幕上任何一种"假装出来的键盘"都好。</p>
+<p>和手机配对，它能用。</p>
+<p>对一切都能用。</p>
+<p>除了模拟器。</p>
+<p>到这次发版之前，WhereQ-DOSBox 就是这样：配好蓝牙键盘，按一个键，什么也不会发生。不是"按错了键"，是什么都没有。内置的 SDL2 根本没有给 Android 键盘事件留通路，Java 层只喂输入法，原生那一侧一次按键事件都收不到。屏幕键盘是 app 唯一的输入通道，而想要一次按键的游戏，收到的是一根手指。</p>
+<p>1.0.0.18 修好了它，而且是用这个 app 一贯的方式修：绝不另造一条输入通路。</p>
+<p>现在，Android 的键码会被映射成 DOSBox 的键名，再通过屏幕键盘一直在用的那张原生表解析。两条路最后落到同一个扫描码、进入同一个 BIOS 缓冲区、从同一个 <strong>INT 09h</strong> 出去。<strong>Shift</strong>、<strong>Ctrl</strong> 和 <strong>Alt</strong> 一并带上，DOS 该看到的大写字母就都能看到。按住一个键时只有第一次按下会被转发——DOSBox 在 BIOS 定时器里自己会重复，多送一次事件就等于缓冲区里多一个扫描码。而打在启动脚本编辑器上的按键，永远不会跑到游戏里去。</p>
+<p>这些是在模拟器里用真实按键事件验过的，不是用假动作糊过去的：字母和 <strong>Enter</strong> 能过《真人快打》的过场保护，<strong>F1</strong> 能开始游戏，<strong>F10</strong> 能打开它自己的选项菜单，方向键能移动菜单光标，也被游戏当作移动键接受。</p>
+<p>抽屉里那把键盘，现在是 DOS 键盘了。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="音乐里本不该有的那声">音乐里本不该有的那声<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E9%9F%B3%E4%B9%90%E9%87%8C%E6%9C%AC%E4%B8%8D%E8%AF%A5%E6%9C%89%E7%9A%84%E9%82%A3%E5%A3%B0" class="hash-link" aria-label="音乐里本不该有的那声的直接链接" title="音乐里本不该有的那声的直接链接" translate="no">​</a></h2>
+<p>有些游戏里，模拟器会自己加进去一个音。不是在音乐里——是压在音乐上面：一段稳稳的颤音，跟着配乐走，音乐一关它就没了。</p>
+<p>这是最烦人的一种 bug，因为它有一半是真的。那个音确实响着；它也确实不该响，可你没法靠耳朵把这两件事分开。</p>
+<p>原因出在混音器里的一段算术，得画张图才说得清。DOSBox 为了让音频缓冲保持居中，会持续微调模拟器实际输出采样率：生产线程跑在模拟的 PIT 时钟上，消费线程跑在手机的音频时钟上，两者永远不会完全一致，于是每次回调都 nudge 一下速率，把缓冲维持在设定点附近。在桌面上这是个不错的设计。</p>
+<p>可在手机上，OPL/FM 合成那种又重又稳的负载会让这个环路开始"游走"。而一个持续的 FM 音本身就是载波——恰好是那种会把飘忽的采样率变成听得见的节拍的声音。数字音效是瞬态的，从来不会暴露它：太短了，骑不到颤音上面。</p>
+<p align="center"><img src="https://whereq.github.io/img/apps/whereq-dosbox-opl-test.png" alt="WhereQ-DOSBox 里正在跑的 OPL 测试：DOS 屏幕上写着 OPL test: one sustained tone on the FM chip、Save a state, wait, load it - the tone must not restart，以及 The tone is playing. Press any key to stop it.，两侧是屏幕键盘。" width="900"></p>
+<p align="center"><sub>把问题照出来的那个测试：FM 芯片上的一个持续长音——正是飘忽的采样率
+会拧出节拍的载波。</sub></p>
+<p>修法是 app 自带 <code>dosbox.conf</code> 里的三行：混音器改用 <strong>48 kHz</strong>（手机的原生采样率），块大小 <strong>2048</strong>，预缓冲 <strong>50 ms</strong>。环路不再游走，颤音也就跟着没了。</p>
+<p>这只动了音频缓冲，别的什么都没碰。游戏速度与逻辑不受影响，代价是大约 50 毫秒的延迟，对 DOS 游戏来说听不出来。完整的分析——音频通路、反馈环路、频移调制——都写在 <a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/AUDIO-FM-BEEP.md" target="_blank" rel="noopener noreferrer" class=""><code>docs/AUDIO-FM-BEEP.md</code></a> 里，配了三张图：这个 bug 里真正有意思的部分，从来就不是那三行配置。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="第二次启动">第二次启动<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%90%AF%E5%8A%A8" class="hash-link" aria-label="第二次启动的直接链接" title="第二次启动的直接链接" translate="no">​</a></h2>
+<p>用返回键退出 app 再重新打开，以前就足以把模拟器弄死。</p>
+<div class="language-text codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-text codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token plain">  DOS:Too many devices added</span><br></div></code></pre></div></div>
+<p>设备表是一个十个槽位的静态数组，而一次运行的设备从来没有从里面删掉。app 在两次启动之间保留着同一个进程，于是第二次启动发现表还是满的，槽位用尽，直接死掉。现在 DOS 段关闭时会把它自己的设备移除，MSCDEX 设备也跟着自己撤掉。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="game-mode-回到你离开时的样子">Game Mode 回到你离开时的样子<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#game-mode-%E5%9B%9E%E5%88%B0%E4%BD%A0%E7%A6%BB%E5%BC%80%E6%97%B6%E7%9A%84%E6%A0%B7%E5%AD%90" class="hash-link" aria-label="Game Mode 回到你离开时的样子的直接链接" title="Game Mode 回到你离开时的样子的直接链接" translate="no">​</a></h2>
+<p>同一个角落里还有两个小修。</p>
+<p>手柄现在一次性恢复每个游戏各自的状态——档位、D-pad 模式、按键重映射——而且是在手柄搭出来之前恢复。顺序是有讲究的：D-pad 必须先就位，再去搭按键栏，否则那个标着模式名字的按钮会标成<strong>上一个</strong>模式；而拆成几个 setter 之后，调用方还得自己按对的顺序调。一个布局过程不会搞错。</p>
+<p><strong>TURBO</strong> 连发也不会再卡住了。按住 FIRE 的时候，TURBO 会一遍一遍地触发它。这个循环原本住在按钮自己的触摸监听器里，而一次重建——转个屏，或者另一只拇指切了个档位——会在按住的过程中把这个视图摘掉，却没有送来 <code>ACTION_UP</code>。监听器于是永远停不下来，那个键就一直响下去。现在这个循环住在手柄这一层，凡是释放按键的路径都会把它取消。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="说明书也跟着长了">说明书也跟着长了<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E8%AF%B4%E6%98%8E%E4%B9%A6%E4%B9%9F%E8%B7%9F%E7%9D%80%E9%95%BF%E4%BA%86" class="hash-link" aria-label="说明书也跟着长了的直接链接" title="说明书也跟着长了的直接链接" translate="no">​</a></h2>
+<p align="center"><img src="https://whereq.github.io/img/apps/whereq-dosbox-keyboard-columns.png" alt="WhereQ-DOSBox 窄屏时的键盘：左边一列按键，从 File、键盘切换、Esc、Tab、RMB 一直到方向键，右边一列是引号键、Bks、Alt、Ctrl、Shift、Space 和 Ent，中间是 DOS 欢迎画面和 C:\> 提示符。" width="900"></p>
+<p align="center"><sub>列布局：每侧一列按键，给那些再也放不下按键垫的屏幕。</sub></p>
+<p>用户指南把键盘的三种布局都讲了一遍，却只给其中两种配了图。第三种——<strong>列</strong>布局，每侧一列按键，当 4:3 画面旁边的黑边宽度掉到 116 dp 以下时 app 就会换成它——现在是真实截图了；窄横屏下字母被挤到约 24 dp 的那张也是。新的 <strong>Game Mode</strong> 截图全部用 1.0.0.17 的发布版重拍，于是说明书、仓库和截图集里的画面是同一批。DOSBox 手册页里那段没人看的 <em>SEE ALSO</em> 删掉了，重映射的描边改成了按设备像素核对，1.0.0.17 那个 APK 的校验值也记进了仓库。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="存档照样能读">存档照样能读<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E5%AD%98%E6%A1%A3%E7%85%A7%E6%A0%B7%E8%83%BD%E8%AF%BB" class="hash-link" aria-label="存档照样能读的直接链接" title="存档照样能读的直接链接" translate="no">​</a></h2>
+<p><strong>存档格式没有变。</strong> 早期版本写下的每一个存档都照样能读。</p>
+<p>这次发版没有碰模拟器内部——它是一次 app 层的发版，和之前那些一样——但这句话必须出现在每一份发布说明里，所以这里再说一遍。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="拿去用">拿去用<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E6%8B%BF%E5%8E%BB%E7%94%A8" class="hash-link" aria-label="拿去用的直接链接" title="拿去用的直接链接" translate="no">​</a></h2>
+<p>这次发布在<a href="https://github.com/whereq/whereq-dosbox/releases" target="_blank" rel="noopener noreferrer" class="">发布页</a>上，标签是 <strong>v1.0.0.18</strong>。APK 由 CI 从这个标签构建，作为发布附件上传，旁边还有一个 <code>.sha256</code> 文件，方便你核对下载到的东西。</p>
+<p>👉 <strong><a href="https://github.com/whereq/whereq-dosbox" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/whereq-dosbox</a></strong> ——源码，以及它全部的历史。</p>
+<p>它跑在 <strong>arm64-v8a、armeabi-v7a 和 x86_64</strong> 设备上，Android 5.0 及以后，完全离线，不要账号，不做追踪。项目是 GPL-2.0，DOSBox 内核连同它的 <code>AUTHORS</code>、<code>ChangeLog</code>、<code>COPYING</code> 和逐文件的头注释一起嵌在里面。</p>
+<p>如果你刚来，<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-Announcement">公告</a>说了这是什么项目，<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-User-Guide">用户指南</a>把每一屏都讲了一遍。<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.9">键盘变成的那台主机</a>讲的是 Game Mode 要替换掉的按键垫，<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.12">比 app 活得久的存档</a>讲的是那些至今还能读的槽位，<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.15">给拇指的掌机</a>讲的是键盘的第二张脸。想看项目的全貌，去读 <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox">WhereQ-DOSBox</a>；想知道一个键在机器里面干了什么，<a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-Interrupts">中断地图</a>里有。</p>
+<p>再说一次：<strong>这篇文章不是文档。</strong> 文档在仓库里：<a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/USER-GUIDE.md" target="_blank" rel="noopener noreferrer" class="">用户指南</a>、<a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/TECHNICAL-REFERENCE.md" target="_blank" rel="noopener noreferrer" class="">技术参考</a>，还有<a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/AUDIO-FM-BEEP.md" target="_blank" rel="noopener noreferrer" class="">那份音频分析</a>。与其相信我的话，不如去读它们。</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="感谢-dosbox">感谢 DOSBox<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18-CN#%E6%84%9F%E8%B0%A2-dosbox" class="hash-link" aria-label="感谢 DOSBox的直接链接" title="感谢 DOSBox的直接链接" translate="no">​</a></h2>
+<p>这一切没有 DOSBox 项目就不可能。</p>
+<p><strong>DOSBox</strong> 由 <a href="https://www.dosbox.com/crew.php" target="_blank" rel="noopener noreferrer" class="">DOSBox Team</a> 写成——一群志愿者，把 1994 年的一套操作系统带到了此后世界造出的每一台机器上，包括那些当时还不存在的机器。他们让它活了三十年，然后免费送给了任何想要的人。WhereQ-DOSBox 是叠在他们工作之上的一层薄薄的壳，这次发布又是叠在那层壳之上的一层。原创、技艺和慷慨，全部属于他们。</p>
+<p>这个移植建立在 <strong><a href="https://github.com/dreamlayers/em-dosbox" target="_blank" rel="noopener noreferrer" class="">Em-DOSBox</a></strong> 之上——<a href="https://github.com/dreamlayers" target="_blank" rel="noopener noreferrer" class="">Boris Gjenero</a> 用 Emscripten 编译的 DOSBox r4305，它又源自 <a href="https://github.com/CeRiAl" target="_blank" rel="noopener noreferrer" class="">Ismail Khatib</a> 第一次尝试用 Emscripten 编译 DOSBox，还站在 <a href="https://github.com/kripken/" target="_blank" rel="noopener noreferrer" class="">Alon Zakai</a> 的 Emscripten 工作之上。SDL2 库由 <a href="https://github.com/libsdl-org/SDL" target="_blank" rel="noopener noreferrer" class="">Sam Lantinga</a> 撑着，负责窗口、音频和触摸输入——现在还多了一件硬件键盘。</p>
+<p><strong>DOSBox 是 DOSBox 项目的商标</strong>；这个移植与 DOSBox 团队无隶属关系，也未获其背书。</p>
+<hr>
+<p><em>你早就有的那把键盘，是 1994 年的游戏能要求到的最好的输入设备。它只是需要有人把它插上。</em></p>]]></content>
+        <author>
+            <name>Dazhi Zhang (Tony)</name>
+            <uri>/about</uri>
+        </author>
+        <category label="dosbox" term="dosbox"/>
+        <category label="android" term="android"/>
+        <category label="emulator" term="emulator"/>
+        <category label="release" term="release"/>
+        <category label="retro" term="retro"/>
+        <category label="open-source" term="open-source"/>
+        <category label="whereq" term="whereq"/>
+        <category label="bluetooth" term="bluetooth"/>
+        <category label="audio" term="audio"/>
+        <category label="game-mode" term="game-mode"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WhereQ-DOSBox 1.0.0.18: the keyboard you already own]]></title>
+        <id>https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18</id>
+        <link href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18"/>
+        <updated>2026-11-24T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<ThemedImage]]></summary>
+        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://whereq.github.io/img/apps/whereq-dosbox-logo.png" alt="WhereQ-DOSBox" class="themedComponent_K_SA themedComponent--light_mE0A" width="300"><img src="https://whereq.github.io/img/apps/whereq-dosbox-logo-transparent.png" alt="WhereQ-DOSBox" class="themedComponent_K_SA themedComponent--dark_re_f" width="300"></figure>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="the-keyboard-in-the-drawer">The keyboard in the drawer<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#the-keyboard-in-the-drawer" class="hash-link" aria-label="The keyboard in the drawer的直接链接" title="The keyboard in the drawer的直接链接" translate="no">​</a></h2>
+<p>Somewhere in most houses there is a Bluetooth keyboard. It came with a tablet, or a phone, or a television, and it has been sitting in a drawer ever since — a rectangle of plastic with a hundred and four keys that feel better than anything a screen can pretend to be.</p>
+<p>Pair it with the phone and it works. For everything.</p>
+<p>Except the emulator.</p>
+<p>That was the state of WhereQ-DOSBox until this release: you paired the keyboard, you pressed a key, and nothing happened. Not "the wrong key" — nothing. The vendored SDL2 has no path for Android key events at all; the Java layer fed only the IME, and the native side never saw a single key event come in. The on-screen keyboard was the only input the app had, and a game that wanted a keypress got a finger instead.</p>
+<p>1.0.0.18 fixes that, and it fixes it the way the app does everything else: by refusing to invent a new input path.</p>
+<p>An Android key code is now mapped to a DOSBox key name, and that name is resolved through the same native table the on-screen keyboard already used. Both roads end in the same scancode, in the same BIOS buffer, behind the same <strong>INT 09h</strong>. <strong>Shift</strong>, <strong>Ctrl</strong> and <strong>Alt</strong> are carried along, so DOS sees the capital letters it should. Only the first press of a held key is forwarded — DOSBox does its own auto-repeat in the BIOS timer, and every extra event would be one more scancode in the buffer. And a keystroke aimed at the launch-script editor never reaches the game, which is the one thing that had to stay true.</p>
+<p>Checked in the emulator with real key events, not with a mock: the letters and <strong>Enter</strong> pass the copy protection of <em>Mortal Kombat</em>, <strong>F1</strong> starts the game, <strong>F10</strong> opens its own options menu, and the arrow keys move the menu cursor and are accepted as the game's movement keys.</p>
+<p>The keyboard in the drawer is a DOS keyboard now.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="a-tone-that-was-never-in-the-music">A tone that was never in the music<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#a-tone-that-was-never-in-the-music" class="hash-link" aria-label="A tone that was never in the music的直接链接" title="A tone that was never in the music的直接链接" translate="no">​</a></h2>
+<p>There was a note that the emulator added to some games. Not in the music — <em>on</em> top of it: a steady beat, a warble that rode along under the soundtrack and vanished the moment you turned the music off.</p>
+<p>It was the most annoying kind of bug, because it was partly true. The tone was really there. It was also really not supposed to be there, and no amount of listening could separate the two.</p>
+<p>The cause is a piece of arithmetic in the mixer, and it took a diagram to explain. DOSBox keeps its audio buffer centred by continuously re-tuning the emulator's effective output sample rate: the producer thread runs on the emulated PIT's clock, the consumer thread runs on the phone's audio clock, and the two never agree exactly, so on every callback the mixer nudges the rate to keep the buffer near its set point. That is a fine design on a desktop.</p>
+<p>Under the steady, heavy load of OPL/FM synthesis on a phone, though, the loop hunts. And a held FM note is a sustained carrier — exactly the kind of signal that turns a wandering sample rate into an audible beat. The digital sound effects, being transient, never revealed it: they were too short to sit on a warble.</p>
+<p align="center"><img src="https://whereq.github.io/img/apps/whereq-dosbox-opl-test.png" alt="The OPL test running in WhereQ-DOSBox: the DOS screen reads OPL test: one sustained tone on the FM chip, Save a state, wait, load it - the tone must not restart, and The tone is playing. Press any key to stop it., with the on-screen keyboard down both sides." width="900"></p>
+<p align="center"><sub>The test that exposed it: one sustained tone on the FM chip — the
+carrier that a wandering sample rate turns into a beat.</sub></p>
+<p>The fix is three lines in the <code>dosbox.conf</code> the app ships: the mixer runs at <strong>48 kHz</strong>, the phone's native rate, in blocks of <strong>2048</strong>, with a <strong>50 ms</strong> prebuffer. The loop stops hunting, and the warble goes with it.</p>
+<p>This changes audio buffering and nothing else. Game speed and logic are untouched, and the price is about 50 ms of latency, which is inaudible in a DOS game. The whole analysis — the pipeline, the control loop, the modulation — is in <a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/AUDIO-FM-BEEP.md" target="_blank" rel="noopener noreferrer" class=""><code>docs/AUDIO-FM-BEEP.md</code></a>, with three diagrams, because the interesting part of this bug was never the three lines.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="the-second-start">The second start<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#the-second-start" class="hash-link" aria-label="The second start的直接链接" title="The second start的直接链接" translate="no">​</a></h2>
+<p>Leaving the app with the Back button and opening it again used to be enough to kill the emulator.</p>
+<div class="language-text codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-text codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token plain">  DOS:Too many devices added</span><br></div></code></pre></div></div>
+<p>The device table is a static array of ten slots, and the devices of a run were never removed from it. The app keeps its process alive between two starts, so the second start found the table still full, ran out of slots and died. The devices of the DOS section are now removed when it shuts down; the MSCDEX device removes itself with it.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="game-mode-comes-back-the-way-you-left-it">Game Mode comes back the way you left it<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#game-mode-comes-back-the-way-you-left-it" class="hash-link" aria-label="Game Mode comes back the way you left it的直接链接" title="Game Mode comes back the way you left it的直接链接" translate="no">​</a></h2>
+<p>Two smaller fixes in the same corner of the app.</p>
+<p>The gamepad restores your per-game state — the profile, the D-pad mode, the remaps — in one pass now, before the gamepad is built. The order mattered: the D-pad has to be in place before the bar is built, or the chip that names the mode names the <em>previous</em> one, and the separate setters had to be called in an order the caller could get wrong. One layout pass cannot get it wrong.</p>
+<p>And the <strong>TURBO</strong> auto-fire cannot get stuck any more. While the FIRE button is held, TURBO fires it again and again. That loop lived in the button's own touch listener, and a rebuild — a rotation, or the other thumb cycling a chip — detached the view mid-hold without an <code>ACTION_UP</code>. The listener never stopped, and the key fired forever. The loop now lives with the gamepad, and every path that releases the keys cancels it.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="the-guide-grew-to-match">The guide grew to match<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#the-guide-grew-to-match" class="hash-link" aria-label="The guide grew to match的直接链接" title="The guide grew to match的直接链接" translate="no">​</a></h2>
+<p align="center"><img src="https://whereq.github.io/img/apps/whereq-dosbox-keyboard-columns.png" alt="The narrow-screen keyboard in WhereQ-DOSBox: one column of keys down the left with File, the keyboard toggle, Esc, Tab, RMB and the arrows, one column down the right with the quote key, Bks, Alt, Ctrl, Shift, Space and Ent, and the DOS welcome screen with a C:\> prompt in the middle." width="900"></p>
+<p align="center"><sub>The columns layout: one key column per side, for the screen where the
+pads no longer fit.</sub></p>
+<p>The user guide had described the keyboard's three layouts and pictured two of them. The third — the <strong>columns</strong> layout, one key column per side, that the app falls back to when the black bar beside the 4:3 picture drops below 116 dp — is now a real capture, as is the narrow landscape screen where the letters are squeezed to about 24 dp. The new <strong>Game Mode</strong> screenshots were re-taken from the 1.0.0.17 release build, so the frames in the guide, in the repository and in the capture set are the same ones. The dead <em>SEE ALSO</em> section is out of the DOSBox man page, the remap outline is checked on the device in pixels, and the checksum of the shipped 1.0.0.17 APK is recorded in the repository.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="your-save-states-still-load">Your save states still load<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#your-save-states-still-load" class="hash-link" aria-label="Your save states still load的直接链接" title="Your save states still load的直接链接" translate="no">​</a></h2>
+<p><strong>The save-state format did not change.</strong> Every save state written by the earlier releases loads normally.</p>
+<p>Nothing in this release touches the emulator's internals — it is an app-layer release, like the ones before it — but this is the sentence that has to be in every release note, so here it is again.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="get-it">Get it<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#get-it" class="hash-link" aria-label="Get it的直接链接" title="Get it的直接链接" translate="no">​</a></h2>
+<p>The release is on the <a href="https://github.com/whereq/whereq-dosbox/releases" target="_blank" rel="noopener noreferrer" class="">releases page</a> as tag <strong>v1.0.0.18</strong>. The APK is published as a release asset built by CI from that tag, with a <code>.sha256</code> sidecar next to it, so you can check what you downloaded.</p>
+<p>👉 <strong><a href="https://github.com/whereq/whereq-dosbox" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/whereq-dosbox</a></strong> — the source, and the whole history of it.</p>
+<p>It runs on <strong>arm64-v8a, armeabi-v7a and x86_64</strong> devices, Android 5.0 and newer, entirely offline, with no account and no tracking. The project is GPL-2.0, and the DOSBox core is embedded with its <code>AUTHORS</code>, <code>ChangeLog</code>, <code>COPYING</code> and per-file headers intact.</p>
+<p>If you are new here, the <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-Announcement">announcement</a> says what the project is, and the <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-User-Guide">user guide</a> walks through every screen of it. <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.9">The console that the keyboard became</a> is about the pads Game Mode replaces, <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.12">the save that outlives the app</a> about the slots that still load, and <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.15">the gamepad for your thumb</a> about the second face of the keyboard. For the whole picture of the project, read <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox">WhereQ-DOSBox</a>; for what a key does inside the machine, the <a class="" href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-Interrupts">interrupt map</a> has it.</p>
+<p>Again, <strong>this post is not the documentation.</strong> The documentation is the repository: the <a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/USER-GUIDE.md" target="_blank" rel="noopener noreferrer" class="">user guide</a>, the <a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/TECHNICAL-REFERENCE.md" target="_blank" rel="noopener noreferrer" class="">technical reference</a>, and <a href="https://github.com/whereq/whereq-dosbox/blob/main/docs/AUDIO-FM-BEEP.md" target="_blank" rel="noopener noreferrer" class="">the audio analysis</a>. Please read those rather than take my word for it.</p>
+<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="thank-you-dosbox">Thank you, DOSBox<a href="https://whereq.github.io/zh-CN/blog/WhereQ-DOSBox-1.0.0.18#thank-you-dosbox" class="hash-link" aria-label="Thank you, DOSBox的直接链接" title="Thank you, DOSBox的直接链接" translate="no">​</a></h2>
+<p>None of this is possible without the DOSBox project.</p>
+<p><strong>DOSBox</strong> was written by the <a href="https://www.dosbox.com/crew.php" target="_blank" rel="noopener noreferrer" class="">DOSBox Team</a> — a volunteer crew who took an operating system from 1994 and made it runnable on every machine the world has produced since, including the ones that did not exist yet. They kept it alive for three decades and gave it away to anyone who wanted it. WhereQ-DOSBox is a thin layer on top of their work, and this release is a thin layer on top of that. The originality, the craft and the generosity are entirely theirs.</p>
+<p>This port is built on <strong><a href="https://github.com/dreamlayers/em-dosbox" target="_blank" rel="noopener noreferrer" class="">Em-DOSBox</a></strong>, the Emscripten build of DOSBox r4305 by <a href="https://github.com/dreamlayers" target="_blank" rel="noopener noreferrer" class="">Boris Gjenero</a>, which grew out of <a href="https://github.com/CeRiAl" target="_blank" rel="noopener noreferrer" class="">Ismail Khatib's</a> first attempt to compile DOSBox with Emscripten, and rode on the Emscripten work of <a href="https://github.com/kripken/" target="_blank" rel="noopener noreferrer" class="">Alon Zakai</a>. The SDL2 library by <a href="https://github.com/libsdl-org/SDL" target="_blank" rel="noopener noreferrer" class="">Sam Lantinga</a> carries the window, the audio and the touch input — and now the hardware keyboard too.</p>
+<p><strong>DOSBox is a trademark of the DOSBox project</strong>; this port is not affiliated with or endorsed by the DOSBox team.</p>
+<hr>
+<p><em>A keyboard you already own is the best input device a 1994 game ever asked for. It just needed someone to plug it in.</em></p>]]></content>
+        <author>
+            <name>Dazhi Zhang (Tony)</name>
+            <uri>/about</uri>
+        </author>
+        <category label="dosbox" term="dosbox"/>
+        <category label="android" term="android"/>
+        <category label="emulator" term="emulator"/>
+        <category label="release" term="release"/>
+        <category label="retro" term="retro"/>
+        <category label="open-source" term="open-source"/>
+        <category label="whereq" term="whereq"/>
+        <category label="bluetooth" term="bluetooth"/>
+        <category label="audio" term="audio"/>
+        <category label="game-mode" term="game-mode"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[whereq.ca：@whereq/react 的实时演示，在你的浏览器里跑起来]]></title>
         <id>https://whereq.github.io/zh-CN/blog/WhereQ-CA-React-Demo-CN</id>
@@ -1859,306 +1999,5 @@ the bars on either side of it.</sub></p>
         <category label="whereq" term="whereq"/>
         <category label="native" term="native"/>
         <category label="jit" term="jit"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[财经今日 开源了：界面、它读的库表结构，以及中间的 API]]></title>
-        <id>https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN</id>
-        <link href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN"/>
-        <updated>2026-11-12T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<ThemedImage]]></summary>
-        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://whereq.github.io/img/apps/caijing.svg" alt="财经今日 · CaiJing Today" class="themedComponent_K_SA themedComponent--light_mE0A" width="180"><img src="https://whereq.github.io/img/apps/caijing.svg" alt="财经今日 · CaiJing Today" class="themedComponent_K_SA themedComponent--dark_re_f" width="180"></figure>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="一个交易日是六个标签页">一个交易日，是六个标签页<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN#%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%98%93%E6%97%A5%E6%98%AF%E5%85%AD%E4%B8%AA%E6%A0%87%E7%AD%BE%E9%A1%B5" class="hash-link" aria-label="一个交易日，是六个标签页的直接链接" title="一个交易日，是六个标签页的直接链接" translate="no">​</a></h2>
-<p>九点二十五，集合竞价结束。九点半，开盘。从这一刻起，接下来四个小时，
-市场一直在说话：一次公开市场操作、一个期货点位、一个指数点位、一份征求意见
-稿、一份公司公告，再加上一篇分析——而这两者到底差在哪。</p>
-<p>这些消息都是真的，也都真实存在。只是它们不在同一个地方。</p>
-<p>于是你打开六个标签页：行情快讯、指数页面、板块热力图、日历、公告检索、还有
-一个论坛。它们各自的版式、配色、关注点都不一样，而且大多是为别人的问题而
-做的。</p>
-<p>我一直想要的是一块板子。一屏之内，热榜、7×24 快讯、板块热力、经济日历、个股
-热榜同时都在；而且每个面板回答的都是同一个问题：<strong>发生了什么变化，有多重要。</strong></p>
-<p><strong>财经今日（CaiJing Today）</strong> 就是这块板子。它以中文为默认界面，因为市场先说
-中文；英文放在旁边，一键可切。</p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="这块板子">这块板子<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN#%E8%BF%99%E5%9D%97%E6%9D%BF%E5%AD%90" class="hash-link" aria-label="这块板子的直接链接" title="这块板子的直接链接" translate="no">​</a></h2>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-live-zh.jpg" alt="财经今日线上运行中的界面（真实数据）——左侧是带热度条的热榜，中间是编辑精选、行情图表和个股热榜，右侧是 7×24 快讯、经济日历和全球市场行情" width="100%"></p>
-<p align="center"><sub>这是运行中的站点——<strong>caijing.today</strong>——里面是真实数据。左侧是热榜
-TOP 50，配 1 小时 / 24 小时 / 本周 / 本月四档时间窗和热度条；中间是编辑精选、
-行情图表和个股热榜；右侧是 7×24 快讯、经济日历和全球市场行情；顶部那条是滚动的
-行情带。</sub></p>
-<p>打开它，版式是刻意做密的。顶部一条行情带横向滚动。往下是三栏面板，每一个都是
-同一套数据库的一个切面，谁也不替谁做总结。</p>
-<ul>
-<li class=""><strong>热榜 / TOP 50</strong> —— 按热度排序的新闻，右侧可切换时间窗。这里的热度不是编辑
-判断，而是由发布时间、该条所挂分析的可信度，以及情绪强度共同算出来的。</li>
-<li class=""><strong>7×24 快讯</strong> —— 快讯流。短、带时间戳，有自己的节奏；你读一篇五分钟前打开
-的稿子，它也还在旁边走着。</li>
-<li class=""><strong>个股热榜</strong> —— 个股热榜，自带一套排序。</li>
-<li class=""><strong>分类导航</strong> —— 十二个分类：宏观、股市、美股、债券、外汇、大宗商品、加密、
-房产、科技、公司、政策、观点。这不是手工维护的分类表——每一条内容是按它的
-信号类型、板块、地域和标签归类的，你也可以手动改。</li>
-<li class=""><strong>经济日历</strong> —— 当天的预定数据发布，带重要度。</li>
-<li class=""><strong>数据图表 / 行业板块 / 加密市场 / 热搜关键词</strong> —— 走势图、带资金流的板块
-热力、加密板块，以及大家正在搜什么。</li>
-</ul>
-<p>整套界面两种语言，切换按钮在页头。中文不是英文的翻译——中文才是最初的版式，
-英文是后来并排加上去的。</p>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-live-zh-light.jpg" alt="财经今日线上运行中的浅色界面——同样的首页，浅色主题" width="100%"></p>
-<p align="center"><sub>同一块板子的浅色主题。板子默认是深色的，页头的切换按钮可以换，切换结果会
-被记住。</sub></p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="技术说明">技术说明<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN#%E6%8A%80%E6%9C%AF%E8%AF%B4%E6%98%8E" class="hash-link" aria-label="技术说明的直接链接" title="技术说明的直接链接" translate="no">​</a></h2>
-<ul>
-<li class=""><strong>前端</strong> —— React 19、TypeScript、Vite、TanStack Query、i18next。类型严格，
-55 个测试。</li>
-<li class=""><strong>后端</strong> —— FastAPI、SQLAlchemy 2（asyncpg 异步驱动）、Pydantic。
-<strong>只读</strong>：这个服务从不写入它所读的数据库。</li>
-<li class=""><strong>数据库</strong> —— PostgreSQL 17。15 张表、2 个视图，以
-<a href="https://github.com/whereq/CaiJing-Today/blob/main/docs/SCHEMA.sql" target="_blank" rel="noopener noreferrer" class=""><code>docs/SCHEMA.sql</code></a>
-的形式公开。</li>
-<li class=""><strong>API</strong> —— <code>/api/v1</code> 下 17 个接口，全部是读。</li>
-<li class=""><strong>许可</strong> —— MIT，覆盖整个仓库。</li>
-<li class=""><strong>测试</strong> —— 后端 25 个、前端 55 个，CI 里四道关：后端测试、一道把库表契约
-真正灌进 PostgreSQL 并和 ORM 映射对账的 schema 检查、前端测试，以及四个镜像
-的 Docker 构建。</li>
-</ul>
-<p><strong>这篇文章不是文档。</strong> 文档是仓库本身：库表契约、安装指南、数据来源的规矩、
-测试矩阵。我更希望你直接去读那些，而不是听我一面之词。</p>
-<p>👉 <strong><a href="https://github.com/whereq/CaiJing-Today" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/CaiJing-Today</a></strong></p>
-<p>跑起来：</p>
-<div class="language-bash codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-bash codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">git</span><span class="token plain"> clone https://github.com/whereq/CaiJing-Today.git</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token builtin class-name" style="color:rgb(78, 201, 176)">cd</span><span class="token plain"> CaiJing-Today</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">cp</span><span class="token plain"> docker/.env.example docker/.env</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">docker</span><span class="token plain"> compose </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-f</span><span class="token plain"> docker/docker-compose.yml up </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-d</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">--build</span><br></div></code></pre></div></div>
-<p>然后打开 <code>http://localhost:8080</code>。这就是完整的一栈——PostgreSQL 17、库表契约、
-演示数据、API 和前端。API 在 <code>http://localhost:8000</code>，交互式文档在 <code>/docs</code>。</p>
-<p><strong>构建、测试、运行都不需要任何 key。</strong> <code>docker/.env.example</code> 里的默认值是本地
-开发用的凭据，不是密钥；而且不需要身份提供者：浏览是公开的，所以界面停在匿名
-模式，登录入口自动隐藏。</p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="为什么现在把它放出来">为什么现在把它放出来<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E5%9C%A8%E6%8A%8A%E5%AE%83%E6%94%BE%E5%87%BA%E6%9D%A5" class="hash-link" aria-label="为什么现在把它放出来的直接链接" title="为什么现在把它放出来的直接链接" translate="no">​</a></h2>
-<p>因为<strong>采集器</strong>是那部分不开源的，而<strong>库表结构</strong>是开源的。</p>
-<p>这个仓库把库表结构当作一份明确的契约公开——15 张表、2 个视图，列的类型、唯一
-约束、快照的纪律、时间的 UTC 规矩——再加上一个只读它的 FastAPI 服务。生产环境
-里往这些表里灌数据的采集器是另一个组件。</p>
-<p>我觉得这个切分才是有用的地方。库表结构不是谁家数据库的导出物，它是<strong>两个允许
-由不同的人写的程序之间的约定</strong>。如果你想要自己的采集器——自己的信源、自己的节
-奏、自己对「一条新闻」的理解——那就写一个往这些表里插入的组件，API 和界面不
-改一行代码就会把它伺服出来。</p>
-<p>这就是全部的扩展点，规矩写在
-<a href="https://github.com/whereq/CaiJing-Today/blob/main/docs/data-sources.md" target="_blank" rel="noopener noreferrer" class="">docs/data-sources.md</a>里：
-<code>published_at</code> 是什么时区、为什么快照表要新增一个 <code>as_of</code> 而不是更新、哪些分
-类 id 是合法的、热度分数由什么构成。</p>
-<p><strong>有一句必须说清楚的话。</strong> MIT 许可覆盖的是<strong>代码</strong>，它对往数据库里放的数据只
-字未提。采集器取回来的标题、行情和公告，权利属于发布它们的那家机构，各有各的
-条款；财经通讯社、免费公开数据门户和行情数据商给的授权根本不是一回事。你要是
-接了真实数据，守约是你的事，不是这个项目的。</p>
-<p>还有关于演示数据，说白了：里面每一行都是编的。标题带【示例】/ <code>[sample]</code> 前缀，
-价格是假的，日历条目是占位的，链接用的是保留域名 <code>.invalid</code>，热榜里的代码是
-<code>DEMO-001</code> … <code>DEMO-010</code> 而不是真实股票代码。这是有意的——真实代码配一个编出来
-的热度，读起来就成了投资建议。</p>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-home.jpg" alt="同一块板子跑在仓库自带的合成演示数据上——每条标题都标着【示例】，个股热榜里的代码全是 DEMO-001 到 DEMO-010" width="100%"></p>
-<p align="center"><sub>这就是一份全新 checkout 跑起来的样子：同一块板子，跑在合成演示数据上。每条
-标题都标着【示例】，代码全是 DEMO-001 … <code>DEMO-010</code>，里面没有一个数字是真的。
-界面和线上一样，默认中文。</sub></p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="致谢">致谢<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement-CN#%E8%87%B4%E8%B0%A2" class="hash-link" aria-label="致谢的直接链接" title="致谢的直接链接" translate="no">​</a></h2>
-<p>这个应用站在别人的劳动之上，装作不是那样才是不诚实的。</p>
-<ul>
-<li class=""><strong><a href="https://polygon.io/" target="_blank" rel="noopener noreferrer" class="">Polygon.io</a></strong> —— 行情数据。行情带、指数点位、走势图都
-来自它。</li>
-<li class=""><strong><a href="https://www.gdeltproject.org/" target="_blank" rel="noopener noreferrer" class="">GDELT</a></strong> —— 全球新闻索引，对应 <code>gdelt</code> 这个
-信源 id。</li>
-<li class=""><strong><a href="https://www.sec.gov/edgar" target="_blank" rel="noopener noreferrer" class="">SEC EDGAR</a></strong> —— 美国公告索引，对应 <code>sec_edgar</code>
-这个信源 id。</li>
-<li class=""><strong>东方财富</strong> —— 界面上标注为 <code>akshare_em_global</code> 和 <code>akshare_em_cjzc</code> 的全球
-快讯与财经早餐信源。</li>
-<li class=""><strong>财经 RSS 聚合</strong> —— <code>rss</code> 这个信源 id 背后的财经 RSS 信息源。</li>
-<li class=""><strong><a href="https://react.dev/" target="_blank" rel="noopener noreferrer" class="">React</a></strong>、<strong><a href="https://vite.dev/" target="_blank" rel="noopener noreferrer" class="">Vite</a></strong>、
-<strong><a href="https://tanstack.com/query" target="_blank" rel="noopener noreferrer" class="">TanStack Query</a></strong>、
-<strong><a href="https://www.i18next.com/" target="_blank" rel="noopener noreferrer" class="">i18next</a></strong>、
-<strong><a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer" class="">FastAPI</a></strong>、
-<strong><a href="https://www.sqlalchemy.org/" target="_blank" rel="noopener noreferrer" class="">SQLAlchemy</a></strong>、
-<strong><a href="https://docs.pydantic.dev/" target="_blank" rel="noopener noreferrer" class="">Pydantic</a></strong>、
-<strong><a href="https://www.postgresql.org/" target="_blank" rel="noopener noreferrer" class="">PostgreSQL</a></strong>、
-<strong><a href="https://nginx.org/" target="_blank" rel="noopener noreferrer" class="">nginx</a></strong> 和 <strong><a href="https://www.docker.com/" target="_blank" rel="noopener noreferrer" class="">Docker</a></strong> —— 这个
-仓库所依赖的技术栈。依赖清单在 <code>NOTICE</code> 里。</li>
-</ul>
-<p>演示数据集则不归任何人所有——这恰恰是它的意义：它是合成的，它自己写明了这一点，
-它的存在只是为了让一份全新的 checkout 起来就有东西可看。</p>
-<hr>
-<p><em>如果你照着这份契约写了一个采集器——或者把它改成一块服务于别的市场的板子——
-我很想听听。</em></p>]]></content>
-        <author>
-            <name>Dazhi Zhang (Tony)</name>
-            <uri>/about</uri>
-        </author>
-        <category label="whereq" term="whereq"/>
-        <category label="开源" term="开源"/>
-        <category label="财经" term="财经"/>
-        <category label="新闻" term="新闻"/>
-        <category label="react" term="react"/>
-        <category label="fastapi" term="fastapi"/>
-        <category label="postgresql" term="postgresql"/>
-        <category label="库表结构" term="库表结构"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CaiJing Today is open source — the board, the schema it reads, and the API in between]]></title>
-        <id>https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement</id>
-        <link href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement"/>
-        <updated>2026-11-12T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<ThemedImage]]></summary>
-        <content type="html"><![CDATA[<figure style="text-align:center;margin:0 0 2rem"><img src="https://whereq.github.io/img/apps/caijing.svg" alt="CaiJing Today · 财经今日" class="themedComponent_K_SA themedComponent--light_mE0A" width="180"><img src="https://whereq.github.io/img/apps/caijing.svg" alt="CaiJing Today · 财经今日" class="themedComponent_K_SA themedComponent--dark_re_f" width="180"></figure>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="a-market-day-is-a-lot-of-tabs">A market day is a lot of tabs<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement#a-market-day-is-a-lot-of-tabs" class="hash-link" aria-label="A market day is a lot of tabs的直接链接" title="A market day is a lot of tabs的直接链接" translate="no">​</a></h2>
-<p>At 09:25 the call auction ends. At 09:30 the tape starts, and for the next
-four hours the Chinese market talks continuously — a central-bank operation, a
-futures point, an index level, a draft regulation, a company filing, an
-analyst note about the difference between two of them.</p>
-<p>All of it is real, and all of it is somewhere. But it is not in the same place.</p>
-<p>So you end up with six tabs open — a wire service, a quote page, a sector
-heatmap, a calendar, a filing index, a forum — and the tab bar quietly becomes
-the product. Every one of them is a different layout, a different colour
-scheme, a different idea of what matters, and most of them are built for
-somebody else's question.</p>
-<p>I kept wanting a single board. One page where the hot list, the 7×24 newsflash,
-sector heat, the economic calendar and the individual-stock hot list are all
-visible at once, and where every panel answers the same question: <em>what
-changed, and how much does it matter?</em></p>
-<p><strong>财经今日 (CaiJing Today)</strong> is that board. It is Chinese-first, because that
-is the language the market speaks first, with English one click away.</p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="the-board">The board<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement#the-board" class="hash-link" aria-label="The board的直接链接" title="The board的直接链接" translate="no">​</a></h2>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-live-en.jpg" alt="CaiJing Today running at caijing.today with live data — the hot ranking on the left with heat bars, the editorial picks and market charts in the middle, the individual-stock hot list below them, and the live newsflash, economic calendar and global market quotes on the right" width="100%"></p>
-<p align="center"><sub>This is the running site — <strong>caijing.today</strong> — with live data.
-On the left the TOP 50 hot ranking with its 1-hour / 24-hour / week / month
-windows and heat bars. In the middle the editorial picks, the market charts
-and the individual-stock hot list. On the right the 7×24 newsflash, the
-economic calendar and the global market quotes. The strip across the top
-scrolls the live quote tape.</sub></p>
-<p>Open it and the shape is deliberately dense. A quote strip scrolls along the
-top. Below that, three columns of panels, each one a window onto the same
-database, none of them a summary of the others.</p>
-<ul>
-<li class=""><strong>Hot Ranking (热榜 / TOP 50)</strong> — headlines ranked by heat, with a window
-selector. The heat score is not editorial judgement; it is computed from
-publication time, the confidence of the analysis attached to the item, and
-how strong its sentiment is.</li>
-<li class=""><strong>Live Newsflash (7×24 快讯)</strong> — the newsflash. Short, timestamped, and it
-keeps its own rhythm while you read, so an article you opened five minutes
-ago still has the tape beside it.</li>
-<li class=""><strong>Hot Stocks (个股热榜)</strong> — the individual-stock hot list, with its own
-ranking.</li>
-<li class=""><strong>Categories (分类导航)</strong> — twelve categories: 宏观, 股市, 美股, 债券, 外汇,
-大宗商品, 加密, 房产, 科技, 公司, 政策, 观点. They are not a hand-made
-taxonomy — each item is classified from its signal type, sectors, region and
-tags, and you can disagree with the result by hand.</li>
-<li class=""><strong>Economic Calendar (经济日历)</strong> — the day's scheduled releases, with an
-importance rating.</li>
-<li class=""><strong>Market Data / Trending / Global Markets (数据图表 / 热搜关键词 / 全球市场)</strong> —
-the index sparklines, the trending keywords, and the global quote board.</li>
-<li class=""><strong>Sector Heat / Crypto Market (行业板块 / 加密市场)</strong> — the sector heatmap with
-capital inflow, and the crypto board with coins, chains and TVL.</li>
-</ul>
-<p>And the whole thing is in two languages, with the toggle in the header. The
-Chinese is not a translation of the English — the Chinese is the original
-layout, and English was added beside it.</p>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-live-en-light.jpg" alt="CaiJing Today running at caijing.today in light mode — the same home board with a light theme" width="100%"></p>
-<p align="center"><sub>The same board in the light theme. The board is dark by default; the
-toggle in the header switches it, and the choice is remembered.</sub></p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="the-honest-technical-note">The honest technical note<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement#the-honest-technical-note" class="hash-link" aria-label="The honest technical note的直接链接" title="The honest technical note的直接链接" translate="no">​</a></h2>
-<ul>
-<li class=""><strong>Frontend</strong> — React 19, TypeScript, Vite, TanStack Query, i18next. Strict
-types, and 55 tests.</li>
-<li class=""><strong>Backend</strong> — FastAPI, SQLAlchemy 2 over asyncpg, Pydantic. <strong>Read-only</strong>:
-the service never writes to the database it reads.</li>
-<li class=""><strong>Database</strong> — PostgreSQL 17. Fifteen tables and two views, published as
-<a href="https://github.com/whereq/CaiJing-Today/blob/main/docs/SCHEMA.sql" target="_blank" rel="noopener noreferrer" class=""><code>docs/SCHEMA.sql</code></a>.</li>
-<li class=""><strong>API</strong> — seventeen endpoints under <code>/api/v1</code>, all of them reads.</li>
-<li class=""><strong>Licence</strong> — MIT, for the whole repository.</li>
-<li class=""><strong>Tests</strong> — 25 backend, 55 frontend, and four CI gates: the backend suite, a
-schema job that applies the contract to a real PostgreSQL and checks the ORM
-mirror against it, the frontend suite, and a Docker build of all four images.</li>
-</ul>
-<p><strong>This post is not the documentation.</strong> The documentation is the repository:
-the schema contract, the setup guide, the data-source rules and the test
-matrix. I would rather you read those than take my word for it.</p>
-<p>👉 <strong><a href="https://github.com/whereq/CaiJing-Today" target="_blank" rel="noopener noreferrer" class="">github.com/whereq/CaiJing-Today</a></strong></p>
-<p>To run it:</p>
-<div class="language-bash codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-bash codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">git</span><span class="token plain"> clone https://github.com/whereq/CaiJing-Today.git</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token builtin class-name" style="color:rgb(78, 201, 176)">cd</span><span class="token plain"> CaiJing-Today</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">cp</span><span class="token plain"> docker/.env.example docker/.env</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">docker</span><span class="token plain"> compose </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-f</span><span class="token plain"> docker/docker-compose.yml up </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-d</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">--build</span><br></div></code></pre></div></div>
-<p>Then open <code>http://localhost:8080</code>. That is the whole stack — PostgreSQL 17,
-the schema contract, the demo data, the API and the frontend. The API is on
-<code>http://localhost:8000</code>, with interactive documentation at <code>/docs</code>.</p>
-<p><strong>You do not need any keys to build, test or run it.</strong> The defaults in
-<code>docker/.env.example</code> are local development credentials, not secrets, and the
-site works with no identity provider at all: browsing is public, so the UI
-stays in anonymous mode and the sign-in control is hidden.</p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="why-it-is-in-the-world-now">Why it is in the world now<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement#why-it-is-in-the-world-now" class="hash-link" aria-label="Why it is in the world now的直接链接" title="Why it is in the world now的直接链接" translate="no">​</a></h2>
-<p>Because the collector is the part that is <em>not</em> open, and the schema is the
-part that is.</p>
-<p>This repository ships the schema as an explicit contract — 15 tables, two
-views, the column types, the unique constraints, the snapshot discipline, the
-UTC rules — and a FastAPI service that reads it and nothing else. The
-collector that fills those tables in production is a separate component.</p>
-<p>I think that split is the useful bit. The schema is not a dump of somebody
-else's database; it is the agreement between two programs that are allowed to
-be written by different people. If you want your own collector — your own
-sources, your own cadence, your own idea of what a headline is — you write a
-component that inserts into those tables, and the API and the interface serve
-it with no code changes.</p>
-<p>That is the whole extension point, and it is documented in
-<a href="https://github.com/whereq/CaiJing-Today/blob/main/docs/data-sources.md" target="_blank" rel="noopener noreferrer" class="">docs/data-sources.md</a>:
-what <code>published_at</code> means, why the snapshot tables take a new <code>as_of</code> instead
-of an update, which category ids are legal, and what the heat score is made
-of.</p>
-<p><strong>One warning, because it matters.</strong> The MIT licence covers <strong>the code</strong>. It
-says nothing about the data you put into the database. The headlines, quotes
-and filings a collector retrieves belong to the organisations that published
-them, each under its own terms, and a financial wire, a free public-data
-portal and a market-data vendor do not grant the same rights. If you connect
-real data, complying with those terms is your job, not this project's.</p>
-<p>And to be plain about the demo dataset: every row in it is invented. The
-headlines are prefixed 【示例】 / <code>[sample]</code>, the prices are fabricated, the
-calendar entries are placeholders, the links use the reserved <code>.invalid</code> TLD,
-and the hot-stock list uses <code>DEMO-001</code> … <code>DEMO-010</code> rather than real tickers.
-That is deliberate. A real ticker next to a fabricated heat score reads as
-investment advice.</p>
-<p align="center"><img src="https://whereq.github.io/img/apps/caijing-today-home.jpg" alt="the same home board running on the repository's synthetic demo dataset — every headline marked 【示例】 and every ticker in the hot list reading DEMO-001 to DEMO-010" width="100%"></p>
-<p align="center"><sub>This is what a fresh checkout gives you: the same board, running on the
-synthetic demo dataset. Every headline is marked 【示例】, every ticker reads
-DEMO-001 … DEMO-010, and nothing in it is real. The interface is
-Chinese-first, as it is on the live site.</sub></p>
-<h2 class="anchor anchorTargetStickyNavbar_dNSn" id="credits">Credits<a href="https://whereq.github.io/zh-CN/blog/CaiJing-Today-Open-Source-Announcement#credits" class="hash-link" aria-label="Credits的直接链接" title="Credits的直接链接" translate="no">​</a></h2>
-<p>This app stands on the work of other people, and it would be dishonest to
-pretend otherwise.</p>
-<ul>
-<li class=""><strong><a href="https://polygon.io/" target="_blank" rel="noopener noreferrer" class="">Polygon.io</a></strong> — market data. The quote strip, the
-index levels, the charts.</li>
-<li class=""><strong><a href="https://www.gdeltproject.org/" target="_blank" rel="noopener noreferrer" class="">GDELT</a></strong> — the global news index behind
-the <code>gdelt</code> source id.</li>
-<li class=""><strong><a href="https://www.sec.gov/edgar" target="_blank" rel="noopener noreferrer" class="">SEC EDGAR</a></strong> — the US filing index behind
-the <code>sec_edgar</code> source id.</li>
-<li class=""><strong>东方财富 (Eastmoney)</strong> — the 全球快讯 and 财经早餐 feeds the interface
-credits as <code>akshare_em_global</code> and <code>akshare_em_cjzc</code>.</li>
-<li class=""><strong>财经 RSS 聚合</strong> — the finance RSS feeds behind the <code>rss</code> source id.</li>
-<li class=""><strong><a href="https://react.dev/" target="_blank" rel="noopener noreferrer" class="">React</a></strong>, <strong><a href="https://vite.dev/" target="_blank" rel="noopener noreferrer" class="">Vite</a></strong>,
-<strong><a href="https://tanstack.com/query" target="_blank" rel="noopener noreferrer" class="">TanStack Query</a></strong>,
-<strong><a href="https://www.i18next.com/" target="_blank" rel="noopener noreferrer" class="">i18next</a></strong>,
-<strong><a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer" class="">FastAPI</a></strong>,
-<strong><a href="https://www.sqlalchemy.org/" target="_blank" rel="noopener noreferrer" class="">SQLAlchemy</a></strong>,
-<strong><a href="https://docs.pydantic.dev/" target="_blank" rel="noopener noreferrer" class="">Pydantic</a></strong>,
-<strong><a href="https://www.postgresql.org/" target="_blank" rel="noopener noreferrer" class="">PostgreSQL</a></strong>,
-<strong><a href="https://nginx.org/" target="_blank" rel="noopener noreferrer" class="">nginx</a></strong> and <strong><a href="https://www.docker.com/" target="_blank" rel="noopener noreferrer" class="">Docker</a></strong> — the
-stack this repository is built on. The dependency list is in <code>NOTICE</code>.</li>
-</ul>
-<p>The demo dataset is also the work of nobody in particular, which is exactly
-the point: it is synthetic, it says so, and it exists so that a fresh
-checkout has something to show.</p>
-<hr>
-<p><em>If you write a collector against the schema — or fork the board for a
-market this one does not cover — I would genuinely like to hear about it.</em></p>]]></content>
-        <author>
-            <name>Dazhi Zhang (Tony)</name>
-            <uri>/about</uri>
-        </author>
-        <category label="whereq" term="whereq"/>
-        <category label="open-source" term="open-source"/>
-        <category label="finance" term="finance"/>
-        <category label="news" term="news"/>
-        <category label="react" term="react"/>
-        <category label="fastapi" term="fastapi"/>
-        <category label="postgresql" term="postgresql"/>
-        <category label="schema" term="schema"/>
     </entry>
 </feed>
