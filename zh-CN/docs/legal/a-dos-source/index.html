@@ -13,8 +13,8 @@
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css" integrity="sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM" crossorigin="anonymous"><link rel="stylesheet" href="/zh-CN/assets/css/styles.3ed99884.css">
-<script src="/zh-CN/assets/js/runtime~main.2eef856b.js" defer="defer"></script>
-<script src="/zh-CN/assets/js/main.04cff895.js" defer="defer"></script>
+<script src="/zh-CN/assets/js/runtime~main.a1e00c03.js" defer="defer"></script>
+<script src="/zh-CN/assets/js/main.b1315d10.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
@@ -63,12 +63,12 @@ well. The complete source of each build is published below.</li>
 
 
 
-<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Version</td><td>1.0.0.0 (<code>versionCode</code> 1000000)</td></tr><tr><td>Source commit</td><td><code>886a50c</code></td></tr><tr><td>Licence</td><td>GNU General Public License, version 2</td></tr><tr><td>Archive</td><td><a href="/zh-CN/assets/files/a-dos-1.0.0.0-source.tar-ea22fc75831f9ab21d7cf64ac8fc2a37.gz" target="_blank" class=""><code>a-dos-1.0.0.0-source.tar.gz</code></a></td></tr><tr><td>SHA-256</td><td><code>90ed6a52cbbb0cac591d7edb12f1dec26fd2bcc2a3ab3db8358e0af98a963f57</code></td></tr></tbody></table>
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Version</td><td>1.0.0.0 (<code>versionCode</code> 1000000)</td></tr><tr><td>Source commit</td><td><code>bfbbcaf</code></td></tr><tr><td>Licence</td><td>GNU General Public License, version 2</td></tr><tr><td>Archive</td><td><a href="/zh-CN/assets/files/a-dos-1.0.0.0-source.tar-26bddf3507b7da21e6bcaa62cc726f44.gz" target="_blank" class=""><code>a-dos-1.0.0.0-source.tar.gz</code></a></td></tr><tr><td>SHA-256</td><td><code>48eb03557379eb89e99bb264ce71860e28c4bcd33ae62ecaa7862715ff620de7</code></td></tr></tbody></table>
 <p>Verify it before you build it:</p>
-<div class="language-sh codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-sh codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">curl</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-LO</span><span class="token plain"> https://whereq.github.io/downloads/a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256sum a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token comment" style="color:rgb(106, 153, 85)"># 90ed6a52cbbb0cac591d7edb12f1dec26fd2bcc2a3ab3db8358e0af98a963f57</span><br></div></code></pre></div></div>
+<div class="language-sh codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-sh codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">curl</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-LO</span><span class="token plain"> https://whereq.github.io/downloads/a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256sum a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token comment" style="color:rgb(106, 153, 85)"># 48eb03557379eb89e99bb264ce71860e28c4bcd33ae62ecaa7862715ff620de7</span><br></div></code></pre></div></div>
 <p>The archive is the tree of the release commit plus a <code>SOURCE-RELEASE.md</code>
 that names the version, the commit and the build. The shipped build was
-made from <code>886a50c</code> — the commit the snapshot above is taken from, so the
+made from <code>bfbbcaf</code> — the commit the snapshot above is taken from, so the
 archive is the exact source of the binary. It holds the DOSBox core with
 its per-file copyright and licence headers intact, the Android
 application, the NDK/CMake build of the native library, the desktop Linux
@@ -82,6 +82,15 @@ the hardware Back button. The implementation lives in
 <code>android/app/src/main/java/com/whereq/ados/GameModeView.kt</code> in the
 archive, and the release notes in <code>docs/releases/1.0.0.0.md</code> describe
 the gesture and the profiles.</p>
+<p><strong>The sound is tuned for a phone.</strong> The mixer&#x27;s defaults (44100 / block
+size 1024 / prebuffer 25 ms) are tuned for a desktop; under the steady CPU
+load of OPL/FM music the mixer&#x27;s rate-tracking loop hunts and bends a
+sustained FM note into an audible warble — &quot;a beep that is only there
+while the BGM plays&quot;. This build runs the mixer at 48000, the native rate
+of most phones, with a larger block and a deeper prebuffer. It changes
+the audio buffering only; the latency rises by about 50 ms, which is
+inaudible in a DOS game. The configuration is regenerated from the asset
+on every boot, so the new settings take effect on the next start.</p>
 <h2 class="anchor anchorTargetStickyNavbar_dNSn" id="building-it">Building it<a href="#building-it" class="hash-link" aria-label="Building it的直接链接" title="Building it的直接链接" translate="no">​</a></h2>
 <div class="language-sh codeBlockContainer_dKIv theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_tDOk"><pre tabindex="0" class="prism-code language-sh codeBlock_nDhC thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_w3N3"><div class="token-line" style="color:#9CDCFE"><span class="token plain">./bin/build.sh bootstrap            </span><span class="token comment" style="color:rgb(106, 153, 85)"># fetch SDL2 and build the toolchain</span><span class="token plain"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">./bin/build.sh android </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">--abis</span><span class="token plain"> </span><span class="token string" style="color:rgb(206, 145, 120)">&quot;arm64-v8a armeabi-v7a x86_64&quot;</span><span class="token plain"></span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">./bin/build.sh apk </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">--release</span><span class="token plain">        </span><span class="token comment" style="color:rgb(106, 153, 85)"># the signed APK</span><br></div></code></pre></div></div>
 <p><code>BUILDING.md</code> and <code>bin/build.sh doctor</code> say what is missing.</p>
