@@ -13,7 +13,7 @@
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css" integrity="sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM" crossorigin="anonymous"><link rel="stylesheet" href="/zh-CN/assets/css/styles.2c350096.css">
-<script src="/zh-CN/assets/js/runtime~main.cd0677ff.js" defer="defer"></script>
+<script src="/zh-CN/assets/js/runtime~main.0e2e9bf2.js" defer="defer"></script>
 <script src="/zh-CN/assets/js/main.2143f670.js" defer="defer"></script>
 </head>
 <body>
@@ -63,12 +63,12 @@ well. The complete source of each build is published below.</li>
 
 
 
-<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Version</td><td>1.0.0.0 (<code>versionCode</code> 1000000)</td></tr><tr><td>Source commit</td><td><code>652ddb2</code></td></tr><tr><td>Licence</td><td>GNU General Public License, version 2</td></tr><tr><td>Archive</td><td><a href="/zh-CN/assets/files/a-dos-1.0.0.0-source.tar-11c1b4f4f506dc47ef57deb5e73ceac1.gz" target="_blank" class=""><code>a-dos-1.0.0.0-source.tar.gz</code></a></td></tr><tr><td>SHA-256</td><td><code>89efed3e52c2f3547f478201f0326cf755f57a514001896e77b56d85b536986c</code></td></tr></tbody></table>
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Version</td><td>1.0.0.0 (<code>versionCode</code> 1000000)</td></tr><tr><td>Source commit</td><td><code>5261092</code></td></tr><tr><td>Licence</td><td>GNU General Public License, version 2</td></tr><tr><td>Archive</td><td><a href="/zh-CN/assets/files/a-dos-1.0.0.0-source.tar-2dfe785767e8d0107e5351ca903ef844.gz" target="_blank" class=""><code>a-dos-1.0.0.0-source.tar.gz</code></a></td></tr><tr><td>SHA-256</td><td><code>a721d95a3b83ddc33443b35063f48fde35f5dacb763cb168ab1098d380eab0c9</code></td></tr></tbody></table>
 <p>Verify it before you build it:</p>
-<div class="language-sh codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-sh codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">curl</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-LO</span><span class="token plain"> https://whereq.github.io/downloads/a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256sum a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token comment" style="color:rgb(106, 153, 85)"># 89efed3e52c2f3547f478201f0326cf755f57a514001896e77b56d85b536986c</span><br></div></code></pre></div></div>
+<div class="language-sh codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#1E1E1E"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-sh codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#1E1E1E"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#9CDCFE"><span class="token function" style="color:rgb(220, 220, 170)">curl</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(156, 220, 254)">-LO</span><span class="token plain"> https://whereq.github.io/downloads/a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain">sha256sum a-dos-1.0.0.0-source.tar.gz</span><br></div><div class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token comment" style="color:rgb(106, 153, 85)"># a721d95a3b83ddc33443b35063f48fde35f5dacb763cb168ab1098d380eab0c9</span><br></div></code></pre></div></div>
 <p>The archive is the tree of the release commit plus a <code>SOURCE-RELEASE.md</code>
 that names the version, the commit and the build. The shipped build was
-made from <code>652ddb2</code> — the commit the snapshot above is taken from, so the
+made from <code>5261092</code> — the commit the snapshot above is taken from, so the
 archive is the exact source of the binary. It holds the DOSBox core with
 its per-file copyright and licence headers intact, the Android
 application, the NDK/CMake build of the native library, the desktop Linux
@@ -91,6 +91,24 @@ of most phones, with a larger block and a deeper prebuffer. It changes
 the audio buffering only; the latency rises by about 50 ms, which is
 inaudible in a DOS game. The configuration is regenerated from the asset
 on every boot, so the new settings take effect on the next start.</p>
+<p><strong>The mixer interpolates the channels that do not run at its own rate.</strong> The
+OPL and the PC speaker are created at 44100 Hz while the mixer runs at
+48000 Hz, and <code>MIXER_AddChannel()</code> overwrote the flag that decides how such
+a channel is read back — so every resampled channel was <em>held</em> instead of
+interpolated, which put the images of the carrier back into the audio band
+and roughened every sustained FM note. Measured on this build, capturing the
+mixer output of a sustained 440 Hz OPL note: the non-harmonic junk under the
+note drops from −11.7 dB to −51.3 dB relative to the fundamental. The carrier
+was never wrong — 440.003 Hz, +0.0 cents against A4, a pitch wander of
+1.8 cents, no clipped samples.</p>
+<p><strong>The PC speaker falls silent when it is switched off.</strong> Port 61h bit 0 gates
+the speaker amplifier, and with the gate closed the output is 0 V. The code
+held the <em>low level of the square wave</em> instead and walked it back to zero
+one step per mixer block, so every beep left a −15 % FS DC step behind that
+took about 4.5 seconds to decay — a thump after every sound effect. The beep
+itself is unchanged: the same 994 Hz square wave at the same level. With the
+step gone, the DC offset under a sustained FM note measures −49.7 dB below
+the peak, where it used to be −13 dB.</p>
 <p><strong>There is no foreground service.</strong> This build removes the <code>specialUse</code>
 foreground service the earlier snapshot carried, together with the
 <code>FOREGROUND_SERVICE</code>, <code>FOREGROUND_SERVICE_SPECIAL_USE</code> and
